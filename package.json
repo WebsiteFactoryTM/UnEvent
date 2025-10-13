@@ -2,7 +2,7 @@
   "name": "unevent",
   "private": true,
   "version": "0.1.0",
-  "packageManager": "pnpm@8.15.4",
+  "packageManager": "pnpm@9.1.0",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -14,6 +14,9 @@
     "dev": "pnpm -r --parallel dev",
     "dev:infra": "docker compose up -d",
     "down:infra": "docker compose down",
-    "ps": "docker compose ps"
+    "ps": "docker compose ps",
+    "dev:backend": "pnpm --filter @unevent/backend dev",
+    "build:backend": "pnpm --filter @unevent/backend build",
+    "start:backend": "pnpm --filter @unevent/backend start"
   }
 }
