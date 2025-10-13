@@ -1,0 +1,8 @@
+{
+  "name": "@unevent/backend",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "echo 'Backend dev placeholder. We will scaffold Payload next.' && ping -t 3 localhost >/dev/null 2>&1 || true"
+  }
+}

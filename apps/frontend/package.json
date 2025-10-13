@@ -1,0 +1,8 @@
+{
+  "name": "@unevent/frontend",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "echo 'Frontend dev placeholder. We will scaffold Next.js (via V0) next.' && ping -t 3 localhost >/dev/null 2>&1 || true"
+  }
+}

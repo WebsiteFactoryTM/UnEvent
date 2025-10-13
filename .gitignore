@@ -1,0 +1,18 @@
+# dependencies
+node_modules
+.pnpm-store
+
+# env
+.env
+.env.local
+apps/*/.env
+apps/*/.env.local
+
+# docker
+docker-data/
+*.pid
+
+# build
+.next
+dist
+build
