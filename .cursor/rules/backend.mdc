@@ -1,0 +1,24 @@
+---
+alwaysApply: true
+description: |
+  Backend development rules for the UnEvent platform, built with PayloadCMS v3 (TypeScript) and PostgreSQL.
+
+rules:
+  - Use **Payload v3 with PostgreSQL adapter** (`@payloadcms/db-postgres`).
+  - Store environment-specific configs in `apps/backend/.env`.
+  - **Do not** store any secrets (tokens, API keys) in code — only via env vars.
+  - Define each collection in its own file under `src/collections/`.
+  - Maintain a consistent naming scheme: `PascalCase` for collection files, `camelCase` for fields.
+  - Each collection must have:
+    - Clear **access control** definitions (read/update/create/delete).
+    - Optional **hooks** for automation (e.g., auto-create profiles, revalidate frontend).
+  - Use **Payload hooks** instead of direct DB writes whenever business logic is needed.
+  - Group reusable logic into `/src/utils` or `/src/hooks`.
+  - Use **migrations** for schema evolution (no manual DB edits).
+  - For data fetching from frontend, expose custom endpoints via Payload’s `endpoints` config, not arbitrary routes.
+  - Add **Redis caching** layer for frequent reads (e.g., public listings, stats) using a service helper.
+  - Every external integration (e.g., payment, messaging) must have its own service in `/src/services`.
+  - Avoid circular dependencies between collections.
+  - Define clear TypeScript types for all data returned by Payload APIs.
+  - Write integration tests for key API endpoints and hooks.
+---

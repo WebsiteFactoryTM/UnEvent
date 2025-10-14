@@ -9,5 +9,17 @@ export const Users: CollectionConfig = {
   fields: [
     // Email added by default
     // Add more fields as needed
+    {
+      name: 'displayName',
+      type: 'text',
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
+      name: 'avatarURL',
+      type: 'text',
+      admin: { readOnly: true },
+    },
   ],
 }

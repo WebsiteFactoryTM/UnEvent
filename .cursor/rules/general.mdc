@@ -1,0 +1,19 @@
+---
+alwaysApply: true
+description: |
+  General coding and architecture standards for the UnEvent monorepo.
+
+rules:
+  - Use **TypeScript** consistently across all apps and packages.
+  - Prefer **composition over inheritance** in both backend and frontend code.
+  - Use **environment variables** for all secrets and configuration.
+  - Use **pnpm** for dependency management — no npm/yarn installs.
+  - Every code snippet must include **error handling** and minimal inline documentation.
+  - Code must be **readable, modular, and testable** — no long monolithic functions.
+  - All external integrations (APIs, SDKs, plugins) must have their own service module.
+  - For any shared logic, create a file in `packages/shared/` — avoid duplicating code between backend and frontend.
+  - Include **comments** explaining reasoning for complex logic or architectural decisions.
+  - Use absolute imports (via `tsconfig.json` paths) — no long relative imports.
+  - Commit messages and file names should use **kebab-case**.
+  - Use **.env.example** files for each app to define required environment variables.
+---

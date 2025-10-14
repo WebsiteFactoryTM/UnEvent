@@ -1,0 +1,23 @@
+---
+alwaysApply: true
+description: |
+  **UnEvent** is a scalable event discovery and listing platform built with Next.js (frontend) and PayloadCMS v3 (backend).
+  It connects people with event locations, service providers, and organizers through searchable listings.
+
+  The architecture follows a **monorepo** structure using pnpm workspaces, Docker-based Postgres + Redis services, and clean separation between frontend and backend.
+
+  MVP goals:
+  - Allow free listing of Locations, Services, and Events
+  - Filter by city, date, and category
+  - Organizer profiles with reviews, messaging, and rating
+  - SEO-friendly pages and dynamic revalidation via Payload ↔ Next.js integration
+
+rules:
+  - Use modern, modular architecture with clearly separated concerns.
+  - Prioritize maintainability and clarity over brevity.
+  - Ensure all code is type-safe, with clear naming and reusable components.
+  - Always follow the conventions defined in general, backend, and frontend rulesets.
+  - Include rules/general.mdc
+  - Include rules/backend.mdc
+  - Include rules/frontend.mdc
+---

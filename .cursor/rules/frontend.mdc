@@ -1,0 +1,25 @@
+---
+alwaysApply: true
+description: |
+  Frontend development rules for the UnEvent web app, built with Next.js 15 (App Router), Tailwind CSS, and React Query.
+
+rules:
+  - Use **Next.js App Router** exclusively — no legacy pages directory.
+  - All UI components go in `/components`, organized by domain (e.g., `/events`, `/profiles`).
+  - Use **React Query** for all data fetching and mutation.
+  - Define fetchers separately (e.g., `/lib/api/events.ts`) and import them into hooks.
+  - Use **server components** for static or cached data; **client components** only for interactive views.
+  - Configure ISR (Incremental Static Regeneration) via `revalidate` or Payload’s revalidation webhooks.
+  - Styling:
+    - Use **Tailwind CSS** via `className` — no inline styles.
+    - Follow UnEvent’s **black-and-white minimalist aesthetic**.
+  - Every page should include **SEO metadata** via Next’s `metadata` export.
+  - Reusable UI patterns (buttons, cards, modals) belong under `components/ui`.
+  - Use `react-hook-form` + `zod` for all forms and validation.
+  - Use **environment variables** prefixed with `NEXT_PUBLIC_` for frontend configs.
+  - All API calls must use a shared base URL from `NEXT_PUBLIC_API_URL`.
+  - Handle all API errors gracefully with toast notifications or error states.
+  - Keep accessibility in mind — every interactive element must be keyboard-navigable.
+  - Use lazy loading for media and dynamic imports for heavy components.
+  - Prefer named exports and avoid default exports unless necessary.
+---

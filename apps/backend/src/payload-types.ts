@@ -119,6 +119,8 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  displayName?: string | null;
+  avatarURL?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -218,6 +220,8 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  displayName?: T;
+  avatarURL?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

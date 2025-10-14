@@ -1,5 +1,4 @@
 // storage-adapter-import-placeholder
-import 'dotenv/config'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -14,9 +13,9 @@ import { Media } from './collections/Media'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-console.log('Is this running', process.env.DATABASE_URI, process.env.PAYLOAD_SECRET)
-
 export default buildConfig({
+  serverURL:
+    process.env.PAYLOAD_PUBLIC_SERVER_URL || `http://localhost:${process.env.PORT || 4000}`,
   admin: {
     user: Users.slug,
     importMap: {

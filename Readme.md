@@ -24,7 +24,7 @@ UnEvent is a modern event management platform designed to provide seamless event
 Before getting started, ensure you have the following installed on your local machine:
 
 - [Node.js](https://nodejs.org/) (v18+ recommended)
-- [pnpm](https://pnpm.io/) (version 8.15.4 is used in this project)
+- [pnpm](https://pnpm.io/) (version 9.1.0 is used in this project)
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 - Git
 
@@ -41,7 +41,7 @@ Before getting started, ensure you have the following installed on your local ma
 
    ```bash
    corepack enable
-   corepack prepare pnpm@8.15.4 --activate
+   corepack prepare pnpm@9.1.0 --activate
    ```
 
 3. **Install dependencies**
