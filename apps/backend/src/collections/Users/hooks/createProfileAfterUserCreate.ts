@@ -36,7 +36,6 @@ export const createProfileAfterUserCreate: CollectionAfterOperationHook = async 
         await req.payload.create({
           collection: 'profiles',
           data: {
-            id: user.id,
             user: user.id,
             name: (user.email || '').split('@')[0] || 'User',
             userType,
@@ -101,5 +100,6 @@ export const createProfileAfterUserCreate: CollectionAfterOperationHook = async 
       err instanceof Error ? err.message : 'Unknown error',
       err instanceof Error ? err.stack : undefined,
     )
+    return
   }
 }

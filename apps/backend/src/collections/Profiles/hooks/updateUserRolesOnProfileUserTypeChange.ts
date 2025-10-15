@@ -8,13 +8,21 @@ export const updateUserRolesOnProfileUserTypeChange: CollectionAfterChangeHook =
 }) => {
   if (operation === 'update') {
     if (doc.userType !== data.userType) {
-      await req.payload.update({
-        collection: 'users',
-        id: doc.id,
-        data: {
-          roles: data.userType,
-        },
-      })
+      try {
+        await req.payload.update({
+          collection: 'users',
+          id: doc.id,
+          data: {
+            roles: data.userType,
+          },
+        })
+      } catch (error) {
+        req.payload.logger.error(
+          `[updateUserRolesOnProfileUserTypeChange] error updating user roles for user ${doc.id}`,
+          error,
+        )
+        return
+      }
     }
   }
 }

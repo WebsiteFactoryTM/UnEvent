@@ -2,6 +2,7 @@ import { isAdmin } from '@/access/roles'
 import { createProfileAfterUserCreate } from './hooks/createProfileAfterUserCreate'
 import type { CollectionConfig } from 'payload'
 import { ensureBaseClientRole } from './hooks/ensureBaseClientRole'
+import { deleteProfileUserDelete } from './hooks/deleteProfileAfterUserDelete'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -16,7 +17,7 @@ export const Users: CollectionConfig = {
     create: () => true, // allow public registration
   },
   auth: {
-    verify: false,
+    // verify: true,
     maxLoginAttempts: 3,
   },
   fields: [
@@ -28,6 +29,12 @@ export const Users: CollectionConfig = {
       admin: {
         readOnly: true,
       },
+    },
+    {
+      name: 'profile',
+      type: 'relationship',
+      relationTo: 'profiles',
+      hasMany: false,
     },
     {
       name: 'avatarURL',
@@ -75,5 +82,6 @@ export const Users: CollectionConfig = {
   hooks: {
     afterOperation: [createProfileAfterUserCreate],
     beforeValidate: [ensureBaseClientRole],
+    beforeDelete: [deleteProfileUserDelete],
   },
 }

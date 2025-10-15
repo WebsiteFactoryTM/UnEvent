@@ -1,7 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin } from '@/access/roles'
 import { updateUserRolesOnProfileUserTypeChange } from './hooks/updateUserRolesOnProfileUserTypeChange'
-import { linkUserIdAndMemberSince } from './hooks/linkUserIdAndMemberSince'
+import { updateMemberSince } from './hooks/updateMemberSince'
+import { linkProfileToUserAfterChange } from './hooks/linkProfileToUser'
 
 export const Profiles: CollectionConfig = {
   slug: 'profiles',
@@ -245,6 +246,15 @@ export const Profiles: CollectionConfig = {
       ],
     },
     {
+      name: 'favorites',
+      type: 'relationship',
+      relationTo: 'favorites',
+      hasMany: true,
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
       name: 'memberSince',
       type: 'date',
       admin: {
@@ -267,8 +277,8 @@ export const Profiles: CollectionConfig = {
     },
   ],
   hooks: {
-    beforeChange: [linkUserIdAndMemberSince],
-    afterChange: [updateUserRolesOnProfileUserTypeChange],
+    beforeChange: [updateMemberSince],
+    afterChange: [linkProfileToUserAfterChange, updateUserRolesOnProfileUserTypeChange],
   },
   timestamps: true,
 }
