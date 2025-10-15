@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    profiles: Profile;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,6 +78,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -121,6 +123,10 @@ export interface User {
   id: number;
   displayName?: string | null;
   avatarURL?: string | null;
+  roles: ('organizer' | 'host' | 'provider' | 'client' | 'admin')[];
+  status?: ('active' | 'pending' | 'suspended') | null;
+  agreeTermsAndConditions: boolean;
+  agreePrivacyPolicy: boolean;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -160,6 +166,101 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profiles".
+ */
+export interface Profile {
+  id: number;
+  user: number | User;
+  userType?: ('organizer' | 'host' | 'provider' | 'client')[] | null;
+  /**
+   * Full name or business name
+   */
+  name: string;
+  /**
+   * Profile avatar
+   */
+  avatar?: (number | null) | Media;
+  /**
+   * Display name
+   */
+  displayName?: string | null;
+  /**
+   * Short bio or tagline
+   */
+  bio?: string | null;
+  /**
+   * Primary contact number
+   */
+  phone?: string | null;
+  /**
+   * Personal or business website
+   */
+  website?: string | null;
+  /**
+   * Primary city of operation
+   */
+  city?: string | null;
+  socialMedia?: {
+    /**
+     * Facebook profile/page URL
+     */
+    facebook?: string | null;
+    /**
+     * Instagram profile URL
+     */
+    instagram?: string | null;
+    /**
+     * LinkedIn profile URL
+     */
+    linkedin?: string | null;
+    /**
+     * YouTube channel URL
+     */
+    youtube?: string | null;
+    /**
+     * TikTok profile URL
+     */
+    tiktok?: string | null;
+    /**
+     * Twitch profile URL
+     */
+    twitch?: string | null;
+    /**
+     * X profile URL
+     */
+    x?: string | null;
+  };
+  verified?: {
+    status?: ('none' | 'pending' | 'approved' | 'rejected') | null;
+    documents?:
+      | {
+          type?: ('id' | 'company' | 'other') | null;
+          file: number | Media;
+          notes?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    verificationData?: {
+      fullName?: string | null;
+      address?: string | null;
+      isCompany?: boolean | null;
+      companyName?: string | null;
+      cui?: string | null;
+      companyAddress?: string | null;
+    };
+  };
+  rating?: {
+    average?: number | null;
+    count?: number | null;
+  };
+  memberSince?: string | null;
+  lastOnline?: string | null;
+  views?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -172,6 +273,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'profiles';
+        value: number | Profile;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -222,6 +327,10 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   displayName?: T;
   avatarURL?: T;
+  roles?: T;
+  status?: T;
+  agreeTermsAndConditions?: T;
+  agreePrivacyPolicy?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -256,6 +365,66 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profiles_select".
+ */
+export interface ProfilesSelect<T extends boolean = true> {
+  user?: T;
+  userType?: T;
+  name?: T;
+  avatar?: T;
+  displayName?: T;
+  bio?: T;
+  phone?: T;
+  website?: T;
+  city?: T;
+  socialMedia?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+        tiktok?: T;
+        twitch?: T;
+        x?: T;
+      };
+  verified?:
+    | T
+    | {
+        status?: T;
+        documents?:
+          | T
+          | {
+              type?: T;
+              file?: T;
+              notes?: T;
+              id?: T;
+            };
+        verificationData?:
+          | T
+          | {
+              fullName?: T;
+              address?: T;
+              isCompany?: T;
+              companyName?: T;
+              cui?: T;
+              companyAddress?: T;
+            };
+      };
+  rating?:
+    | T
+    | {
+        average?: T;
+        count?: T;
+      };
+  memberSince?: T;
+  lastOnline?: T;
+  views?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

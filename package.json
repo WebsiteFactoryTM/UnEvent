@@ -17,6 +17,7 @@
     "ps": "docker compose ps",
     "dev:backend": "pnpm --filter @unevent/backend dev",
     "build:backend": "pnpm --filter @unevent/backend build",
-    "start:backend": "pnpm --filter @unevent/backend start"
+    "start:backend": "pnpm --filter @unevent/backend start",
+    "generate:types": "pnpm --filter @unevent/backend generate:types"
   }
 }
