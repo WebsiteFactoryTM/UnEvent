@@ -278,7 +278,8 @@ export const Profiles: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [updateMemberSince],
-    afterChange: [linkProfileToUserAfterChange, updateUserRolesOnProfileUserTypeChange],
+    afterChange: [updateUserRolesOnProfileUserTypeChange],
+    afterOperation: [linkProfileToUserAfterChange],
   },
   timestamps: true,
 }

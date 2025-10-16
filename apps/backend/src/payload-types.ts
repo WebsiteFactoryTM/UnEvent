@@ -72,6 +72,7 @@ export interface Config {
     profiles: Profile;
     favorites: Favorite;
     'listing-types': ListingType;
+    cities: City;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -83,6 +84,7 @@ export interface Config {
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
     'listing-types': ListingTypesSelect<false> | ListingTypesSelect<true>;
+    cities: CitiesSelect<false> | CitiesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -314,6 +316,43 @@ export interface ListingType {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities".
+ */
+export interface City {
+  id: number;
+  /**
+   * The official name of the city
+   */
+  name: string;
+  /**
+   * Auto-generated from city name. Used in URLs and lookups.
+   */
+  slug?: string | null;
+  country?: string | null;
+  /**
+   * Where this city data originated from
+   */
+  source?: ('seeded' | 'google' | 'user') | null;
+  /**
+   * Geographic coordinates (latitude, longitude)
+   *
+   * @minItems 2
+   * @maxItems 2
+   */
+  geo: [number, number];
+  /**
+   * Number of times this city is referenced
+   */
+  usageCount?: number | null;
+  /**
+   * Indicates if this city data has been verified by admins
+   */
+  verified?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -338,6 +377,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'listing-types';
         value: number | ListingType;
+      } | null)
+    | ({
+        relationTo: 'cities';
+        value: number | City;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -510,6 +553,21 @@ export interface ListingTypesSelect<T extends boolean = true> {
   type?: T;
   sortOrder?: T;
   isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities_select".
+ */
+export interface CitiesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  country?: T;
+  source?: T;
+  geo?: T;
+  usageCount?: T;
+  verified?: T;
   updatedAt?: T;
   createdAt?: T;
 }
