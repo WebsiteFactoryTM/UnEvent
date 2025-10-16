@@ -11,6 +11,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Profiles } from './collections/Profiles'
 import { Favorites } from './collections/Favorites'
+import { ListingTypes } from './collections/ListingTypes'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -18,13 +19,19 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   serverURL:
     process.env.PAYLOAD_PUBLIC_SERVER_URL || `http://localhost:${process.env.PORT || 4000}`,
+  bin: [
+    {
+      scriptPath: path.resolve(dirname, 'scripts/seed/seed.ts'),
+      key: 'seed',
+    },
+  ],
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Profiles, Favorites],
+  collections: [Users, Media, Profiles, Favorites, ListingTypes],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

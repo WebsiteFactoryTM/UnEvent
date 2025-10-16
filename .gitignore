@@ -16,3 +16,6 @@ docker-data/
 .next
 dist
 build
+
+# misc
+.DS_Store

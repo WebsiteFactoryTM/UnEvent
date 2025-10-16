@@ -1,0 +1,906 @@
+{
+  "categories": [
+    {
+      "name": "SĂLI DE EVENIMENTE & RESTAURANTE",
+      "slug": "sali-de-evenimente-restaurante",
+      "items": [
+        {
+          "name": "Sală de evenimente (ballroom)",
+          "slug": "locations-sali-de-evenimente-restaurante-sala-de-evenimente-ballroom"
+        },
+        {
+          "name": "Salon nuntă / botez",
+          "slug": "locations-sali-de-evenimente-restaurante-salon-nunta-botez"
+        },
+        {
+          "name": "Restaurant cu salon privat",
+          "slug": "locations-sali-de-evenimente-restaurante-restaurant-cu-salon-privat"
+        },
+        {
+          "name": "Berărie / beer hall",
+          "slug": "locations-sali-de-evenimente-restaurante-berarie-beer-hall"
+        },
+        {
+          "name": "Wine bar cu sală privată",
+          "slug": "locations-sali-de-evenimente-restaurante-wine-bar-cu-sala-privata"
+        },
+        {
+          "name": "Food hall / hală culinară",
+          "slug": "locations-sali-de-evenimente-restaurante-food-hall-hala-culinara"
+        },
+        {
+          "name": "Grădină de vară a restaurantului",
+          "slug": "locations-sali-de-evenimente-restaurante-gradina-de-vara-a-restaurantului"
+        },
+        {
+          "name": "Crama restaurantului (pivniță)",
+          "slug": "locations-sali-de-evenimente-restaurante-crama-restaurantului-pivnita"
+        },
+        {
+          "name": "Terasa restaurantului (acoperită/descoperită)",
+          "slug": "locations-sali-de-evenimente-restaurante-terasa-restaurantului-acoperitadescoperita"
+        }
+      ]
+    },
+    {
+      "name": "HOTELURI & CENTRE DE CONFERINȚE",
+      "slug": "hoteluri-centre-de-conferinte",
+      "items": [
+        {
+          "name": "Hotel – ballroom",
+          "slug": "locations-hoteluri-centre-de-conferinte-hotel-ballroom"
+        },
+        {
+          "name": "Hotel – sală conferințe",
+          "slug": "locations-hoteluri-centre-de-conferinte-hotel-sala-conferinte"
+        },
+        {
+          "name": "Hotel – săli ședințe / boardroom",
+          "slug": "locations-hoteluri-centre-de-conferinte-hotel-sali-sedinte-boardroom"
+        },
+        {
+          "name": "Hotel – business center",
+          "slug": "locations-hoteluri-centre-de-conferinte-hotel-business-center"
+        },
+        {
+          "name": "Hotel – rooftop / sky bar",
+          "slug": "locations-hoteluri-centre-de-conferinte-hotel-rooftop-sky-bar"
+        },
+        {
+          "name": "Hotel – grădină / curte interioară",
+          "slug": "locations-hoteluri-centre-de-conferinte-hotel-gradina-curte-interioara"
+        },
+        {
+          "name": "Centru de conferințe (convention center)",
+          "slug": "locations-hoteluri-centre-de-conferinte-centru-de-conferinte-convention-center"
+        },
+        {
+          "name": "Resort (complex cu multiple spații)",
+          "slug": "locations-hoteluri-centre-de-conferinte-resort-complex-cu-multiple-spatii"
+        }
+      ]
+    },
+    {
+      "name": "BARURI, CLUBURI & LOUNGE",
+      "slug": "baruri-cluburi-lounge",
+      "items": [
+        {
+          "name": "Club (dance floor)",
+          "slug": "locations-baruri-cluburi-lounge-club-dance-floor"
+        },
+        {
+          "name": "Lounge / cocktail bar",
+          "slug": "locations-baruri-cluburi-lounge-lounge-cocktail-bar"
+        },
+        {
+          "name": "Speakeasy / bar ascuns",
+          "slug": "locations-baruri-cluburi-lounge-speakeasy-bar-ascuns"
+        },
+        {
+          "name": "Karaoke bar",
+          "slug": "locations-baruri-cluburi-lounge-karaoke-bar"
+        },
+        {
+          "name": "Jazz club",
+          "slug": "locations-baruri-cluburi-lounge-jazz-club"
+        },
+        {
+          "name": "Piano bar",
+          "slug": "locations-baruri-cluburi-lounge-piano-bar"
+        },
+        {
+          "name": "Pub irlandez / sports bar",
+          "slug": "locations-baruri-cluburi-lounge-pub-irlandez-sports-bar"
+        },
+        {
+          "name": "Shisha lounge",
+          "slug": "locations-baruri-cluburi-lounge-shisha-lounge"
+        },
+        {
+          "name": "Beach club (sezonier)",
+          "slug": "locations-baruri-cluburi-lounge-beach-club-sezonier"
+        }
+      ]
+    },
+    {
+      "name": "CAFENELE & CEAINĂRII",
+      "slug": "cafenele-ceainarii",
+      "items": [
+        {
+          "name": "Cafenea de specialitate",
+          "slug": "locations-cafenele-ceainarii-cafenea-de-specialitate"
+        },
+        {
+          "name": "Coffee roastery (prăjitorie) cu sală",
+          "slug": "locations-cafenele-ceainarii-coffee-roastery-prajitorie-cu-sala"
+        },
+        {
+          "name": "Ceainărie",
+          "slug": "locations-cafenele-ceainarii-ceainarie"
+        },
+        {
+          "name": "Patiserie / cofetărie cu salon",
+          "slug": "locations-cafenele-ceainarii-patiserie-cofetarie-cu-salon"
+        },
+        {
+          "name": "Brutărie artizanală cu spațiu",
+          "slug": "locations-cafenele-ceainarii-brutarie-artizanala-cu-spatiu"
+        }
+      ]
+    },
+    {
+      "name": "CULTURĂ & ARTĂ",
+      "slug": "cultura-arta",
+      "items": [
+        {
+          "name": "Teatru (sală mare)",
+          "slug": "locations-cultura-arta-teatru-sala-mare"
+        },
+        {
+          "name": "Teatru – sală studio / blackbox",
+          "slug": "locations-cultura-arta-teatru-sala-studio-blackbox"
+        },
+        {
+          "name": "Operă / Operetă",
+          "slug": "locations-cultura-arta-opera-opereta"
+        },
+        {
+          "name": "Filarmonică / Sală concert",
+          "slug": "locations-cultura-arta-filarmonica-sala-concert"
+        },
+        {
+          "name": "Casă de cultură",
+          "slug": "locations-cultura-arta-casa-de-cultura"
+        },
+        {
+          "name": "Muzeu (sală evenimente)",
+          "slug": "locations-cultura-arta-muzeu-sala-evenimente"
+        },
+        {
+          "name": "Galerie de artă",
+          "slug": "locations-cultura-arta-galerie-de-arta"
+        },
+        {
+          "name": "Bibliotecă (aula / sală evenimente)",
+          "slug": "locations-cultura-arta-biblioteca-aula-sala-evenimente"
+        },
+        {
+          "name": "Centru cultural (multifuncțional)",
+          "slug": "locations-cultura-arta-centru-cultural-multifunctional"
+        },
+        {
+          "name": "Cinema (multiplex / boutique)",
+          "slug": "locations-cultura-arta-cinema-multiplex-boutique"
+        },
+        {
+          "name": "Cinema în aer liber (curte)",
+          "slug": "locations-cultura-arta-cinema-in-aer-liber-curte"
+        }
+      ]
+    },
+    {
+      "name": "MUZICĂ & SCENE LIVE",
+      "slug": "muzica-scene-live",
+      "items": [
+        {
+          "name": "Sală de concert",
+          "slug": "locations-muzica-scene-live-sala-de-concert"
+        },
+        {
+          "name": "Club live music",
+          "slug": "locations-muzica-scene-live-club-live-music"
+        },
+        {
+          "name": "Amfiteatru",
+          "slug": "locations-muzica-scene-live-amfiteatru"
+        },
+        {
+          "name": "Scenă în aer liber",
+          "slug": "locations-muzica-scene-live-scena-in-aer-liber"
+        },
+        {
+          "name": "Grădină de vară pentru concerte",
+          "slug": "locations-muzica-scene-live-gradina-de-vara-pentru-concerte"
+        }
+      ]
+    },
+    {
+      "name": "FILM, FOTO & STUDIO",
+      "slug": "film-foto-studio",
+      "items": [
+        {
+          "name": "Studio foto (daylight)",
+          "slug": "locations-film-foto-studio-studio-foto-daylight"
+        },
+        {
+          "name": "Studio foto – cicloramă alb/negru",
+          "slug": "locations-film-foto-studio-studio-foto-ciclorama-albnegru"
+        },
+        {
+          "name": "Studio video / green screen",
+          "slug": "locations-film-foto-studio-studio-video-green-screen"
+        },
+        {
+          "name": "Studio TV / platou filmare",
+          "slug": "locations-film-foto-studio-studio-tv-platou-filmare"
+        },
+        {
+          "name": "Kitchen studio (studio culinar)",
+          "slug": "locations-film-foto-studio-kitchen-studio-studio-culinar"
+        },
+        {
+          "name": "Podcast studio",
+          "slug": "locations-film-foto-studio-podcast-studio"
+        },
+        {
+          "name": "Rehearsal studio (repetiții)",
+          "slug": "locations-film-foto-studio-rehearsal-studio-repetitii"
+        },
+        {
+          "name": "Loft creativ pentru ședințe foto",
+          "slug": "locations-film-foto-studio-loft-creativ-pentru-sedinte-foto"
+        },
+        {
+          "name": "Blackbox studio",
+          "slug": "locations-film-foto-studio-blackbox-studio"
+        }
+      ]
+    },
+    {
+      "name": "CORPORATE, OFFICE & SHOWROOM",
+      "slug": "corporate-office-showroom",
+      "items": [
+        {
+          "name": "Coworking – sală evenimente",
+          "slug": "locations-corporate-office-showroom-coworking-sala-evenimente"
+        },
+        {
+          "name": "Coworking – săli ședințe",
+          "slug": "locations-corporate-office-showroom-coworking-sali-sedinte"
+        },
+        {
+          "name": "Open-space office (după program)",
+          "slug": "locations-corporate-office-showroom-open-space-office-dupa-program"
+        },
+        {
+          "name": "Hub de inovație / accelerator",
+          "slug": "locations-corporate-office-showroom-hub-de-inovatie-accelerator"
+        },
+        {
+          "name": "Showroom auto",
+          "slug": "locations-corporate-office-showroom-showroom-auto"
+        },
+        {
+          "name": "Showroom mobilier & design interior",
+          "slug": "locations-corporate-office-showroom-showroom-mobilier-design-interior"
+        },
+        {
+          "name": "Showroom tehnologie / electro",
+          "slug": "locations-corporate-office-showroom-showroom-tehnologie-electro"
+        },
+        {
+          "name": "Centru training corporativ",
+          "slug": "locations-corporate-office-showroom-centru-training-corporativ"
+        }
+      ]
+    },
+    {
+      "name": "EXPOZIȚII & COMERCIAL",
+      "slug": "expozitii-comercial",
+      "items": [
+        {
+          "name": "Centru expozițional (pavilioane)",
+          "slug": "locations-expozitii-comercial-centru-expozitional-pavilioane"
+        },
+        {
+          "name": "Hală expo",
+          "slug": "locations-expozitii-comercial-hala-expo"
+        },
+        {
+          "name": "Galerie comercială / mall – atrium",
+          "slug": "locations-expozitii-comercial-galerie-comerciala-mall-atrium"
+        },
+        {
+          "name": "Magazin flagship (după program)",
+          "slug": "locations-expozitii-comercial-magazin-flagship-dupa-program"
+        },
+        {
+          "name": "Pop‑up retail space",
+          "slug": "locations-expozitii-comercial-popup-retail-space"
+        },
+        {
+          "name": "Piață acoperită / târg permanent",
+          "slug": "locations-expozitii-comercial-piata-acoperita-targ-permanent"
+        }
+      ]
+    },
+    {
+      "name": "OUTDOOR URBAN",
+      "slug": "outdoor-urban",
+      "items": [
+        {
+          "name": "Parc (zonă dedicată evenimente)",
+          "slug": "locations-outdoor-urban-parc-zona-dedicata-evenimente"
+        },
+        {
+          "name": "Piațetă / esplanadă",
+          "slug": "locations-outdoor-urban-piateta-esplanada"
+        },
+        {
+          "name": "Promenadă (mal de râu)",
+          "slug": "locations-outdoor-urban-promenada-mal-de-rau"
+        },
+        {
+          "name": "Curte interioară (inner courtyard)",
+          "slug": "locations-outdoor-urban-curte-interioara-inner-courtyard"
+        },
+        {
+          "name": "Rooftop clădire de birouri",
+          "slug": "locations-outdoor-urban-rooftop-cladire-de-birouri"
+        },
+        {
+          "name": "Parcare rooftop (cu vedere)",
+          "slug": "locations-outdoor-urban-parcare-rooftop-cu-vedere"
+        },
+        {
+          "name": "Terase urbane / belvedere",
+          "slug": "locations-outdoor-urban-terase-urbane-belvedere"
+        },
+        {
+          "name": "Grădină urbană / comunitară",
+          "slug": "locations-outdoor-urban-gradina-urbana-comunitara"
+        }
+      ]
+    },
+    {
+      "name": "NATURĂ & RURAL",
+      "slug": "natura-rural",
+      "items": [
+        {
+          "name": "Grădină / livadă",
+          "slug": "locations-natura-rural-gradina-livada"
+        },
+        {
+          "name": "Vie / cramă (outdoor & indoor)",
+          "slug": "locations-natura-rural-vie-crama-outdoor-indoor"
+        },
+        {
+          "name": "Fermă agroturistică",
+          "slug": "locations-natura-rural-ferma-agroturistica"
+        },
+        {
+          "name": "Șură restaurată (barn)",
+          "slug": "locations-natura-rural-sura-restaurata-barn"
+        },
+        {
+          "name": "Pădure / poiană",
+          "slug": "locations-natura-rural-padure-poiana"
+        },
+        {
+          "name": "Fâneață / câmp cu flori",
+          "slug": "locations-natura-rural-faneata-camp-cu-flori"
+        },
+        {
+          "name": "Lac / mal de lac",
+          "slug": "locations-natura-rural-lac-mal-de-lac"
+        },
+        {
+          "name": "Râu / vad / ponton natural",
+          "slug": "locations-natura-rural-rau-vad-ponton-natural"
+        },
+        {
+          "name": "Parc natural / rezervație (cu permisiuni)",
+          "slug": "locations-natura-rural-parc-natural-rezervatie-cu-permisiuni"
+        },
+        {
+          "name": "Câmp de lavandă / floarea-soarelui",
+          "slug": "locations-natura-rural-camp-de-lavanda-floarea-soarelui"
+        }
+      ]
+    },
+    {
+      "name": "LITORAL & APE",
+      "slug": "litoral-ape",
+      "items": [
+        {
+          "name": "Plajă",
+          "slug": "locations-litoral-ape-plaja"
+        },
+        {
+          "name": "Beach bar / beach club",
+          "slug": "locations-litoral-ape-beach-bar-beach-club"
+        },
+        {
+          "name": "Faleză / promenadă marină",
+          "slug": "locations-litoral-ape-faleza-promenada-marina"
+        },
+        {
+          "name": "Ponton / debarcader",
+          "slug": "locations-litoral-ape-ponton-debarcader"
+        },
+        {
+          "name": "Marină / port turistic",
+          "slug": "locations-litoral-ape-marina-port-turistic"
+        },
+        {
+          "name": "Iaht / velier",
+          "slug": "locations-litoral-ape-iaht-velier"
+        },
+        {
+          "name": "Vapor de agrement / vaporaș",
+          "slug": "locations-litoral-ape-vapor-de-agrement-vaporas"
+        },
+        {
+          "name": "Insulă privată / peninsulă",
+          "slug": "locations-litoral-ape-insula-privata-peninsula"
+        }
+      ]
+    },
+    {
+      "name": "MUNȚI & CABANE",
+      "slug": "munti-cabane",
+      "items": [
+        {
+          "name": "Cabana montană",
+          "slug": "locations-munti-cabane-cabana-montana"
+        },
+        {
+          "name": "Chalet / pensiune de munte",
+          "slug": "locations-munti-cabane-chalet-pensiune-de-munte"
+        },
+        {
+          "name": "Refugiu montan (închiriabil)",
+          "slug": "locations-munti-cabane-refugiu-montan-inchiriabil"
+        },
+        {
+          "name": "Belvedere / viewpoint",
+          "slug": "locations-munti-cabane-belvedere-viewpoint"
+        },
+        {
+          "name": "Restaurant montan / stână modernă",
+          "slug": "locations-munti-cabane-restaurant-montan-stana-moderna"
+        },
+        {
+          "name": "Stațiune montană – spații evenimente",
+          "slug": "locations-munti-cabane-statiune-montana-spatii-evenimente"
+        }
+      ]
+    },
+    {
+      "name": "PATRIMONIU & ISTORIC",
+      "slug": "patrimoniu-istoric",
+      "items": [
+        {
+          "name": "Castel",
+          "slug": "locations-patrimoniu-istoric-castel"
+        },
+        {
+          "name": "Conac / vilă boierească",
+          "slug": "locations-patrimoniu-istoric-conac-vila-boiereasca"
+        },
+        {
+          "name": "Cetate / bastion",
+          "slug": "locations-patrimoniu-istoric-cetate-bastion"
+        },
+        {
+          "name": "Han istoric",
+          "slug": "locations-patrimoniu-istoric-han-istoric"
+        },
+        {
+          "name": "Muzeu în aer liber (sat tradițional)",
+          "slug": "locations-patrimoniu-istoric-muzeu-in-aer-liber-sat-traditional"
+        },
+        {
+          "name": "Turn / clopotniță (accesibilă)",
+          "slug": "locations-patrimoniu-istoric-turn-clopotnita-accesibila"
+        },
+        {
+          "name": "Curte boierească / domeniu istoric",
+          "slug": "locations-patrimoniu-istoric-curte-boiereasca-domeniu-istoric"
+        }
+      ]
+    },
+    {
+      "name": "INDUSTRIAL & ALTERNATIVE",
+      "slug": "industrial-alternative",
+      "items": [
+        {
+          "name": "Hală industrială (activă/inactivă)",
+          "slug": "locations-industrial-alternative-hala-industriala-activainactiva"
+        },
+        {
+          "name": "Depozit / warehouse",
+          "slug": "locations-industrial-alternative-depozit-warehouse"
+        },
+        {
+          "name": "Loft industrial",
+          "slug": "locations-industrial-alternative-loft-industrial"
+        },
+        {
+          "name": "Atelier / makerspace",
+          "slug": "locations-industrial-alternative-atelier-makerspace"
+        },
+        {
+          "name": "Garaj / service auto (transformat)",
+          "slug": "locations-industrial-alternative-garaj-service-auto-transformat"
+        },
+        {
+          "name": "Hangar avion",
+          "slug": "locations-industrial-alternative-hangar-avion"
+        },
+        {
+          "name": "Siloz / moară veche",
+          "slug": "locations-industrial-alternative-siloz-moara-veche"
+        },
+        {
+          "name": "Centrala electrică dezafectată",
+          "slug": "locations-industrial-alternative-centrala-electrica-dezafectata"
+        },
+        {
+          "name": "Turn de apă",
+          "slug": "locations-industrial-alternative-turn-de-apa"
+        },
+        {
+          "name": "Containere modulare (aranjate)",
+          "slug": "locations-industrial-alternative-containere-modulare-aranjate"
+        },
+        {
+          "name": "Dom geodezic",
+          "slug": "locations-industrial-alternative-dom-geodezic"
+        },
+        {
+          "name": "Pavilion temporar (structură ușoară)",
+          "slug": "locations-industrial-alternative-pavilion-temporar-structura-usoara"
+        }
+      ]
+    },
+    {
+      "name": "SPORT & MIȘCARE",
+      "slug": "sport-miscare",
+      "items": [
+        {
+          "name": "Sală de sport / polivalentă",
+          "slug": "locations-sport-miscare-sala-de-sport-polivalenta"
+        },
+        {
+          "name": "Stadion / teren fotbal",
+          "slug": "locations-sport-miscare-stadion-teren-fotbal"
+        },
+        {
+          "name": "Teren tenis / baschet / volei",
+          "slug": "locations-sport-miscare-teren-tenis-baschet-volei"
+        },
+        {
+          "name": "Piscină acoperită / descoperită",
+          "slug": "locations-sport-miscare-piscina-acoperita-descoperita"
+        },
+        {
+          "name": "Patinoar",
+          "slug": "locations-sport-miscare-patinoar"
+        },
+        {
+          "name": "Sala de dans / studio balet",
+          "slug": "locations-sport-miscare-sala-de-dans-studio-balet"
+        },
+        {
+          "name": "Dojo / sală arte marțiale",
+          "slug": "locations-sport-miscare-dojo-sala-arte-martiale"
+        },
+        {
+          "name": "Skatepark",
+          "slug": "locations-sport-miscare-skatepark"
+        },
+        {
+          "name": "Kartodrom",
+          "slug": "locations-sport-miscare-kartodrom"
+        },
+        {
+          "name": "Bowling / biliard",
+          "slug": "locations-sport-miscare-bowling-biliard"
+        },
+        {
+          "name": "Parc aventură / tiroliană",
+          "slug": "locations-sport-miscare-parc-aventura-tiroliana"
+        },
+        {
+          "name": "Traseu running / pistă atletism",
+          "slug": "locations-sport-miscare-traseu-running-pista-atletism"
+        }
+      ]
+    },
+    {
+      "name": "EDUCAȚIE & INSTITUȚII",
+      "slug": "educatie-institutii",
+      "items": [
+        {
+          "name": "Aulă universitară / amfiteatru",
+          "slug": "locations-educatie-institutii-aula-universitara-amfiteatru"
+        },
+        {
+          "name": "Sală curs / seminar",
+          "slug": "locations-educatie-institutii-sala-curs-seminar"
+        },
+        {
+          "name": "Laborator (demonstrații)",
+          "slug": "locations-educatie-institutii-laborator-demonstratii"
+        },
+        {
+          "name": "Campus – curte / grădină",
+          "slug": "locations-educatie-institutii-campus-curte-gradina"
+        },
+        {
+          "name": "Liceu – sală festivități",
+          "slug": "locations-educatie-institutii-liceu-sala-festivitati"
+        },
+        {
+          "name": "Școală – sală sport / sală festivă",
+          "slug": "locations-educatie-institutii-scoala-sala-sport-sala-festiva"
+        },
+        {
+          "name": "Gradiniță – sală evenimente",
+          "slug": "locations-educatie-institutii-gradinita-sala-evenimente"
+        }
+      ]
+    },
+    {
+      "name": "RELIGIE & COMUNITATE (UNDE E PERMIS)",
+      "slug": "religie-comunitate-unde-e-permis",
+      "items": [
+        {
+          "name": "Sală parohială",
+          "slug": "locations-religie-comunitate-unde-e-permis-sala-parohiala"
+        },
+        {
+          "name": "Casă parohială – curte/grădină",
+          "slug": "locations-religie-comunitate-unde-e-permis-casa-parohiala-curtegradina"
+        },
+        {
+          "name": "Centru spiritual / retreat",
+          "slug": "locations-religie-comunitate-unde-e-permis-centru-spiritual-retreat"
+        },
+        {
+          "name": "Casă de cultură parohială",
+          "slug": "locations-religie-comunitate-unde-e-permis-casa-de-cultura-parohiala"
+        }
+      ]
+    },
+    {
+      "name": "COPII & FAMILIE",
+      "slug": "copii-familie",
+      "items": [
+        {
+          "name": "Loc de joacă indoor",
+          "slug": "locations-copii-familie-loc-de-joaca-indoor"
+        },
+        {
+          "name": "Playground outdoor privat",
+          "slug": "locations-copii-familie-playground-outdoor-privat"
+        },
+        {
+          "name": "Centru family entertainment",
+          "slug": "locations-copii-familie-centru-family-entertainment"
+        },
+        {
+          "name": "Mini‑zoo / fermă educațională",
+          "slug": "locations-copii-familie-minizoo-ferma-educationala"
+        },
+        {
+          "name": "Parc tematic mic (indoor/outdoor)",
+          "slug": "locations-copii-familie-parc-tematic-mic-indooroutdoor"
+        }
+      ]
+    },
+    {
+      "name": "GASTRONOMIE & PRODUCĂTORI",
+      "slug": "gastronomie-producatori",
+      "items": [
+        {
+          "name": "Crama (sală degustare)",
+          "slug": "locations-gastronomie-producatori-crama-sala-degustare"
+        },
+        {
+          "name": "Pivniță de vin",
+          "slug": "locations-gastronomie-producatori-pivnita-de-vin"
+        },
+        {
+          "name": "Berărie artizanală / taproom",
+          "slug": "locations-gastronomie-producatori-berarie-artizanala-taproom"
+        },
+        {
+          "name": "Distilerie (sală degustare)",
+          "slug": "locations-gastronomie-producatori-distilerie-sala-degustare"
+        },
+        {
+          "name": "Prăjitorie de cafea (cu sală)",
+          "slug": "locations-gastronomie-producatori-prajitorie-de-cafea-cu-sala"
+        },
+        {
+          "name": "Fabrică de ciocolată (degustare)",
+          "slug": "locations-gastronomie-producatori-fabrica-de-ciocolata-degustare"
+        },
+        {
+          "name": "Școală de gătit / cooking studio",
+          "slug": "locations-gastronomie-producatori-scoala-de-gatit-cooking-studio"
+        }
+      ]
+    },
+    {
+      "name": "TRANSPORT & MOBILITATE",
+      "slug": "transport-mobilitate",
+      "items": [
+        {
+          "name": "Vagon restaurant / tren privat",
+          "slug": "locations-transport-mobilitate-vagon-restaurant-tren-privat"
+        },
+        {
+          "name": "Tramvai de evenimente",
+          "slug": "locations-transport-mobilitate-tramvai-de-evenimente"
+        },
+        {
+          "name": "Autobuz retro / London bus",
+          "slug": "locations-transport-mobilitate-autobuz-retro-london-bus"
+        },
+        {
+          "name": "Ferry / navă fluvială",
+          "slug": "locations-transport-mobilitate-ferry-nava-fluviala"
+        },
+        {
+          "name": "Avion la sol (muzeu/privat)",
+          "slug": "locations-transport-mobilitate-avion-la-sol-muzeuprivat"
+        },
+        {
+          "name": "Hangar / heliport",
+          "slug": "locations-transport-mobilitate-hangar-heliport"
+        }
+      ]
+    },
+    {
+      "name": "SĂNĂTATE, SPA & WELLBEING",
+      "slug": "sanatate-spa-wellbeing",
+      "items": [
+        {
+          "name": "Spa / wellness center",
+          "slug": "locations-sanatate-spa-wellbeing-spa-wellness-center"
+        },
+        {
+          "name": "Termale / băi minerale",
+          "slug": "locations-sanatate-spa-wellbeing-termale-bai-minerale"
+        },
+        {
+          "name": "Studio yoga / pilates",
+          "slug": "locations-sanatate-spa-wellbeing-studio-yoga-pilates"
+        },
+        {
+          "name": "Centru mindfulness / retreat",
+          "slug": "locations-sanatate-spa-wellbeing-centru-mindfulness-retreat"
+        },
+        {
+          "name": "Clinic training room (non‑medical events)",
+          "slug": "locations-sanatate-spa-wellbeing-clinic-training-room-nonmedical-events"
+        }
+      ]
+    },
+    {
+      "name": "TEMPORARE & MOBILE",
+      "slug": "temporare-mobile",
+      "items": [
+        {
+          "name": "Cort evenimente (marquee)",
+          "slug": "locations-temporare-mobile-cort-evenimente-marquee"
+        },
+        {
+          "name": "Pavilion stretch tent",
+          "slug": "locations-temporare-mobile-pavilion-stretch-tent"
+        },
+        {
+          "name": "Dom geodezic (glamping)",
+          "slug": "locations-temporare-mobile-dom-geodezic-glamping"
+        },
+        {
+          "name": "Container pop‑up",
+          "slug": "locations-temporare-mobile-container-popup"
+        },
+        {
+          "name": "Scenă mobilă / trailere evenimente",
+          "slug": "locations-temporare-mobile-scena-mobila-trailere-evenimente"
+        },
+        {
+          "name": "Iglu transparent (sezonier)",
+          "slug": "locations-temporare-mobile-iglu-transparent-sezonier"
+        }
+      ]
+    },
+    {
+      "name": "LOCUINȚE & REZIDENȚIAL",
+      "slug": "locuinte-rezidential",
+      "items": [
+        {
+          "name": "Apartament (home events)",
+          "slug": "locations-locuinte-rezidential-apartament-home-events"
+        },
+        {
+          "name": "Penthouse / rooftop privat",
+          "slug": "locations-locuinte-rezidential-penthouse-rooftop-privat"
+        },
+        {
+          "name": "Loft / mansardă",
+          "slug": "locations-locuinte-rezidential-loft-mansarda"
+        },
+        {
+          "name": "Casă cu grădină",
+          "slug": "locations-locuinte-rezidential-casa-cu-gradina"
+        },
+        {
+          "name": "Vilă / vilă istorică",
+          "slug": "locations-locuinte-rezidential-vila-vila-istorica"
+        },
+        {
+          "name": "Curte / grădină privată",
+          "slug": "locations-locuinte-rezidential-curte-gradina-privata"
+        },
+        {
+          "name": "Ansamblu rezidențial – sală club",
+          "slug": "locations-locuinte-rezidential-ansamblu-rezidential-sala-club"
+        },
+        {
+          "name": "Casă la țară / farmhouse",
+          "slug": "locations-locuinte-rezidential-casa-la-tara-farmhouse"
+        }
+      ]
+    },
+    {
+      "name": "ALTELE SPECIALE",
+      "slug": "altele-speciale",
+      "items": [
+        {
+          "name": "Planetariu",
+          "slug": "locations-altele-speciale-planetariu"
+        },
+        {
+          "name": "Observator astronomic",
+          "slug": "locations-altele-speciale-observator-astronomic"
+        },
+        {
+          "name": "Acvariu / zoo – spații închiriabile",
+          "slug": "locations-altele-speciale-acvariu-zoo-spatii-inchiriabile"
+        },
+        {
+          "name": "Grădină botanică – seră",
+          "slug": "locations-altele-speciale-gradina-botanica-sera"
+        },
+        {
+          "name": "Bibliotecă – sală lectură premium",
+          "slug": "locations-altele-speciale-biblioteca-sala-lectura-premium"
+        },
+        {
+          "name": "Drive‑in (parcare amenajată)",
+          "slug": "locations-altele-speciale-drivein-parcare-amenajata"
+        },
+        {
+          "name": "Galerie subterană / catacombe (unde permis)",
+          "slug": "locations-altele-speciale-galerie-subterana-catacombe-unde-permis"
+        }
+      ]
+    }
+  ]
+}

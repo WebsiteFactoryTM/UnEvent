@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     profiles: Profile;
     favorites: Favorite;
+    'listing-types': ListingType;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -81,6 +82,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
+    'listing-types': ListingTypesSelect<false> | ListingTypesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -275,6 +277,43 @@ export interface Favorite {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-types".
+ */
+export interface ListingType {
+  id: number;
+  /**
+   * URL-friendly identifier (e.g., logodna, sala-evenimente)
+   */
+  slug: string;
+  /**
+   * Display name (e.g., Logodnă, Sală de evenimente)
+   */
+  title: string;
+  /**
+   * Category header (e.g., NUNȚI & CEREMONII DE FAMILIE)
+   */
+  category: string;
+  /**
+   * Slugified category name
+   */
+  categorySlug: string;
+  /**
+   * Which taxonomy type this belongs to
+   */
+  type: 'events' | 'locations' | 'services';
+  /**
+   * Order within category (maintains the defined hierarchy)
+   */
+  sortOrder: number;
+  /**
+   * Whether this taxonomy item is active/available
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -295,6 +334,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'favorites';
         value: number | Favorite;
+      } | null)
+    | ({
+        relationTo: 'listing-types';
+        value: number | ListingType;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -454,6 +497,21 @@ export interface FavoritesSelect<T extends boolean = true> {
   user?: T;
   createdAt?: T;
   updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-types_select".
+ */
+export interface ListingTypesSelect<T extends boolean = true> {
+  slug?: T;
+  title?: T;
+  category?: T;
+  categorySlug?: T;
+  type?: T;
+  sortOrder?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
