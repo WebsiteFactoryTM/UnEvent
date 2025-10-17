@@ -1,0 +1,17 @@
+import seedListingTypes from '@/scripts/seed/seed-listing-types'
+import seedFacilities from '@/scripts/seed/seed-facilities'
+import type { SanitizedConfig } from 'payload'
+import payload from 'payload'
+
+console.log('seeding...')
+
+// Script must define a "script" function export that accepts the sanitized config
+export const script = async (config: SanitizedConfig) => {
+  console.log('seeding...')
+
+  const payloadInstance = await payload.init({ config })
+  await seedFacilities(payloadInstance)
+  await seedListingTypes(payloadInstance)
+  payload.logger.info('Successfully seeded!')
+  process.exit(0)
+}

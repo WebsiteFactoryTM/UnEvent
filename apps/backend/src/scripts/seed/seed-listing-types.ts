@@ -1,24 +1,19 @@
-import payload from 'payload'
-
 import { promises as fs } from 'fs'
 import path from 'path'
+import { Payload } from 'payload'
 import { fileURLToPath } from 'url'
 
 interface TaxonomyItem {
   title: string
-  slug: string
   category: string
-  categorySlug: string
   type: 'events' | 'locations' | 'services'
   sortOrder: number
 }
 
 interface TaxonomyCategory {
   name: string
-  slug: string
   items: Array<{
     name: string
-    slug: string
   }>
 }
 
@@ -40,9 +35,7 @@ async function loadTaxonomyData(
     for (const item of category.items) {
       items.push({
         title: item.name,
-        slug: item.slug,
         category: category.name,
-        categorySlug: category.slug,
         type,
         sortOrder,
       })
@@ -55,7 +48,7 @@ async function loadTaxonomyData(
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-async function seedListingTypes() {
+async function seedListingTypes(payload: Payload) {
   try {
     console.log('Loading taxonomy data from JSON files...')
 
