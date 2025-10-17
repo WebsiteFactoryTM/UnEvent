@@ -2,1447 +2,1096 @@
   "categories": [
     {
       "name": "NUNȚI & CEREMONII DE FAMILIE",
-      "slug": "nunti-ceremonii-de-familie",
       "items": [
         {
-          "name": "Logodnă",
-          "slug": "events-nunti-ceremonii-de-familie-logodna"
+          "name": "Logodnă"
         },
         {
-          "name": "Cununie civilă (oficiere)",
-          "slug": "events-nunti-ceremonii-de-familie-cununie-civila-oficiere"
+          "name": "Cununie civilă (oficiere)"
         },
         {
-          "name": "Cununie religioasă",
-          "slug": "events-nunti-ceremonii-de-familie-cununie-religioasa"
+          "name": "Cununie religioasă"
         },
         {
-          "name": "Petrecere nuntă (banchet)",
-          "slug": "events-nunti-ceremonii-de-familie-petrecere-nunta-banchet"
+          "name": "Petrecere nuntă (banchet)"
         },
         {
-          "name": "Nuntă restrânsă (micro‑nuntă)",
-          "slug": "events-nunti-ceremonii-de-familie-nunta-restransa-micronunta"
+          "name": "Nuntă restrânsă (micro‑nuntă)"
         },
         {
-          "name": "After‑party nuntă",
-          "slug": "events-nunti-ceremonii-de-familie-afterparty-nunta"
+          "name": "After‑party nuntă"
         },
         {
-          "name": "Trash the dress (ședință foto)",
-          "slug": "events-nunti-ceremonii-de-familie-trash-the-dress-sedinta-foto"
+          "name": "Trash the dress (ședință foto)"
         },
         {
-          "name": "Botez (ceremonie)",
-          "slug": "events-nunti-ceremonii-de-familie-botez-ceremonie"
+          "name": "Botez (ceremonie)"
         },
         {
-          "name": "Petrecere botez",
-          "slug": "events-nunti-ceremonii-de-familie-petrecere-botez"
+          "name": "Petrecere botez"
         },
         {
-          "name": "Aniversare căsătorie (argint, aur)",
-          "slug": "events-nunti-ceremonii-de-familie-aniversare-casatorie-argint-aur"
+          "name": "Aniversare căsătorie (argint, aur)"
         },
         {
-          "name": "Renewal of vows (reînnoirea jurămintelor)",
-          "slug": "events-nunti-ceremonii-de-familie-renewal-of-vows-reinnoirea-juramintelor"
+          "name": "Renewal of vows (reînnoirea jurămintelor)"
         },
         {
-          "name": "Majorat (18 ani)",
-          "slug": "events-nunti-ceremonii-de-familie-majorat-18-ani"
+          "name": "Majorat (18 ani)"
         },
         {
-          "name": "Zi de naștere adult",
-          "slug": "events-nunti-ceremonii-de-familie-zi-de-nastere-adult"
+          "name": "Zi de naștere adult"
         },
         {
-          "name": "Zi de naștere copil",
-          "slug": "events-nunti-ceremonii-de-familie-zi-de-nastere-copil"
+          "name": "Zi de naștere copil"
         },
         {
-          "name": "Onomastică",
-          "slug": "events-nunti-ceremonii-de-familie-onomastica"
+          "name": "Onomastică"
         },
         {
-          "name": "Petrecere surpriză",
-          "slug": "events-nunti-ceremonii-de-familie-petrecere-surpriza"
+          "name": "Petrecere surpriză"
         },
         {
-          "name": "Tăierea moțului / turta",
-          "slug": "events-nunti-ceremonii-de-familie-taierea-motului-turta"
+          "name": "Tăierea moțului / turta"
         },
         {
-          "name": "Ceremonie de numire copil",
-          "slug": "events-nunti-ceremonii-de-familie-ceremonie-de-numire-copil"
+          "name": "Ceremonie de numire copil"
         },
         {
-          "name": "Baby shower",
-          "slug": "events-nunti-ceremonii-de-familie-baby-shower"
+          "name": "Baby shower"
         },
         {
-          "name": "Gender reveal",
-          "slug": "events-nunti-ceremonii-de-familie-gender-reveal"
+          "name": "Gender reveal"
         },
         {
-          "name": "Housewarming (petrecere de casă nouă)",
-          "slug": "events-nunti-ceremonii-de-familie-housewarming-petrecere-de-casa-noua"
+          "name": "Housewarming (petrecere de casă nouă)"
         },
         {
-          "name": "Petrecere de pensionare",
-          "slug": "events-nunti-ceremonii-de-familie-petrecere-de-pensionare"
+          "name": "Petrecere de pensionare"
         },
         {
-          "name": "Petrecere de divorț",
-          "slug": "events-nunti-ceremonii-de-familie-petrecere-de-divort"
+          "name": "Petrecere de divorț"
         },
         {
-          "name": "Petrecere de mutare / farewell",
-          "slug": "events-nunti-ceremonii-de-familie-petrecere-de-mutare-farewell"
+          "name": "Petrecere de mutare / farewell"
         },
         {
-          "name": "Parastas / Pomenire",
-          "slug": "events-nunti-ceremonii-de-familie-parastas-pomenire"
+          "name": "Parastas / Pomenire"
         },
         {
-          "name": "Comemorare / Memorial",
-          "slug": "events-nunti-ceremonii-de-familie-comemorare-memorial"
+          "name": "Comemorare / Memorial"
         }
       ]
     },
     {
       "name": "SĂRBĂTORI & SEZONIERE",
-      "slug": "sarbatori-sezoniere",
       "items": [
         {
-          "name": "Revelion / New Year’s Eve",
-          "slug": "events-sarbatori-sezoniere-revelion-new-years-eve"
+          "name": "Revelion / New Year’s Eve"
         },
         {
-          "name": "Crăciun – petrecere / masă festivă",
-          "slug": "events-sarbatori-sezoniere-craciun-petrecere-masa-festiva"
+          "name": "Crăciun – petrecere / masă festivă"
         },
         {
-          "name": "Ajunul Crăciunului (colinde)",
-          "slug": "events-sarbatori-sezoniere-ajunul-craciunului-colinde"
+          "name": "Ajunul Crăciunului (colinde)"
         },
         {
-          "name": "Paște – masă festivă",
-          "slug": "events-sarbatori-sezoniere-paste-masa-festiva"
+          "name": "Paște – masă festivă"
         },
         {
-          "name": "1 Mai – grătar / picnic",
-          "slug": "events-sarbatori-sezoniere-1-mai-gratar-picnic"
+          "name": "1 Mai – grătar / picnic"
         },
         {
-          "name": "Halloween – petrecere costumată",
-          "slug": "events-sarbatori-sezoniere-halloween-petrecere-costumata"
+          "name": "Halloween – petrecere costumată"
         },
         {
-          "name": "Valentine’s Day",
-          "slug": "events-sarbatori-sezoniere-valentines-day"
+          "name": "Valentine’s Day"
         },
         {
-          "name": "Dragobete",
-          "slug": "events-sarbatori-sezoniere-dragobete"
+          "name": "Dragobete"
         },
         {
-          "name": "1 Martie – Mărțișor",
-          "slug": "events-sarbatori-sezoniere-1-martie-martisor"
+          "name": "1 Martie – Mărțișor"
         },
         {
-          "name": "8 Martie – Ziua Femeii",
-          "slug": "events-sarbatori-sezoniere-8-martie-ziua-femeii"
+          "name": "8 Martie – Ziua Femeii"
         },
         {
-          "name": "Ziua Copilului (1 Iunie)",
-          "slug": "events-sarbatori-sezoniere-ziua-copilului-1-iunie"
+          "name": "Ziua Copilului (1 Iunie)"
         },
         {
-          "name": "Iepuraș / Egg hunt",
-          "slug": "events-sarbatori-sezoniere-iepuras-egg-hunt"
+          "name": "Iepuraș / Egg hunt"
         },
         {
-          "name": "Bal mascat / Carnaval",
-          "slug": "events-sarbatori-sezoniere-bal-mascat-carnaval"
+          "name": "Bal mascat / Carnaval"
         },
         {
-          "name": "Seară tematică (’80/’90/2000)",
-          "slug": "events-sarbatori-sezoniere-seara-tematica-80902000"
+          "name": "Seară tematică (’80/’90/2000)"
         },
         {
-          "name": "White Party / Black & White",
-          "slug": "events-sarbatori-sezoniere-white-party-black-white"
+          "name": "White Party / Black & White"
         },
         {
-          "name": "Sărbători religioase & tradiții locale (evenimente private)",
-          "slug": "events-sarbatori-sezoniere-sarbatori-religioase-traditii-locale-evenimente-private"
+          "name": "Sărbători religioase & tradiții locale (evenimente private)"
         }
       ]
     },
     {
       "name": "MUZICĂ & PETRECERI (GENURI)",
-      "slug": "muzica-petreceri-genuri",
       "items": [
         {
-          "name": "Petrecere generală (private party)",
-          "slug": "events-muzica-petreceri-genuri-petrecere-generala-private-party"
+          "name": "Petrecere generală (private party)"
         },
         {
-          "name": "Garden party",
-          "slug": "events-muzica-petreceri-genuri-garden-party"
+          "name": "Garden party"
         },
         {
-          "name": "Rooftop party",
-          "slug": "events-muzica-petreceri-genuri-rooftop-party"
+          "name": "Rooftop party"
         },
         {
-          "name": "Pool party",
-          "slug": "events-muzica-petreceri-genuri-pool-party"
+          "name": "Pool party"
         },
         {
-          "name": "Boat party",
-          "slug": "events-muzica-petreceri-genuri-boat-party"
+          "name": "Boat party"
         },
         {
-          "name": "Silent party (cască)",
-          "slug": "events-muzica-petreceri-genuri-silent-party-casca"
+          "name": "Silent party (cască)"
         },
         {
-          "name": "Petrecere karaoke",
-          "slug": "events-muzica-petreceri-genuri-petrecere-karaoke"
+          "name": "Petrecere karaoke"
         },
         {
-          "name": "Petrecere cu DJ",
-          "slug": "events-muzica-petreceri-genuri-petrecere-cu-dj"
+          "name": "Petrecere cu DJ"
         },
         {
-          "name": "Petrecere live band",
-          "slug": "events-muzica-petreceri-genuri-petrecere-live-band"
+          "name": "Petrecere live band"
         },
         {
-          "name": "Petrecere rock",
-          "slug": "events-muzica-petreceri-genuri-petrecere-rock"
+          "name": "Petrecere rock"
         },
         {
-          "name": "Petrecere pop",
-          "slug": "events-muzica-petreceri-genuri-petrecere-pop"
+          "name": "Petrecere pop"
         },
         {
-          "name": "Petrecere hip‑hop / rap / trap",
-          "slug": "events-muzica-petreceri-genuri-petrecere-hiphop-rap-trap"
+          "name": "Petrecere hip‑hop / rap / trap"
         },
         {
-          "name": "Petrecere R\\&B / soul",
-          "slug": "events-muzica-petreceri-genuri-petrecere-rb-soul"
+          "name": "Petrecere R\\&B / soul"
         },
         {
-          "name": "Petrecere EDM",
-          "slug": "events-muzica-petreceri-genuri-petrecere-edm"
+          "name": "Petrecere EDM"
         },
         {
-          "name": "Petrecere techno",
-          "slug": "events-muzica-petreceri-genuri-petrecere-techno"
+          "name": "Petrecere techno"
         },
         {
-          "name": "Petrecere house",
-          "slug": "events-muzica-petreceri-genuri-petrecere-house"
+          "name": "Petrecere house"
         },
         {
-          "name": "Petrecere trance",
-          "slug": "events-muzica-petreceri-genuri-petrecere-trance"
+          "name": "Petrecere trance"
         },
         {
-          "name": "Petrecere drum & bass",
-          "slug": "events-muzica-petreceri-genuri-petrecere-drum-bass"
+          "name": "Petrecere drum & bass"
         },
         {
-          "name": "Petrecere dubstep",
-          "slug": "events-muzica-petreceri-genuri-petrecere-dubstep"
+          "name": "Petrecere dubstep"
         },
         {
-          "name": "Petrecere reggae",
-          "slug": "events-muzica-petreceri-genuri-petrecere-reggae"
+          "name": "Petrecere reggae"
         },
         {
-          "name": "Petrecere latino",
-          "slug": "events-muzica-petreceri-genuri-petrecere-latino"
+          "name": "Petrecere latino"
         },
         {
-          "name": "Petrecere salsa / bachata / kizomba",
-          "slug": "events-muzica-petreceri-genuri-petrecere-salsa-bachata-kizomba"
+          "name": "Petrecere salsa / bachata / kizomba"
         },
         {
-          "name": "Petrecere afro / afrobeats",
-          "slug": "events-muzica-petreceri-genuri-petrecere-afro-afrobeats"
+          "name": "Petrecere afro / afrobeats"
         },
         {
-          "name": "Petrecere manele",
-          "slug": "events-muzica-petreceri-genuri-petrecere-manele"
+          "name": "Petrecere manele"
         },
         {
-          "name": "Petrecere muzică populară / folclor",
-          "slug": "events-muzica-petreceri-genuri-petrecere-muzica-populara-folclor"
+          "name": "Petrecere muzică populară / folclor"
         },
         {
-          "name": "Petrecere etno",
-          "slug": "events-muzica-petreceri-genuri-petrecere-etno"
+          "name": "Petrecere etno"
         },
         {
-          "name": "Petrecere jazz",
-          "slug": "events-muzica-petreceri-genuri-petrecere-jazz"
+          "name": "Petrecere jazz"
         },
         {
-          "name": "Petrecere blues",
-          "slug": "events-muzica-petreceri-genuri-petrecere-blues"
+          "name": "Petrecere blues"
         },
         {
-          "name": "Petrecere indie / alternative",
-          "slug": "events-muzica-petreceri-genuri-petrecere-indie-alternative"
+          "name": "Petrecere indie / alternative"
         },
         {
-          "name": "Petrecere metal",
-          "slug": "events-muzica-petreceri-genuri-petrecere-metal"
+          "name": "Petrecere metal"
         },
         {
-          "name": "Petrecere punk",
-          "slug": "events-muzica-petreceri-genuri-petrecere-punk"
+          "name": "Petrecere punk"
         },
         {
-          "name": "Petrecere folk",
-          "slug": "events-muzica-petreceri-genuri-petrecere-folk"
+          "name": "Petrecere folk"
         },
         {
-          "name": "Petrecere country",
-          "slug": "events-muzica-petreceri-genuri-petrecere-country"
+          "name": "Petrecere country"
         },
         {
-          "name": "Seară de dans (social dance)",
-          "slug": "events-muzica-petreceri-genuri-seara-de-dans-social-dance"
+          "name": "Seară de dans (social dance)"
         },
         {
-          "name": "Bal / Banchet",
-          "slug": "events-muzica-petreceri-genuri-bal-banchet"
+          "name": "Bal / Banchet"
         },
         {
-          "name": "Vinyl party / retro party",
-          "slug": "events-muzica-petreceri-genuri-vinyl-party-retro-party"
+          "name": "Vinyl party / retro party"
         }
       ]
     },
     {
       "name": "CONCERTE & SCENE LIVE",
-      "slug": "concerte-scene-live",
       "items": [
         {
-          "name": "Concert rock",
-          "slug": "events-concerte-scene-live-concert-rock"
+          "name": "Concert rock"
         },
         {
-          "name": "Concert pop",
-          "slug": "events-concerte-scene-live-concert-pop"
+          "name": "Concert pop"
         },
         {
-          "name": "Concert hip‑hop / rap / trap",
-          "slug": "events-concerte-scene-live-concert-hiphop-rap-trap"
+          "name": "Concert hip‑hop / rap / trap"
         },
         {
-          "name": "Concert R\\&B / soul",
-          "slug": "events-concerte-scene-live-concert-rb-soul"
+          "name": "Concert R\\&B / soul"
         },
         {
-          "name": "Concert EDM / electronic",
-          "slug": "events-concerte-scene-live-concert-edm-electronic"
+          "name": "Concert EDM / electronic"
         },
         {
-          "name": "Concert techno / club",
-          "slug": "events-concerte-scene-live-concert-techno-club"
+          "name": "Concert techno / club"
         },
         {
-          "name": "Concert house / deep house",
-          "slug": "events-concerte-scene-live-concert-house-deep-house"
+          "name": "Concert house / deep house"
         },
         {
-          "name": "Concert trance",
-          "slug": "events-concerte-scene-live-concert-trance"
+          "name": "Concert trance"
         },
         {
-          "name": "Concert drum & bass",
-          "slug": "events-concerte-scene-live-concert-drum-bass"
+          "name": "Concert drum & bass"
         },
         {
-          "name": "Concert reggae",
-          "slug": "events-concerte-scene-live-concert-reggae"
+          "name": "Concert reggae"
         },
         {
-          "name": "Concert latino",
-          "slug": "events-concerte-scene-live-concert-latino"
+          "name": "Concert latino"
         },
         {
-          "name": "Concert salsa / bachata / kizomba",
-          "slug": "events-concerte-scene-live-concert-salsa-bachata-kizomba"
+          "name": "Concert salsa / bachata / kizomba"
         },
         {
-          "name": "Concert afro",
-          "slug": "events-concerte-scene-live-concert-afro"
+          "name": "Concert afro"
         },
         {
-          "name": "Concert manele",
-          "slug": "events-concerte-scene-live-concert-manele"
+          "name": "Concert manele"
         },
         {
-          "name": "Concert muzică populară / folclor",
-          "slug": "events-concerte-scene-live-concert-muzica-populara-folclor"
+          "name": "Concert muzică populară / folclor"
         },
         {
-          "name": "Concert etno",
-          "slug": "events-concerte-scene-live-concert-etno"
+          "name": "Concert etno"
         },
         {
-          "name": "Concert jazz",
-          "slug": "events-concerte-scene-live-concert-jazz"
+          "name": "Concert jazz"
         },
         {
-          "name": "Concert blues",
-          "slug": "events-concerte-scene-live-concert-blues"
+          "name": "Concert blues"
         },
         {
-          "name": "Concert indie / alternative",
-          "slug": "events-concerte-scene-live-concert-indie-alternative"
+          "name": "Concert indie / alternative"
         },
         {
-          "name": "Concert metal",
-          "slug": "events-concerte-scene-live-concert-metal"
+          "name": "Concert metal"
         },
         {
-          "name": "Concert punk",
-          "slug": "events-concerte-scene-live-concert-punk"
+          "name": "Concert punk"
         },
         {
-          "name": "Concert folk / cantautor",
-          "slug": "events-concerte-scene-live-concert-folk-cantautor"
+          "name": "Concert folk / cantautor"
         },
         {
-          "name": "Concert country",
-          "slug": "events-concerte-scene-live-concert-country"
+          "name": "Concert country"
         },
         {
-          "name": "Recital / cameră",
-          "slug": "events-concerte-scene-live-recital-camera"
+          "name": "Recital / cameră"
         },
         {
-          "name": "Cor / muzică corală",
-          "slug": "events-concerte-scene-live-cor-muzica-corala"
+          "name": "Cor / muzică corală"
         },
         {
-          "name": "Orchestră / muzică clasică",
-          "slug": "events-concerte-scene-live-orchestra-muzica-clasica"
+          "name": "Orchestră / muzică clasică"
         },
         {
-          "name": "Operă / Operetă",
-          "slug": "events-concerte-scene-live-opera-opereta"
+          "name": "Operă / Operetă"
         },
         {
-          "name": "Musical (live)",
-          "slug": "events-concerte-scene-live-musical-live"
+          "name": "Musical (live)"
         },
         {
-          "name": "Jam session",
-          "slug": "events-concerte-scene-live-jam-session"
+          "name": "Jam session"
         },
         {
-          "name": "Open mic (muzică)",
-          "slug": "events-concerte-scene-live-open-mic-muzica"
+          "name": "Open mic (muzică)"
         }
       ]
     },
     {
       "name": "CORPORATE & BUSINESS",
-      "slug": "corporate-business",
       "items": [
         {
-          "name": "Conferință",
-          "slug": "events-corporate-business-conferinta"
+          "name": "Conferință"
         },
         {
-          "name": "Congres / Simpozion",
-          "slug": "events-corporate-business-congres-simpozion"
+          "name": "Congres / Simpozion"
         },
         {
-          "name": "Summit / Forum",
-          "slug": "events-corporate-business-summit-forum"
+          "name": "Summit / Forum"
         },
         {
-          "name": "Seminar",
-          "slug": "events-corporate-business-seminar"
+          "name": "Seminar"
         },
         {
-          "name": "Workshop practic",
-          "slug": "events-corporate-business-workshop-practic"
+          "name": "Workshop practic"
         },
         {
-          "name": "Training / Curs",
-          "slug": "events-corporate-business-training-curs"
+          "name": "Training / Curs"
         },
         {
-          "name": "Masterclass",
-          "slug": "events-corporate-business-masterclass"
+          "name": "Masterclass"
         },
         {
-          "name": "Bootcamp",
-          "slug": "events-corporate-business-bootcamp"
+          "name": "Bootcamp"
         },
         {
-          "name": "Hackathon",
-          "slug": "events-corporate-business-hackathon"
+          "name": "Hackathon"
         },
         {
-          "name": "Demo day",
-          "slug": "events-corporate-business-demo-day"
+          "name": "Demo day"
         },
         {
-          "name": "Pitch night / Investor pitch",
-          "slug": "events-corporate-business-pitch-night-investor-pitch"
+          "name": "Pitch night / Investor pitch"
         },
         {
-          "name": "Networking event (B2B)",
-          "slug": "events-corporate-business-networking-event-b2b"
+          "name": "Networking event (B2B)"
         },
         {
-          "name": "Breakfast / Meetup de afaceri",
-          "slug": "events-corporate-business-breakfast-meetup-de-afaceri"
+          "name": "Breakfast / Meetup de afaceri"
         },
         {
-          "name": "Lansare de produs / brand",
-          "slug": "events-corporate-business-lansare-de-produs-brand"
+          "name": "Lansare de produs / brand"
         },
         {
-          "name": "Conferință de presă",
-          "slug": "events-corporate-business-conferinta-de-presa"
+          "name": "Conferință de presă"
         },
         {
-          "name": "Eveniment media / PR",
-          "slug": "events-corporate-business-eveniment-media-pr"
+          "name": "Eveniment media / PR"
         },
         {
-          "name": "Town hall (companie)",
-          "slug": "events-corporate-business-town-hall-companie"
+          "name": "Town hall (companie)"
         },
         {
-          "name": "Întâlnire board / management",
-          "slug": "events-corporate-business-intalnire-board-management"
+          "name": "Întâlnire board / management"
         },
         {
-          "name": "Ședință / Offsite",
-          "slug": "events-corporate-business-sedinta-offsite"
+          "name": "Ședință / Offsite"
         },
         {
-          "name": "Team building",
-          "slug": "events-corporate-business-team-building"
+          "name": "Team building"
         },
         {
-          "name": "Family day (companie)",
-          "slug": "events-corporate-business-family-day-companie"
+          "name": "Family day (companie)"
         },
         {
-          "name": "Party corporate (Crăciun / Summer)",
-          "slug": "events-corporate-business-party-corporate-craciun-summer"
+          "name": "Party corporate (Crăciun / Summer)"
         },
         {
-          "name": "Gala & Premiere (awards)",
-          "slug": "events-corporate-business-gala-premiere-awards"
+          "name": "Gala & Premiere (awards)"
         },
         {
-          "name": "Focus group / Studiu de piață",
-          "slug": "events-corporate-business-focus-group-studiu-de-piata"
+          "name": "Focus group / Studiu de piață"
         },
         {
-          "name": "Recrutare / Job fair",
-          "slug": "events-corporate-business-recrutare-job-fair"
+          "name": "Recrutare / Job fair"
         },
         {
-          "name": "Ziua porților deschise (fabrică / companie)",
-          "slug": "events-corporate-business-ziua-portilor-deschise-fabrica-companie"
+          "name": "Ziua porților deschise (fabrică / companie)"
         },
         {
-          "name": "Expoziție / Târg industrial",
-          "slug": "events-corporate-business-expozitie-targ-industrial"
+          "name": "Expoziție / Târg industrial"
         },
         {
-          "name": "Roadshow / showroom mobil",
-          "slug": "events-corporate-business-roadshow-showroom-mobil"
+          "name": "Roadshow / showroom mobil"
         }
       ]
     },
     {
       "name": "CULTURĂ & ARTĂ",
-      "slug": "cultura-arta",
       "items": [
         {
-          "name": "Piesă de teatru",
-          "slug": "events-cultura-arta-piesa-de-teatru"
+          "name": "Piesă de teatru"
         },
         {
-          "name": "Teatru de improvizație",
-          "slug": "events-cultura-arta-teatru-de-improvizatie"
+          "name": "Teatru de improvizație"
         },
         {
-          "name": "Stand‑up comedy",
-          "slug": "events-cultura-arta-standup-comedy"
+          "name": "Stand‑up comedy"
         },
         {
-          "name": "One‑man show",
-          "slug": "events-cultura-arta-oneman-show"
+          "name": "One‑man show"
         },
         {
-          "name": "Musical (spectacol)",
-          "slug": "events-cultura-arta-musical-spectacol"
+          "name": "Musical (spectacol)"
         },
         {
-          "name": "Dans clasic / balet",
-          "slug": "events-cultura-arta-dans-clasic-balet"
+          "name": "Dans clasic / balet"
         },
         {
-          "name": "Dans contemporan",
-          "slug": "events-cultura-arta-dans-contemporan"
+          "name": "Dans contemporan"
         },
         {
-          "name": "Spectacol de dans tradițional",
-          "slug": "events-cultura-arta-spectacol-de-dans-traditional"
+          "name": "Spectacol de dans tradițional"
         },
         {
-          "name": "Performance art",
-          "slug": "events-cultura-arta-performance-art"
+          "name": "Performance art"
         },
         {
-          "name": "Recital de poezie / spoken word",
-          "slug": "events-cultura-arta-recital-de-poezie-spoken-word"
+          "name": "Recital de poezie / spoken word"
         },
         {
-          "name": "Lansare de carte",
-          "slug": "events-cultura-arta-lansare-de-carte"
+          "name": "Lansare de carte"
         },
         {
-          "name": "Club de carte",
-          "slug": "events-cultura-arta-club-de-carte"
+          "name": "Club de carte"
         },
         {
-          "name": "Vernisaj de expoziție",
-          "slug": "events-cultura-arta-vernisaj-de-expozitie"
+          "name": "Vernisaj de expoziție"
         },
         {
-          "name": "Expoziție de artă / fotografie",
-          "slug": "events-cultura-arta-expozitie-de-arta-fotografie"
+          "name": "Expoziție de artă / fotografie"
         },
         {
-          "name": "Proiecție de film",
-          "slug": "events-cultura-arta-proiectie-de-film"
+          "name": "Proiecție de film"
         },
         {
-          "name": "Festival de film / Seară de film",
-          "slug": "events-cultura-arta-festival-de-film-seara-de-film"
+          "name": "Festival de film / Seară de film"
         },
         {
-          "name": "Cinema în aer liber",
-          "slug": "events-cultura-arta-cinema-in-aer-liber"
+          "name": "Cinema în aer liber"
         },
         {
-          "name": "Ciné‑concert",
-          "slug": "events-cultura-arta-cineconcert"
+          "name": "Ciné‑concert"
         },
         {
-          "name": "Târg de carte / artă",
-          "slug": "events-cultura-arta-targ-de-carte-arta"
+          "name": "Târg de carte / artă"
         },
         {
-          "name": "Licitație de artă",
-          "slug": "events-cultura-arta-licitatie-de-arta"
+          "name": "Licitație de artă"
         }
       ]
     },
     {
       "name": "EDUCAȚIE & COMUNITATE",
-      "slug": "educatie-comunitate",
       "items": [
         {
-          "name": "Atelier (pictură, ceramică, DIY)",
-          "slug": "events-educatie-comunitate-atelier-pictura-ceramica-diy"
+          "name": "Atelier (pictură, ceramică, DIY)"
         },
         {
-          "name": "Workshop parenting",
-          "slug": "events-educatie-comunitate-workshop-parenting"
+          "name": "Workshop parenting"
         },
         {
-          "name": "Cerc de programare / STEM",
-          "slug": "events-educatie-comunitate-cerc-de-programare-stem"
+          "name": "Cerc de programare / STEM"
         },
         {
-          "name": "Club de robotică",
-          "slug": "events-educatie-comunitate-club-de-robotica"
+          "name": "Club de robotică"
         },
         {
-          "name": "Club de șah",
-          "slug": "events-educatie-comunitate-club-de-sah"
+          "name": "Club de șah"
         },
         {
-          "name": "Olimpiadă / Concurs",
-          "slug": "events-educatie-comunitate-olimpiada-concurs"
+          "name": "Olimpiadă / Concurs"
         },
         {
-          "name": "Școală de vară",
-          "slug": "events-educatie-comunitate-scoala-de-vara"
+          "name": "Școală de vară"
         },
         {
-          "name": "Meditații / Seminarii",
-          "slug": "events-educatie-comunitate-meditatii-seminarii"
+          "name": "Meditații / Seminarii"
         },
         {
-          "name": "Dezbateri publice",
-          "slug": "events-educatie-comunitate-dezbateri-publice"
+          "name": "Dezbateri publice"
         },
         {
-          "name": "Conferință educațională",
-          "slug": "events-educatie-comunitate-conferinta-educationala"
+          "name": "Conferință educațională"
         },
         {
-          "name": "Serbare școlară",
-          "slug": "events-educatie-comunitate-serbare-scolara"
+          "name": "Serbare școlară"
         },
         {
-          "name": "Balul bobocilor",
-          "slug": "events-educatie-comunitate-balul-bobocilor"
+          "name": "Balul bobocilor"
         },
         {
-          "name": "Absolvire / Banquet",
-          "slug": "events-educatie-comunitate-absolvire-banquet"
+          "name": "Absolvire / Banquet"
         },
         {
-          "name": "Ziua porților deschise (școală)",
-          "slug": "events-educatie-comunitate-ziua-portilor-deschise-scoala"
+          "name": "Ziua porților deschise (școală)"
         },
         {
-          "name": "Ședință cu părinții",
-          "slug": "events-educatie-comunitate-sedinta-cu-parintii"
+          "name": "Ședință cu părinții"
         }
       ]
     },
     {
       "name": "SPORT & MIȘCARE",
-      "slug": "sport-miscare",
       "items": [
         {
-          "name": "Competiție fotbal",
-          "slug": "events-sport-miscare-competitie-fotbal"
+          "name": "Competiție fotbal"
         },
         {
-          "name": "Competiție baschet",
-          "slug": "events-sport-miscare-competitie-baschet"
+          "name": "Competiție baschet"
         },
         {
-          "name": "Competiție tenis",
-          "slug": "events-sport-miscare-competitie-tenis"
+          "name": "Competiție tenis"
         },
         {
-          "name": "Competiție volei",
-          "slug": "events-sport-miscare-competitie-volei"
+          "name": "Competiție volei"
         },
         {
-          "name": "Competiție tenis de masă",
-          "slug": "events-sport-miscare-competitie-tenis-de-masa"
+          "name": "Competiție tenis de masă"
         },
         {
-          "name": "Competiție înot",
-          "slug": "events-sport-miscare-competitie-inot"
+          "name": "Competiție înot"
         },
         {
-          "name": "Alergare (maraton / semi / 10K)",
-          "slug": "events-sport-miscare-alergare-maraton-semi-10k"
+          "name": "Alergare (maraton / semi / 10K)"
         },
         {
-          "name": "Ciclism (șosea / MTB)",
-          "slug": "events-sport-miscare-ciclism-sosea-mtb"
+          "name": "Ciclism (șosea / MTB)"
         },
         {
-          "name": "Triatlon / Duatlon",
-          "slug": "events-sport-miscare-triatlon-duatlon"
+          "name": "Triatlon / Duatlon"
         },
         {
-          "name": "CrossFit Throwdown",
-          "slug": "events-sport-miscare-crossfit-throwdown"
+          "name": "CrossFit Throwdown"
         },
         {
-          "name": "Strongman / Powerlifting",
-          "slug": "events-sport-miscare-strongman-powerlifting"
+          "name": "Strongman / Powerlifting"
         },
         {
-          "name": "Arte marțiale (MMA, BJJ, karate)",
-          "slug": "events-sport-miscare-arte-martiale-mma-bjj-karate"
+          "name": "Arte marțiale (MMA, BJJ, karate)"
         },
         {
-          "name": "Dans sportiv",
-          "slug": "events-sport-miscare-dans-sportiv"
+          "name": "Dans sportiv"
         },
         {
-          "name": "Yogă",
-          "slug": "events-sport-miscare-yoga"
+          "name": "Yogă"
         },
         {
-          "name": "Pilates",
-          "slug": "events-sport-miscare-pilates"
+          "name": "Pilates"
         },
         {
-          "name": "Zumba",
-          "slug": "events-sport-miscare-zumba"
+          "name": "Zumba"
         },
         {
-          "name": "Antrenament funcțional",
-          "slug": "events-sport-miscare-antrenament-functional"
+          "name": "Antrenament funcțional"
         },
         {
-          "name": "Bootcamp fitness",
-          "slug": "events-sport-miscare-bootcamp-fitness"
+          "name": "Bootcamp fitness"
         },
         {
-          "name": "Meditație ghidată / Breathwork",
-          "slug": "events-sport-miscare-meditatie-ghidata-breathwork"
+          "name": "Meditație ghidată / Breathwork"
         },
         {
-          "name": "Sound bath",
-          "slug": "events-sport-miscare-sound-bath"
+          "name": "Sound bath"
         },
         {
-          "name": "eSports tournament / LAN party",
-          "slug": "events-sport-miscare-esports-tournament-lan-party"
+          "name": "eSports tournament / LAN party"
         },
         {
-          "name": "Vizionare meci (fan zone / public viewing)",
-          "slug": "events-sport-miscare-vizionare-meci-fan-zone-public-viewing"
+          "name": "Vizionare meci (fan zone / public viewing)"
         },
         {
-          "name": "Demonstrativ sportiv / workshop tehnic",
-          "slug": "events-sport-miscare-demonstrativ-sportiv-workshop-tehnic"
+          "name": "Demonstrativ sportiv / workshop tehnic"
         }
       ]
     },
     {
       "name": "GASTRONOMIE & BEVERAGE",
-      "slug": "gastronomie-beverage",
       "items": [
         {
-          "name": "Degustare de vin",
-          "slug": "events-gastronomie-beverage-degustare-de-vin"
+          "name": "Degustare de vin"
         },
         {
-          "name": "Degustare de bere",
-          "slug": "events-gastronomie-beverage-degustare-de-bere"
+          "name": "Degustare de bere"
         },
         {
-          "name": "Degustare whisky / gin / rom",
-          "slug": "events-gastronomie-beverage-degustare-whisky-gin-rom"
+          "name": "Degustare whisky / gin / rom"
         },
         {
-          "name": "Degustare de cafea",
-          "slug": "events-gastronomie-beverage-degustare-de-cafea"
+          "name": "Degustare de cafea"
         },
         {
-          "name": "Degustare de ceai",
-          "slug": "events-gastronomie-beverage-degustare-de-ceai"
+          "name": "Degustare de ceai"
         },
         {
-          "name": "Degustare de ciocolată",
-          "slug": "events-gastronomie-beverage-degustare-de-ciocolata"
+          "name": "Degustare de ciocolată"
         },
         {
-          "name": "Degustare de brânzeturi / pairing",
-          "slug": "events-gastronomie-beverage-degustare-de-branzeturi-pairing"
+          "name": "Degustare de brânzeturi / pairing"
         },
         {
-          "name": "Brunch",
-          "slug": "events-gastronomie-beverage-brunch"
+          "name": "Brunch"
         },
         {
-          "name": "Cină privată",
-          "slug": "events-gastronomie-beverage-cina-privata"
+          "name": "Cină privată"
         },
         {
-          "name": "Chef’s table",
-          "slug": "events-gastronomie-beverage-chefs-table"
+          "name": "Chef’s table"
         },
         {
-          "name": "Pop‑up restaurant / Supper club",
-          "slug": "events-gastronomie-beverage-popup-restaurant-supper-club"
+          "name": "Pop‑up restaurant / Supper club"
         },
         {
-          "name": "BBQ / Grătar",
-          "slug": "events-gastronomie-beverage-bbq-gratar"
+          "name": "BBQ / Grătar"
         },
         {
-          "name": "Picnic organizat",
-          "slug": "events-gastronomie-beverage-picnic-organizat"
+          "name": "Picnic organizat"
         },
         {
-          "name": "Street food event",
-          "slug": "events-gastronomie-beverage-street-food-event"
+          "name": "Street food event"
         },
         {
-          "name": "Food truck rally",
-          "slug": "events-gastronomie-beverage-food-truck-rally"
+          "name": "Food truck rally"
         },
         {
-          "name": "Curs de gătit / Baking",
-          "slug": "events-gastronomie-beverage-curs-de-gatit-baking"
+          "name": "Curs de gătit / Baking"
         },
         {
-          "name": "Festival culinar",
-          "slug": "events-gastronomie-beverage-festival-culinar"
+          "name": "Festival culinar"
         }
       ]
     },
     {
       "name": "FOTO, VIDEO & MEDIA",
-      "slug": "foto-video-media",
       "items": [
         {
-          "name": "Ședință foto portret / familie",
-          "slug": "events-foto-video-media-sedinta-foto-portret-familie"
+          "name": "Ședință foto portret / familie"
         },
         {
-          "name": "Ședință foto maternitate / newborn",
-          "slug": "events-foto-video-media-sedinta-foto-maternitate-newborn"
+          "name": "Ședință foto maternitate / newborn"
         },
         {
-          "name": "Ședință foto cuplu / logodnă",
-          "slug": "events-foto-video-media-sedinta-foto-cuplu-logodna"
+          "name": "Ședință foto cuplu / logodnă"
         },
         {
-          "name": "Ședință foto nuntă (save the date)",
-          "slug": "events-foto-video-media-sedinta-foto-nunta-save-the-date"
+          "name": "Ședință foto nuntă (save the date)"
         },
         {
-          "name": "Ședință foto produs / culinar",
-          "slug": "events-foto-video-media-sedinta-foto-produs-culinar"
+          "name": "Ședință foto produs / culinar"
         },
         {
-          "name": "Ședință foto modă / lookbook",
-          "slug": "events-foto-video-media-sedinta-foto-moda-lookbook"
+          "name": "Ședință foto modă / lookbook"
         },
         {
-          "name": "Ședință foto corporate / headshots",
-          "slug": "events-foto-video-media-sedinta-foto-corporate-headshots"
+          "name": "Ședință foto corporate / headshots"
         },
         {
-          "name": "Ședință foto boudoir",
-          "slug": "events-foto-video-media-sedinta-foto-boudoir"
+          "name": "Ședință foto boudoir"
         },
         {
-          "name": "Filmare comercială / Spot",
-          "slug": "events-foto-video-media-filmare-comerciala-spot"
+          "name": "Filmare comercială / Spot"
         },
         {
-          "name": "Videoclip muzical",
-          "slug": "events-foto-video-media-videoclip-muzical"
+          "name": "Videoclip muzical"
         },
         {
-          "name": "Filmare dronă",
-          "slug": "events-foto-video-media-filmare-drona"
+          "name": "Filmare dronă"
         },
         {
-          "name": "Live streaming",
-          "slug": "events-foto-video-media-live-streaming"
+          "name": "Live streaming"
         },
         {
-          "name": "Webinar live",
-          "slug": "events-foto-video-media-webinar-live"
+          "name": "Webinar live"
         },
         {
-          "name": "Podcast – înregistrare",
-          "slug": "events-foto-video-media-podcast-inregistrare"
+          "name": "Podcast – înregistrare"
         },
         {
-          "name": "Podcast – live cu public",
-          "slug": "events-foto-video-media-podcast-live-cu-public"
+          "name": "Podcast – live cu public"
         },
         {
-          "name": "Interviu / Talk show",
-          "slug": "events-foto-video-media-interviu-talk-show"
+          "name": "Interviu / Talk show"
         },
         {
-          "name": "Vlogging meetup",
-          "slug": "events-foto-video-media-vlogging-meetup"
+          "name": "Vlogging meetup"
         },
         {
-          "name": "Studio day (foto/video)",
-          "slug": "events-foto-video-media-studio-day-fotovideo"
+          "name": "Studio day (foto/video)"
         },
         {
-          "name": "Casting / Audiții",
-          "slug": "events-foto-video-media-casting-auditii"
+          "name": "Casting / Audiții"
         }
       ]
     },
     {
       "name": "TÂRGURI, PIEȚE & EXPO",
-      "slug": "targuri-piete-expo",
       "items": [
         {
-          "name": "Târg de nunți",
-          "slug": "events-targuri-piete-expo-targ-de-nunti"
+          "name": "Târg de nunți"
         },
         {
-          "name": "Târg imobiliar",
-          "slug": "events-targuri-piete-expo-targ-imobiliar"
+          "name": "Târg imobiliar"
         },
         {
-          "name": "Târg auto / moto",
-          "slug": "events-targuri-piete-expo-targ-auto-moto"
+          "name": "Târg auto / moto"
         },
         {
-          "name": "Târg IT / tech",
-          "slug": "events-targuri-piete-expo-targ-it-tech"
+          "name": "Târg IT / tech"
         },
         {
-          "name": "Târg handmade / artizanat",
-          "slug": "events-targuri-piete-expo-targ-handmade-artizanat"
+          "name": "Târg handmade / artizanat"
         },
         {
-          "name": "Târg vintage / antichități",
-          "slug": "events-targuri-piete-expo-targ-vintage-antichitati"
+          "name": "Târg vintage / antichități"
         },
         {
-          "name": "Târg de carte",
-          "slug": "events-targuri-piete-expo-targ-de-carte"
+          "name": "Târg de carte"
         },
         {
-          "name": "Expo industrială",
-          "slug": "events-targuri-piete-expo-expo-industriala"
+          "name": "Expo industrială"
         },
         {
-          "name": "Expo animale de companie",
-          "slug": "events-targuri-piete-expo-expo-animale-de-companie"
+          "name": "Expo animale de companie"
         },
         {
-          "name": "Pop‑up shop / Sample sale",
-          "slug": "events-targuri-piete-expo-popup-shop-sample-sale"
+          "name": "Pop‑up shop / Sample sale"
         },
         {
-          "name": "Bazar caritabil",
-          "slug": "events-targuri-piete-expo-bazar-caritabil"
+          "name": "Bazar caritabil"
         },
         {
-          "name": "Garage sale / Yard sale",
-          "slug": "events-targuri-piete-expo-garage-sale-yard-sale"
+          "name": "Garage sale / Yard sale"
         },
         {
-          "name": "Marketplace local",
-          "slug": "events-targuri-piete-expo-marketplace-local"
+          "name": "Marketplace local"
         }
       ]
     },
     {
       "name": "LIFESTYLE & HOBBY",
-      "slug": "lifestyle-hobby",
       "items": [
         {
-          "name": "Seară de board games",
-          "slug": "events-lifestyle-hobby-seara-de-board-games"
+          "name": "Seară de board games"
         },
         {
-          "name": "Campionat de șah / go",
-          "slug": "events-lifestyle-hobby-campionat-de-sah-go"
+          "name": "Campionat de șah / go"
         },
         {
-          "name": "Dungeons & Dragons (D\\&D)",
-          "slug": "events-lifestyle-hobby-dungeons-dragons-dd"
+          "name": "Dungeons & Dragons (D\\&D)"
         },
         {
-          "name": "Trivia / Quiz Night",
-          "slug": "events-lifestyle-hobby-trivia-quiz-night"
+          "name": "Trivia / Quiz Night"
         },
         {
-          "name": "Paint & sip",
-          "slug": "events-lifestyle-hobby-paint-sip"
+          "name": "Paint & sip"
         },
         {
-          "name": "Atelier de caligrafie",
-          "slug": "events-lifestyle-hobby-atelier-de-caligrafie"
+          "name": "Atelier de caligrafie"
         },
         {
-          "name": "Origami / Craft",
-          "slug": "events-lifestyle-hobby-origami-craft"
+          "name": "Origami / Craft"
         },
         {
-          "name": "Modelism (RC, trenulețe)",
-          "slug": "events-lifestyle-hobby-modelism-rc-trenulete"
+          "name": "Modelism (RC, trenulețe)"
         },
         {
-          "name": "Lego AFOL meetup",
-          "slug": "events-lifestyle-hobby-lego-afol-meetup"
+          "name": "Lego AFOL meetup"
         },
         {
-          "name": "Astronomy night / Stargazing",
-          "slug": "events-lifestyle-hobby-astronomy-night-stargazing"
+          "name": "Astronomy night / Stargazing"
         },
         {
-          "name": "Foto‑walk",
-          "slug": "events-lifestyle-hobby-fotowalk"
+          "name": "Foto‑walk"
         },
         {
-          "name": "Birdwatching",
-          "slug": "events-lifestyle-hobby-birdwatching"
+          "name": "Birdwatching"
         },
         {
-          "name": "Workshop de grădinărit",
-          "slug": "events-lifestyle-hobby-workshop-de-gradinarit"
+          "name": "Workshop de grădinărit"
         },
         {
-          "name": "Plimbare cu bicicleta",
-          "slug": "events-lifestyle-hobby-plimbare-cu-bicicleta"
+          "name": "Plimbare cu bicicleta"
         },
         {
-          "name": "Drumeție ghidată",
-          "slug": "events-lifestyle-hobby-drumetie-ghidata"
+          "name": "Drumeție ghidată"
         },
         {
-          "name": "Camping",
-          "slug": "events-lifestyle-hobby-camping"
+          "name": "Camping"
         },
         {
-          "name": "Geocaching",
-          "slug": "events-lifestyle-hobby-geocaching"
+          "name": "Geocaching"
         },
         {
-          "name": "Treasure hunt",
-          "slug": "events-lifestyle-hobby-treasure-hunt"
+          "name": "Treasure hunt"
         },
         {
-          "name": "Escape room – eveniment",
-          "slug": "events-lifestyle-hobby-escape-room-eveniment"
+          "name": "Escape room – eveniment"
         }
       ]
     },
     {
       "name": "AUTO, MOTO & TEHNOLOGIE",
-      "slug": "auto-moto-tehnologie",
       "items": [
         {
-          "name": "Lansare auto / test‑drive",
-          "slug": "events-auto-moto-tehnologie-lansare-auto-testdrive"
+          "name": "Lansare auto / test‑drive"
         },
         {
-          "name": "Expo auto / moto",
-          "slug": "events-auto-moto-tehnologie-expo-auto-moto"
+          "name": "Expo auto / moto"
         },
         {
-          "name": "Drift show",
-          "slug": "events-auto-moto-tehnologie-drift-show"
+          "name": "Drift show"
         },
         {
-          "name": "Parade moto / car meet",
-          "slug": "events-auto-moto-tehnologie-parade-moto-car-meet"
+          "name": "Parade moto / car meet"
         },
         {
-          "name": "Roadshow tehnic",
-          "slug": "events-auto-moto-tehnologie-roadshow-tehnic"
+          "name": "Roadshow tehnic"
         },
         {
-          "name": "Tech meetup",
-          "slug": "events-auto-moto-tehnologie-tech-meetup"
+          "name": "Tech meetup"
         },
         {
-          "name": "Showcase VR/AR",
-          "slug": "events-auto-moto-tehnologie-showcase-vrar"
+          "name": "Showcase VR/AR"
         },
         {
-          "name": "Demo imprimare 3D / makers",
-          "slug": "events-auto-moto-tehnologie-demo-imprimare-3d-makers"
+          "name": "Demo imprimare 3D / makers"
         },
         {
-          "name": "IoT showcase",
-          "slug": "events-auto-moto-tehnologie-iot-showcase"
+          "name": "IoT showcase"
         },
         {
-          "name": "Electromobility day",
-          "slug": "events-auto-moto-tehnologie-electromobility-day"
+          "name": "Electromobility day"
         }
       ]
     },
     {
       "name": "CIVIC & ONG",
-      "slug": "civic-ong",
       "items": [
         {
-          "name": "Gala caritabilă / Strângere de fonduri",
-          "slug": "events-civic-ong-gala-caritabila-strangere-de-fonduri"
+          "name": "Gala caritabilă / Strângere de fonduri"
         },
         {
-          "name": "Concert caritabil",
-          "slug": "events-civic-ong-concert-caritabil"
+          "name": "Concert caritabil"
         },
         {
-          "name": "Conferință ONG",
-          "slug": "events-civic-ong-conferinta-ong"
+          "name": "Conferință ONG"
         },
         {
-          "name": "Acțiune de voluntariat",
-          "slug": "events-civic-ong-actiune-de-voluntariat"
+          "name": "Acțiune de voluntariat"
         },
         {
-          "name": "Plantare de copaci",
-          "slug": "events-civic-ong-plantare-de-copaci"
+          "name": "Plantare de copaci"
         },
         {
-          "name": "Curățenie în parc / oraș",
-          "slug": "events-civic-ong-curatenie-in-parc-oras"
+          "name": "Curățenie în parc / oraș"
         },
         {
-          "name": "Campanie donare de sânge",
-          "slug": "events-civic-ong-campanie-donare-de-sange"
+          "name": "Campanie donare de sânge"
         },
         {
-          "name": "Protest / Miting (public)",
-          "slug": "events-civic-ong-protest-miting-public"
+          "name": "Protest / Miting (public)"
         },
         {
-          "name": "Consultare publică",
-          "slug": "events-civic-ong-consultare-publica"
+          "name": "Consultare publică"
         },
         {
-          "name": "Ședință consiliu local / comunitar",
-          "slug": "events-civic-ong-sedinta-consiliu-local-comunitar"
+          "name": "Ședință consiliu local / comunitar"
         }
       ]
     },
     {
       "name": "RELIGIE & SPIRITUALITATE",
-      "slug": "religie-spiritualitate",
       "items": [
         {
-          "name": "Slujbă religioasă (nuntă / botez)",
-          "slug": "events-religie-spiritualitate-slujba-religioasa-nunta-botez"
+          "name": "Slujbă religioasă (nuntă / botez)"
         },
         {
-          "name": "Curs premarital",
-          "slug": "events-religie-spiritualitate-curs-premarital"
+          "name": "Curs premarital"
         },
         {
-          "name": "Pelerinaj",
-          "slug": "events-religie-spiritualitate-pelerinaj"
+          "name": "Pelerinaj"
         },
         {
-          "name": "Retreat spiritual",
-          "slug": "events-religie-spiritualitate-retreat-spiritual"
+          "name": "Retreat spiritual"
         },
         {
-          "name": "Rugăciune & meditație",
-          "slug": "events-religie-spiritualitate-rugaciune-meditatie"
+          "name": "Rugăciune & meditație"
         },
         {
-          "name": "Grup de studiu",
-          "slug": "events-religie-spiritualitate-grup-de-studiu"
+          "name": "Grup de studiu"
         },
         {
-          "name": "Seară de colinde",
-          "slug": "events-religie-spiritualitate-seara-de-colinde"
+          "name": "Seară de colinde"
         },
         {
-          "name": "Comemorare / Parastas",
-          "slug": "events-religie-spiritualitate-comemorare-parastas"
+          "name": "Comemorare / Parastas"
         }
       ]
     },
     {
       "name": "IMOBILIARE & CORPORATE PROMO",
-      "slug": "imobiliare-corporate-promo",
       "items": [
         {
-          "name": "Open house (imobiliare)",
-          "slug": "events-imobiliare-corporate-promo-open-house-imobiliare"
+          "name": "Open house (imobiliare)"
         },
         {
-          "name": "Prezentare proiect imobiliar",
-          "slug": "events-imobiliare-corporate-promo-prezentare-proiect-imobiliar"
+          "name": "Prezentare proiect imobiliar"
         },
         {
-          "name": "Inaugurare / Tăiere de panglică",
-          "slug": "events-imobiliare-corporate-promo-inaugurare-taiere-de-panglica"
+          "name": "Inaugurare / Tăiere de panglică"
         },
         {
-          "name": "Ziua porților deschise (fabrică / tur ghidat)",
-          "slug": "events-imobiliare-corporate-promo-ziua-portilor-deschise-fabrica-tur-ghidat"
+          "name": "Ziua porților deschise (fabrică / tur ghidat)"
         },
         {
-          "name": "Tur ghidat showroom",
-          "slug": "events-imobiliare-corporate-promo-tur-ghidat-showroom"
+          "name": "Tur ghidat showroom"
         }
       ]
     },
     {
       "name": "NATURĂ & OUTDOOR",
-      "slug": "natura-outdoor",
       "items": [
         {
-          "name": "Picnic în parc / livadă",
-          "slug": "events-natura-outdoor-picnic-in-parc-livada"
+          "name": "Picnic în parc / livadă"
         },
         {
-          "name": "Grătar în aer liber",
-          "slug": "events-natura-outdoor-gratar-in-aer-liber"
+          "name": "Grătar în aer liber"
         },
         {
-          "name": "Seară la foc de tabără",
-          "slug": "events-natura-outdoor-seara-la-foc-de-tabara"
+          "name": "Seară la foc de tabără"
         },
         {
-          "name": "Petrecere în grădină",
-          "slug": "events-natura-outdoor-petrecere-in-gradina"
+          "name": "Petrecere în grădină"
         },
         {
-          "name": "Festival în aer liber",
-          "slug": "events-natura-outdoor-festival-in-aer-liber"
+          "name": "Festival în aer liber"
         },
         {
-          "name": "Plimbare cu barca / hidrobicicleta",
-          "slug": "events-natura-outdoor-plimbare-cu-barca-hidrobicicleta"
+          "name": "Plimbare cu barca / hidrobicicleta"
         },
         {
-          "name": "Excursie / drumeție",
-          "slug": "events-natura-outdoor-excursie-drumetie"
+          "name": "Excursie / drumeție"
         },
         {
-          "name": "Off‑road 4x4",
-          "slug": "events-natura-outdoor-offroad-4x4"
+          "name": "Off‑road 4x4"
         },
         {
-          "name": "Noapte de Perseide / Observare meteori",
-          "slug": "events-natura-outdoor-noapte-de-perseide-observare-meteori"
+          "name": "Noapte de Perseide / Observare meteori"
         }
       ]
     },
     {
       "name": "FAMILIE & COPII",
-      "slug": "familie-copii",
       "items": [
         {
-          "name": "Petrecere copii cu animator",
-          "slug": "events-familie-copii-petrecere-copii-cu-animator"
+          "name": "Petrecere copii cu animator"
         },
         {
-          "name": "Magician show",
-          "slug": "events-familie-copii-magician-show"
+          "name": "Magician show"
         },
         {
-          "name": "Teatru de păpuși",
-          "slug": "events-familie-copii-teatru-de-papusi"
+          "name": "Teatru de păpuși"
         },
         {
-          "name": "Baby gym / joacă senzorială",
-          "slug": "events-familie-copii-baby-gym-joaca-senzoriala"
+          "name": "Baby gym / joacă senzorială"
         },
         {
-          "name": "Atelier pentru copii (craft / gătit)",
-          "slug": "events-familie-copii-atelier-pentru-copii-craft-gatit"
+          "name": "Atelier pentru copii (craft / gătit)"
         },
         {
-          "name": "Family day",
-          "slug": "events-familie-copii-family-day"
+          "name": "Family day"
         },
         {
-          "name": "Jocuri în aer liber pentru copii",
-          "slug": "events-familie-copii-jocuri-in-aer-liber-pentru-copii"
+          "name": "Jocuri în aer liber pentru copii"
         },
         {
-          "name": "Cinema pentru copii",
-          "slug": "events-familie-copii-cinema-pentru-copii"
+          "name": "Cinema pentru copii"
         },
         {
-          "name": "Petrecere tematică (supereroi / prințese)",
-          "slug": "events-familie-copii-petrecere-tematica-supereroi-printese"
+          "name": "Petrecere tematică (supereroi / prințese)"
         }
       ]
     },
     {
       "name": "SERVICII FUNEBRE & MEMORIAL",
-      "slug": "servicii-funebre-memorial",
       "items": [
         {
-          "name": "Priveghi (organizare privată)",
-          "slug": "events-servicii-funebre-memorial-priveghi-organizare-privata"
+          "name": "Priveghi (organizare privată)"
         },
         {
-          "name": "Înmormântare – logistică (sală, catering)",
-          "slug": "events-servicii-funebre-memorial-inmormantare-logistica-sala-catering"
+          "name": "Înmormântare – logistică (sală, catering)"
         },
         {
-          "name": "Pomenire / Parastas",
-          "slug": "events-servicii-funebre-memorial-pomenire-parastas"
+          "name": "Pomenire / Parastas"
         },
         {
-          "name": "Comemorare / Zi de doliu",
-          "slug": "events-servicii-funebre-memorial-comemorare-zi-de-doliu"
+          "name": "Comemorare / Zi de doliu"
         }
       ]
     },
     {
       "name": "EVENIMENTE PENTRU ANIMALE",
-      "slug": "evenimente-pentru-animale",
       "items": [
         {
-          "name": "Expoziție canină",
-          "slug": "events-evenimente-pentru-animale-expozitie-canina"
+          "name": "Expoziție canină"
         },
         {
-          "name": "Expoziție felină",
-          "slug": "events-evenimente-pentru-animale-expozitie-felina"
+          "name": "Expoziție felină"
         },
         {
-          "name": "Zi de adopții",
-          "slug": "events-evenimente-pentru-animale-zi-de-adoptii"
+          "name": "Zi de adopții"
         },
         {
-          "name": "Parada animalelor",
-          "slug": "events-evenimente-pentru-animale-parada-animalelor"
+          "name": "Parada animalelor"
         },
         {
-          "name": "Concurs agility",
-          "slug": "events-evenimente-pentru-animale-concurs-agility"
+          "name": "Concurs agility"
         },
         {
-          "name": "Yoga cu câini (Doga)",
-          "slug": "events-evenimente-pentru-animale-yoga-cu-caini-doga"
+          "name": "Yoga cu câini (Doga)"
         }
       ]
     },
     {
       "name": "ALTE EVENIMENTE SPECIALE",
-      "slug": "alte-evenimente-speciale",
       "items": [
         {
-          "name": "Ședință foto tematică de Crăciun",
-          "slug": "events-alte-evenimente-speciale-sedinta-foto-tematica-de-craciun"
+          "name": "Ședință foto tematică de Crăciun"
         },
         {
-          "name": "Photo booth party",
-          "slug": "events-alte-evenimente-speciale-photo-booth-party"
+          "name": "Photo booth party"
         },
         {
-          "name": "Time‑capsule ceremony",
-          "slug": "events-alte-evenimente-speciale-timecapsule-ceremony"
+          "name": "Time‑capsule ceremony"
         },
         {
-          "name": "Roast & Toast night",
-          "slug": "events-alte-evenimente-speciale-roast-toast-night"
+          "name": "Roast & Toast night"
         },
         {
-          "name": "Ceremonie de premiere privată",
-          "slug": "events-alte-evenimente-speciale-ceremonie-de-premiere-privata"
+          "name": "Ceremonie de premiere privată"
         },
         {
-          "name": "Eveniment hibrid (online \\+ offline)",
-          "slug": "events-alte-evenimente-speciale-eveniment-hibrid-online-offline"
+          "name": "Eveniment hibrid (online \\+ offline)"
         },
         {
-          "name": "Întâlnire comunitară / Meetup nișat",
-          "slug": "events-alte-evenimente-speciale-intalnire-comunitara-meetup-nisat"
+          "name": "Întâlnire comunitară / Meetup nișat"
         }
       ]
     }

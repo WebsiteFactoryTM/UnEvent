@@ -2,1837 +2,1396 @@
   "categories": [
     {
       "name": "ORGANIZARE & PLANIFICARE",
-      "slug": "organizare-planificare",
       "items": [
         {
-          "name": "Planificator de eveniment (Event Planner)",
-          "slug": "services-organizare-planificare-planificator-de-eveniment-event-planner"
+          "name": "Planificator de eveniment (Event Planner)"
         },
         {
-          "name": "Coordonator de zi (Day-of Coordinator)",
-          "slug": "services-organizare-planificare-coordonator-de-zi-day-of-coordinator"
+          "name": "Coordonator de zi (Day-of Coordinator)"
         },
         {
-          "name": "Producer / Showcaller",
-          "slug": "services-organizare-planificare-producer-showcaller"
+          "name": "Producer / Showcaller"
         },
         {
-          "name": "Stage manager / Stage management",
-          "slug": "services-organizare-planificare-stage-manager-stage-management"
+          "name": "Stage manager / Stage management"
         },
         {
-          "name": "Asistent producție (runner)",
-          "slug": "services-organizare-planificare-asistent-productie-runner"
+          "name": "Asistent producție (runner)"
         },
         {
-          "name": "Consultanță concept & temă",
-          "slug": "services-organizare-planificare-consultanta-concept-tema"
+          "name": "Consultanță concept & temă"
         },
         {
-          "name": "Bugetare & timeline eveniment",
-          "slug": "services-organizare-planificare-bugetare-timeline-eveniment"
+          "name": "Bugetare & timeline eveniment"
         },
         {
-          "name": "Management furnizori",
-          "slug": "services-organizare-planificare-management-furnizori"
+          "name": "Management furnizori"
         },
         {
-          "name": "Coordonare invitați VIP",
-          "slug": "services-organizare-planificare-coordonare-invitati-vip"
+          "name": "Coordonare invitați VIP"
         },
         {
-          "name": "Protocol & hostess management",
-          "slug": "services-organizare-planificare-protocol-hostess-management"
+          "name": "Protocol & hostess management"
         },
         {
-          "name": "Gestionare backstage / backstage hospitality",
-          "slug": "services-organizare-planificare-gestionare-backstage-backstage-hospitality"
+          "name": "Gestionare backstage / backstage hospitality"
         },
         {
-          "name": "Servicii RSVP & seating plan",
-          "slug": "services-organizare-planificare-servicii-rsvp-seating-plan"
+          "name": "Servicii RSVP & seating plan"
         },
         {
-          "name": "Servicii concierge (cazare, transport, city tips)",
-          "slug": "services-organizare-planificare-servicii-concierge-cazare-transport-city-tips"
+          "name": "Servicii concierge (cazare, transport, city tips)"
         },
         {
-          "name": "Consultanță sustenabilitate (evenimente verzi)",
-          "slug": "services-organizare-planificare-consultanta-sustenabilitate-evenimente-verzi"
+          "name": "Consultanță sustenabilitate (evenimente verzi)"
         },
         {
-          "name": "Audit & evaluare post-eveniment",
-          "slug": "services-organizare-planificare-audit-evaluare-post-eveniment"
+          "name": "Audit & evaluare post-eveniment"
         },
         {
-          "name": "Plan de urgență & evacuare (consultant)",
-          "slug": "services-organizare-planificare-plan-de-urgenta-evacuare-consultant"
+          "name": "Plan de urgență & evacuare (consultant)"
         }
       ]
     },
     {
       "name": "ENTERTAINMENT & PERFORMERI",
-      "slug": "entertainment-performeri",
       "items": [
         {
-          "name": "MC / Maestru de ceremonii",
-          "slug": "services-entertainment-performeri-mc-maestru-de-ceremonii"
+          "name": "MC / Maestru de ceremonii"
         },
         {
-          "name": "Host / Prezentator",
-          "slug": "services-entertainment-performeri-host-prezentator"
+          "name": "Host / Prezentator"
         },
         {
-          "name": "Comedian / Stand-up",
-          "slug": "services-entertainment-performeri-comedian-stand-up"
+          "name": "Comedian / Stand-up"
         },
         {
-          "name": "Magician / Iluzionist",
-          "slug": "services-entertainment-performeri-magician-iluzionist"
+          "name": "Magician / Iluzionist"
         },
         {
-          "name": "Mentalist",
-          "slug": "services-entertainment-performeri-mentalist"
+          "name": "Mentalist"
         },
         {
-          "name": "Caricaturist",
-          "slug": "services-entertainment-performeri-caricaturist"
+          "name": "Caricaturist"
         },
         {
-          "name": "Actor / Improvizație",
-          "slug": "services-entertainment-performeri-actor-improvizatie"
+          "name": "Actor / Improvizație"
         },
         {
-          "name": "Dansatori profesioniști",
-          "slug": "services-entertainment-performeri-dansatori-profesionisti"
+          "name": "Dansatori profesioniști"
         },
         {
-          "name": "Dansatori populari / ansamblu folcloric",
-          "slug": "services-entertainment-performeri-dansatori-populari-ansamblu-folcloric"
+          "name": "Dansatori populari / ansamblu folcloric"
         },
         {
-          "name": "Dans oriental / belly dance",
-          "slug": "services-entertainment-performeri-dans-oriental-belly-dance"
+          "name": "Dans oriental / belly dance"
         },
         {
-          "name": "Dans latino (salsa, bachata, kizomba)",
-          "slug": "services-entertainment-performeri-dans-latino-salsa-bachata-kizomba"
+          "name": "Dans latino (salsa, bachata, kizomba)"
         },
         {
-          "name": "Balet / Dans contemporan",
-          "slug": "services-entertainment-performeri-balet-dans-contemporan"
+          "name": "Balet / Dans contemporan"
         },
         {
-          "name": "Pole dance / Aerial (cerc, mătase)",
-          "slug": "services-entertainment-performeri-pole-dance-aerial-cerc-matase"
+          "name": "Pole dance / Aerial (cerc, mătase)"
         },
         {
-          "name": "Foc & Poi (cu măsuri de siguranță)",
-          "slug": "services-entertainment-performeri-foc-poi-cu-masuri-de-siguranta"
+          "name": "Foc & Poi (cu măsuri de siguranță)"
         },
         {
-          "name": "Statui vivante / Performance art",
-          "slug": "services-entertainment-performeri-statui-vivante-performance-art"
+          "name": "Statui vivante / Performance art"
         },
         {
-          "name": "Animator eveniment",
-          "slug": "services-entertainment-performeri-animator-eveniment"
+          "name": "Animator eveniment"
         },
         {
-          "name": "MC copii / Entertainer copii",
-          "slug": "services-entertainment-performeri-mc-copii-entertainer-copii"
+          "name": "MC copii / Entertainer copii"
         },
         {
-          "name": "Clovni & mascote",
-          "slug": "services-entertainment-performeri-clovni-mascote"
+          "name": "Clovni & mascote"
         },
         {
-          "name": "Ventriloc",
-          "slug": "services-entertainment-performeri-ventriloc"
+          "name": "Ventriloc"
         },
         {
-          "name": "MC nuntă / nași coordonatori (protocol)",
-          "slug": "services-entertainment-performeri-mc-nunta-nasi-coordonatori-protocol"
+          "name": "MC nuntă / nași coordonatori (protocol)"
         },
         {
-          "name": "Roast master",
-          "slug": "services-entertainment-performeri-roast-master"
+          "name": "Roast master"
         },
         {
-          "name": "Quiz master / Trivia host",
-          "slug": "services-entertainment-performeri-quiz-master-trivia-host"
+          "name": "Quiz master / Trivia host"
         },
         {
-          "name": "Karaoke host",
-          "slug": "services-entertainment-performeri-karaoke-host"
+          "name": "Karaoke host"
         },
         {
-          "name": "Croupier & cazino tematic (fără bani reali)",
-          "slug": "services-entertainment-performeri-croupier-cazino-tematic-fara-bani-reali"
+          "name": "Croupier & cazino tematic (fără bani reali)"
         }
       ]
     },
     {
       "name": "MUZICĂ: DJ & MC",
-      "slug": "muzica-dj-mc",
       "items": [
         {
-          "name": "DJ generalist",
-          "slug": "services-muzica-dj-mc-dj-generalist"
+          "name": "DJ generalist"
         },
         {
-          "name": "DJ nuntă",
-          "slug": "services-muzica-dj-mc-dj-nunta"
+          "name": "DJ nuntă"
         },
         {
-          "name": "DJ corporate",
-          "slug": "services-muzica-dj-mc-dj-corporate"
+          "name": "DJ corporate"
         },
         {
-          "name": "DJ club (house/techno)",
-          "slug": "services-muzica-dj-mc-dj-club-housetechno"
+          "name": "DJ club (house/techno)"
         },
         {
-          "name": "DJ rock / alternative",
-          "slug": "services-muzica-dj-mc-dj-rock-alternative"
+          "name": "DJ rock / alternative"
         },
         {
-          "name": "DJ hip-hop / R\\&B",
-          "slug": "services-muzica-dj-mc-dj-hip-hop-rb"
+          "name": "DJ hip-hop / R\\&B"
         },
         {
-          "name": "DJ latino",
-          "slug": "services-muzica-dj-mc-dj-latino"
+          "name": "DJ latino"
         },
         {
-          "name": "DJ manele",
-          "slug": "services-muzica-dj-mc-dj-manele"
+          "name": "DJ manele"
         },
         {
-          "name": "DJ muzică populară / etno",
-          "slug": "services-muzica-dj-mc-dj-muzica-populara-etno"
+          "name": "DJ muzică populară / etno"
         },
         {
-          "name": "DJ copii",
-          "slug": "services-muzica-dj-mc-dj-copii"
+          "name": "DJ copii"
         },
         {
-          "name": "DJ silent party (căști)",
-          "slug": "services-muzica-dj-mc-dj-silent-party-casti"
+          "name": "DJ silent party (căști)"
         },
         {
-          "name": "VJ (video-jockey)",
-          "slug": "services-muzica-dj-mc-vj-video-jockey"
+          "name": "VJ (video-jockey)"
         },
         {
-          "name": "MC party (hype-man)",
-          "slug": "services-muzica-dj-mc-mc-party-hype-man"
+          "name": "MC party (hype-man)"
         },
         {
-          "name": "Selectură vinil (vinyl set)",
-          "slug": "services-muzica-dj-mc-selectura-vinil-vinyl-set"
+          "name": "Selectură vinil (vinyl set)"
         }
       ]
     },
     {
       "name": "MUZICIENI & TRUPE LIVE",
-      "slug": "muzicieni-trupe-live",
       "items": [
         {
-          "name": "Trupă cover",
-          "slug": "services-muzicieni-trupe-live-trupa-cover"
+          "name": "Trupă cover"
         },
         {
-          "name": "Trupă rock / metal / punk",
-          "slug": "services-muzicieni-trupe-live-trupa-rock-metal-punk"
+          "name": "Trupă rock / metal / punk"
         },
         {
-          "name": "Trupă pop / indie",
-          "slug": "services-muzicieni-trupe-live-trupa-pop-indie"
+          "name": "Trupă pop / indie"
         },
         {
-          "name": "Trupă blues / jazz",
-          "slug": "services-muzicieni-trupe-live-trupa-blues-jazz"
+          "name": "Trupă blues / jazz"
         },
         {
-          "name": "Taraf / Lăutari",
-          "slug": "services-muzicieni-trupe-live-taraf-lautari"
+          "name": "Taraf / Lăutari"
         },
         {
-          "name": "Ansamblu muzică populară",
-          "slug": "services-muzicieni-trupe-live-ansamblu-muzica-populara"
+          "name": "Ansamblu muzică populară"
         },
         {
-          "name": "Cvartet de coarde",
-          "slug": "services-muzicieni-trupe-live-cvartet-de-coarde"
+          "name": "Cvartet de coarde"
         },
         {
-          "name": "Orchestră",
-          "slug": "services-muzicieni-trupe-live-orchestra"
+          "name": "Orchestră"
         },
         {
-          "name": "Solist vocal (muzică ușoară)",
-          "slug": "services-muzicieni-trupe-live-solist-vocal-muzica-usoara"
+          "name": "Solist vocal (muzică ușoară)"
         },
         {
-          "name": "Soliști muzică populară",
-          "slug": "services-muzicieni-trupe-live-solisti-muzica-populara"
+          "name": "Soliști muzică populară"
         },
         {
-          "name": "Solist operă / musical",
-          "slug": "services-muzicieni-trupe-live-solist-opera-musical"
+          "name": "Solist operă / musical"
         },
         {
-          "name": "Chitarist solo",
-          "slug": "services-muzicieni-trupe-live-chitarist-solo"
+          "name": "Chitarist solo"
         },
         {
-          "name": "Pianist / clape",
-          "slug": "services-muzicieni-trupe-live-pianist-clape"
+          "name": "Pianist / clape"
         },
         {
-          "name": "Violonist(ă)",
-          "slug": "services-muzicieni-trupe-live-violonista"
+          "name": "Violonist(ă)"
         },
         {
-          "name": "Saxofonist",
-          "slug": "services-muzicieni-trupe-live-saxofonist"
+          "name": "Saxofonist"
         },
         {
-          "name": "Trompetist",
-          "slug": "services-muzicieni-trupe-live-trompetist"
+          "name": "Trompetist"
         },
         {
-          "name": "Percuționist / Cajon",
-          "slug": "services-muzicieni-trupe-live-percutionist-cajon"
+          "name": "Percuționist / Cajon"
         },
         {
-          "name": "Harpist(ă)",
-          "slug": "services-muzicieni-trupe-live-harpista"
+          "name": "Harpist(ă)"
         },
         {
-          "name": "DJ \\+ instrumentist (sax/violin)",
-          "slug": "services-muzicieni-trupe-live-dj-instrumentist-saxviolin"
+          "name": "DJ \\+ instrumentist (sax/violin)"
         },
         {
-          "name": "Fanfară / Brass band",
-          "slug": "services-muzicieni-trupe-live-fanfara-brass-band"
+          "name": "Fanfară / Brass band"
         },
         {
-          "name": "Cor / muzică corală",
-          "slug": "services-muzicieni-trupe-live-cor-muzica-corala"
+          "name": "Cor / muzică corală"
         },
         {
-          "name": "Backline & repetiții cu sunetist inclus",
-          "slug": "services-muzicieni-trupe-live-backline-repetitii-cu-sunetist-inclus"
+          "name": "Backline & repetiții cu sunetist inclus"
         }
       ]
     },
     {
       "name": "SUNET (AUDIO) – ÎNCHIRIERE & TEHNICIENI",
-      "slug": "sunet-audio-inchiriere-tehnicieni",
       "items": [
         {
-          "name": "Sistem PA (boxe, subwoofere)",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-sistem-pa-boxe-subwoofere"
+          "name": "Sistem PA (boxe, subwoofere)"
         },
         {
-          "name": "Console audio (FOH / monitoare)",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-console-audio-foh-monitoare"
+          "name": "Console audio (FOH / monitoare)"
         },
         {
-          "name": "Monitoare scenă (wedges, IEM)",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-monitoare-scena-wedges-iem"
+          "name": "Monitoare scenă (wedges, IEM)"
         },
         {
-          "name": "Microfoane (dinamice, condensator, lavalieră)",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-microfoane-dinamice-condensator-lavaliera"
+          "name": "Microfoane (dinamice, condensator, lavalieră)"
         },
         {
-          "name": "Sistem wireless (microfoane/in-ear)",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-sistem-wireless-microfoanein-ear"
+          "name": "Sistem wireless (microfoane/in-ear)"
         },
         {
-          "name": "DJ booth (platane, controler)",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-dj-booth-platane-controler"
+          "name": "DJ booth (platane, controler)"
         },
         {
-          "name": "Backline (tobe, amplificatoare, clape)",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-backline-tobe-amplificatoare-clape"
+          "name": "Backline (tobe, amplificatoare, clape)"
         },
         {
-          "name": "Cablu & multicore / patching",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-cablu-multicore-patching"
+          "name": "Cablu & multicore / patching"
         },
         {
-          "name": "Tehnician sunet FOH",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-tehnician-sunet-foh"
+          "name": "Tehnician sunet FOH"
         },
         {
-          "name": "Tehnician monitoare",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-tehnician-monitoare"
+          "name": "Tehnician monitoare"
         },
         {
-          "name": "Inginer sistem (system tech)",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-inginer-sistem-system-tech"
+          "name": "Inginer sistem (system tech)"
         },
         {
-          "name": "Soundcheck & mix live",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-soundcheck-mix-live"
+          "name": "Soundcheck & mix live"
         },
         {
-          "name": "Înregistrare multitrack",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-inregistrare-multitrack"
+          "name": "Înregistrare multitrack"
         },
         {
-          "name": "Acustică & tratament temporar",
-          "slug": "services-sunet-audio-inchiriere-tehnicieni-acustica-tratament-temporar"
+          "name": "Acustică & tratament temporar"
         }
       ]
     },
     {
       "name": "LUMINI & EFECTE SPECIALE",
-      "slug": "lumini-efecte-speciale",
       "items": [
         {
-          "name": "Închiriere lumini (movere, wash, spot)",
-          "slug": "services-lumini-efecte-speciale-inchiriere-lumini-movere-wash-spot"
+          "name": "Închiriere lumini (movere, wash, spot)"
         },
         {
-          "name": "Controller / Consolă lumini",
-          "slug": "services-lumini-efecte-speciale-controller-consola-lumini"
+          "name": "Controller / Consolă lumini"
         },
         {
-          "name": "Design lumini eveniment",
-          "slug": "services-lumini-efecte-speciale-design-lumini-eveniment"
+          "name": "Design lumini eveniment"
         },
         {
-          "name": "Operator lumini",
-          "slug": "services-lumini-efecte-speciale-operator-lumini"
+          "name": "Operator lumini"
         },
         {
-          "name": "Lasere (conform reglementărilor)",
-          "slug": "services-lumini-efecte-speciale-lasere-conform-reglementarilor"
+          "name": "Lasere (conform reglementărilor)"
         },
         {
-          "name": "LED bars / pixel mapping",
-          "slug": "services-lumini-efecte-speciale-led-bars-pixel-mapping"
+          "name": "LED bars / pixel mapping"
         },
         {
-          "name": "Gobos & monograme personalizate",
-          "slug": "services-lumini-efecte-speciale-gobos-monograme-personalizate"
+          "name": "Gobos & monograme personalizate"
         },
         {
-          "name": "Follow spot",
-          "slug": "services-lumini-efecte-speciale-follow-spot"
+          "name": "Follow spot"
         },
         {
-          "name": "Mașină de fum / ceață",
-          "slug": "services-lumini-efecte-speciale-masina-de-fum-ceata"
+          "name": "Mașină de fum / ceață"
         },
         {
-          "name": "Low fog (gheață carbonică)",
-          "slug": "services-lumini-efecte-speciale-low-fog-gheata-carbonica"
+          "name": "Low fog (gheață carbonică)"
         },
         {
-          "name": "Cold sparks (foc rece / sparkular)",
-          "slug": "services-lumini-efecte-speciale-cold-sparks-foc-rece-sparkular"
+          "name": "Cold sparks (foc rece / sparkular)"
         },
         {
-          "name": "Confetti & streamer",
-          "slug": "services-lumini-efecte-speciale-confetti-streamer"
+          "name": "Confetti & streamer"
         },
         {
-          "name": "CO2 jets",
-          "slug": "services-lumini-efecte-speciale-co2-jets"
+          "name": "CO2 jets"
         },
         {
-          "name": "Bubble machine",
-          "slug": "services-lumini-efecte-speciale-bubble-machine"
+          "name": "Bubble machine"
         },
         {
-          "name": "UV / Blacklight",
-          "slug": "services-lumini-efecte-speciale-uv-blacklight"
+          "name": "UV / Blacklight"
         },
         {
-          "name": "Iluminat arhitectural / ambiental",
-          "slug": "services-lumini-efecte-speciale-iluminat-arhitectural-ambiental"
+          "name": "Iluminat arhitectural / ambiental"
         },
         {
-          "name": "Iluminat de urgență (backup)",
-          "slug": "services-lumini-efecte-speciale-iluminat-de-urgenta-backup"
+          "name": "Iluminat de urgență (backup)"
         }
       ]
     },
     {
       "name": "VIDEO & ECRANE",
-      "slug": "video-ecrane",
       "items": [
         {
-          "name": "LED screen (indoor/outdoor)",
-          "slug": "services-video-ecrane-led-screen-indooroutdoor"
+          "name": "LED screen (indoor/outdoor)"
         },
         {
-          "name": "Ecran proiecție (front/rear)",
-          "slug": "services-video-ecrane-ecran-proiectie-frontrear"
+          "name": "Ecran proiecție (front/rear)"
         },
         {
-          "name": "Videoproiector (HD/4K)",
-          "slug": "services-video-ecrane-videoproiector-hd4k"
+          "name": "Videoproiector (HD/4K)"
         },
         {
-          "name": "Switcher video / scalere",
-          "slug": "services-video-ecrane-switcher-video-scalere"
+          "name": "Switcher video / scalere"
         },
         {
-          "name": "Procesor video LED",
-          "slug": "services-video-ecrane-procesor-video-led"
+          "name": "Procesor video LED"
         },
         {
-          "name": "Teleprompter",
-          "slug": "services-video-ecrane-teleprompter"
+          "name": "Teleprompter"
         },
         {
-          "name": "Confidence monitor",
-          "slug": "services-video-ecrane-confidence-monitor"
+          "name": "Confidence monitor"
         },
         {
-          "name": "Cameră video (ENG / cinema)",
-          "slug": "services-video-ecrane-camera-video-eng-cinema"
+          "name": "Cameră video (ENG / cinema)"
         },
         {
-          "name": "Operator video",
-          "slug": "services-video-ecrane-operator-video"
+          "name": "Operator video"
         },
         {
-          "name": "Regie live (multicam)",
-          "slug": "services-video-ecrane-regie-live-multicam"
+          "name": "Regie live (multicam)"
         },
         {
-          "name": "Transmitere live (AV)",
-          "slug": "services-video-ecrane-transmitere-live-av"
+          "name": "Transmitere live (AV)"
         },
         {
-          "name": "Playout / Media server",
-          "slug": "services-video-ecrane-playout-media-server"
+          "name": "Playout / Media server"
         },
         {
-          "name": "Projection mapping",
-          "slug": "services-video-ecrane-projection-mapping"
+          "name": "Projection mapping"
         },
         {
-          "name": "Motion graphics / animații",
-          "slug": "services-video-ecrane-motion-graphics-animatii"
+          "name": "Motion graphics / animații"
         },
         {
-          "name": "Aftermovie / Montaj video",
-          "slug": "services-video-ecrane-aftermovie-montaj-video"
+          "name": "Aftermovie / Montaj video"
         },
         {
-          "name": "Subtitrare live",
-          "slug": "services-video-ecrane-subtitrare-live"
+          "name": "Subtitrare live"
         },
         {
-          "name": "Gimbal / Steadicam operator",
-          "slug": "services-video-ecrane-gimbal-steadicam-operator"
+          "name": "Gimbal / Steadicam operator"
         },
         {
-          "name": "Grip & rigging video",
-          "slug": "services-video-ecrane-grip-rigging-video"
+          "name": "Grip & rigging video"
         }
       ]
     },
     {
       "name": "FOTO & BOOTH",
-      "slug": "foto-booth",
       "items": [
         {
-          "name": "Fotograf eveniment",
-          "slug": "services-foto-booth-fotograf-eveniment"
+          "name": "Fotograf eveniment"
         },
         {
-          "name": "Second shooter / asistent foto",
-          "slug": "services-foto-booth-second-shooter-asistent-foto"
+          "name": "Second shooter / asistent foto"
         },
         {
-          "name": "Fotografie nuntă / cuplu",
-          "slug": "services-foto-booth-fotografie-nunta-cuplu"
+          "name": "Fotografie nuntă / cuplu"
         },
         {
-          "name": "Fotografie corporate",
-          "slug": "services-foto-booth-fotografie-corporate"
+          "name": "Fotografie corporate"
         },
         {
-          "name": "Fotografie produs / food",
-          "slug": "services-foto-booth-fotografie-produs-food"
+          "name": "Fotografie produs / food"
         },
         {
-          "name": "Fotografie lifestyle",
-          "slug": "services-foto-booth-fotografie-lifestyle"
+          "name": "Fotografie lifestyle"
         },
         {
-          "name": "Cabină foto (photo booth)",
-          "slug": "services-foto-booth-cabina-foto-photo-booth"
+          "name": "Cabină foto (photo booth)"
         },
         {
-          "name": "360 photo booth",
-          "slug": "services-foto-booth-360-photo-booth"
+          "name": "360 photo booth"
         },
         {
-          "name": "Mirror booth",
-          "slug": "services-foto-booth-mirror-booth"
+          "name": "Mirror booth"
         },
         {
-          "name": "Print foto instant",
-          "slug": "services-foto-booth-print-foto-instant"
+          "name": "Print foto instant"
         },
         {
-          "name": "Background & props personalizate",
-          "slug": "services-foto-booth-background-props-personalizate"
+          "name": "Background & props personalizate"
         },
         {
-          "name": "Editare & retuș foto",
-          "slug": "services-foto-booth-editare-retus-foto"
+          "name": "Editare & retuș foto"
         },
         {
-          "name": "Album foto premium",
-          "slug": "services-foto-booth-album-foto-premium"
+          "name": "Album foto premium"
         },
         {
-          "name": "Drone foto/video (pilot autorizat)",
-          "slug": "services-foto-booth-drone-fotovideo-pilot-autorizat"
+          "name": "Drone foto/video (pilot autorizat)"
         }
       ]
     },
     {
       "name": "STREAMING & HYBRID",
-      "slug": "streaming-hybrid",
       "items": [
         {
-          "name": "Live streaming multi-platform (YT/FB/IG/LinkedIn)",
-          "slug": "services-streaming-hybrid-live-streaming-multi-platform-ytfbiglinkedin"
+          "name": "Live streaming multi-platform (YT/FB/IG/LinkedIn)"
         },
         {
-          "name": "Platformă webinar / Q\\&A",
-          "slug": "services-streaming-hybrid-platforma-webinar-qa"
+          "name": "Platformă webinar / Q\\&A"
         },
         {
-          "name": "Streaming cu chat moderat",
-          "slug": "services-streaming-hybrid-streaming-cu-chat-moderat"
+          "name": "Streaming cu chat moderat"
         },
         {
-          "name": "Streaming securizat (paywall)",
-          "slug": "services-streaming-hybrid-streaming-securizat-paywall"
+          "name": "Streaming securizat (paywall)"
         },
         {
-          "name": "Servicii studio mobil",
-          "slug": "services-streaming-hybrid-servicii-studio-mobil"
+          "name": "Servicii studio mobil"
         },
         {
-          "name": "Captură prezentări & picture-in-picture",
-          "slug": "services-streaming-hybrid-captura-prezentari-picture-in-picture"
+          "name": "Captură prezentări & picture-in-picture"
         },
         {
-          "name": "Interpretare la distanță (RSI)",
-          "slug": "services-streaming-hybrid-interpretare-la-distanta-rsi"
+          "name": "Interpretare la distanță (RSI)"
         },
         {
-          "name": "Înregistrare și livrare on-demand",
-          "slug": "services-streaming-hybrid-inregistrare-si-livrare-on-demand"
+          "name": "Înregistrare și livrare on-demand"
         },
         {
-          "name": "Transcodare & CDN",
-          "slug": "services-streaming-hybrid-transcodare-cdn"
+          "name": "Transcodare & CDN"
         },
         {
-          "name": "Backup internet (bonding, 4G/5G)",
-          "slug": "services-streaming-hybrid-backup-internet-bonding-4g5g"
+          "name": "Backup internet (bonding, 4G/5G)"
         }
       ]
     },
     {
       "name": "DECOR & DESIGN",
-      "slug": "decor-design",
       "items": [
         {
-          "name": "Design tematic & scenografie",
-          "slug": "services-decor-design-design-tematic-scenografie"
+          "name": "Design tematic & scenografie"
         },
         {
-          "name": "Arcuri & backdrops",
-          "slug": "services-decor-design-arcuri-backdrops"
+          "name": "Arcuri & backdrops"
         },
         {
-          "name": "Photo corner / step & repeat",
-          "slug": "services-decor-design-photo-corner-step-repeat"
+          "name": "Photo corner / step & repeat"
         },
         {
-          "name": "Neon & litere luminoase",
-          "slug": "services-decor-design-neon-litere-luminoase"
+          "name": "Neon & litere luminoase"
         },
         {
-          "name": "Lanterns / fairy lights / ghirlande",
-          "slug": "services-decor-design-lanterns-fairy-lights-ghirlande"
+          "name": "Lanterns / fairy lights / ghirlande"
         },
         {
-          "name": "Draperii & pipe & drape",
-          "slug": "services-decor-design-draperii-pipe-drape"
+          "name": "Draperii & pipe & drape"
         },
         {
-          "name": "Tunel lumini",
-          "slug": "services-decor-design-tunel-lumini"
+          "name": "Tunel lumini"
         },
         {
-          "name": "Balustrade & baloane LED",
-          "slug": "services-decor-design-balustrade-baloane-led"
+          "name": "Balustrade & baloane LED"
         },
         {
-          "name": "Instalații artistice / custom build",
-          "slug": "services-decor-design-instalatii-artistice-custom-build"
+          "name": "Instalații artistice / custom build"
         },
         {
-          "name": "Planșe moodboard & 3D vizualizare",
-          "slug": "services-decor-design-planse-moodboard-3d-vizualizare"
+          "name": "Planșe moodboard & 3D vizualizare"
         },
         {
-          "name": "Consultanță cromatică & stil",
-          "slug": "services-decor-design-consultanta-cromatica-stil"
+          "name": "Consultanță cromatică & stil"
         }
       ]
     },
     {
       "name": "FLORI & BOTANICE",
-      "slug": "flori-botanice",
       "items": [
         {
-          "name": "Aranjamente florale (masă, scenă)",
-          "slug": "services-flori-botanice-aranjamente-florale-masa-scena"
+          "name": "Aranjamente florale (masă, scenă)"
         },
         {
-          "name": "Buchet mireasă / nașă",
-          "slug": "services-flori-botanice-buchet-mireasa-nasa"
+          "name": "Buchet mireasă / nașă"
         },
         {
-          "name": "Corsaje & butoniere",
-          "slug": "services-flori-botanice-corsaje-butoniere"
+          "name": "Corsaje & butoniere"
         },
         {
-          "name": "Arcadă florală",
-          "slug": "services-flori-botanice-arcada-florala"
+          "name": "Arcadă florală"
         },
         {
-          "name": "Flower wall",
-          "slug": "services-flori-botanice-flower-wall"
+          "name": "Flower wall"
         },
         {
-          "name": "Decor biserică",
-          "slug": "services-flori-botanice-decor-biserica"
+          "name": "Decor biserică"
         },
         {
-          "name": "Decor mașină",
-          "slug": "services-flori-botanice-decor-masina"
+          "name": "Decor mașină"
         },
         {
-          "name": "Plante în ghiveci / închiriere verdeață",
-          "slug": "services-flori-botanice-plante-in-ghiveci-inchiriere-verdeata"
+          "name": "Plante în ghiveci / închiriere verdeață"
         },
         {
-          "name": "Întreținere / reîmprospătare aranjamente",
-          "slug": "services-flori-botanice-intretinere-reimprospatare-aranjamente"
+          "name": "Întreținere / reîmprospătare aranjamente"
         }
       ]
     },
     {
       "name": "BALONISTICĂ & INSTALAȚII DECORATIVE",
-      "slug": "balonistica-instalatii-decorative",
       "items": [
         {
-          "name": "Arce & ghirlande baloane",
-          "slug": "services-balonistica-instalatii-decorative-arce-ghirlande-baloane"
+          "name": "Arce & ghirlande baloane"
         },
         {
-          "name": "Baloane heliu (litere, cifre)",
-          "slug": "services-balonistica-instalatii-decorative-baloane-heliu-litere-cifre"
+          "name": "Baloane heliu (litere, cifre)"
         },
         {
-          "name": "Baloane personalizate (logo/mesaj)",
-          "slug": "services-balonistica-instalatii-decorative-baloane-personalizate-logomesaj"
+          "name": "Baloane personalizate (logo/mesaj)"
         },
         {
-          "name": "Decor baloane copii (tematic)",
-          "slug": "services-balonistica-instalatii-decorative-decor-baloane-copii-tematic"
+          "name": "Decor baloane copii (tematic)"
         },
         {
-          "name": "Instalații baloane organice",
-          "slug": "services-balonistica-instalatii-decorative-instalatii-baloane-organice"
+          "name": "Instalații baloane organice"
         },
         {
-          "name": "Structuri baloane gigant",
-          "slug": "services-balonistica-instalatii-decorative-structuri-baloane-gigant"
+          "name": "Structuri baloane gigant"
         }
       ]
     },
     {
       "name": "ÎNCHIRIERE MOBILIER & LOGISTICĂ SALĂ",
-      "slug": "inchiriere-mobilier-logistica-sala",
       "items": [
         {
-          "name": "Mese (rotunde, dreptunghiulare, cocktail)",
-          "slug": "services-inchiriere-mobilier-logistica-sala-mese-rotunde-dreptunghiulare-cocktail"
+          "name": "Mese (rotunde, dreptunghiulare, cocktail)"
         },
         {
-          "name": "Scaune (Chiavari, cross-back, banqueting)",
-          "slug": "services-inchiriere-mobilier-logistica-sala-scaune-chiavari-cross-back-banqueting"
+          "name": "Scaune (Chiavari, cross-back, banqueting)"
         },
         {
-          "name": "Canapele & lounge",
-          "slug": "services-inchiriere-mobilier-logistica-sala-canapele-lounge"
+          "name": "Canapele & lounge"
         },
         {
-          "name": "Baruri mobile",
-          "slug": "services-inchiriere-mobilier-logistica-sala-baruri-mobile"
+          "name": "Baruri mobile"
         },
         {
-          "name": "Mese candy bar / coffee station",
-          "slug": "services-inchiriere-mobilier-logistica-sala-mese-candy-bar-coffee-station"
+          "name": "Mese candy bar / coffee station"
         },
         {
-          "name": "Dancefloor (LED / negru / alb)",
-          "slug": "services-inchiriere-mobilier-logistica-sala-dancefloor-led-negru-alb"
+          "name": "Dancefloor (LED / negru / alb)"
         },
         {
-          "name": "Scenă modulară (podium)",
-          "slug": "services-inchiriere-mobilier-logistica-sala-scena-modulara-podium"
+          "name": "Scenă modulară (podium)"
         },
         {
-          "name": "Covoare & alei (red carpet)",
-          "slug": "services-inchiriere-mobilier-logistica-sala-covoare-alei-red-carpet"
+          "name": "Covoare & alei (red carpet)"
         },
         {
-          "name": "Panouri expo & display",
-          "slug": "services-inchiriere-mobilier-logistica-sala-panouri-expo-display"
+          "name": "Panouri expo & display"
         },
         {
-          "name": "Garduri / bariere mulțime",
-          "slug": "services-inchiriere-mobilier-logistica-sala-garduri-bariere-multime"
+          "name": "Garduri / bariere mulțime"
         },
         {
-          "name": "Stâlpi ghidaj & cordoane",
-          "slug": "services-inchiriere-mobilier-logistica-sala-stalpi-ghidaj-cordoane"
+          "name": "Stâlpi ghidaj & cordoane"
         },
         {
-          "name": "Coat check / garderobă",
-          "slug": "services-inchiriere-mobilier-logistica-sala-coat-check-garderoba"
+          "name": "Coat check / garderobă"
         },
         {
-          "name": "Ventilație & încălzitoare",
-          "slug": "services-inchiriere-mobilier-logistica-sala-ventilatie-incalzitoare"
+          "name": "Ventilație & încălzitoare"
         },
         {
-          "name": "A/C mobil & climatizare",
-          "slug": "services-inchiriere-mobilier-logistica-sala-ac-mobil-climatizare"
+          "name": "A/C mobil & climatizare"
         },
         {
-          "name": "Toalete mobile premium",
-          "slug": "services-inchiriere-mobilier-logistica-sala-toalete-mobile-premium"
+          "name": "Toalete mobile premium"
         },
         {
-          "name": "Generator electric (închiriere)",
-          "slug": "services-inchiriere-mobilier-logistica-sala-generator-electric-inchiriere"
+          "name": "Generator electric (închiriere)"
         }
       ]
     },
     {
       "name": "TEXTILE, VESELĂ & TABLETOP",
-      "slug": "textile-vesela-tabletop",
       "items": [
         {
-          "name": "Fețe de masă & șervete",
-          "slug": "services-textile-vesela-tabletop-fete-de-masa-servete"
+          "name": "Fețe de masă & șervete"
         },
         {
-          "name": "Huse scaune & panglici",
-          "slug": "services-textile-vesela-tabletop-huse-scaune-panglici"
+          "name": "Huse scaune & panglici"
         },
         {
-          "name": "Drappaje & runner-e",
-          "slug": "services-textile-vesela-tabletop-drappaje-runner-e"
+          "name": "Drappaje & runner-e"
         },
         {
-          "name": "Veselă (farfurii, boluri)",
-          "slug": "services-textile-vesela-tabletop-vesela-farfurii-boluri"
+          "name": "Veselă (farfurii, boluri)"
         },
         {
-          "name": "Pahare (vin/șampanie/cocktail)",
-          "slug": "services-textile-vesela-tabletop-pahare-vinsampaniecocktail"
+          "name": "Pahare (vin/șampanie/cocktail)"
         },
         {
-          "name": "Tacamuri premium",
-          "slug": "services-textile-vesela-tabletop-tacamuri-premium"
+          "name": "Tacamuri premium"
         },
         {
-          "name": "Platouri & standuri",
-          "slug": "services-textile-vesela-tabletop-platouri-standuri"
+          "name": "Platouri & standuri"
         },
         {
-          "name": "Seturi coffee/tea",
-          "slug": "services-textile-vesela-tabletop-seturi-coffeetea"
+          "name": "Seturi coffee/tea"
         },
         {
-          "name": "Decor masă (vaze, lumânări)",
-          "slug": "services-textile-vesela-tabletop-decor-masa-vaze-lumanari"
+          "name": "Decor masă (vaze, lumânări)"
         },
         {
-          "name": "Numere masă & place cards",
-          "slug": "services-textile-vesela-tabletop-numere-masa-place-cards"
+          "name": "Numere masă & place cards"
         }
       ]
     },
     {
       "name": "PAVILIOANE, CORTURI & OUTDOOR",
-      "slug": "pavilioane-corturi-outdoor",
       "items": [
         {
-          "name": "Cort eveniment (pavilion, stretch, tipografie)",
-          "slug": "services-pavilioane-corturi-outdoor-cort-eveniment-pavilion-stretch-tipografie"
+          "name": "Cort eveniment (pavilion, stretch, tipografie)"
         },
         {
-          "name": "Pergole & umbrele mari",
-          "slug": "services-pavilioane-corturi-outdoor-pergole-umbrele-mari"
+          "name": "Pergole & umbrele mari"
         },
         {
-          "name": "Podea pentru cort",
-          "slug": "services-pavilioane-corturi-outdoor-podea-pentru-cort"
+          "name": "Podea pentru cort"
         },
         {
-          "name": "Ancorare & contragreutăți",
-          "slug": "services-pavilioane-corturi-outdoor-ancorare-contragreutati"
+          "name": "Ancorare & contragreutăți"
         },
         {
-          "name": "Pereți transparenți / black-out",
-          "slug": "services-pavilioane-corturi-outdoor-pereti-transparenti-black-out"
+          "name": "Pereți transparenți / black-out"
         },
         {
-          "name": "Încălzitoare exterioare",
-          "slug": "services-pavilioane-corturi-outdoor-incalzitoare-exterioare"
+          "name": "Încălzitoare exterioare"
         },
         {
-          "name": "Iluminat exterior (path lights)",
-          "slug": "services-pavilioane-corturi-outdoor-iluminat-exterior-path-lights"
+          "name": "Iluminat exterior (path lights)"
         },
         {
-          "name": "Permise & plan amplasare",
-          "slug": "services-pavilioane-corturi-outdoor-permise-plan-amplasare"
+          "name": "Permise & plan amplasare"
         }
       ]
     },
     {
       "name": "CATERING & MENIU",
-      "slug": "catering-meniu",
       "items": [
         {
-          "name": "Bucătar",
-          "slug": "services-catering-meniu-bucatar"
+          "name": "Bucătar"
         },
         {
-          "name": "Catering complet (plated / buffet)",
-          "slug": "services-catering-meniu-catering-complet-plated-buffet"
+          "name": "Catering complet (plated / buffet)"
         },
         {
-          "name": "Finger food & canapele",
-          "slug": "services-catering-meniu-finger-food-canapele"
+          "name": "Finger food & canapele"
         },
         {
-          "name": "Grill & BBQ on-site",
-          "slug": "services-catering-meniu-grill-bbq-on-site"
+          "name": "Grill & BBQ on-site"
         },
         {
-          "name": "Street food corner",
-          "slug": "services-catering-meniu-street-food-corner"
+          "name": "Street food corner"
         },
         {
-          "name": "Live cooking station",
-          "slug": "services-catering-meniu-live-cooking-station"
+          "name": "Live cooking station"
         },
         {
-          "name": "Vegetarian / Vegan / Raw-vegan",
-          "slug": "services-catering-meniu-vegetarian-vegan-raw-vegan"
+          "name": "Vegetarian / Vegan / Raw-vegan"
         },
         {
-          "name": "Menu copii",
-          "slug": "services-catering-meniu-menu-copii"
+          "name": "Menu copii"
         },
         {
-          "name": "Meniu tradițional românesc",
-          "slug": "services-catering-meniu-meniu-traditional-romanesc"
+          "name": "Meniu tradițional românesc"
         },
         {
-          "name": "Meniu internațional (italian, mexican, asiatic etc.)",
-          "slug": "services-catering-meniu-meniu-international-italian-mexican-asiatic-etc"
+          "name": "Meniu internațional (italian, mexican, asiatic etc.)"
         },
         {
-          "name": "Kosher / Halal (la cerere)",
-          "slug": "services-catering-meniu-kosher-halal-la-cerere"
+          "name": "Kosher / Halal (la cerere)"
         },
         {
-          "name": "Degustare & testare meniu",
-          "slug": "services-catering-meniu-degustare-testare-meniu"
+          "name": "Degustare & testare meniu"
         },
         {
-          "name": "Servicii chelneri & șefi de sală",
-          "slug": "services-catering-meniu-servicii-chelneri-sefi-de-sala"
+          "name": "Servicii chelneri & șefi de sală"
         },
         {
-          "name": "Echipă montaj / demontaj mise-en-place",
-          "slug": "services-catering-meniu-echipa-montaj-demontaj-mise-en-place"
+          "name": "Echipă montaj / demontaj mise-en-place"
         },
         {
-          "name": "Consultanță alergeni & dietetică",
-          "slug": "services-catering-meniu-consultanta-alergeni-dietetica"
+          "name": "Consultanță alergeni & dietetică"
         },
         {
-          "name": "Ospătar",
-          "slug": "services-catering-meniu-ospatar"
+          "name": "Ospătar"
         },
         {
-          "name": "Echipă ospătari",
-          "slug": "services-catering-meniu-echipa-ospatari"
+          "name": "Echipă ospătari"
         }
       ]
     },
     {
       "name": "BAR & BĂUTURI",
-      "slug": "bar-bauturi",
       "items": [
         {
-          "name": "Bar complet (open bar)",
-          "slug": "services-bar-bauturi-bar-complet-open-bar"
+          "name": "Bar complet (open bar)"
         },
         {
-          "name": "Mobile bar (design personalizat)",
-          "slug": "services-bar-bauturi-mobile-bar-design-personalizat"
+          "name": "Mobile bar (design personalizat)"
         },
         {
-          "name": "Barman",
-          "slug": "services-bar-bauturi-barman"
+          "name": "Barman"
         },
         {
-          "name": "Bartender / Mixologist",
-          "slug": "services-bar-bauturi-bartender-mixologist"
+          "name": "Bartender / Mixologist"
         },
         {
-          "name": "Barista & coffee station (espresso)",
-          "slug": "services-bar-bauturi-barista-coffee-station-espresso"
+          "name": "Barista & coffee station (espresso)"
         },
         {
-          "name": "Tea station & mocktail bar",
-          "slug": "services-bar-bauturi-tea-station-mocktail-bar"
+          "name": "Tea station & mocktail bar"
         },
         {
-          "name": "Somelier & degustare de vin",
-          "slug": "services-bar-bauturi-somelier-degustare-de-vin"
+          "name": "Somelier & degustare de vin"
         },
         {
-          "name": "Beer tap / craft beer bar",
-          "slug": "services-bar-bauturi-beer-tap-craft-beer-bar"
+          "name": "Beer tap / craft beer bar"
         },
         {
-          "name": "Prosecco / Aperitivo cart",
-          "slug": "services-bar-bauturi-prosecco-aperitivo-cart"
+          "name": "Prosecco / Aperitivo cart"
         },
         {
-          "name": "Șampanie & sabrage",
-          "slug": "services-bar-bauturi-sampanie-sabrage"
+          "name": "Șampanie & sabrage"
         },
         {
-          "name": "Țuică / pălincă corner (responsabil)",
-          "slug": "services-bar-bauturi-tuica-palinca-corner-responsabil"
+          "name": "Țuică / pălincă corner (responsabil)"
         },
         {
-          "name": "Bar fără alcool (dry bar)",
-          "slug": "services-bar-bauturi-bar-fara-alcool-dry-bar"
+          "name": "Bar fără alcool (dry bar)"
         },
         {
-          "name": "Gheață sculptată / sculpturi de gheață",
-          "slug": "services-bar-bauturi-gheata-sculptata-sculpturi-de-gheata"
+          "name": "Gheață sculptată / sculpturi de gheață"
         },
         {
-          "name": "Servicii licențe alcool & responsabilitate",
-          "slug": "services-bar-bauturi-servicii-licente-alcool-responsabilitate"
+          "name": "Servicii licențe alcool & responsabilitate"
         }
       ]
     },
     {
       "name": "DESERT & SPECIALITĂȚI",
-      "slug": "desert-specialitati",
       "items": [
         {
-          "name": "Candy bar",
-          "slug": "services-desert-specialitati-candy-bar"
+          "name": "Candy bar"
         },
         {
-          "name": "Fruit bar",
-          "slug": "services-desert-specialitati-fruit-bar"
+          "name": "Fruit bar"
         },
         {
-          "name": "Cheesecake / desert la pahar",
-          "slug": "services-desert-specialitati-cheesecake-desert-la-pahar"
+          "name": "Cheesecake / desert la pahar"
         },
         {
-          "name": "Fântână de ciocolată",
-          "slug": "services-desert-specialitati-fantana-de-ciocolata"
+          "name": "Fântână de ciocolată"
         },
         {
-          "name": "Tort nuntă / botez (cake designer)",
-          "slug": "services-desert-specialitati-tort-nunta-botez-cake-designer"
+          "name": "Tort nuntă / botez (cake designer)"
         },
         {
-          "name": "Înghețată artizanală (gelato cart)",
-          "slug": "services-desert-specialitati-inghetata-artizanala-gelato-cart"
+          "name": "Înghețată artizanală (gelato cart)"
         },
         {
-          "name": "Clătite & waffles station",
-          "slug": "services-desert-specialitati-clatite-waffles-station"
+          "name": "Clătite & waffles station"
         },
         {
-          "name": "Popcorn & cotton candy",
-          "slug": "services-desert-specialitati-popcorn-cotton-candy"
+          "name": "Popcorn & cotton candy"
         },
         {
-          "name": "Prăjituri tradiționale",
-          "slug": "services-desert-specialitati-prajituri-traditionale"
+          "name": "Prăjituri tradiționale"
         },
         {
-          "name": "Macarons / eclere / mini tarte",
-          "slug": "services-desert-specialitati-macarons-eclere-mini-tarte"
+          "name": "Macarons / eclere / mini tarte"
         }
       ]
     },
     {
       "name": "FOOD TRUCKS & POP‑UP",
-      "slug": "food-trucks-popup",
       "items": [
         {
-          "name": "Food truck burgeri",
-          "slug": "services-food-trucks-popup-food-truck-burgeri"
+          "name": "Food truck burgeri"
         },
         {
-          "name": "Food truck pizza / cuptor mobil",
-          "slug": "services-food-trucks-popup-food-truck-pizza-cuptor-mobil"
+          "name": "Food truck pizza / cuptor mobil"
         },
         {
-          "name": "Food truck paste",
-          "slug": "services-food-trucks-popup-food-truck-paste"
+          "name": "Food truck paste"
         },
         {
-          "name": "Food truck mexican",
-          "slug": "services-food-trucks-popup-food-truck-mexican"
+          "name": "Food truck mexican"
         },
         {
-          "name": "Food truck asiatic",
-          "slug": "services-food-trucks-popup-food-truck-asiatic"
+          "name": "Food truck asiatic"
         },
         {
-          "name": "Food truck vegan",
-          "slug": "services-food-trucks-popup-food-truck-vegan"
+          "name": "Food truck vegan"
         },
         {
-          "name": "Food truck cafea",
-          "slug": "services-food-trucks-popup-food-truck-cafea"
+          "name": "Food truck cafea"
         },
         {
-          "name": "Gelato cart / înghețată",
-          "slug": "services-food-trucks-popup-gelato-cart-inghetata"
+          "name": "Gelato cart / înghețată"
         },
         {
-          "name": "Bar mobil prosecco",
-          "slug": "services-food-trucks-popup-bar-mobil-prosecco"
+          "name": "Bar mobil prosecco"
         },
         {
-          "name": "Vin & brânzeturi pop-up",
-          "slug": "services-food-trucks-popup-vin-branzeturi-pop-up"
+          "name": "Vin & brânzeturi pop-up"
         }
       ]
     },
     {
       "name": "BEAUTY & STYLING",
-      "slug": "beauty-styling",
       "items": [
         {
-          "name": "Make-up artist (MUA)",
-          "slug": "services-beauty-styling-make-up-artist-mua"
+          "name": "Make-up artist (MUA)"
         },
         {
-          "name": "Hair stylist",
-          "slug": "services-beauty-styling-hair-stylist"
+          "name": "Hair stylist"
         },
         {
-          "name": "Barber corner (gentlemen)",
-          "slug": "services-beauty-styling-barber-corner-gentlemen"
+          "name": "Barber corner (gentlemen)"
         },
         {
-          "name": "Nail artist",
-          "slug": "services-beauty-styling-nail-artist"
+          "name": "Nail artist"
         },
         {
-          "name": "Stylist vestimentar",
-          "slug": "services-beauty-styling-stylist-vestimentar"
+          "name": "Stylist vestimentar"
         },
         {
-          "name": "Consultanță ținută mireasă / mire",
-          "slug": "services-beauty-styling-consultanta-tinuta-mireasa-mire"
+          "name": "Consultanță ținută mireasă / mire"
         },
         {
-          "name": "Atelier retuș & croitor pe loc",
-          "slug": "services-beauty-styling-atelier-retus-croitor-pe-loc"
+          "name": "Atelier retuș & croitor pe loc"
         },
         {
-          "name": "Body art / face painting (adulți)",
-          "slug": "services-beauty-styling-body-art-face-painting-adulti"
+          "name": "Body art / face painting (adulți)"
         }
       ]
     },
     {
       "name": "COPII & FAMILIE",
-      "slug": "copii-familie",
       "items": [
         {
-          "name": "Animator copii",
-          "slug": "services-copii-familie-animator-copii"
+          "name": "Animator copii"
         },
         {
-          "name": "Magician copii",
-          "slug": "services-copii-familie-magician-copii"
+          "name": "Magician copii"
         },
         {
-          "name": "Pictură pe față",
-          "slug": "services-copii-familie-pictura-pe-fata"
+          "name": "Pictură pe față"
         },
         {
-          "name": "Modelaj baloane",
-          "slug": "services-copii-familie-modelaj-baloane"
+          "name": "Modelaj baloane"
         },
         {
-          "name": "Atelier DIY pentru copii",
-          "slug": "services-copii-familie-atelier-diy-pentru-copii"
+          "name": "Atelier DIY pentru copii"
         },
         {
-          "name": "Baby gym / joacă senzorială",
-          "slug": "services-copii-familie-baby-gym-joaca-senzoriala"
+          "name": "Baby gym / joacă senzorială"
         },
         {
-          "name": "Mini disco copii (DJ kids)",
-          "slug": "services-copii-familie-mini-disco-copii-dj-kids"
+          "name": "Mini disco copii (DJ kids)"
         },
         {
-          "name": "Teatru de păpuși",
-          "slug": "services-copii-familie-teatru-de-papusi"
+          "name": "Teatru de păpuși"
         },
         {
-          "name": "Corner Lego / board games",
-          "slug": "services-copii-familie-corner-lego-board-games"
+          "name": "Corner Lego / board games"
         },
         {
-          "name": "Carusel / gonflabile (supraveghere inclusă)",
-          "slug": "services-copii-familie-carusel-gonflabile-supraveghere-inclusa"
+          "name": "Carusel / gonflabile (supraveghere inclusă)"
         },
         {
-          "name": "Mascote & costume",
-          "slug": "services-copii-familie-mascote-costume"
+          "name": "Mascote & costume"
         },
         {
-          "name": "Candy bar copii sănătos",
-          "slug": "services-copii-familie-candy-bar-copii-sanatos"
+          "name": "Candy bar copii sănătos"
         }
       ]
     },
     {
       "name": "RELIGIOS & CEREMONIAL (UNDE ESTE PERMIS)",
-      "slug": "religios-ceremonial-unde-este-permis",
       "items": [
         {
-          "name": "Oficiant ceremonie simbolică",
-          "slug": "services-religios-ceremonial-unde-este-permis-oficiant-ceremonie-simbolica"
+          "name": "Oficiant ceremonie simbolică"
         },
         {
-          "name": "Consilier premarital",
-          "slug": "services-religios-ceremonial-unde-este-permis-consilier-premarital"
+          "name": "Consilier premarital"
         },
         {
-          "name": "Cor bisericesc (extern)",
-          "slug": "services-religios-ceremonial-unde-este-permis-cor-bisericesc-extern"
+          "name": "Cor bisericesc (extern)"
         },
         {
-          "name": "Clopotari / fanfară ceremonială",
-          "slug": "services-religios-ceremonial-unde-este-permis-clopotari-fanfara-ceremoniala"
+          "name": "Clopotari / fanfară ceremonială"
         },
         {
-          "name": "Aranjamente & protocol ceremonie",
-          "slug": "services-religios-ceremonial-unde-este-permis-aranjamente-protocol-ceremonie"
+          "name": "Aranjamente & protocol ceremonie"
         },
         {
-          "name": "Tradiții & obiceiuri (coordonare)",
-          "slug": "services-religios-ceremonial-unde-este-permis-traditii-obiceiuri-coordonare"
+          "name": "Tradiții & obiceiuri (coordonare)"
         }
       ]
     },
     {
       "name": "ACTIVĂRI DE BRAND, MARKETING & PR",
-      "slug": "activari-de-brand-marketing-pr",
       "items": [
         {
-          "name": "Strategie & concept activare",
-          "slug": "services-activari-de-brand-marketing-pr-strategie-concept-activare"
+          "name": "Strategie & concept activare"
         },
         {
-          "name": "PR & relații cu presa",
-          "slug": "services-activari-de-brand-marketing-pr-pr-relatii-cu-presa"
+          "name": "PR & relații cu presa"
         },
         {
-          "name": "Influencer marketing (eveniment)",
-          "slug": "services-activari-de-brand-marketing-pr-influencer-marketing-eveniment"
+          "name": "Influencer marketing (eveniment)"
         },
         {
-          "name": "Social media coverage (reel/foto/live)",
-          "slug": "services-activari-de-brand-marketing-pr-social-media-coverage-reelfotolive"
+          "name": "Social media coverage (reel/foto/live)"
         },
         {
-          "name": "Copywriting & content live",
-          "slug": "services-activari-de-brand-marketing-pr-copywriting-content-live"
+          "name": "Copywriting & content live"
         },
         {
-          "name": "Hostess & promoteri",
-          "slug": "services-activari-de-brand-marketing-pr-hostess-promoteri"
+          "name": "Hostess & promoteri"
         },
         {
-          "name": "Sampling & demonstrații",
-          "slug": "services-activari-de-brand-marketing-pr-sampling-demonstratii"
+          "name": "Sampling & demonstrații"
         },
         {
-          "name": "Brand ambassadors",
-          "slug": "services-activari-de-brand-marketing-pr-brand-ambassadors"
+          "name": "Brand ambassadors"
         },
         {
-          "name": "Studiu de piață / chestionare",
-          "slug": "services-activari-de-brand-marketing-pr-studiu-de-piata-chestionare"
+          "name": "Studiu de piață / chestionare"
         },
         {
-          "name": "Media buying (OOH/online)",
-          "slug": "services-activari-de-brand-marketing-pr-media-buying-oohonline"
+          "name": "Media buying (OOH/online)"
         },
         {
-          "name": "Analitică post-eveniment (raport)",
-          "slug": "services-activari-de-brand-marketing-pr-analitica-post-eveniment-raport"
+          "name": "Analitică post-eveniment (raport)"
         }
       ]
     },
     {
       "name": "TIPAR, SEMNALISTICĂ & MERCH",
-      "slug": "tipar-semnalistica-merch",
       "items": [
         {
-          "name": "Invitații & papetărie (place cards, meniuri)",
-          "slug": "services-tipar-semnalistica-merch-invitatii-papetarie-place-cards-meniuri"
+          "name": "Invitații & papetărie (place cards, meniuri)"
         },
         {
-          "name": "Badge-uri & ecusoane",
-          "slug": "services-tipar-semnalistica-merch-badge-uri-ecusoane"
+          "name": "Badge-uri & ecusoane"
         },
         {
-          "name": "Print roll-up / mesh / bannere",
-          "slug": "services-tipar-semnalistica-merch-print-roll-up-mesh-bannere"
+          "name": "Print roll-up / mesh / bannere"
         },
         {
-          "name": "Tablouri șevalet / welcome signs",
-          "slug": "services-tipar-semnalistica-merch-tablouri-sevalet-welcome-signs"
+          "name": "Tablouri șevalet / welcome signs"
         },
         {
-          "name": "Wayfinding & semnalistică",
-          "slug": "services-tipar-semnalistica-merch-wayfinding-semnalistica"
+          "name": "Wayfinding & semnalistică"
         },
         {
-          "name": "Decupaje 3D / litere volumetrice",
-          "slug": "services-tipar-semnalistica-merch-decupaje-3d-litere-volumetrice"
+          "name": "Decupaje 3D / litere volumetrice"
         },
         {
-          "name": "Merchandising (tricouri, tote bags)",
-          "slug": "services-tipar-semnalistica-merch-merchandising-tricouri-tote-bags"
+          "name": "Merchandising (tricouri, tote bags)"
         },
         {
-          "name": "Gravură / personalizare cadouri",
-          "slug": "services-tipar-semnalistica-merch-gravura-personalizare-cadouri"
+          "name": "Gravură / personalizare cadouri"
         },
         {
-          "name": "Photo print instant & magnet",
-          "slug": "services-tipar-semnalistica-merch-photo-print-instant-magnet"
+          "name": "Photo print instant & magnet"
         },
         {
-          "name": "Stickere podea / ferestre",
-          "slug": "services-tipar-semnalistica-merch-stickere-podea-ferestre"
+          "name": "Stickere podea / ferestre"
         }
       ]
     },
     {
       "name": "TEHNOLOGIE & EXPERIENȚE INTERACTIVE",
-      "slug": "tehnologie-experiente-interactive",
       "items": [
         {
-          "name": "Photo booth AR / green screen",
-          "slug": "services-tehnologie-experiente-interactive-photo-booth-ar-green-screen"
+          "name": "Photo booth AR / green screen"
         },
         {
-          "name": "VR experience (căști, stații)",
-          "slug": "services-tehnologie-experiente-interactive-vr-experience-casti-statii"
+          "name": "VR experience (căști, stații)"
         },
         {
-          "name": "Simulatoare (racing, zbor)",
-          "slug": "services-tehnologie-experiente-interactive-simulatoare-racing-zbor"
+          "name": "Simulatoare (racing, zbor)"
         },
         {
-          "name": "Console gaming corner",
-          "slug": "services-tehnologie-experiente-interactive-console-gaming-corner"
+          "name": "Console gaming corner"
         },
         {
-          "name": "Hologramă / Fanii holografici",
-          "slug": "services-tehnologie-experiente-interactive-holograma-fanii-holografici"
+          "name": "Hologramă / Fanii holografici"
         },
         {
-          "name": "Kinetic lights / roboți",
-          "slug": "services-tehnologie-experiente-interactive-kinetic-lights-roboti"
+          "name": "Kinetic lights / roboți"
         },
         {
-          "name": "Aplicație eveniment (agenda, hărți)",
-          "slug": "services-tehnologie-experiente-interactive-aplicatie-eveniment-agenda-harti"
+          "name": "Aplicație eveniment (agenda, hărți)"
         },
         {
-          "name": "Q\\&A live / polling / quiz",
-          "slug": "services-tehnologie-experiente-interactive-qa-live-polling-quiz"
+          "name": "Q\\&A live / polling / quiz"
         },
         {
-          "name": "Gamificare & treasure hunt digital",
-          "slug": "services-tehnologie-experiente-interactive-gamificare-treasure-hunt-digital"
+          "name": "Gamificare & treasure hunt digital"
         },
         {
-          "name": "Brățări LED sincronizate",
-          "slug": "services-tehnologie-experiente-interactive-bratari-led-sincronizate"
+          "name": "Brățări LED sincronizate"
         },
         {
-          "name": "Beacon / NFC activări",
-          "slug": "services-tehnologie-experiente-interactive-beacon-nfc-activari"
+          "name": "Beacon / NFC activări"
         },
         {
-          "name": "Chatbot / AI info desk",
-          "slug": "services-tehnologie-experiente-interactive-chatbot-ai-info-desk"
+          "name": "Chatbot / AI info desk"
         }
       ]
     },
     {
       "name": "TEAM BUILDING & FACILITATORI",
-      "slug": "team-building-facilitatori",
       "items": [
         {
-          "name": "Facilitator team building",
-          "slug": "services-team-building-facilitatori-facilitator-team-building"
+          "name": "Facilitator team building"
         },
         {
-          "name": "Ateliere creative (ceramică, pictură)",
-          "slug": "services-team-building-facilitatori-ateliere-creative-ceramica-pictura"
+          "name": "Ateliere creative (ceramică, pictură)"
         },
         {
-          "name": "Ateliere culinare & mixologie",
-          "slug": "services-team-building-facilitatori-ateliere-culinare-mixologie"
+          "name": "Ateliere culinare & mixologie"
         },
         {
-          "name": "Escape room mobil",
-          "slug": "services-team-building-facilitatori-escape-room-mobil"
+          "name": "Escape room mobil"
         },
         {
-          "name": "Vânătoare de comori (outdoor)",
-          "slug": "services-team-building-facilitatori-vanatoare-de-comori-outdoor"
+          "name": "Vânătoare de comori (outdoor)"
         },
         {
-          "name": "Olimpiade corporate",
-          "slug": "services-team-building-facilitatori-olimpiade-corporate"
+          "name": "Olimpiade corporate"
         },
         {
-          "name": "Workshop improv & public speaking",
-          "slug": "services-team-building-facilitatori-workshop-improv-public-speaking"
+          "name": "Workshop improv & public speaking"
         },
         {
-          "name": "Coaching de echipă",
-          "slug": "services-team-building-facilitatori-coaching-de-echipa"
+          "name": "Coaching de echipă"
         },
         {
-          "name": "Yogă / mindfulness de grup",
-          "slug": "services-team-building-facilitatori-yoga-mindfulness-de-grup"
+          "name": "Yogă / mindfulness de grup"
         },
         {
-          "name": "Drumeții ghidate",
-          "slug": "services-team-building-facilitatori-drumetii-ghidate"
+          "name": "Drumeții ghidate"
         },
         {
-          "name": "CSR – voluntariat organizat",
-          "slug": "services-team-building-facilitatori-csr-voluntariat-organizat"
+          "name": "CSR – voluntariat organizat"
         }
       ]
     },
     {
       "name": "SECURITATE, SIGURANȚĂ & MEDICAL",
-      "slug": "securitate-siguranta-medical",
       "items": [
         {
-          "name": "Agent securitate eveniment",
-          "slug": "services-securitate-siguranta-medical-agent-securitate-eveniment"
+          "name": "Agent securitate eveniment"
         },
         {
-          "name": "Bodyguard VIP",
-          "slug": "services-securitate-siguranta-medical-bodyguard-vip"
+          "name": "Bodyguard VIP"
         },
         {
-          "name": "Control acces & counting",
-          "slug": "services-securitate-siguranta-medical-control-acces-counting"
+          "name": "Control acces & counting"
         },
         {
-          "name": "Pază perimetru & backstage",
-          "slug": "services-securitate-siguranta-medical-paza-perimetru-backstage"
+          "name": "Pază perimetru & backstage"
         },
         {
-          "name": "Stingătoare & pompieri (servicii private)",
-          "slug": "services-securitate-siguranta-medical-stingatoare-pompieri-servicii-private"
+          "name": "Stingătoare & pompieri (servicii private)"
         },
         {
-          "name": "Ambulanță / paramedici / punct de prim ajutor",
-          "slug": "services-securitate-siguranta-medical-ambulanta-paramedici-punct-de-prim-ajutor"
+          "name": "Ambulanță / paramedici / punct de prim ajutor"
         },
         {
-          "name": "Asistent medical on-site",
-          "slug": "services-securitate-siguranta-medical-asistent-medical-on-site"
+          "name": "Asistent medical on-site"
         },
         {
-          "name": "Plan PSI / ISU (consultant)",
-          "slug": "services-securitate-siguranta-medical-plan-psi-isu-consultant"
+          "name": "Plan PSI / ISU (consultant)"
         },
         {
-          "name": "Supraveghere video perimetrală",
-          "slug": "services-securitate-siguranta-medical-supraveghere-video-perimetrala"
+          "name": "Supraveghere video perimetrală"
         },
         {
-          "name": "Protecție date & zone foto-free",
-          "slug": "services-securitate-siguranta-medical-protectie-date-zone-foto-free"
+          "name": "Protecție date & zone foto-free"
         }
       ]
     },
     {
       "name": "CURĂȚENIE, SANITAȚIE & WASTE",
-      "slug": "curatenie-sanitatie-waste",
       "items": [
         {
-          "name": "Echipă curățenie pe durata evenimentului",
-          "slug": "services-curatenie-sanitatie-waste-echipa-curatenie-pe-durata-evenimentului"
+          "name": "Echipă curățenie pe durata evenimentului"
         },
         {
-          "name": "Curățenie înainte/după eveniment",
-          "slug": "services-curatenie-sanitatie-waste-curatenie-inaintedupa-eveniment"
+          "name": "Curățenie înainte/după eveniment"
         },
         {
-          "name": "Toalete mobile & stații igienă",
-          "slug": "services-curatenie-sanitatie-waste-toalete-mobile-statii-igiena"
+          "name": "Toalete mobile & stații igienă"
         },
         {
-          "name": "Colectare selectivă & management deșeuri",
-          "slug": "services-curatenie-sanitatie-waste-colectare-selectiva-management-deseuri"
+          "name": "Colectare selectivă & management deșeuri"
         },
         {
-          "name": "Dezinfecție & consumabile",
-          "slug": "services-curatenie-sanitatie-waste-dezinfectie-consumabile"
+          "name": "Dezinfecție & consumabile"
         },
         {
-          "name": "Mașini de spălat pahare / veselă on-site",
-          "slug": "services-curatenie-sanitatie-waste-masini-de-spalat-pahare-vesela-on-site"
+          "name": "Mașini de spălat pahare / veselă on-site"
         }
       ]
     },
     {
       "name": "TRANSPORT & LOGISTICĂ",
-      "slug": "transport-logistica",
       "items": [
         {
-          "name": "Transfer invitați (microbuze, autocare)",
-          "slug": "services-transport-logistica-transfer-invitati-microbuze-autocare"
+          "name": "Transfer invitați (microbuze, autocare)"
         },
         {
-          "name": "Șoferi privați",
-          "slug": "services-transport-logistica-soferi-privati"
+          "name": "Șoferi privați"
         },
         {
-          "name": "Valet parking",
-          "slug": "services-transport-logistica-valet-parking"
+          "name": "Valet parking"
         },
         {
-          "name": "Logistică marfă / manipulare",
-          "slug": "services-transport-logistica-logistica-marfa-manipulare"
+          "name": "Logistică marfă / manipulare"
         },
         {
-          "name": "Motostivuitor & operator",
-          "slug": "services-transport-logistica-motostivuitor-operator"
+          "name": "Motostivuitor & operator"
         },
         {
-          "name": "Ridicare & livrare echipamente",
-          "slug": "services-transport-logistica-ridicare-livrare-echipamente"
+          "name": "Ridicare & livrare echipamente"
         },
         {
-          "name": "Curier rapid documente",
-          "slug": "services-transport-logistica-curier-rapid-documente"
+          "name": "Curier rapid documente"
         },
         {
-          "name": "Parcare biciclete / stații bike",
-          "slug": "services-transport-logistica-parcare-biciclete-statii-bike"
+          "name": "Parcare biciclete / stații bike"
         },
         {
-          "name": "Coordenare acces camioane & ferestre timp",
-          "slug": "services-transport-logistica-coordenare-acces-camioane-ferestre-timp"
+          "name": "Coordenare acces camioane & ferestre timp"
         }
       ]
     },
     {
       "name": "RECEPȚIE, GUEST MANAGEMENT & PROTOCOL",
-      "slug": "receptie-guest-management-protocol",
       "items": [
         {
-          "name": "Hostess / întâmpinare",
-          "slug": "services-receptie-guest-management-protocol-hostess-intampinare"
+          "name": "Hostess / întâmpinare"
         },
         {
-          "name": "Registratură & acreditări",
-          "slug": "services-receptie-guest-management-protocol-registratura-acreditari"
+          "name": "Registratură & acreditări"
         },
         {
-          "name": "Check-in digital (QR)",
-          "slug": "services-receptie-guest-management-protocol-check-in-digital-qr"
+          "name": "Check-in digital (QR)"
         },
         {
-          "name": "Listă invitați & seating",
-          "slug": "services-receptie-guest-management-protocol-lista-invitati-seating"
+          "name": "Listă invitați & seating"
         },
         {
-          "name": "Coat check / garderobă",
-          "slug": "services-receptie-guest-management-protocol-coat-check-garderoba"
+          "name": "Coat check / garderobă"
         },
         {
-          "name": "Cadouri invitați (gift bags)",
-          "slug": "services-receptie-guest-management-protocol-cadouri-invitati-gift-bags"
+          "name": "Cadouri invitați (gift bags)"
         },
         {
-          "name": "VIP hospitality / green room catering",
-          "slug": "services-receptie-guest-management-protocol-vip-hospitality-green-room-catering"
+          "name": "VIP hospitality / green room catering"
         },
         {
-          "name": "Protocol oficialități",
-          "slug": "services-receptie-guest-management-protocol-protocol-oficialitati"
+          "name": "Protocol oficialități"
         },
         {
-          "name": "Traducători / Interpreți",
-          "slug": "services-receptie-guest-management-protocol-traducatori-interpreti"
+          "name": "Traducători / Interpreți"
         },
         {
-          "name": "Servicii ghidaj multilingv",
-          "slug": "services-receptie-guest-management-protocol-servicii-ghidaj-multilingv"
+          "name": "Servicii ghidaj multilingv"
         }
       ]
     },
     {
       "name": "BILETE, ACCES & MONETIZARE",
-      "slug": "bilete-acces-monetizare",
       "items": [
         {
-          "name": "Soluție ticketing (online/offline)",
-          "slug": "services-bilete-acces-monetizare-solutie-ticketing-onlineoffline"
+          "name": "Soluție ticketing (online/offline)"
         },
         {
-          "name": "Scanare bilete (hardware)",
-          "slug": "services-bilete-acces-monetizare-scanare-bilete-hardware"
+          "name": "Scanare bilete (hardware)"
         },
         {
-          "name": "Abonamente & brățări RFID/NFC",
-          "slug": "services-bilete-acces-monetizare-abonamente-bratari-rfidnfc"
+          "name": "Abonamente & brățări RFID/NFC"
         },
         {
-          "name": "Cashless payments (POS & top-up)",
-          "slug": "services-bilete-acces-monetizare-cashless-payments-pos-top-up"
+          "name": "Cashless payments (POS & top-up)"
         },
         {
-          "name": "Merch POS & inventar",
-          "slug": "services-bilete-acces-monetizare-merch-pos-inventar"
+          "name": "Merch POS & inventar"
         },
         {
-          "name": "Raportare vânzări & reconcilieri",
-          "slug": "services-bilete-acces-monetizare-raportare-vanzari-reconcilieri"
+          "name": "Raportare vânzări & reconcilieri"
         }
       ]
     },
     {
       "name": "PERMISE, LEGAL & ASIGURĂRI",
-      "slug": "permise-legal-asigurari",
       "items": [
         {
-          "name": "Obținere avize (Primărie, ISU, DSP)",
-          "slug": "services-permise-legal-asigurari-obtinere-avize-primarie-isu-dsp"
+          "name": "Obținere avize (Primărie, ISU, DSP)"
         },
         {
-          "name": "Drepturi autor (UCMR-ADA, CREDIDAM)",
-          "slug": "services-permise-legal-asigurari-drepturi-autor-ucmr-ada-credidam"
+          "name": "Drepturi autor (UCMR-ADA, CREDIDAM)"
         },
         {
-          "name": "Notificări poliție / jandarmerie",
-          "slug": "services-permise-legal-asigurari-notificari-politie-jandarmerie"
+          "name": "Notificări poliție / jandarmerie"
         },
         {
-          "name": "Asigurare eveniment (broker)",
-          "slug": "services-permise-legal-asigurari-asigurare-eveniment-broker"
+          "name": "Asigurare eveniment (broker)"
         },
         {
-          "name": "Contracte & GDPR consultanță",
-          "slug": "services-permise-legal-asigurari-contracte-gdpr-consultanta"
+          "name": "Contracte & GDPR consultanță"
         },
         {
-          "name": "Evaluare risc & securitate muncă",
-          "slug": "services-permise-legal-asigurari-evaluare-risc-securitate-munca"
+          "name": "Evaluare risc & securitate muncă"
         },
         {
-          "name": "Plan trafic & ocupare domeniu public",
-          "slug": "services-permise-legal-asigurari-plan-trafic-ocupare-domeniu-public"
+          "name": "Plan trafic & ocupare domeniu public"
         }
       ]
     },
     {
       "name": "SERVICII PENTRU EVENIMENTE SPORTIVE",
-      "slug": "servicii-pentru-evenimente-sportive",
       "items": [
         {
-          "name": "Arbitri & oficiali",
-          "slug": "services-servicii-pentru-evenimente-sportive-arbitri-oficiali"
+          "name": "Arbitri & oficiali"
         },
         {
-          "name": "Cronometraj & rezultate",
-          "slug": "services-servicii-pentru-evenimente-sportive-cronometraj-rezultate"
+          "name": "Cronometraj & rezultate"
         },
         {
-          "name": "Închiriere porți, filee, jaloane",
-          "slug": "services-servicii-pentru-evenimente-sportive-inchiriere-porti-filee-jaloane"
+          "name": "Închiriere porți, filee, jaloane"
         },
         {
-          "name": "Baraj de protecție / garduri",
-          "slug": "services-servicii-pentru-evenimente-sportive-baraj-de-protectie-garduri"
+          "name": "Baraj de protecție / garduri"
         },
         {
-          "name": "Speaker stadion / MC sport",
-          "slug": "services-servicii-pentru-evenimente-sportive-speaker-stadion-mc-sport"
+          "name": "Speaker stadion / MC sport"
         },
         {
-          "name": "Foto sport & live scoring",
-          "slug": "services-servicii-pentru-evenimente-sportive-foto-sport-live-scoring"
+          "name": "Foto sport & live scoring"
         },
         {
-          "name": "Medalii, cupe & podium",
-          "slug": "services-servicii-pentru-evenimente-sportive-medalii-cupe-podium"
+          "name": "Medalii, cupe & podium"
         },
         {
-          "name": "Masaj sportiv & recuperare",
-          "slug": "services-servicii-pentru-evenimente-sportive-masaj-sportiv-recuperare"
+          "name": "Masaj sportiv & recuperare"
         },
         {
-          "name": "Water stations & puncte alimentare",
-          "slug": "services-servicii-pentru-evenimente-sportive-water-stations-puncte-alimentare"
+          "name": "Water stations & puncte alimentare"
         }
       ]
     },
     {
       "name": "SERVICII PENTRU EXPOZIȚII & STANDURI",
-      "slug": "servicii-pentru-expozitii-standuri",
       "items": [
         {
-          "name": "Design stand expozițional",
-          "slug": "services-servicii-pentru-expozitii-standuri-design-stand-expozitional"
+          "name": "Design stand expozițional"
         },
         {
-          "name": "Construire stand (octanorm/custom)",
-          "slug": "services-servicii-pentru-expozitii-standuri-construire-stand-octanormcustom"
+          "name": "Construire stand (octanorm/custom)"
         },
         {
-          "name": "Electrică stand & prize",
-          "slug": "services-servicii-pentru-expozitii-standuri-electrica-stand-prize"
+          "name": "Electrică stand & prize"
         },
         {
-          "name": "Internet & networking stand",
-          "slug": "services-servicii-pentru-expozitii-standuri-internet-networking-stand"
+          "name": "Internet & networking stand"
         },
         {
-          "name": "Hostess & promoteri stand",
-          "slug": "services-servicii-pentru-expozitii-standuri-hostess-promoteri-stand"
+          "name": "Hostess & promoteri stand"
         },
         {
-          "name": "Lead capture & CRM",
-          "slug": "services-servicii-pentru-expozitii-standuri-lead-capture-crm"
+          "name": "Lead capture & CRM"
         },
         {
-          "name": "Depozitare material expo",
-          "slug": "services-servicii-pentru-expozitii-standuri-depozitare-material-expo"
+          "name": "Depozitare material expo"
         },
         {
-          "name": "Transport și montaj/demontaj",
-          "slug": "services-servicii-pentru-expozitii-standuri-transport-si-montajdemontaj"
+          "name": "Transport și montaj/demontaj"
         }
       ]
     },
     {
       "name": "PET‑FRIENDLY & ANIMALE (UNDE PERMIS)",
-      "slug": "petfriendly-animale-unde-permis",
       "items": [
         {
-          "name": "Pet-sitting eveniment",
-          "slug": "services-petfriendly-animale-unde-permis-pet-sitting-eveniment"
+          "name": "Pet-sitting eveniment"
         },
         {
-          "name": "Handler câini (nuntă/foto)",
-          "slug": "services-petfriendly-animale-unde-permis-handler-caini-nuntafoto"
+          "name": "Handler câini (nuntă/foto)"
         },
         {
-          "name": "Zonă relaxare animale (outdoor)",
-          "slug": "services-petfriendly-animale-unde-permis-zona-relaxare-animale-outdoor"
+          "name": "Zonă relaxare animale (outdoor)"
         },
         {
-          "name": "Bar de apă & goodies pentru animale",
-          "slug": "services-petfriendly-animale-unde-permis-bar-de-apa-goodies-pentru-animale"
+          "name": "Bar de apă & goodies pentru animale"
         },
         {
-          "name": "Fotografie cu animale de companie",
-          "slug": "services-petfriendly-animale-unde-permis-fotografie-cu-animale-de-companie"
+          "name": "Fotografie cu animale de companie"
         }
       ]
     },
     {
       "name": "WELLBEING & RELAXARE",
-      "slug": "wellbeing-relaxare",
       "items": [
         {
-          "name": "Masaj chair / neck",
-          "slug": "services-wellbeing-relaxare-masaj-chair-neck"
+          "name": "Masaj chair / neck"
         },
         {
-          "name": "Colț mindfulness / meditație ghidată",
-          "slug": "services-wellbeing-relaxare-colt-mindfulness-meditatie-ghidata"
+          "name": "Colț mindfulness / meditație ghidată"
         },
         {
-          "name": "Sound bath / boluri tibetane",
-          "slug": "services-wellbeing-relaxare-sound-bath-boluri-tibetane"
+          "name": "Sound bath / boluri tibetane"
         },
         {
-          "name": "Aromaterapie corner",
-          "slug": "services-wellbeing-relaxare-aromaterapie-corner"
+          "name": "Aromaterapie corner"
         },
         {
-          "name": "Stretching de dimineață (evenimente multi‑zi)",
-          "slug": "services-wellbeing-relaxare-stretching-de-dimineata-evenimente-multizi"
+          "name": "Stretching de dimineață (evenimente multi‑zi)"
         }
       ]
     }

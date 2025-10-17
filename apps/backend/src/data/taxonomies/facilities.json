@@ -1,0 +1,813 @@
+{
+  "categories": [
+    {
+      "name": "SPAȚIU & CONFIGURARE",
+      "items": [
+        {
+          "name": "Open-space"
+        },
+        {
+          "name": "Săli modulare (pereți mobili)"
+        },
+        {
+          "name": "Săli de breakout (1+)"
+        },
+        {
+          "name": "Sală conferințe"
+        },
+        {
+          "name": "Sală ședințe / boardroom"
+        },
+        {
+          "name": "Foaier / zonă recepție"
+        },
+        {
+          "name": "Scenă fixă"
+        },
+        {
+          "name": "Scenă mobilă"
+        },
+        {
+          "name": "Pistă de dans"
+        },
+        {
+          "name": "Gradene / tribune"
+        },
+        {
+          "name": "Amfiteatru"
+        },
+        {
+          "name": "Blackbox (pereți negri)"
+        },
+        {
+          "name": "Zid foto / step & repeat"
+        },
+        {
+          "name": "Zonă lounge"
+        },
+        {
+          "name": "Spațiu fumători (dedicat)"
+        },
+        {
+          "name": "Zonă expo / standuri"
+        },
+        {
+          "name": "Green room / cameră artiști"
+        },
+        {
+          "name": "Dressing room / vestiar"
+        },
+        {
+          "name": "Make-up room (oglinzi lumini)"
+        },
+        {
+          "name": "Cameră de alăptare"
+        },
+        {
+          "name": "Colț copii / family corner"
+        },
+        {
+          "name": "Spațiu depozitare echipamente"
+        },
+        {
+          "name": "Room pentru interpretare simultană"
+        },
+        {
+          "name": "Cabină traducere (ISO)"
+        },
+        {
+          "name": "Cabină de regie (AV)"
+        },
+        {
+          "name": "Pereți pentru proiectare"
+        },
+        {
+          "name": "Podea întărită (încărcare mare)"
+        },
+        {
+          "name": "Înălțime tavan \\>5 m (tavan înalt)"
+        },
+        {
+          "name": "Tavan cu puncte de rigging"
+        },
+        {
+          "name": "Blackout complet (draperii opace)"
+        },
+        {
+          "name": "Lumină naturală abundentă"
+        },
+        {
+          "name": "Ferestre mari / luminatoare"
+        },
+        {
+          "name": "Izolare fonică (insonorizare)"
+        },
+        {
+          "name": "Tratament acustic (panouri)"
+        }
+      ]
+    },
+    {
+      "name": "MOBILIER & SETUP",
+      "items": [
+        {
+          "name": "Mese rotunde"
+        },
+        {
+          "name": "Mese dreptunghiulare"
+        },
+        {
+          "name": "Mese cocktail / high tables"
+        },
+        {
+          "name": "Mese pliabile (montaj rapid)"
+        },
+        {
+          "name": "Scaune banqueting"
+        },
+        {
+          "name": "Scaune Chiavari"
+        },
+        {
+          "name": "Scaune conferință cu clipboard"
+        },
+        {
+          "name": "Canapele & fotolii lounge"
+        },
+        {
+          "name": "Pufuri / ottomane"
+        },
+        {
+          "name": "Bănci / banchete"
+        },
+        {
+          "name": "Huse scaune"
+        },
+        {
+          "name": "Fețe de masă & runner-e"
+        },
+        {
+          "name": "Numere de masă & place cards (standuri)"
+        },
+        {
+          "name": "Podium vorbitor / pupitru"
+        },
+        {
+          "name": "Whiteboard / flipchart"
+        },
+        {
+          "name": "Panouri afișaj / tăblii magnetice"
+        },
+        {
+          "name": "Cloakroom / garderobă"
+        },
+        {
+          "name": "Coșuri hârtie / deșeuri selectiv"
+        },
+        {
+          "name": "Stative și separatoare spațiu"
+        },
+        {
+          "name": "Decorațiuni de bază (vaze/lumânări)"
+        }
+      ]
+    },
+    {
+      "name": "AUDIO, LUMINI & VIDEO (INTEGRAT)",
+      "items": [
+        {
+          "name": "Sistem sunet integrat (PA)"
+        },
+        {
+          "name": "Microfoane (handheld/lavalieră)"
+        },
+        {
+          "name": "Mixing console (FOH)"
+        },
+        {
+          "name": "Monitoare scenă / IEM"
+        },
+        {
+          "name": "Limitator dB (conformizare zgomot)"
+        },
+        {
+          "name": "Tratament acustic"
+        },
+        {
+          "name": "Iluminat scenic (wash/spot)"
+        },
+        {
+          "name": "Iluminat ambiental (dimmer)"
+        },
+        {
+          "name": "Gobos / monograme"
+        },
+        {
+          "name": "Mașină de fum / haze (permisiune)"
+        },
+        {
+          "name": "Proiector (HD/4K)"
+        },
+        {
+          "name": "Ecran proiecție (front/rear)"
+        },
+        {
+          "name": "LED wall (indoor/outdoor)"
+        },
+        {
+          "name": "Televizoare display (1+)"
+        },
+        {
+          "name": "Camere PTZ (conferințe)"
+        },
+        {
+          "name": "Sistem videoconferință (Zoom/Teams)"
+        },
+        {
+          "name": "Regie AV dedicată"
+        },
+        {
+          "name": "Conexiuni HDMI/SDI multiple"
+        },
+        {
+          "name": "Prize audio/video scenă"
+        },
+        {
+          "name": "Puncte de rigging lumini"
+        }
+      ]
+    },
+    {
+      "name": "ELECTRICITATE & TEHNIC",
+      "items": [
+        {
+          "name": "Curent trifazic 32A"
+        },
+        {
+          "name": "Curent trifazic 63A"
+        },
+        {
+          "name": "Panou distribuție curent eveniment"
+        },
+        {
+          "name": "Prize 230V multiple perimetral"
+        },
+        {
+          "name": "UPS (backup scurt)"
+        },
+        {
+          "name": "Generator (backup)"
+        },
+        {
+          "name": "ATS (comutare automată)"
+        },
+        {
+          "name": "Cablare ascunsă / canal cablu"
+        },
+        {
+          "name": "Stație încărcare echipamente"
+        },
+        {
+          "name": "Senzori iluminat / economisire energie"
+        }
+      ]
+    },
+    {
+      "name": "INTERNET & STREAMING",
+      "items": [
+        {
+          "name": "Fibra optică \\>300 Mbps (simetric)"
+        },
+        {
+          "name": "Wi‑Fi 5/6 (mesh)"
+        },
+        {
+          "name": "Rețea separată invitați"
+        },
+        {
+          "name": "Porturi LAN la scenă / regie"
+        },
+        {
+          "name": "Backup 4G/5G (bonding)"
+        },
+        {
+          "name": "Politică trafic prioritar AV"
+        },
+        {
+          "name": "Spațiu regie streaming"
+        },
+        {
+          "name": "Prize dedicate IT"
+        }
+      ]
+    },
+    {
+      "name": "BUCĂTĂRIE & CATERING",
+      "items": [
+        {
+          "name": "Bucătărie complet utilată"
+        },
+        {
+          "name": "Zonă preparare rece/cald"
+        },
+        {
+          "name": "Chiuvete inox (HACCP)"
+        },
+        {
+          "name": "Mașină de spălat vase industrială"
+        },
+        {
+          "name": "Cuptoare / plite profesionale"
+        },
+        {
+          "name": "Grill / plancha"
+        },
+        {
+          "name": "Frigidere & congelatoare (capacitate)"
+        },
+        {
+          "name": "Spațiu plating"
+        },
+        {
+          "name": "Zona catering separată"
+        },
+        {
+          "name": "Acces camioane catering"
+        },
+        {
+          "name": "Stație cafea (barista ready)"
+        },
+        {
+          "name": "Spațiu pentru food trucks (curte)"
+        },
+        {
+          "name": "Ventilație bucătărie / hotă"
+        },
+        {
+          "name": "Frigidere băuturi / lăzi frigorifice"
+        }
+      ]
+    },
+    {
+      "name": "BAR & BĂUTURI",
+      "items": [
+        {
+          "name": "Bar fix"
+        },
+        {
+          "name": "Bar mobil"
+        },
+        {
+          "name": "Chiuvetă bar / backbar"
+        },
+        {
+          "name": "Mașină de gheață"
+        },
+        {
+          "name": "Frigidere vitrine"
+        },
+        {
+          "name": "Sticlărie & tacâmuri de bază"
+        },
+        {
+          "name": "POS bar"
+        },
+        {
+          "name": "Spațiu Prosecco/Șampanie"
+        },
+        {
+          "name": "Colț degustare vin (somelier ready)"
+        }
+      ]
+    },
+    {
+      "name": "GRUPURI SANITARE & IGIENĂ",
+      "items": [
+        {
+          "name": "Toalete femei/bărbați (multiple)"
+        },
+        {
+          "name": "Toaletă accesibilă (PMR)"
+        },
+        {
+          "name": "Baby changing station"
+        },
+        {
+          "name": "Dușuri (unde e cazul)"
+        },
+        {
+          "name": "Puncte igienă (dezinfectant)"
+        },
+        {
+          "name": "Ventilație / odorizare"
+        },
+        {
+          "name": "Curățenie la eveniment (staff)"
+        }
+      ]
+    },
+    {
+      "name": "ACCES & LOGISTICĂ",
+      "items": [
+        {
+          "name": "Acces parter (fără trepte)"
+        },
+        {
+          "name": "Rampă marfă"
+        },
+        {
+          "name": "Uși duble lățime \\>1,2 m"
+        },
+        {
+          "name": "Lift pasageri"
+        },
+        {
+          "name": "Lift marfă (dimensiuni mari)"
+        },
+        {
+          "name": "Doc de încărcare (loading dock)"
+        },
+        {
+          "name": "Acces camion / dube în curte"
+        },
+        {
+          "name": "Acces auto în interior (unde permis)"
+        },
+        {
+          "name": "Cărucioare / cărucioare marfă"
+        },
+        {
+          "name": "Spațiu depozitare temporară"
+        },
+        {
+          "name": "Spațiu montaj / demontaj"
+        },
+        {
+          "name": "Traseu separat furnizori"
+        },
+        {
+          "name": "Zona fumat (exterior)"
+        }
+      ]
+    },
+    {
+      "name": "PARCARE & TRANSPORT",
+      "items": [
+        {
+          "name": "Parcare privată (x locuri)"
+        },
+        {
+          "name": "Parcare subterană / acoperită"
+        },
+        {
+          "name": "Parcare autocare"
+        },
+        {
+          "name": "Parcare camionete furnizori"
+        },
+        {
+          "name": "Stații încărcare EV"
+        },
+        {
+          "name": "Suport biciclete"
+        },
+        {
+          "name": "Stație taxi / rideshare aproape"
+        },
+        {
+          "name": "Aproape de transport public"
+        },
+        {
+          "name": "Valet (opțional)"
+        }
+      ]
+    },
+    {
+      "name": "CONFORT & CLIMAT",
+      "items": [
+        {
+          "name": "Climatizare (A/C)"
+        },
+        {
+          "name": "Încălzire centrală"
+        },
+        {
+          "name": "Ventilație mecanică"
+        },
+        {
+          "name": "Șemineu (decorativ/funcțional)"
+        },
+        {
+          "name": "Umidificare / dezumidificare"
+        },
+        {
+          "name": "Zonare termică (camere separate)"
+        },
+        {
+          "name": "Izolație termică bună"
+        },
+        {
+          "name": "Fără curent de aer / infiltrații"
+        }
+      ]
+    },
+    {
+      "name": "OUTDOOR & NATURĂ (UNDE EXISTĂ)",
+      "items": [
+        {
+          "name": "Terasă"
+        },
+        {
+          "name": "Grădină"
+        },
+        {
+          "name": "Curte interioară"
+        },
+        {
+          "name": "Rooftop"
+        },
+        {
+          "name": "Foișor / pergolă"
+        },
+        {
+          "name": "Zonă BBQ / grătar (permisiune)"
+        },
+        {
+          "name": "Foc de tabără (permisiune)"
+        },
+        {
+          "name": "Iluminat exterior perimetral"
+        },
+        {
+          "name": "Ponton / mal apă"
+        },
+        {
+          "name": "Loc de joacă copii (outdoor)"
+        },
+        {
+          "name": "Priză exterior / curent în curte"
+        },
+        {
+          "name": "Umbrire (seilă / umbrele)"
+        }
+      ]
+    },
+    {
+      "name": "WELLBEING, SPORT & LEISURE (OPȚIONAL)",
+      "items": [
+        {
+          "name": "Piscină"
+        },
+        {
+          "name": "Jacuzzi"
+        },
+        {
+          "name": "Saună"
+        },
+        {
+          "name": "Sală fitness / sport"
+        },
+        {
+          "name": "Dușuri vestiar"
+        },
+        {
+          "name": "Masaj room / wellness corner"
+        }
+      ]
+    },
+    {
+      "name": "SIGURANȚĂ & SECURITATE",
+      "items": [
+        {
+          "name": "Sistem detecție incendiu"
+        },
+        {
+          "name": "Sprinklere / hidranți interiori"
+        },
+        {
+          "name": "Stingătoare (verificate)"
+        },
+        {
+          "name": "Plan evacuare & marcaje"
+        },
+        {
+          "name": "Iluminat de urgență"
+        },
+        {
+          "name": "Trusă prim ajutor"
+        },
+        {
+          "name": "Defibrilator (AED)"
+        },
+        {
+          "name": "CCTV perimetral / interior"
+        },
+        {
+          "name": "Control acces (badge/QR)"
+        },
+        {
+          "name": "Securitate la eveniment (opțional)"
+        },
+        {
+          "name": "Barieră perimetru / gard"
+        },
+        {
+          "name": "Detector CO / fum"
+        }
+      ]
+    },
+    {
+      "name": "ACCESIBILITATE (PMR)",
+      "items": [
+        {
+          "name": "Intrare cu rampă"
+        },
+        {
+          "name": "Toaletă accesibilă"
+        },
+        {
+          "name": "Lift accesibil"
+        },
+        {
+          "name": "Locuri de parcare rezervate"
+        },
+        {
+          "name": "Semnalizare Braille / relief"
+        },
+        {
+          "name": "Buclă inductivă (hearing loop)"
+        },
+        {
+          "name": "Trasee fără praguri"
+        },
+        {
+          "name": "Mese accesibile (înălțime)"
+        },
+        {
+          "name": "Scaune cu brațe pentru sprijin"
+        }
+      ]
+    },
+    {
+      "name": "SUSTENABILITATE & MEDIU",
+      "items": [
+        {
+          "name": "Colectare selectivă deșeuri"
+        },
+        {
+          "name": "Stație apă refil (fără plastic)"
+        },
+        {
+          "name": "Echipamente eficiente energetic"
+        },
+        {
+          "name": "Iluminat LED integral"
+        },
+        {
+          "name": "Energie verde / panouri solare"
+        },
+        {
+          "name": "Politică Zero Waste (opțional)"
+        },
+        {
+          "name": "Furnizori locali (prioritizați)"
+        },
+        {
+          "name": "Materiale reutilizabile (veselă/decorațiuni)"
+        }
+      ]
+    },
+    {
+      "name": "POLITICI & PERMISIUNI",
+      "items": [
+        {
+          "name": "Oră limită muzică (curfew)"
+        },
+        {
+          "name": "Zgomot permis până la (dB)"
+        },
+        {
+          "name": "Fără vecini apropiați (ok pentru volum)"
+        },
+        {
+          "name": "Permis fum/scenă (haze)"
+        },
+        {
+          "name": "Permis confetti (uscat/biodegradabil)"
+        },
+        {
+          "name": "Permis lumânări / flacără deschisă"
+        },
+        {
+          "name": "Permis artificii reci (cold sparks)"
+        },
+        {
+          "name": "Permis BBQ / grătar"
+        },
+        {
+          "name": "Permis food trucks"
+        },
+        {
+          "name": "Permis drone"
+        },
+        {
+          "name": "Permis animale de companie"
+        },
+        {
+          "name": "Permis filmări & shooting foto"
+        },
+        {
+          "name": "Licență alcool (bar propriu)"
+        },
+        {
+          "name": "Taxă de dop (vin/spirtoase)"
+        },
+        {
+          "name": "Taxă curățenie"
+        },
+        {
+          "name": "Depozit garanție"
+        },
+        {
+          "name": "Ore suplimentare (tarif)"
+        },
+        {
+          "name": "Asigurare răspundere civilă (necesară)"
+        },
+        {
+          "name": "Contract & GDPR compliant"
+        }
+      ]
+    },
+    {
+      "name": "ESTETICĂ & DECOR",
+      "items": [
+        {
+          "name": "Pereți albi (neutru foto)"
+        },
+        {
+          "name": "Pereți cărămidă aparentă"
+        },
+        {
+          "name": "Beton aparent / industrial"
+        },
+        {
+          "name": "Rustic / lemn masiv"
+        },
+        {
+          "name": "Boho / eclectic"
+        },
+        {
+          "name": "Clasic / baroc"
+        },
+        {
+          "name": "Minimal / modern"
+        },
+        {
+          "name": "Plante naturale / green wall"
+        },
+        {
+          "name": "Cyclorama alb / negru"
+        },
+        {
+          "name": "Oglinzi mari"
+        },
+        {
+          "name": "Scară statement / element arhitectural"
+        },
+        {
+          "name": "Vedere panoramică / skyline"
+        },
+        {
+          "name": "Apus spectaculos (orientare)"
+        }
+      ]
+    },
+    {
+      "name": "PROXIMITATE & CONTEXT",
+      "items": [
+        {
+          "name": "Centru oraș"
+        },
+        {
+          "name": "Zonă rezidențială"
+        },
+        {
+          "name": "Zonă comercială / business"
+        },
+        {
+          "name": "Aproape de parc / lac"
+        },
+        {
+          "name": "Aproape de aeroport / gară"
+        },
+        {
+          "name": "Cazare la distanță pietonală"
+        },
+        {
+          "name": "Parteneriate hotel (tarife preferențiale)"
+        }
+      ]
+    }
+  ]
+}
