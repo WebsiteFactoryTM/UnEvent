@@ -13,7 +13,10 @@ import { Profiles } from './collections/Profiles'
 import { Favorites } from './collections/Favorites'
 import { ListingTypes } from './collections/ListingTypes'
 import { Cities } from './collections/Cities'
+import { Events, Locations, Services } from './collections/Listings'
+import { Facilities } from './collections/Facilities'
 
+import { seed } from './endpoints/seedEndpoint'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -22,7 +25,7 @@ export default buildConfig({
     process.env.PAYLOAD_PUBLIC_SERVER_URL || `http://localhost:${process.env.PORT || 4000}`,
   bin: [
     {
-      scriptPath: path.resolve(dirname, 'scripts/seed/seed.ts'),
+      scriptPath: path.resolve(dirname, 'seed.ts'),
       key: 'seed',
     },
   ],
@@ -32,7 +35,25 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Profiles, Favorites, ListingTypes, Cities],
+  endpoints: [
+    {
+      path: '/seed',
+      method: 'get',
+      handler: seed,
+    },
+  ],
+  collections: [
+    Users,
+    Media,
+    Profiles,
+    Favorites,
+    ListingTypes,
+    Cities,
+    Events,
+    Locations,
+    Services,
+    Facilities,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
