@@ -44,6 +44,15 @@ const Cities: CollectionConfig = {
       },
     },
     {
+      name: 'county',
+      type: 'text',
+      defaultValue: 'Romania',
+      admin: {
+        position: 'sidebar',
+        description: 'The ISO 3166-1 alpha-2 code for the country',
+      },
+    },
+    {
       name: 'source',
       type: 'select',
       defaultValue: 'seeded',

@@ -1,9 +1,10 @@
 import type { CollectionConfig } from 'payload'
+import slugify from 'slugify'
 import { createSlugField } from '../../utils/slugifySlug'
-import type { ListingType } from '@/payload-types'
+import { Facility } from '@/payload-types'
 
-export const ListingTypes: CollectionConfig = {
-  slug: 'listing-types',
+export const Facilities: CollectionConfig = {
+  slug: 'facilities',
   admin: {
     useAsTitle: 'title',
     group: 'Taxonomy',
@@ -16,17 +17,18 @@ export const ListingTypes: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
+      unique: true,
       admin: {
-        description: 'URL-friendly identifier (e.g., logodna, sala-evenimente)',
+        description: 'URL-friendly identifier (e.g., open-space, meeting-room)',
       },
-      hooks: { beforeValidate: [createSlugField<ListingType>('title')] },
+      hooks: { beforeValidate: [createSlugField<Facility>('title')] },
     },
     {
       name: 'title',
       type: 'text',
       required: true,
       admin: {
-        description: 'Display name (e.g., Logodnă, Sală de evenimente)',
+        description: 'Display name (e.g., Open Space, Meeting Room)',
       },
     },
     {
@@ -34,7 +36,7 @@ export const ListingTypes: CollectionConfig = {
       type: 'text',
       required: true,
       admin: {
-        description: 'Category header (e.g., NUNȚI & CEREMONII DE FAMILIE)',
+        description: 'Category header (e.g., SPAȚIU & CONFIGURARE, MOBILIER & SETUP)',
       },
     },
     {
@@ -43,20 +45,7 @@ export const ListingTypes: CollectionConfig = {
       admin: {
         description: 'Slugified category name',
       },
-      hooks: { beforeValidate: [createSlugField<ListingType>('category')] },
-    },
-    {
-      name: 'type',
-      type: 'select',
-      required: true,
-      options: [
-        { label: 'Events', value: 'events' },
-        { label: 'Locations', value: 'locations' },
-        { label: 'Services', value: 'services' },
-      ],
-      admin: {
-        description: 'Which taxonomy type this belongs to',
-      },
+      hooks: { beforeValidate: [createSlugField<Facility>('category')] },
     },
     {
       name: 'sortOrder',

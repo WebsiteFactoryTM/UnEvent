@@ -4,6 +4,9 @@ import { updateUserRolesOnProfileUserTypeChange } from './hooks/updateUserRolesO
 import { updateMemberSince } from './hooks/updateMemberSince'
 import { linkProfileToUserAfterChange } from './hooks/linkProfileToUser'
 
+import { createSlugField } from '../../utils/slugifySlug'
+import type { Profile } from '@/payload-types'
+
 export const Profiles: CollectionConfig = {
   slug: 'profiles',
   admin: {
@@ -34,6 +37,15 @@ export const Profiles: CollectionConfig = {
       admin: {
         readOnly: true,
       },
+    },
+    {
+      name: 'slug',
+      type: 'text',
+      unique: true,
+      admin: {
+        description: 'URL-friendly identifier',
+      },
+      hooks: { beforeValidate: [createSlugField<Profile>('name')] },
     },
     {
       name: 'userType',
