@@ -71,6 +71,19 @@ export const Services: CollectionConfig = {
             condition: (data) => ['fixed', 'from'].includes(data?.pricing?.type),
           },
         },
+        {
+          name: 'period',
+          type: 'select',
+          defaultValue: 'day',
+          options: [
+            { label: 'Per Hour', value: 'hour' },
+            { label: 'Per Day', value: 'day' },
+            { label: 'Per Event', value: 'event' },
+          ],
+          admin: {
+            condition: (data) => ['fixed', 'from'].includes(data?.pricing?.type),
+          },
+        },
       ],
     },
     {
@@ -135,48 +148,6 @@ export const Services: CollectionConfig = {
         {
           name: 'description',
           type: 'textarea',
-        },
-      ],
-    },
-    {
-      name: 'stats',
-      type: 'group',
-      admin: {
-        readOnly: true,
-      },
-      fields: [
-        {
-          name: 'views',
-          type: 'number',
-          defaultValue: 0,
-        },
-        {
-          name: 'bookings',
-          type: 'number',
-          defaultValue: 0,
-        },
-        {
-          name: 'favorites',
-          type: 'number',
-          defaultValue: 0,
-        },
-        {
-          name: 'rating',
-          type: 'group',
-          fields: [
-            {
-              name: 'average',
-              type: 'number',
-              min: 0,
-              max: 5,
-              defaultValue: 0,
-            },
-            {
-              name: 'count',
-              type: 'number',
-              defaultValue: 0,
-            },
-          ],
         },
       ],
     },

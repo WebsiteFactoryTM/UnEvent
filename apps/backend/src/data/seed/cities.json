@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Bucharest",
+    "country": "Romania",
+    "county": "Bucharest",
+    "source": "seeded",
+    "geo": [26.0963, 44.4369],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Cluj-Napoca",
+    "country": "Romania",
+    "county": "Cluj",
+    "source": "seeded",
+    "geo": [23.6236, 46.7712],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Timișoara",
+    "country": "Romania",
+    "county": "Timiș",
+    "source": "seeded",
+    "geo": [21.2087, 45.7489],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Iași",
+    "country": "Romania",
+    "county": "Iași",
+    "source": "seeded",
+    "geo": [27.6014, 47.1585],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Constanța",
+    "country": "Romania",
+    "county": "Constanța",
+    "source": "seeded",
+    "geo": [28.6525, 44.1733],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Brașov",
+    "country": "Romania",
+    "county": "Brașov",
+    "source": "seeded",
+    "geo": [25.3333, 45.6579],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Sibiu",
+    "country": "Romania",
+    "county": "Sibiu",
+    "source": "seeded",
+    "geo": [24.1514, 45.7939],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Oradea",
+    "country": "Romania",
+    "county": "Bihor",
+    "source": "seeded",
+    "geo": [21.9189, 47.0722],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Craiova",
+    "country": "Romania",
+    "county": "Dolj",
+    "source": "seeded",
+    "geo": [23.7994, 44.3302],
+    "usageCount": 0,
+    "verified": true
+  },
+  {
+    "name": "Galați",
+    "country": "Romania",
+    "county": "Galați",
+    "source": "seeded",
+    "geo": [28.0525, 45.4353],
+    "usageCount": 0,
+    "verified": true
+  }
+]

@@ -20,8 +20,9 @@ export const Locations: CollectionConfig = {
       name: 'type',
       type: 'relationship',
       relationTo: 'listing-types',
-      hasMany: true,
+      hasMany: false,
       required: true,
+      index: true,
       filterOptions: {
         type: { equals: 'locations' },
       },
@@ -35,15 +36,18 @@ export const Locations: CollectionConfig = {
       },
       hasMany: true,
       required: true,
+      index: true,
     },
     {
       name: 'capacity',
       type: 'group',
+
       fields: [
         {
           name: 'indoor',
           type: 'number',
           min: 0,
+          index: true,
           admin: {
             description: 'Indoor capacity',
           },
@@ -52,6 +56,7 @@ export const Locations: CollectionConfig = {
           name: 'outdoor',
           type: 'number',
           min: 0,
+          index: true,
           admin: {
             description: 'Outdoor capacity',
           },
@@ -60,6 +65,7 @@ export const Locations: CollectionConfig = {
           name: 'seating',
           type: 'number',
           min: 0,
+          index: true,
           admin: {
             description: 'Seating capacity',
           },
@@ -68,11 +74,20 @@ export const Locations: CollectionConfig = {
           name: 'parking',
           type: 'number',
           min: 0,
+          index: true,
           admin: {
             description: 'Parking spots',
           },
         },
       ],
+    },
+    {
+      name: 'surface',
+      type: 'number',
+      min: 0,
+      admin: {
+        description: 'Surface area in square meters (m²)',
+      },
     },
     {
       name: 'pricing',
@@ -92,6 +107,7 @@ export const Locations: CollectionConfig = {
         {
           name: 'amount',
           type: 'number',
+          index: true,
           min: 0,
           admin: {
             condition: (data) => ['fixed', 'from'].includes(data?.pricing?.type),
@@ -176,61 +192,13 @@ export const Locations: CollectionConfig = {
       ],
     },
     {
-      name: 'amenities',
-      type: 'array',
-      fields: [
-        {
-          name: 'amenity',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-        },
-      ],
-    },
-    {
-      name: 'stats',
-      type: 'group',
+      name: 'facilities',
+      type: 'relationship',
+      relationTo: 'facilities',
+      hasMany: true,
       admin: {
-        readOnly: true,
+        description: 'Select facilities available at this location',
       },
-      fields: [
-        {
-          name: 'views',
-          type: 'number',
-          defaultValue: 0,
-        },
-        {
-          name: 'bookings',
-          type: 'number',
-          defaultValue: 0,
-        },
-        {
-          name: 'favorites',
-          type: 'number',
-          defaultValue: 0,
-        },
-        {
-          name: 'rating',
-          type: 'group',
-          fields: [
-            {
-              name: 'average',
-              type: 'number',
-              min: 0,
-              max: 5,
-              defaultValue: 0,
-            },
-            {
-              name: 'count',
-              type: 'number',
-              defaultValue: 0,
-            },
-          ],
-        },
-      ],
     },
   ],
   timestamps: true,

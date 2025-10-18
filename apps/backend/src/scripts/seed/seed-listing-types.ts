@@ -87,9 +87,7 @@ async function seedListingTypes(payload: Payload) {
     console.log(`Successfully created ${created} taxonomy items`)
   } catch (error) {
     console.error('Seeding failed:', error)
-    process.exit(1)
+    return new Response('Seeding failed', { status: 500 })
   }
-
-  process.exit(0)
 }
 export default seedListingTypes

@@ -17,6 +17,10 @@ import { Events, Locations, Services } from './collections/Listings'
 import { Facilities } from './collections/Facilities'
 
 import { seed } from './endpoints/seedEndpoint'
+import { openapi, swaggerUI } from 'payload-oapi'
+import { searchPlugin } from '@payloadcms/plugin-search'
+import { index } from '@payloadcms/db-postgres/drizzle/pg-core'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -63,10 +67,46 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
+    afterSchemaInit: [
+      ({ schema, extendTable }) => {
+        // Check the actual table name in `schema.tables`
+        const jt = (schema.tables as Record<string, any>).locations_suitableFor_rel // eslint-disable-line @typescript-eslint/no-explicit-any
+        if (jt) {
+          extendTable({
+            table: jt,
+            extraConfig: (table) => ({
+              // Single-column indexes commonly used by Payload queries
+              locations_suitableFor_parent_idx: index('locations_suitableFor_parent_idx').on(
+                table.parentId,
+              ),
+              locations_suitableFor_value_idx: index('locations_suitableFor_value_idx').on(
+                table.value,
+              ),
+              // Optional composite index to speed up combined filters on (value, parentId)
+              // Remove if you don't need it to keep write overhead minimal
+              locations_suitableFor_value_parent_idx: index(
+                'locations_suitableFor_value_parent_idx',
+              ).on(table.value, table.parentId),
+            }),
+          })
+        }
+        return schema
+      },
+    ],
   }),
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    // storage-adapter-placeholder
+    openapi({ openapiVersion: '3.0', metadata: { title: 'Dev API', version: '0.0.1' } }),
+    swaggerUI({ docsUrl: '/swagger', specEndpoint: '/openapi.json', enabled: true }),
+    searchPlugin({
+      collections: ['locations', 'services', 'events', 'profiles'],
+      defaultPriorities: {
+        locations: 10,
+        services: 20,
+        events: 30,
+        profiles: 40,
+      },
+    }),
   ],
 })

@@ -1,5 +1,7 @@
 import seedListingTypes from '@/scripts/seed/seed-listing-types'
 import seedFacilities from '@/scripts/seed/seed-facilities'
+import seedCities from '@/scripts/seed/seed-cities'
+import seedLocations from '@/scripts/seed/seed-locations'
 import type { SanitizedConfig } from 'payload'
 import payload from 'payload'
 
@@ -12,6 +14,9 @@ export const script = async (config: SanitizedConfig) => {
   const payloadInstance = await payload.init({ config })
   await seedFacilities(payloadInstance)
   await seedListingTypes(payloadInstance)
+  await seedCities(payloadInstance)
+  await seedLocations(payloadInstance)
+
   payload.logger.info('Successfully seeded!')
   process.exit(0)
 }

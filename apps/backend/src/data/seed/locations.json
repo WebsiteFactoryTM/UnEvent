@@ -1,0 +1,160 @@
+[
+  {
+    "title": "Grand Ballroom Hotel Lux",
+    "description": "Elegant ballroom in the heart of Bucharest with stunning crystal chandeliers and marble floors. Perfect for weddings, corporate events, and galas. Features state-of-the-art sound system and professional lighting.",
+    "city": 1,
+    "address": "Calea Victoriei 147, Bucharest, Romania",
+    "geo": [26.0963, 44.4369],
+    "contact": {
+      "email": "events@hotellux.ro",
+      "phone": "+40 21 305 1234",
+      "website": "https://hotellux.ro/events"
+    },
+    "status": "approved",
+
+    "owner": 13,
+    "featured": true,
+    "sponsored": false,
+    "rating": 4.8,
+    "reviewCount": 156,
+    "tags": [
+      { "tag": "luxury" },
+      { "tag": "wedding" },
+      { "tag": "corporate" },
+      { "tag": "ballroom" }
+    ],
+    "socialLinks": {
+      "facebook": "https://facebook.com/hotelluxevents",
+      "instagram": "https://instagram.com/hotelluxevents"
+    },
+    "type": 5133,
+    "suitableFor": [4936, 4942, 4938],
+    "capacity": {
+      "indoor": 300,
+      "outdoor": 0,
+      "seating": 250,
+      "parking": 50
+    },
+    "surface": 500,
+    "pricing": {
+      "type": "fixed",
+      "amount": 2500,
+      "currency": "EUR",
+      "period": "event"
+    },
+    "availability": {
+      "type": "always"
+    },
+    "facilities": [1188, 1189, 1190, 1191]
+  },
+  {
+    "title": "Rooftop Garden Terrace",
+    "description": "Stunning rooftop terrace with panoramic city views, perfect for intimate celebrations and cocktail parties. Features lush greenery, ambient lighting, and a retractable glass roof.",
+    "city": 1,
+    "address": "Piata Romana 2, Bucharest, Romania",
+    "geo": [26.0936, 44.443],
+    "contact": {
+      "email": "bookings@rooftopterrace.ro",
+      "phone": "+40 72 345 6789",
+      "website": "https://rooftopterrace.ro"
+    },
+    "status": "approved",
+    "owner": 13,
+    "featured": false,
+    "sponsored": true,
+    "rating": 4.6,
+    "reviewCount": 89,
+    "tags": [
+      { "tag": "rooftop" },
+      { "tag": "views" },
+      { "tag": "intimate" },
+      { "tag": "cocktail" }
+    ],
+    "socialLinks": {
+      "instagram": "https://instagram.com/rooftopterrace"
+    },
+    "type": 5129,
+    "suitableFor": [4944, 4942],
+    "capacity": {
+      "indoor": 80,
+      "outdoor": 120,
+      "seating": 60,
+      "parking": 20
+    },
+    "surface": 200,
+    "pricing": {
+      "type": "from",
+      "amount": 800,
+      "currency": "EUR",
+      "period": "event"
+    },
+    "availability": {
+      "type": "custom",
+      "schedule": [
+        {
+          "day": "friday",
+          "startTime": "18:00",
+          "endTime": "02:00"
+        },
+        {
+          "day": "saturday",
+          "startTime": "18:00",
+          "endTime": "02:00"
+        },
+        {
+          "day": "sunday",
+          "startTime": "16:00",
+          "endTime": "23:00"
+        }
+      ]
+    },
+    "facilities": [1188, 1189, 1190, 1191]
+  },
+  {
+    "title": "Historic Castle Courtyard",
+    "description": "Medieval castle courtyard transformed into a magical event space. Surrounded by ancient stone walls and towers, offering an authentic historical atmosphere for special occasions.",
+    "city": 3,
+    "address": "Strada Cetății 1, Bran, Romania",
+    "geo": [25.3667, 45.5167],
+    "contact": {
+      "email": "events@castleevents.ro",
+      "phone": "+40 268 237 100",
+      "website": "https://castleevents.ro"
+    },
+    "status": "approved",
+    "owner": 13,
+    "featured": true,
+    "sponsored": false,
+    "rating": 4.9,
+    "reviewCount": 234,
+    "tags": [
+      { "tag": "historic" },
+      { "tag": "castle" },
+      { "tag": "medieval" },
+      { "tag": "authentic" }
+    ],
+    "socialLinks": {
+      "facebook": "https://facebook.com/castleevents",
+      "instagram": "https://instagram.com/castleevents",
+      "youtube": "https://youtube.com/castleevents"
+    },
+    "type": 5124,
+    "suitableFor": [4944, 4942],
+    "capacity": {
+      "indoor": 0,
+      "outdoor": 200,
+      "seating": 120,
+      "parking": 100
+    },
+    "surface": 800,
+    "pricing": {
+      "type": "contact",
+      "currency": "EUR",
+      "period": "event"
+    },
+    "availability": {
+      "type": "appointment"
+    },
+    "facilities": [1188, 1189, 1190, 1191]
+  }
+]

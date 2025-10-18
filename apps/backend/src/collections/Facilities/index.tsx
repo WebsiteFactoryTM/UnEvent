@@ -22,6 +22,7 @@ export const Facilities: CollectionConfig = {
         description: 'URL-friendly identifier (e.g., open-space, meeting-room)',
       },
       hooks: { beforeValidate: [createSlugField<Facility>('title')] },
+      index: true,
     },
     {
       name: 'title',

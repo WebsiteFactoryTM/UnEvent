@@ -41,6 +41,7 @@ export const Profiles: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
+      index: true,
       unique: true,
       admin: {
         description: 'URL-friendly identifier',

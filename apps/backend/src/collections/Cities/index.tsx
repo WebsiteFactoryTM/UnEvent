@@ -24,6 +24,7 @@ const Cities: CollectionConfig = {
       admin: {
         description: 'The official name of the city',
       },
+      index: true,
     },
     {
       name: 'slug',
@@ -34,6 +35,7 @@ const Cities: CollectionConfig = {
         description: 'Auto-generated from city name. Used in URLs and lookups.',
         readOnly: true,
       },
+      index: true,
     },
     {
       name: 'country',
@@ -51,6 +53,7 @@ const Cities: CollectionConfig = {
         position: 'sidebar',
         description: 'The ISO 3166-1 alpha-2 code for the country',
       },
+      index: true,
     },
     {
       name: 'source',

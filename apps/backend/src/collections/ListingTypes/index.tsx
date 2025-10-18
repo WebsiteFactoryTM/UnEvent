@@ -20,6 +20,7 @@ export const ListingTypes: CollectionConfig = {
         description: 'URL-friendly identifier (e.g., logodna, sala-evenimente)',
       },
       hooks: { beforeValidate: [createSlugField<ListingType>('title')] },
+      index: true,
     },
     {
       name: 'title',

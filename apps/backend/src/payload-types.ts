@@ -77,6 +77,7 @@ export interface Config {
     locations: Location;
     services: Service;
     facilities: Facility;
+    search: Search;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -93,6 +94,7 @@ export interface Config {
     locations: LocationsSelect<false> | LocationsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     facilities: FacilitiesSelect<false> | FacilitiesSelect<true>;
+    search: SearchSelect<false> | SearchSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -389,9 +391,24 @@ export interface Event {
     website?: string | null;
   };
   status?: ('pending' | 'approved' | 'rejected') | null;
-  featuredImage: number | Media;
+  rejectionReason?: string | null;
+  featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   owner: number | Profile;
+  views?: number | null;
+  /**
+   * Mark as recommended/featured listing
+   */
+  featured?: boolean | null;
+  favoritesCount?: number | null;
+  bookingsCount?: number | null;
+  lastViewedAt?: string | null;
+  /**
+   * Mark as sponsored listing
+   */
+  sponsored?: boolean | null;
+  rating?: number | null;
+  reviewCount?: number | null;
   /**
    * Keywords to help find this listing
    */
@@ -416,10 +433,14 @@ export interface Event {
         id?: string | null;
       }[]
     | null;
-  type: (number | ListingType)[];
+  type: number | ListingType;
   eventStatus: 'upcoming' | 'in-progress' | 'finished';
   startDate: string;
   endDate?: string | null;
+  /**
+   * Check if this is an all-day event
+   */
+  allDayEvent?: boolean | null;
   capacity?: {
     /**
      * Maximum number of attendees
@@ -436,6 +457,10 @@ export interface Event {
    * Last day to register for the event
    */
   registrationDeadline?: string | null;
+  /**
+   * Current number of participants registered
+   */
+  participants?: number | null;
   /**
    * Location where the event will be held
    */
@@ -456,11 +481,6 @@ export interface Event {
         id?: string | null;
       }[]
     | null;
-  stats?: {
-    views?: number | null;
-    registrations?: number | null;
-    favorites?: number | null;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -486,114 +506,24 @@ export interface Location {
     website?: string | null;
   };
   status?: ('pending' | 'approved' | 'rejected') | null;
-  featuredImage: number | Media;
+  rejectionReason?: string | null;
+  featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   owner: number | Profile;
+  views?: number | null;
   /**
-   * Keywords to help find this listing
+   * Mark as recommended/featured listing
    */
-  tags?:
-    | {
-        tag: string;
-        id?: string | null;
-      }[]
-    | null;
-  socialLinks?: {
-    facebook?: string | null;
-    instagram?: string | null;
-    linkedin?: string | null;
-    youtube?: string | null;
-    tiktok?: string | null;
-    twitch?: string | null;
-    x?: string | null;
-  };
-  youtubeLinks?:
-    | {
-        youtubeLink?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  type: (number | ListingType)[];
-  suitableFor: (number | ListingType)[];
-  capacity?: {
-    /**
-     * Indoor capacity
-     */
-    indoor?: number | null;
-    /**
-     * Outdoor capacity
-     */
-    outdoor?: number | null;
-    /**
-     * Seating capacity
-     */
-    seating?: number | null;
-    /**
-     * Parking spots
-     */
-    parking?: number | null;
-  };
-  pricing: {
-    type: 'fixed' | 'from' | 'contact';
-    amount?: number | null;
-    currency?: ('RON' | 'EUR' | 'USD') | null;
-    period?: ('hour' | 'day' | 'event') | null;
-  };
-  availability: {
-    type: 'always' | 'custom' | 'appointment';
-    schedule?:
-      | {
-          day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-          startTime: string;
-          endTime: string;
-          id?: string | null;
-        }[]
-      | null;
-  };
-  amenities?:
-    | {
-        amenity: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  stats?: {
-    views?: number | null;
-    bookings?: number | null;
-    favorites?: number | null;
-    rating?: {
-      average?: number | null;
-      count?: number | null;
-    };
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services".
- */
-export interface Service {
-  id: number;
-  title: string;
-  slug?: string | null;
-  description?: string | null;
-  city?: (number | null) | City;
-  address?: string | null;
+  featured?: boolean | null;
+  favoritesCount?: number | null;
+  bookingsCount?: number | null;
+  lastViewedAt?: string | null;
   /**
-   * @minItems 2
-   * @maxItems 2
+   * Mark as sponsored listing
    */
-  geo?: [number, number] | null;
-  contact?: {
-    email?: string | null;
-    phone?: string | null;
-    website?: string | null;
-  };
-  status?: ('pending' | 'approved' | 'rejected') | null;
-  featuredImage: number | Media;
-  gallery?: (number | Media)[] | null;
-  owner: number | Profile;
+  sponsored?: boolean | null;
+  rating?: number | null;
+  reviewCount?: number | null;
   /**
    * Keywords to help find this listing
    */
@@ -620,10 +550,33 @@ export interface Service {
     | null;
   type: number | ListingType;
   suitableFor: (number | ListingType)[];
+  capacity?: {
+    /**
+     * Indoor capacity
+     */
+    indoor?: number | null;
+    /**
+     * Outdoor capacity
+     */
+    outdoor?: number | null;
+    /**
+     * Seating capacity
+     */
+    seating?: number | null;
+    /**
+     * Parking spots
+     */
+    parking?: number | null;
+  };
+  /**
+   * Surface area in square meters (m²)
+   */
+  surface?: number | null;
   pricing: {
     type: 'fixed' | 'from' | 'contact';
     amount?: number | null;
     currency?: ('RON' | 'EUR' | 'USD') | null;
+    period?: ('hour' | 'day' | 'event') | null;
   };
   availability: {
     type: 'always' | 'custom' | 'appointment';
@@ -636,22 +589,10 @@ export interface Service {
         }[]
       | null;
   };
-  features?:
-    | {
-        feature: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  stats?: {
-    views?: number | null;
-    bookings?: number | null;
-    favorites?: number | null;
-    rating?: {
-      average?: number | null;
-      count?: number | null;
-    };
-  };
+  /**
+   * Select facilities available at this location
+   */
+  facilities?: (number | Facility)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -685,6 +626,129 @@ export interface Facility {
    * Whether this taxonomy item is active/available
    */
   isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  slug?: string | null;
+  description?: string | null;
+  city?: (number | null) | City;
+  address?: string | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  geo?: [number, number] | null;
+  contact?: {
+    email?: string | null;
+    phone?: string | null;
+    website?: string | null;
+  };
+  status?: ('pending' | 'approved' | 'rejected') | null;
+  rejectionReason?: string | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  owner: number | Profile;
+  views?: number | null;
+  /**
+   * Mark as recommended/featured listing
+   */
+  featured?: boolean | null;
+  favoritesCount?: number | null;
+  bookingsCount?: number | null;
+  lastViewedAt?: string | null;
+  /**
+   * Mark as sponsored listing
+   */
+  sponsored?: boolean | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  /**
+   * Keywords to help find this listing
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+    tiktok?: string | null;
+    twitch?: string | null;
+    x?: string | null;
+  };
+  youtubeLinks?:
+    | {
+        youtubeLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  type: number | ListingType;
+  suitableFor: (number | ListingType)[];
+  pricing: {
+    type: 'fixed' | 'from' | 'contact';
+    amount?: number | null;
+    currency?: ('RON' | 'EUR' | 'USD') | null;
+    period?: ('hour' | 'day' | 'event') | null;
+  };
+  availability: {
+    type: 'always' | 'custom' | 'appointment';
+    schedule?:
+      | {
+          day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+          startTime: string;
+          endTime: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  features?:
+    | {
+        feature: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "search".
+ */
+export interface Search {
+  id: number;
+  title?: string | null;
+  priority?: number | null;
+  doc:
+    | {
+        relationTo: 'locations';
+        value: number | Location;
+      }
+    | {
+        relationTo: 'services';
+        value: number | Service;
+      }
+    | {
+        relationTo: 'events';
+        value: number | Event;
+      }
+    | {
+        relationTo: 'profiles';
+        value: number | Profile;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -734,6 +798,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'facilities';
         value: number | Facility;
+      } | null)
+    | ({
+        relationTo: 'search';
+        value: number | Search;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -945,9 +1013,18 @@ export interface EventsSelect<T extends boolean = true> {
         website?: T;
       };
   status?: T;
+  rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
   owner?: T;
+  views?: T;
+  featured?: T;
+  favoritesCount?: T;
+  bookingsCount?: T;
+  lastViewedAt?: T;
+  sponsored?: T;
+  rating?: T;
+  reviewCount?: T;
   tags?:
     | T
     | {
@@ -975,6 +1052,7 @@ export interface EventsSelect<T extends boolean = true> {
   eventStatus?: T;
   startDate?: T;
   endDate?: T;
+  allDayEvent?: T;
   capacity?:
     | T
     | {
@@ -989,6 +1067,7 @@ export interface EventsSelect<T extends boolean = true> {
         currency?: T;
       };
   registrationDeadline?: T;
+  participants?: T;
   venue?: T;
   venueAddressDetails?:
     | T
@@ -1003,13 +1082,6 @@ export interface EventsSelect<T extends boolean = true> {
         requirement?: T;
         description?: T;
         id?: T;
-      };
-  stats?:
-    | T
-    | {
-        views?: T;
-        registrations?: T;
-        favorites?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1033,9 +1105,18 @@ export interface LocationsSelect<T extends boolean = true> {
         website?: T;
       };
   status?: T;
+  rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
   owner?: T;
+  views?: T;
+  featured?: T;
+  favoritesCount?: T;
+  bookingsCount?: T;
+  lastViewedAt?: T;
+  sponsored?: T;
+  rating?: T;
+  reviewCount?: T;
   tags?:
     | T
     | {
@@ -1069,6 +1150,7 @@ export interface LocationsSelect<T extends boolean = true> {
         seating?: T;
         parking?: T;
       };
+  surface?: T;
   pricing?:
     | T
     | {
@@ -1090,26 +1172,7 @@ export interface LocationsSelect<T extends boolean = true> {
               id?: T;
             };
       };
-  amenities?:
-    | T
-    | {
-        amenity?: T;
-        description?: T;
-        id?: T;
-      };
-  stats?:
-    | T
-    | {
-        views?: T;
-        bookings?: T;
-        favorites?: T;
-        rating?:
-          | T
-          | {
-              average?: T;
-              count?: T;
-            };
-      };
+  facilities?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1132,9 +1195,18 @@ export interface ServicesSelect<T extends boolean = true> {
         website?: T;
       };
   status?: T;
+  rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
   owner?: T;
+  views?: T;
+  featured?: T;
+  favoritesCount?: T;
+  bookingsCount?: T;
+  lastViewedAt?: T;
+  sponsored?: T;
+  rating?: T;
+  reviewCount?: T;
   tags?:
     | T
     | {
@@ -1166,6 +1238,7 @@ export interface ServicesSelect<T extends boolean = true> {
         type?: T;
         amount?: T;
         currency?: T;
+        period?: T;
       };
   availability?:
     | T
@@ -1187,19 +1260,6 @@ export interface ServicesSelect<T extends boolean = true> {
         description?: T;
         id?: T;
       };
-  stats?:
-    | T
-    | {
-        views?: T;
-        bookings?: T;
-        favorites?: T;
-        rating?:
-          | T
-          | {
-              average?: T;
-              count?: T;
-            };
-      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1214,6 +1274,17 @@ export interface FacilitiesSelect<T extends boolean = true> {
   categorySlug?: T;
   sortOrder?: T;
   isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "search_select".
+ */
+export interface SearchSelect<T extends boolean = true> {
+  title?: T;
+  priority?: T;
+  doc?: T;
   updatedAt?: T;
   createdAt?: T;
 }

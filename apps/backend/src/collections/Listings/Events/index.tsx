@@ -14,14 +14,16 @@ export const Events: CollectionConfig = {
     update: () => true, // We'll refine this later with proper auth
     delete: () => true, // We'll refine this later with proper auth
   },
+  indexes: [{ fields: ['type', 'slug', 'startDate', 'endDate', 'eventStatus'] }],
   fields: [
     ...sharedListingFields,
     {
       name: 'type',
       type: 'relationship',
       relationTo: 'listing-types',
-      hasMany: true,
+      hasMany: false,
       required: true,
+      index: true,
       filterOptions: {
         type: { equals: 'events' },
       },
@@ -56,6 +58,14 @@ export const Events: CollectionConfig = {
           pickerAppearance: 'dayAndTime',
           displayFormat: 'dd/MM/yyyy hh:mm',
         },
+      },
+    },
+    {
+      name: 'allDayEvent',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Check if this is an all-day event',
       },
     },
     {
@@ -129,6 +139,15 @@ export const Events: CollectionConfig = {
       },
     },
     {
+      name: 'participants',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        readOnly: true,
+        description: 'Current number of participants registered',
+      },
+    },
+    {
       name: 'venue',
       type: 'relationship',
       relationTo: 'locations',
@@ -173,40 +192,21 @@ export const Events: CollectionConfig = {
         },
       ],
     },
-    {
-      name: 'stats',
-      type: 'group',
-      admin: {
-        readOnly: true,
-      },
-      fields: [
-        {
-          name: 'views',
-          type: 'number',
-          defaultValue: 0,
-        },
-        {
-          name: 'registrations',
-          type: 'number',
-          defaultValue: 0,
-        },
-        {
-          name: 'favorites',
-          type: 'number',
-          defaultValue: 0,
-        },
-      ],
-    },
   ],
   hooks: {
     beforeChange: [
       ({ data }) => {
         // Auto-calculate remaining capacity if total is set
         if (data.capacity?.total) {
-          data.capacity.remaining = data.capacity.total - (data.stats?.registrations || 0)
+          data.capacity.remaining = data.capacity.total - (data.participants || 0)
         }
         return data
       },
+      // ({ data }) => {
+      //   const cityId = data?.city === 'string' ? data.city : data.city?.id
+      //   if (cityId) data.cityId = cityId
+      //   return data
+      // },
     ],
   },
   timestamps: true,
