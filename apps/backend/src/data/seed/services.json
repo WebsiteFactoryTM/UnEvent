@@ -1,0 +1,57 @@
+[
+  {
+    "title": "Professional Wedding Planner Bucharest",
+    "owner": 13,
+    "type": [4950],
+    "city": 1,
+    "suitableFor": [4942, 4943],
+    "pricing": {
+      "type": "contact"
+    },
+    "availability": {
+      "type": "appointment"
+    }
+  },
+  {
+    "title": "Corporate Event Catering Service",
+    "owner": 13,
+    "type": [4955],
+    "suitableFor": [4945],
+    "pricing": {
+      "type": "from",
+      "amount": 25,
+      "currency": "EUR",
+      "period": "event"
+    },
+    "availability": {
+      "type": "always"
+    }
+  },
+  {
+    "title": "Live Music Band for Events",
+    "owner": 13,
+    "type": [4960],
+    "suitableFor": [4944, 4945],
+    "pricing": {
+      "type": "fixed",
+      "amount": 800,
+      "currency": "EUR",
+      "period": "event"
+    },
+    "availability": {
+      "type": "custom",
+      "schedule": [
+        {
+          "day": "friday",
+          "startTime": "18:00",
+          "endTime": "02:00"
+        },
+        {
+          "day": "saturday",
+          "startTime": "18:00",
+          "endTime": "02:00"
+        }
+      ]
+    }
+  }
+]

@@ -1,8 +1,9 @@
 [
   {
     "title": "Tech Conference Bucharest 2025",
-    "owner": 1,
-    "type": [1, 2],
+    "owner": 13,
+    "type": [4945],
+    "city": 1,
     "eventStatus": "upcoming",
     "startDate": "2025-03-15T09:00:00.000Z",
     "endDate": "2025-03-15T18:00:00.000Z",
@@ -19,8 +20,9 @@
   },
   {
     "title": "Wedding Reception - Ana & Mihai",
-    "owner": 2,
-    "type": [3, 4],
+    "owner": 13,
+    "city": 6,
+    "type": [4942, 4943],
     "eventStatus": "upcoming",
     "startDate": "2025-04-20T18:00:00.000Z",
     "endDate": "2025-04-21T02:00:00.000Z",
@@ -35,8 +37,9 @@
   },
   {
     "title": "Jazz Night at Old Town",
-    "owner": 3,
-    "type": [5, 6],
+    "owner": 13,
+    "city": 1,
+    "type": [4944, 4945],
     "eventStatus": "upcoming",
     "startDate": "2025-02-28T20:00:00.000Z",
     "endDate": "2025-02-28T23:00:00.000Z",

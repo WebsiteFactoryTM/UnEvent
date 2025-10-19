@@ -28,6 +28,10 @@ export const Events: CollectionConfig = {
       filterOptions: {
         type: { equals: 'events' },
       },
+      admin: {
+        position: 'sidebar',
+        description: 'Type of event',
+      },
     },
     {
       name: 'eventStatus',

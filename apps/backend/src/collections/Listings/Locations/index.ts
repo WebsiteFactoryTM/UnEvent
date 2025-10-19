@@ -26,6 +26,10 @@ export const Locations: CollectionConfig = {
       filterOptions: {
         type: { equals: 'locations' },
       },
+      admin: {
+        position: 'sidebar',
+        description: 'Type of location',
+      },
     },
     {
       name: 'suitableFor',
@@ -37,6 +41,10 @@ export const Locations: CollectionConfig = {
       hasMany: true,
       required: true,
       index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Type of event suitable for this location',
+      },
     },
     {
       name: 'capacity',

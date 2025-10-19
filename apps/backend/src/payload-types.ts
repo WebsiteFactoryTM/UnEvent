@@ -376,6 +376,9 @@ export interface City {
 export interface Event {
   id: number;
   title: string;
+  /**
+   * URL-friendly identifier
+   */
   slug?: string | null;
   description?: string | null;
   city?: (number | null) | City;
@@ -390,11 +393,20 @@ export interface Event {
     phone?: string | null;
     website?: string | null;
   };
+  /**
+   * Status of the listing
+   */
   status?: ('pending' | 'approved' | 'rejected') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
+  /**
+   * Owner of the listing
+   */
   owner: number | Profile;
+  /**
+   * Number of views
+   */
   views?: number | null;
   /**
    * Mark as recommended/featured listing
@@ -433,6 +445,9 @@ export interface Event {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Type of event
+   */
   type: (number | ListingType)[];
   eventStatus: 'upcoming' | 'in-progress' | 'finished';
   startDate: string;
@@ -491,6 +506,9 @@ export interface Event {
 export interface Location {
   id: number;
   title: string;
+  /**
+   * URL-friendly identifier
+   */
   slug?: string | null;
   description?: string | null;
   city?: (number | null) | City;
@@ -505,11 +523,20 @@ export interface Location {
     phone?: string | null;
     website?: string | null;
   };
+  /**
+   * Status of the listing
+   */
   status?: ('pending' | 'approved' | 'rejected') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
+  /**
+   * Owner of the listing
+   */
   owner: number | Profile;
+  /**
+   * Number of views
+   */
   views?: number | null;
   /**
    * Mark as recommended/featured listing
@@ -548,7 +575,13 @@ export interface Location {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Type of location
+   */
   type: (number | ListingType)[];
+  /**
+   * Type of event suitable for this location
+   */
   suitableFor: (number | ListingType)[];
   capacity?: {
     /**
@@ -636,6 +669,9 @@ export interface Facility {
 export interface Service {
   id: number;
   title: string;
+  /**
+   * URL-friendly identifier
+   */
   slug?: string | null;
   description?: string | null;
   city?: (number | null) | City;
@@ -650,11 +686,20 @@ export interface Service {
     phone?: string | null;
     website?: string | null;
   };
+  /**
+   * Status of the listing
+   */
   status?: ('pending' | 'approved' | 'rejected') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
+  /**
+   * Owner of the listing
+   */
   owner: number | Profile;
+  /**
+   * Number of views
+   */
   views?: number | null;
   /**
    * Mark as recommended/featured listing
@@ -693,7 +738,13 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Type of service
+   */
   type: (number | ListingType)[];
+  /**
+   * Type of event suitable for this service
+   */
   suitableFor: (number | ListingType)[];
   pricing: {
     type: 'fixed' | 'from' | 'contact';

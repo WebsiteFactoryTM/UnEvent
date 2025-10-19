@@ -12,6 +12,11 @@ export const sharedListingFields: Field[] = [
     unique: true,
     hooks: { beforeValidate: [createSlugField<Event | Location | Service>('title')] },
     index: true,
+    admin: {
+      position: 'sidebar',
+      description: 'URL-friendly identifier',
+      readOnly: true,
+    },
   },
   { name: 'description', type: 'textarea' },
   { name: 'city', type: 'relationship', relationTo: 'cities' },
@@ -43,6 +48,10 @@ export const sharedListingFields: Field[] = [
     options: ['pending', 'approved', 'rejected'],
     defaultValue: 'pending',
     index: true,
+    admin: {
+      position: 'sidebar',
+      description: 'Status of the listing',
+    },
   },
   {
     name: 'rejectionReason',
@@ -51,13 +60,30 @@ export const sharedListingFields: Field[] = [
   },
   { name: 'featuredImage', type: 'upload', relationTo: 'media', required: false },
   { name: 'gallery', type: 'upload', relationTo: 'media', hasMany: true },
-  { name: 'owner', type: 'relationship', relationTo: 'profiles', required: true },
-  { name: 'views', type: 'number', defaultValue: 0, admin: { readOnly: true } },
+  {
+    name: 'owner',
+    type: 'relationship',
+    relationTo: 'profiles',
+    required: true,
+    admin: {
+      position: 'sidebar',
+      description: 'Owner of the listing',
+    },
+  },
+  {
+    name: 'views',
+    type: 'number',
+    defaultValue: 0,
+    admin: { readOnly: true, position: 'sidebar', description: 'Number of views' },
+  },
   {
     name: 'featured',
     type: 'checkbox',
     defaultValue: false,
-    admin: { description: 'Mark as recommended/featured listing' },
+    admin: {
+      position: 'sidebar',
+      description: 'Mark as recommended/featured listing',
+    },
     index: true,
   },
   { name: 'favoritesCount', type: 'number', defaultValue: 0, admin: { readOnly: true } },
@@ -72,7 +98,10 @@ export const sharedListingFields: Field[] = [
     name: 'sponsored',
     type: 'checkbox',
     defaultValue: false,
-    admin: { description: 'Mark as sponsored listing' },
+    admin: {
+      position: 'sidebar',
+      description: 'Mark as sponsored listing',
+    },
   },
   {
     name: 'rating',

@@ -25,6 +25,10 @@ export const Services: CollectionConfig = {
         type: { equals: 'services' },
       },
       hasMany: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Type of service',
+      },
     },
     {
       name: 'suitableFor',
@@ -35,6 +39,10 @@ export const Services: CollectionConfig = {
       },
       hasMany: true,
       required: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Type of event suitable for this service',
+      },
     },
     {
       name: 'pricing',
