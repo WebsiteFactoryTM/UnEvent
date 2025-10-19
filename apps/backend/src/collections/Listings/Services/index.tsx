@@ -24,6 +24,7 @@ export const Services: CollectionConfig = {
       filterOptions: {
         type: { equals: 'services' },
       },
+      hasMany: true,
     },
     {
       name: 'suitableFor',

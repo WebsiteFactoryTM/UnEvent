@@ -433,7 +433,7 @@ export interface Event {
         id?: string | null;
       }[]
     | null;
-  type: number | ListingType;
+  type: (number | ListingType)[];
   eventStatus: 'upcoming' | 'in-progress' | 'finished';
   startDate: string;
   endDate?: string | null;
@@ -548,7 +548,7 @@ export interface Location {
         id?: string | null;
       }[]
     | null;
-  type: number | ListingType;
+  type: (number | ListingType)[];
   suitableFor: (number | ListingType)[];
   capacity?: {
     /**
@@ -693,7 +693,7 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
-  type: number | ListingType;
+  type: (number | ListingType)[];
   suitableFor: (number | ListingType)[];
   pricing: {
     type: 'fixed' | 'from' | 'contact';

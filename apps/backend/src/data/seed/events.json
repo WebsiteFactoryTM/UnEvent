@@ -1,0 +1,52 @@
+[
+  {
+    "title": "Tech Conference Bucharest 2025",
+    "owner": 1,
+    "type": [1, 2],
+    "eventStatus": "upcoming",
+    "startDate": "2025-03-15T09:00:00.000Z",
+    "endDate": "2025-03-15T18:00:00.000Z",
+    "pricing": {
+      "type": "paid",
+      "amount": 150,
+      "currency": "EUR"
+    },
+    "venueAddressDetails": {
+      "venueAddress": "Calea Victoriei 147, Bucharest, Romania",
+      "venueCity": 1,
+      "venueGeo": [26.0963, 44.4369]
+    }
+  },
+  {
+    "title": "Wedding Reception - Ana & Mihai",
+    "owner": 2,
+    "type": [3, 4],
+    "eventStatus": "upcoming",
+    "startDate": "2025-04-20T18:00:00.000Z",
+    "endDate": "2025-04-21T02:00:00.000Z",
+    "pricing": {
+      "type": "contact"
+    },
+    "venueAddressDetails": {
+      "venueAddress": "Strada Episcopiei 5, Bran, Romania",
+      "venueCity": 3,
+      "venueGeo": [25.3667, 45.5167]
+    }
+  },
+  {
+    "title": "Jazz Night at Old Town",
+    "owner": 3,
+    "type": [5, 6],
+    "eventStatus": "upcoming",
+    "startDate": "2025-02-28T20:00:00.000Z",
+    "endDate": "2025-02-28T23:00:00.000Z",
+    "pricing": {
+      "type": "free"
+    },
+    "venueAddressDetails": {
+      "venueAddress": "Strada Stavropoleos 5, Bucharest, Romania",
+      "venueCity": 1,
+      "venueGeo": [26.0983, 44.4318]
+    }
+  }
+]

@@ -20,7 +20,7 @@ export const Locations: CollectionConfig = {
       name: 'type',
       type: 'relationship',
       relationTo: 'listing-types',
-      hasMany: false,
+      hasMany: true,
       required: true,
       index: true,
       filterOptions: {
