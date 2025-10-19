@@ -14,14 +14,15 @@ export const Events: CollectionConfig = {
     update: () => true, // We'll refine this later with proper auth
     delete: () => true, // We'll refine this later with proper auth
   },
-  indexes: [{ fields: ['type', 'slug', 'startDate', 'endDate', 'eventStatus'] }],
+  // Note: 'type' field is hasMany relationship, so can't be in compound index
+  // Individual indexes are set on fields that support them
   fields: [
     ...sharedListingFields,
     {
       name: 'type',
       type: 'relationship',
       relationTo: 'listing-types',
-      hasMany: false,
+      hasMany: true,
       required: true,
       index: true,
       filterOptions: {
@@ -38,11 +39,13 @@ export const Events: CollectionConfig = {
       ],
       required: true,
       defaultValue: 'upcoming',
+      index: true,
     },
     {
       name: 'startDate',
       type: 'date',
       required: true,
+      index: true,
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
@@ -53,6 +56,7 @@ export const Events: CollectionConfig = {
     {
       name: 'endDate',
       type: 'date',
+      index: true,
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
