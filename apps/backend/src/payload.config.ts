@@ -1,5 +1,5 @@
 // storage-adapter-import-placeholder
-import { postgresAdapter } from '@payloadcms/db-postgres'
+import { postgresAdapter, sql } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -69,27 +69,51 @@ export default buildConfig({
     },
     afterSchemaInit: [
       ({ schema, extendTable }) => {
-        // Check the actual table name in `schema.tables`
-        const jt = (schema.tables as Record<string, any>).locations_suitableFor_rel // eslint-disable-line @typescript-eslint/no-explicit-any
-        if (jt) {
+        const tables = schema.tables as Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
+
+        // Helper to safely extend a join table with composite indexes
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        function addCompositeIndexes(tableName: string, builders: (t: any) => Record<string, any>) {
+          const t = tables[tableName]
+          if (!t) return
           extendTable({
-            table: jt,
-            extraConfig: (table) => ({
-              // Single-column indexes commonly used by Payload queries
-              locations_suitableFor_parent_idx: index('locations_suitableFor_parent_idx').on(
-                table.parentId,
-              ),
-              locations_suitableFor_value_idx: index('locations_suitableFor_value_idx').on(
-                table.value,
-              ),
-              // Optional composite index to speed up combined filters on (value, parentId)
-              // Remove if you don't need it to keep write overhead minimal
-              locations_suitableFor_value_parent_idx: index(
-                'locations_suitableFor_value_parent_idx',
-              ).on(table.value, table.parentId),
-            }),
+            table: t,
+            extraConfig: (tbl) => builders(tbl),
           })
         }
+
+        // LOCATIONS_RELS: paths present -> facilities, suitableFor, type
+        addCompositeIndexes('locations_rels', (t) => ({
+          locations_rels_suitableFor_composite_idx: index(
+            'locations_rels_suitableFor_composite_idx',
+          )
+            .on(t.listingTypesId, t.parentId)
+            .where(sql`path = 'suitableFor'`),
+          locations_rels_type_composite_idx: index('locations_rels_type_composite_idx')
+            .on(t.listingTypesId, t.parentId)
+            .where(sql`path = 'type'`),
+          locations_rels_facilities_composite_idx: index('locations_rels_facilities_composite_idx')
+            .on(t.facilitiesId, t.parentId)
+            .where(sql`path = 'facilities'`),
+        }))
+
+        // SERVICES_RELS
+        addCompositeIndexes('services_rels', (t) => ({
+          services_rels_suitableFor_composite_idx: index('services_rels_suitableFor_composite_idx')
+            .on(t.listingTypesId, t.parentId)
+            .where(sql`path = 'suitableFor'`),
+          services_rels_type_composite_idx: index('services_rels_type_composite_idx')
+            .on(t.listingTypesId, t.parentId)
+            .where(sql`path = 'type'`),
+        }))
+
+        // EVENTS_RELS
+        addCompositeIndexes('events_rels', (t) => ({
+          events_rels_type_composite_idx: index('events_rels_type_composite_idx')
+            .on(t.listingTypesId, t.parentId)
+            .where(sql`path = 'type'`),
+        }))
+
         return schema
       },
     ],
