@@ -5,6 +5,7 @@ import { isAdmin } from '@/access/roles'
 import seedLocations from '@/scripts/seed/seed-locations'
 import seedCities from '@/scripts/seed/seed-cities'
 import seedEvents from '@/scripts/seed/seed-events'
+import seedServices from '@/scripts/seed/seed-services'
 
 // Script must define a "script" function export that accepts the sanitized config
 export const seed: PayloadHandler = async (req) => {
@@ -18,6 +19,7 @@ export const seed: PayloadHandler = async (req) => {
   // await seedListingTypes(req.payload)
   // await seedCities(req.payload)
   // await seedLocations(req.payload)
-  await seedEvents(req.payload)
+  // await seedEvents(req.payload)
+  await seedServices(req.payload)
   return new Response('Successfully seeded!', { status: 200 })
 }

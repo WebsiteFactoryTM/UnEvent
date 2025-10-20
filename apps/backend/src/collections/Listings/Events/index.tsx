@@ -8,6 +8,7 @@ export const Events: CollectionConfig = {
     defaultColumns: ['title', 'city', 'status', 'startDate', 'owner'],
     group: 'Listings',
   },
+  timestamps: true,
   access: {
     read: () => true,
     create: () => true, // We'll refine this later with proper auth
@@ -116,6 +117,7 @@ export const Events: CollectionConfig = {
           name: 'amount',
           type: 'number',
           min: 0,
+          index: true,
           admin: {
             condition: (data) => data?.pricing?.type === 'paid',
           },
@@ -217,5 +219,4 @@ export const Events: CollectionConfig = {
       // },
     ],
   },
-  timestamps: true,
 }

@@ -2,7 +2,7 @@
   {
     "title": "Professional Wedding Planner Bucharest",
     "owner": 13,
-    "type": [4950],
+    "type": [5538, 5250],
     "city": 1,
     "suitableFor": [4942, 4943],
     "pricing": {
@@ -15,8 +15,9 @@
   {
     "title": "Corporate Event Catering Service",
     "owner": 13,
-    "type": [4955],
-    "suitableFor": [4945],
+    "city": 2,
+    "type": [5247, 5250],
+    "suitableFor": [4855],
     "pricing": {
       "type": "from",
       "amount": 25,
@@ -30,8 +31,9 @@
   {
     "title": "Live Music Band for Events",
     "owner": 13,
-    "type": [4960],
-    "suitableFor": [4944, 4945],
+    "city": 5,
+    "type": [5245, 5246],
+    "suitableFor": [4855],
     "pricing": {
       "type": "fixed",
       "amount": 800,

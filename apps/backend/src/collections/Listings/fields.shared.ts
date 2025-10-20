@@ -19,8 +19,7 @@ export const sharedListingFields: Field[] = [
     },
   },
   { name: 'description', type: 'textarea' },
-  { name: 'city', type: 'relationship', relationTo: 'cities' },
-  // { name: 'cityId', type: 'text', admin: { readOnly: true }, index: true }, // store the FK id as text
+  { name: 'city', type: 'relationship', relationTo: 'cities', index: true },
 
   { name: 'address', type: 'text' },
   { name: 'geo', type: 'point', index: true },
