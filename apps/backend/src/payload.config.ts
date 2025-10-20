@@ -87,30 +87,30 @@ export default buildConfig({
           locations_rels_suitableFor_composite_idx: index(
             'locations_rels_suitableFor_composite_idx',
           )
-            .on(t.listingTypesId, t.parentId)
+            .on(t['listing-typesID'], t.parent)
             .where(sql`path = 'suitableFor'`),
           locations_rels_type_composite_idx: index('locations_rels_type_composite_idx')
-            .on(t.listingTypesId, t.parentId)
+            .on(t['listing-typesID'], t.parent)
             .where(sql`path = 'type'`),
           locations_rels_facilities_composite_idx: index('locations_rels_facilities_composite_idx')
-            .on(t.facilitiesId, t.parentId)
+            .on(t.facilitiesID, t.parent)
             .where(sql`path = 'facilities'`),
         }))
 
         // SERVICES_RELS
         addCompositeIndexes('services_rels', (t) => ({
           services_rels_suitableFor_composite_idx: index('services_rels_suitableFor_composite_idx')
-            .on(t.listingTypesId, t.parentId)
+            .on(t['listing-typesID'], t.parent)
             .where(sql`path = 'suitableFor'`),
           services_rels_type_composite_idx: index('services_rels_type_composite_idx')
-            .on(t.listingTypesId, t.parentId)
+            .on(t['listing-typesID'], t.parent)
             .where(sql`path = 'type'`),
         }))
 
         // EVENTS_RELS
         addCompositeIndexes('events_rels', (t) => ({
           events_rels_type_composite_idx: index('events_rels_type_composite_idx')
-            .on(t.listingTypesId, t.parentId)
+            .on(t['listing-typesID'], t.parent)
             .where(sql`path = 'type'`),
         }))
 
