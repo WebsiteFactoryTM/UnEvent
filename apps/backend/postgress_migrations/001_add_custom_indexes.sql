@@ -97,15 +97,15 @@ CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS uq_evt_rels_type_unique
   WHERE path = 'type';
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_events_city_status_start_asc
-  ON public.events (city_id, startDate ASC)
+  ON public.events (city_id, start_date ASC)
   WHERE status = 'approved';
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_events_city_status_start_desc
-  ON public.events (city_id, startDate DESC)
+  ON public.events (city_id, start_date DESC)
   WHERE status = 'approved';
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_events_status_eventStatus
-  ON public.events (status, eventStatus);
+  ON public.events (status, event_status);
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_events_pricing_type
   ON public.events ((pricing ->> 'type'))
