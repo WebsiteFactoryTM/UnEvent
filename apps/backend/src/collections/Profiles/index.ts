@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin } from '@/access/roles'
+import { isAdmin } from '@/collections/_access/roles'
 import { updateUserRolesOnProfileUserTypeChange } from './hooks/updateUserRolesOnProfileUserTypeChange'
 import { updateMemberSince } from './hooks/updateMemberSince'
 import { linkProfileToUserAfterChange } from './hooks/linkProfileToUser'

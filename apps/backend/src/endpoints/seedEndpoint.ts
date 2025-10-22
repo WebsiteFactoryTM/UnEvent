@@ -1,7 +1,7 @@
 import seedListingTypes from '@/scripts/seed/seed-listing-types'
 import seedFacilities from '@/scripts/seed/seed-facilities'
 import type { PayloadHandler } from 'payload'
-import { isAdmin } from '@/access/roles'
+import { isAdmin } from '@/collections/_access/roles'
 import seedLocations from '@/scripts/seed/seed-locations'
 import seedCities from '@/scripts/seed/seed-cities'
 import seedEvents from '@/scripts/seed/seed-events'

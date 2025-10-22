@@ -1,4 +1,4 @@
-import { isAdmin } from '@/access/roles'
+import { isAdmin, isAdminOrSelf } from '@/collections/_access/roles'
 import { createProfileAfterUserCreate } from './hooks/createProfileAfterUserCreate'
 import type { CollectionConfig } from 'payload'
 import { ensureBaseClientRole } from './hooks/ensureBaseClientRole'
@@ -12,7 +12,7 @@ export const Users: CollectionConfig = {
   timestamps: true,
   access: {
     read: ({ req }) => !!req.user, // only logged-in users can read users
-    update: ({ req }) => !!req.user, // must be logged in to update self (we can refine later)
+    update: ({ req }) => isAdminOrSelf({ req }), // must be logged in to update self (we can refine later)
     delete: ({ req }) => isAdmin({ req }),
     create: () => true, // allow public registration
   },
