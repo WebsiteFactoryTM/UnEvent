@@ -1,8 +1,9 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin } from '@/collections/_access/roles'
-import { updateUserRolesOnProfileUserTypeChange } from './hooks/updateUserRolesOnProfileUserTypeChange'
+import { updateUserRoles } from './hooks/afterChange/updateUserRoles'
 import { updateMemberSince } from './hooks/updateMemberSince'
 import { linkProfileToUserAfterChange } from './hooks/linkProfileToUser'
+import { updateUserAvatar } from './hooks/afterChange/updateUserAvatar'
 
 import { createSlugField } from '../../utils/slugifySlug'
 import type { Profile } from '@/payload-types'
@@ -27,6 +28,12 @@ export const Profiles: CollectionConfig = {
     },
     delete: ({ req }) => isAdmin({ req }),
   },
+  hooks: {
+    beforeChange: [updateMemberSince],
+    afterChange: [updateUserRoles, updateUserAvatar],
+    afterOperation: [linkProfileToUserAfterChange],
+  },
+  timestamps: true,
   fields: [
     {
       name: 'user',
@@ -34,9 +41,9 @@ export const Profiles: CollectionConfig = {
       relationTo: 'users',
       required: true,
       hasMany: false,
-      admin: {
-        readOnly: true,
-      },
+      // admin: {
+      //   readOnly: true,
+      // },
     },
     {
       name: 'slug',
@@ -289,10 +296,4 @@ export const Profiles: CollectionConfig = {
       },
     },
   ],
-  hooks: {
-    beforeChange: [updateMemberSince],
-    afterChange: [updateUserRolesOnProfileUserTypeChange],
-    afterOperation: [linkProfileToUserAfterChange],
-  },
-  timestamps: true,
 }

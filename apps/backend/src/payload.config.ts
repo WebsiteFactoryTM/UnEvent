@@ -217,9 +217,9 @@ export default buildConfig({
   ],
   onInit: async (payload) => {
     console.log('[Feed] Initializing feed algorithm workers...')
-    await flushCountersToDaily(payload)
-    await aggregateDaily(payload)
-    await rankSegments(payload)
+    // await flushCountersToDaily(payload)
+    // await aggregateDaily(payload)
+    // await rankSegments(payload)
     // Flush Redis counters to metrics_daily every 5 minutes
     cron.schedule('*/5 * * * *', async () => {
       try {
