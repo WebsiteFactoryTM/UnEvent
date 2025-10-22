@@ -3,7 +3,7 @@ import { postgresAdapter, sql } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
-import { buildConfig } from 'payload'
+import { buildConfig, Field } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
@@ -130,6 +130,68 @@ export default buildConfig({
         services: 20,
         events: 30,
         profiles: 40,
+      },
+      searchOverrides: {
+        fields: ({ defaultFields }: { defaultFields: Field[] }) => [
+          ...defaultFields,
+          {
+            name: 'description',
+            type: 'textarea',
+            admin: {
+              readOnly: true,
+            },
+          },
+          {
+            name: 'address',
+            type: 'text',
+            admin: {
+              readOnly: true,
+            },
+          },
+          {
+            name: 'cityName',
+            type: 'text',
+            admin: {
+              readOnly: true,
+            },
+          },
+        ],
+      },
+      beforeSync: async ({
+        originalDoc,
+        searchDoc,
+        payload,
+      }: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        originalDoc: any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        searchDoc: any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        payload: any
+      }) => {
+        let cityName = ''
+
+        // Get city name from the relationship
+        if (originalDoc?.city) {
+          try {
+            const cityId =
+              typeof originalDoc.city === 'object' ? originalDoc.city.id : originalDoc.city
+            const city = await payload.findByID({
+              collection: 'cities',
+              id: cityId,
+            })
+            cityName = city?.name || ''
+          } catch (error) {
+            console.error('Error fetching city:', error)
+          }
+        }
+
+        return {
+          ...searchDoc,
+          description: originalDoc?.description || '',
+          address: originalDoc?.address || '',
+          cityName,
+        }
       },
     }),
   ],
