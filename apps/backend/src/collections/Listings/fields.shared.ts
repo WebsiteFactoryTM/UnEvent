@@ -1,8 +1,6 @@
 // shared/fields.shared.ts
 
 import type { Field } from 'payload'
-import { createSlugField } from '../../utils/slugifySlug'
-import type { Event, Location, Service } from '@/payload-types'
 
 export const sharedListingFields: Field[] = [
   { name: 'title', type: 'text', required: true },
@@ -10,12 +8,21 @@ export const sharedListingFields: Field[] = [
     name: 'slug',
     type: 'text',
     unique: true,
-    hooks: { beforeValidate: [createSlugField<Event | Location | Service>('title')] },
     index: true,
     admin: {
       position: 'sidebar',
       description: 'URL-friendly identifier',
       readOnly: true,
+    },
+  },
+  {
+    name: 'owner',
+    type: 'relationship',
+    relationTo: 'profiles',
+    required: true,
+    admin: {
+      position: 'sidebar',
+      description: 'Owner of the listing',
     },
   },
   { name: 'description', type: 'textarea' },
@@ -60,48 +67,14 @@ export const sharedListingFields: Field[] = [
   { name: 'featuredImage', type: 'upload', relationTo: 'media', required: false },
   { name: 'gallery', type: 'upload', relationTo: 'media', hasMany: true },
   {
-    name: 'owner',
-    type: 'relationship',
-    relationTo: 'profiles',
-    required: true,
-    admin: {
-      position: 'sidebar',
-      description: 'Owner of the listing',
-    },
-  },
-  {
     name: 'views',
     type: 'number',
     defaultValue: 0,
     admin: { readOnly: true, position: 'sidebar', description: 'Number of views' },
   },
-  {
-    name: 'featured',
-    type: 'checkbox',
-    defaultValue: false,
-    admin: {
-      position: 'sidebar',
-      description: 'Mark as recommended/featured listing',
-    },
-    index: true,
-  },
+
   { name: 'favoritesCount', type: 'number', defaultValue: 0, admin: { readOnly: true } },
   { name: 'bookingsCount', type: 'number', defaultValue: 0, admin: { readOnly: true } },
-  {
-    name: 'lastViewedAt',
-    type: 'date',
-    defaultValue: new Date(),
-    admin: { readOnly: true },
-  },
-  {
-    name: 'sponsored',
-    type: 'checkbox',
-    defaultValue: false,
-    admin: {
-      position: 'sidebar',
-      description: 'Mark as sponsored listing',
-    },
-  },
   {
     name: 'rating',
     type: 'number',
@@ -111,6 +84,41 @@ export const sharedListingFields: Field[] = [
     admin: { readOnly: true },
     index: true,
   },
+  {
+    name: 'lastViewedAt',
+    type: 'date',
+    defaultValue: new Date(),
+    admin: { readOnly: true },
+  },
+  {
+    name: 'authority',
+    type: 'select',
+    options: [
+      { label: 'Fresh', value: 'fresh' },
+      { label: 'Standard', value: 'standard' },
+      {
+        label: 'Sponsored',
+        value: 'sponsored',
+      },
+      { label: 'Recommended', value: 'recommended' },
+      { label: 'Top of the month', value: 'top-of-the-month' },
+      { label: 'Featured', value: 'featured' },
+      { label: 'Premium', value: 'premium' },
+      { label: 'Gold', value: 'gold' },
+      { label: 'Platinum', value: 'platinum' },
+      { label: 'Diamond', value: 'diamond' },
+      { label: 'Ultimate', value: 'ultimate' },
+      { label: 'Legendary', value: 'legendary' },
+      { label: 'Mythic', value: 'mythic' },
+      { label: 'Epic', value: 'epic' },
+    ],
+    index: true,
+    admin: {
+      position: 'sidebar',
+      description: 'Authority of the listing',
+    },
+  },
+
   { name: 'reviewCount', type: 'number', defaultValue: 0, admin: { readOnly: true } },
   {
     name: 'tags',

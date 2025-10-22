@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { sharedListingFields } from '../fields.shared'
+import { autoSlug, attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
+import { approvedOnlyPublic, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -10,13 +12,16 @@ export const Events: CollectionConfig = {
   },
   timestamps: true,
   access: {
-    read: () => true,
-    create: () => true, // We'll refine this later with proper auth
-    update: () => true, // We'll refine this later with proper auth
-    delete: () => true, // We'll refine this later with proper auth
+    read: ({ req }) => approvedOnlyPublic({ req }),
+    create: ({ req }) => requireRole(['organizer'])({ req }),
+    update: ({ req }) => isOwnerOrAdmin({ req }),
+    delete: ({ req }) => isOwnerOrAdmin({ req }),
   },
   // Note: 'type' field is hasMany relationship, so can't be in compound index
   // Individual indexes are set on fields that support them
+  hooks: {
+    beforeChange: [autoSlug, attachOwner, setDefaultStatus],
+  },
   fields: [
     ...sharedListingFields,
     {
@@ -203,20 +208,4 @@ export const Events: CollectionConfig = {
       ],
     },
   ],
-  hooks: {
-    beforeChange: [
-      ({ data }) => {
-        // Auto-calculate remaining capacity if total is set
-        if (data.capacity?.total) {
-          data.capacity.remaining = data.capacity.total - (data.participants || 0)
-        }
-        return data
-      },
-      // ({ data }) => {
-      //   const cityId = data?.city === 'string' ? data.city : data.city?.id
-      //   if (cityId) data.cityId = cityId
-      //   return data
-      // },
-    ],
-  },
 }

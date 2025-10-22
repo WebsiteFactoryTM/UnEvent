@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { sharedListingFields } from '../fields.shared'
+import { attachOwner, autoSlug, setDefaultStatus } from '../_hooks/beforeValidate'
+import { approvedOnlyPublic, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 
 export const Locations: CollectionConfig = {
   slug: 'locations',
@@ -9,10 +11,13 @@ export const Locations: CollectionConfig = {
     group: 'Listings',
   },
   access: {
-    read: () => true,
-    create: () => true, // We'll refine this later with proper auth
-    update: () => true, // We'll refine this later with proper auth
-    delete: () => true, // We'll refine this later with proper auth
+    read: ({ req }) => approvedOnlyPublic({ req }),
+    create: ({ req }) => requireRole(['host'])({ req }),
+    update: ({ req }) => isOwnerOrAdmin({ req }),
+    delete: ({ req }) => isOwnerOrAdmin({ req }),
+  },
+  hooks: {
+    beforeChange: [autoSlug, attachOwner, setDefaultStatus],
   },
   fields: [
     ...sharedListingFields,
