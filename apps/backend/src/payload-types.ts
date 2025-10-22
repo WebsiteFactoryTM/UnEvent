@@ -77,6 +77,10 @@ export interface Config {
     locations: Location;
     services: Service;
     facilities: Facility;
+    'metrics-daily': MetricsDaily;
+    aggregates: Aggregate;
+    'listing-rank': ListingRank;
+    reviews: Review;
     search: Search;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +98,10 @@ export interface Config {
     locations: LocationsSelect<false> | LocationsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     facilities: FacilitiesSelect<false> | FacilitiesSelect<true>;
+    'metrics-daily': MetricsDailySelect<false> | MetricsDailySelect<true>;
+    aggregates: AggregatesSelect<false> | AggregatesSelect<true>;
+    'listing-rank': ListingRankSelect<false> | ListingRankSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -413,26 +421,9 @@ export interface Event {
   rating?: number | null;
   lastViewedAt?: string | null;
   /**
-   * Authority of the listing
+   * Tier of the listing
    */
-  authority?:
-    | (
-        | 'fresh'
-        | 'standard'
-        | 'sponsored'
-        | 'recommended'
-        | 'top-of-the-month'
-        | 'featured'
-        | 'premium'
-        | 'gold'
-        | 'platinum'
-        | 'diamond'
-        | 'ultimate'
-        | 'legendary'
-        | 'mythic'
-        | 'epic'
-      )
-    | null;
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   reviewCount?: number | null;
   /**
    * Keywords to help find this listing
@@ -556,26 +547,9 @@ export interface Location {
   rating?: number | null;
   lastViewedAt?: string | null;
   /**
-   * Authority of the listing
+   * Tier of the listing
    */
-  authority?:
-    | (
-        | 'fresh'
-        | 'standard'
-        | 'sponsored'
-        | 'recommended'
-        | 'top-of-the-month'
-        | 'featured'
-        | 'premium'
-        | 'gold'
-        | 'platinum'
-        | 'diamond'
-        | 'ultimate'
-        | 'legendary'
-        | 'mythic'
-        | 'epic'
-      )
-    | null;
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   reviewCount?: number | null;
   /**
    * Keywords to help find this listing
@@ -732,26 +706,9 @@ export interface Service {
   rating?: number | null;
   lastViewedAt?: string | null;
   /**
-   * Authority of the listing
+   * Tier of the listing
    */
-  authority?:
-    | (
-        | 'fresh'
-        | 'standard'
-        | 'sponsored'
-        | 'recommended'
-        | 'top-of-the-month'
-        | 'featured'
-        | 'premium'
-        | 'gold'
-        | 'platinum'
-        | 'diamond'
-        | 'ultimate'
-        | 'legendary'
-        | 'mythic'
-        | 'epic'
-      )
-    | null;
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   reviewCount?: number | null;
   /**
    * Keywords to help find this listing
@@ -809,6 +766,188 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Raw daily counters for views, favorites, and bookings
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "metrics-daily".
+ */
+export interface MetricsDaily {
+  id: number;
+  /**
+   * The listing this metric belongs to
+   */
+  target:
+    | {
+        relationTo: 'locations';
+        value: number | Location;
+      }
+    | {
+        relationTo: 'events';
+        value: number | Event;
+      }
+    | {
+        relationTo: 'services';
+        value: number | Service;
+      };
+  /**
+   * Type of listing for faster filtering
+   */
+  kind: 'locations' | 'events' | 'services';
+  /**
+   * UTC date (YYYY-MM-DD) for this metric snapshot
+   */
+  date: string;
+  /**
+   * Number of views on this date
+   */
+  views?: number | null;
+  /**
+   * Number of favorites added on this date
+   */
+  favorites?: number | null;
+  /**
+   * Number of bookings made on this date
+   */
+  bookings?: number | null;
+}
+/**
+ * Precomputed rolling windows and aggregated metrics per listing
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aggregates".
+ */
+export interface Aggregate {
+  id: number;
+  /**
+   * The listing this aggregate belongs to
+   */
+  target:
+    | {
+        relationTo: 'locations';
+        value: number | Location;
+      }
+    | {
+        relationTo: 'events';
+        value: number | Event;
+      }
+    | {
+        relationTo: 'services';
+        value: number | Service;
+      };
+  /**
+   * Type of listing for faster filtering
+   */
+  kind: 'locations' | 'events' | 'services';
+  /**
+   * Total views in last 7 days
+   */
+  views7d?: number | null;
+  /**
+   * Total views in last 30 days
+   */
+  views30d?: number | null;
+  /**
+   * Total bookings in last 7 days
+   */
+  bookings7d?: number | null;
+  /**
+   * Total bookings in last 30 days
+   */
+  bookings30d?: number | null;
+  /**
+   * Total favorites count (all time)
+   */
+  favorites?: number | null;
+  /**
+   * Total number of reviews
+   */
+  reviewsCount?: number | null;
+  /**
+   * Average rating (1-5)
+   */
+  avgRating?: number | null;
+  /**
+   * Bayesian rating to dampen small sample sizes
+   */
+  bayesRating?: number | null;
+}
+/**
+ * Precomputed ranking scores per segment (city+type) for fast feed queries
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-rank".
+ */
+export interface ListingRank {
+  id: number;
+  /**
+   * The listing being ranked
+   */
+  target:
+    | {
+        relationTo: 'locations';
+        value: number | Location;
+      }
+    | {
+        relationTo: 'events';
+        value: number | Event;
+      }
+    | {
+        relationTo: 'services';
+        value: number | Service;
+      };
+  /**
+   * Type of listing for faster filtering
+   */
+  kind: 'locations' | 'events' | 'services';
+  /**
+   * Segment identifier (e.g., "timisoara|locatii" for city+type)
+   */
+  segmentKey: string;
+  /**
+   * Computed ranking score (0-100+)
+   */
+  score: number;
+  /**
+   * Timestamp when this score was last computed
+   */
+  calculatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: number;
+  listing:
+    | {
+        relationTo: 'locations';
+        value: number | Location;
+      }
+    | {
+        relationTo: 'events';
+        value: number | Event;
+      }
+    | {
+        relationTo: 'services';
+        value: number | Service;
+      };
+  user: number | Profile;
+  /**
+   * Status of the review
+   */
+  status?: ('pending' | 'approved' | 'rejected') | null;
+  /**
+   * Rating of the review
+   */
+  rating: number;
+  /**
+   * Comment of the review
+   */
+  comment: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -891,6 +1030,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'facilities';
         value: number | Facility;
+      } | null)
+    | ({
+        relationTo: 'metrics-daily';
+        value: number | MetricsDaily;
+      } | null)
+    | ({
+        relationTo: 'aggregates';
+        value: number | Aggregate;
+      } | null)
+    | ({
+        relationTo: 'listing-rank';
+        value: number | ListingRank;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: number | Review;
       } | null)
     | ({
         relationTo: 'search';
@@ -1115,7 +1270,7 @@ export interface EventsSelect<T extends boolean = true> {
   bookingsCount?: T;
   rating?: T;
   lastViewedAt?: T;
-  authority?: T;
+  tier?: T;
   reviewCount?: T;
   tags?:
     | T
@@ -1206,7 +1361,7 @@ export interface LocationsSelect<T extends boolean = true> {
   bookingsCount?: T;
   rating?: T;
   lastViewedAt?: T;
-  authority?: T;
+  tier?: T;
   reviewCount?: T;
   tags?:
     | T
@@ -1295,7 +1450,7 @@ export interface ServicesSelect<T extends boolean = true> {
   bookingsCount?: T;
   rating?: T;
   lastViewedAt?: T;
-  authority?: T;
+  tier?: T;
   reviewCount?: T;
   tags?:
     | T
@@ -1364,6 +1519,58 @@ export interface FacilitiesSelect<T extends boolean = true> {
   categorySlug?: T;
   sortOrder?: T;
   isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "metrics-daily_select".
+ */
+export interface MetricsDailySelect<T extends boolean = true> {
+  target?: T;
+  kind?: T;
+  date?: T;
+  views?: T;
+  favorites?: T;
+  bookings?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aggregates_select".
+ */
+export interface AggregatesSelect<T extends boolean = true> {
+  target?: T;
+  kind?: T;
+  views7d?: T;
+  views30d?: T;
+  bookings7d?: T;
+  bookings30d?: T;
+  favorites?: T;
+  reviewsCount?: T;
+  avgRating?: T;
+  bayesRating?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-rank_select".
+ */
+export interface ListingRankSelect<T extends boolean = true> {
+  target?: T;
+  kind?: T;
+  segmentKey?: T;
+  score?: T;
+  calculatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  listing?: T;
+  user?: T;
+  status?: T;
+  rating?: T;
+  comment?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -69,7 +69,6 @@ export const Locations: CollectionConfig = {
           name: 'outdoor',
           type: 'number',
           min: 0,
-          index: true,
           admin: {
             description: 'Outdoor capacity',
           },
@@ -78,7 +77,7 @@ export const Locations: CollectionConfig = {
           name: 'seating',
           type: 'number',
           min: 0,
-          index: true,
+
           admin: {
             description: 'Seating capacity',
           },
@@ -87,7 +86,7 @@ export const Locations: CollectionConfig = {
           name: 'parking',
           type: 'number',
           min: 0,
-          index: true,
+
           admin: {
             description: 'Parking spots',
           },

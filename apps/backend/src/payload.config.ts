@@ -17,9 +17,20 @@ import { Events, Locations, Services } from './collections/Listings'
 import { Facilities } from './collections/Facilities'
 
 import { seed } from './endpoints/seedEndpoint'
+import { feedHandler } from './endpoints/feedEndpoint'
 import { openapi, swaggerUI } from 'payload-oapi'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { index } from '@payloadcms/db-postgres/drizzle/pg-core'
+import { ListingRank } from './collections/Feed/ListingRank'
+import { Aggregates } from './collections/Feed/Aggregates'
+import { MetricsDaily } from './collections/Feed/MetricsDaily'
+import { Reviews } from './collections/Reviews'
+
+// Feed algorithm workers
+import cron from 'node-cron'
+import { flushCountersToDaily } from './collections/Feed/counters'
+import { aggregateDaily } from './collections/Feed/workers/aggregateDaily'
+import { rankSegments } from './collections/Feed/workers/rankSegments'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -45,6 +56,11 @@ export default buildConfig({
       method: 'get',
       handler: seed,
     },
+    {
+      path: '/feed',
+      method: 'get',
+      handler: feedHandler,
+    },
   ],
   collections: [
     Users,
@@ -57,6 +73,10 @@ export default buildConfig({
     Locations,
     Services,
     Facilities,
+    MetricsDaily,
+    Aggregates,
+    ListingRank,
+    Reviews,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -195,4 +215,38 @@ export default buildConfig({
       },
     }),
   ],
+  onInit: async (payload) => {
+    console.log('[Feed] Initializing feed algorithm workers...')
+    await flushCountersToDaily(payload)
+    await aggregateDaily(payload)
+    await rankSegments(payload)
+    // Flush Redis counters to metrics_daily every 5 minutes
+    cron.schedule('*/5 * * * *', async () => {
+      try {
+        await flushCountersToDaily(payload)
+      } catch (error) {
+        console.error('[Feed] Error in flushCountersToDaily cron:', error)
+      }
+    })
+
+    // Compute aggregates every 5 minutes
+    cron.schedule('*/5 * * * *', async () => {
+      try {
+        await aggregateDaily(payload)
+      } catch (error) {
+        console.error('[Feed] Error in aggregateDaily cron:', error)
+      }
+    })
+
+    // Rank segments every 5 minutes
+    cron.schedule('*/5 * * * *', async () => {
+      try {
+        await rankSegments(payload)
+      } catch (error) {
+        console.error('[Feed] Error in rankSegments cron:', error)
+      }
+    })
+
+    console.log('[Feed] ✅ Feed workers scheduled (every 5 minutes)')
+  },
 })
