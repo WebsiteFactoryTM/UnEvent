@@ -380,6 +380,10 @@ export interface Event {
    * URL-friendly identifier
    */
   slug?: string | null;
+  /**
+   * Owner of the listing
+   */
+  owner: number | Profile;
   description?: string | null;
   city?: (number | null) | City;
   address?: string | null;
@@ -401,25 +405,34 @@ export interface Event {
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
-   * Owner of the listing
-   */
-  owner: number | Profile;
-  /**
    * Number of views
    */
   views?: number | null;
-  /**
-   * Mark as recommended/featured listing
-   */
-  featured?: boolean | null;
   favoritesCount?: number | null;
   bookingsCount?: number | null;
+  rating?: number | null;
   lastViewedAt?: string | null;
   /**
-   * Mark as sponsored listing
+   * Authority of the listing
    */
-  sponsored?: boolean | null;
-  rating?: number | null;
+  authority?:
+    | (
+        | 'fresh'
+        | 'standard'
+        | 'sponsored'
+        | 'recommended'
+        | 'top-of-the-month'
+        | 'featured'
+        | 'premium'
+        | 'gold'
+        | 'platinum'
+        | 'diamond'
+        | 'ultimate'
+        | 'legendary'
+        | 'mythic'
+        | 'epic'
+      )
+    | null;
   reviewCount?: number | null;
   /**
    * Keywords to help find this listing
@@ -510,6 +523,10 @@ export interface Location {
    * URL-friendly identifier
    */
   slug?: string | null;
+  /**
+   * Owner of the listing
+   */
+  owner: number | Profile;
   description?: string | null;
   city?: (number | null) | City;
   address?: string | null;
@@ -531,25 +548,34 @@ export interface Location {
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
-   * Owner of the listing
-   */
-  owner: number | Profile;
-  /**
    * Number of views
    */
   views?: number | null;
-  /**
-   * Mark as recommended/featured listing
-   */
-  featured?: boolean | null;
   favoritesCount?: number | null;
   bookingsCount?: number | null;
+  rating?: number | null;
   lastViewedAt?: string | null;
   /**
-   * Mark as sponsored listing
+   * Authority of the listing
    */
-  sponsored?: boolean | null;
-  rating?: number | null;
+  authority?:
+    | (
+        | 'fresh'
+        | 'standard'
+        | 'sponsored'
+        | 'recommended'
+        | 'top-of-the-month'
+        | 'featured'
+        | 'premium'
+        | 'gold'
+        | 'platinum'
+        | 'diamond'
+        | 'ultimate'
+        | 'legendary'
+        | 'mythic'
+        | 'epic'
+      )
+    | null;
   reviewCount?: number | null;
   /**
    * Keywords to help find this listing
@@ -673,6 +699,10 @@ export interface Service {
    * URL-friendly identifier
    */
   slug?: string | null;
+  /**
+   * Owner of the listing
+   */
+  owner: number | Profile;
   description?: string | null;
   city?: (number | null) | City;
   address?: string | null;
@@ -694,25 +724,34 @@ export interface Service {
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
-   * Owner of the listing
-   */
-  owner: number | Profile;
-  /**
    * Number of views
    */
   views?: number | null;
-  /**
-   * Mark as recommended/featured listing
-   */
-  featured?: boolean | null;
   favoritesCount?: number | null;
   bookingsCount?: number | null;
+  rating?: number | null;
   lastViewedAt?: string | null;
   /**
-   * Mark as sponsored listing
+   * Authority of the listing
    */
-  sponsored?: boolean | null;
-  rating?: number | null;
+  authority?:
+    | (
+        | 'fresh'
+        | 'standard'
+        | 'sponsored'
+        | 'recommended'
+        | 'top-of-the-month'
+        | 'featured'
+        | 'premium'
+        | 'gold'
+        | 'platinum'
+        | 'diamond'
+        | 'ultimate'
+        | 'legendary'
+        | 'mythic'
+        | 'epic'
+      )
+    | null;
   reviewCount?: number | null;
   /**
    * Keywords to help find this listing
@@ -800,6 +839,9 @@ export interface Search {
         relationTo: 'profiles';
         value: number | Profile;
       };
+  description?: string | null;
+  address?: string | null;
+  cityName?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1052,6 +1094,7 @@ export interface CitiesSelect<T extends boolean = true> {
 export interface EventsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  owner?: T;
   description?: T;
   city?: T;
   address?: T;
@@ -1067,14 +1110,12 @@ export interface EventsSelect<T extends boolean = true> {
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
-  owner?: T;
   views?: T;
-  featured?: T;
   favoritesCount?: T;
   bookingsCount?: T;
-  lastViewedAt?: T;
-  sponsored?: T;
   rating?: T;
+  lastViewedAt?: T;
+  authority?: T;
   reviewCount?: T;
   tags?:
     | T
@@ -1144,6 +1185,7 @@ export interface EventsSelect<T extends boolean = true> {
 export interface LocationsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  owner?: T;
   description?: T;
   city?: T;
   address?: T;
@@ -1159,14 +1201,12 @@ export interface LocationsSelect<T extends boolean = true> {
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
-  owner?: T;
   views?: T;
-  featured?: T;
   favoritesCount?: T;
   bookingsCount?: T;
-  lastViewedAt?: T;
-  sponsored?: T;
   rating?: T;
+  lastViewedAt?: T;
+  authority?: T;
   reviewCount?: T;
   tags?:
     | T
@@ -1234,6 +1274,7 @@ export interface LocationsSelect<T extends boolean = true> {
 export interface ServicesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  owner?: T;
   description?: T;
   city?: T;
   address?: T;
@@ -1249,14 +1290,12 @@ export interface ServicesSelect<T extends boolean = true> {
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
-  owner?: T;
   views?: T;
-  featured?: T;
   favoritesCount?: T;
   bookingsCount?: T;
-  lastViewedAt?: T;
-  sponsored?: T;
   rating?: T;
+  lastViewedAt?: T;
+  authority?: T;
   reviewCount?: T;
   tags?:
     | T
@@ -1336,6 +1375,9 @@ export interface SearchSelect<T extends boolean = true> {
   title?: T;
   priority?: T;
   doc?: T;
+  description?: T;
+  address?: T;
+  cityName?: T;
   updatedAt?: T;
   createdAt?: T;
 }
