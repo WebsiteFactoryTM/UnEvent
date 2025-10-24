@@ -295,211 +295,22 @@ export interface Media {
  */
 export interface Favorite {
   id: number;
-  user?: (number | null) | User;
-  createdAt: string;
-  updatedAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "listing-types".
- */
-export interface ListingType {
-  id: number;
-  /**
-   * URL-friendly identifier (e.g., logodna, sala-evenimente)
-   */
-  slug?: string | null;
-  /**
-   * Display name (e.g., Logodnă, Sală de evenimente)
-   */
-  title: string;
-  /**
-   * Category header (e.g., NUNȚI & CEREMONII DE FAMILIE)
-   */
-  category: string;
-  /**
-   * Slugified category name
-   */
-  categorySlug?: string | null;
-  /**
-   * Which taxonomy type this belongs to
-   */
-  type: 'events' | 'locations' | 'services';
-  /**
-   * Order within category (maintains the defined hierarchy)
-   */
-  sortOrder: number;
-  /**
-   * Whether this taxonomy item is active/available
-   */
-  isActive?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "cities".
- */
-export interface City {
-  id: number;
-  /**
-   * The official name of the city
-   */
-  name: string;
-  /**
-   * Auto-generated from city name. Used in URLs and lookups.
-   */
-  slug?: string | null;
-  country?: string | null;
-  /**
-   * The ISO 3166-1 alpha-2 code for the country
-   */
-  county?: string | null;
-  /**
-   * Where this city data originated from
-   */
-  source?: ('seeded' | 'google' | 'user') | null;
-  /**
-   * Geographic coordinates (latitude, longitude)
-   *
-   * @minItems 2
-   * @maxItems 2
-   */
-  geo: [number, number];
-  /**
-   * Number of times this city is referenced
-   */
-  usageCount?: number | null;
-  /**
-   * Indicates if this city data has been verified by admins
-   */
-  verified?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events".
- */
-export interface Event {
-  id: number;
-  title: string;
-  /**
-   * URL-friendly identifier
-   */
-  slug?: string | null;
-  /**
-   * Owner of the listing
-   */
-  owner: number | Profile;
-  description?: string | null;
-  city?: (number | null) | City;
-  address?: string | null;
-  /**
-   * @minItems 2
-   * @maxItems 2
-   */
-  geo?: [number, number] | null;
-  contact?: {
-    email?: string | null;
-    phone?: string | null;
-    website?: string | null;
-  };
-  /**
-   * Status of the listing
-   */
-  status?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
-  rejectionReason?: string | null;
-  featuredImage?: (number | null) | Media;
-  gallery?: (number | Media)[] | null;
-  /**
-   * Number of views
-   */
-  views?: number | null;
-  favoritesCount?: number | null;
-  bookingsCount?: number | null;
-  rating?: number | null;
-  lastViewedAt?: string | null;
-  /**
-   * Tier of the listing
-   */
-  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
-  reviewCount?: number | null;
-  /**
-   * Keywords to help find this listing
-   */
-  tags?:
+  user: number | Profile;
+  target:
     | {
-        tag: string;
-        id?: string | null;
-      }[]
-    | null;
-  socialLinks?: {
-    facebook?: string | null;
-    instagram?: string | null;
-    linkedin?: string | null;
-    youtube?: string | null;
-    tiktok?: string | null;
-    twitch?: string | null;
-    x?: string | null;
-  };
-  youtubeLinks?:
+        relationTo: 'locations';
+        value: number | Location;
+      }
     | {
-        youtubeLink?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Type of event
-   */
-  type: (number | ListingType)[];
-  eventStatus: 'upcoming' | 'in-progress' | 'finished';
-  startDate: string;
-  endDate?: string | null;
-  /**
-   * Check if this is an all-day event
-   */
-  allDayEvent?: boolean | null;
-  capacity?: {
-    /**
-     * Maximum number of attendees
-     */
-    total?: number | null;
-    remaining?: number | null;
-  };
-  pricing: {
-    type: 'free' | 'paid' | 'contact';
-    amount?: number | null;
-    currency?: ('RON' | 'EUR' | 'USD') | null;
-  };
-  /**
-   * Last day to register for the event
-   */
-  registrationDeadline?: string | null;
-  /**
-   * Current number of participants registered
-   */
-  participants?: number | null;
-  /**
-   * Location where the event will be held
-   */
-  venue?: (number | null) | Location;
-  venueAddressDetails: {
-    venueAddress: string;
-    venueCity: number | City;
-    /**
-     * @minItems 2
-     * @maxItems 2
-     */
-    venueGeo: [number, number];
-  };
-  requirements?:
+        relationTo: 'events';
+        value: number | Event;
+      }
     | {
-        requirement: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
+        relationTo: 'services';
+        value: number | Service;
+      };
+  kind: 'locations' | 'events' | 'services';
+  targetKey: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -545,12 +356,12 @@ export interface Location {
   favoritesCount?: number | null;
   bookingsCount?: number | null;
   rating?: number | null;
+  reviewCount?: number | null;
   lastViewedAt?: string | null;
   /**
    * Tier of the listing
    */
   tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
-  reviewCount?: number | null;
   /**
    * Keywords to help find this listing
    */
@@ -631,6 +442,84 @@ export interface Location {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities".
+ */
+export interface City {
+  id: number;
+  /**
+   * The official name of the city
+   */
+  name: string;
+  /**
+   * Auto-generated from city name. Used in URLs and lookups.
+   */
+  slug?: string | null;
+  country?: string | null;
+  /**
+   * The ISO 3166-1 alpha-2 code for the country
+   */
+  county?: string | null;
+  /**
+   * Where this city data originated from
+   */
+  source?: ('seeded' | 'google' | 'user') | null;
+  /**
+   * Geographic coordinates (latitude, longitude)
+   *
+   * @minItems 2
+   * @maxItems 2
+   */
+  geo: [number, number];
+  /**
+   * Number of times this city is referenced
+   */
+  usageCount?: number | null;
+  /**
+   * Indicates if this city data has been verified by admins
+   */
+  verified?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-types".
+ */
+export interface ListingType {
+  id: number;
+  /**
+   * URL-friendly identifier (e.g., logodna, sala-evenimente)
+   */
+  slug?: string | null;
+  /**
+   * Display name (e.g., Logodnă, Sală de evenimente)
+   */
+  title: string;
+  /**
+   * Category header (e.g., NUNȚI & CEREMONII DE FAMILIE)
+   */
+  category: string;
+  /**
+   * Slugified category name
+   */
+  categorySlug?: string | null;
+  /**
+   * Which taxonomy type this belongs to
+   */
+  type: 'events' | 'locations' | 'services';
+  /**
+   * Order within category (maintains the defined hierarchy)
+   */
+  sortOrder: number;
+  /**
+   * Whether this taxonomy item is active/available
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "facilities".
  */
 export interface Facility {
@@ -659,6 +548,132 @@ export interface Facility {
    * Whether this taxonomy item is active/available
    */
   isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier
+   */
+  slug?: string | null;
+  /**
+   * Owner of the listing
+   */
+  owner: number | Profile;
+  description?: string | null;
+  city?: (number | null) | City;
+  address?: string | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  geo?: [number, number] | null;
+  contact?: {
+    email?: string | null;
+    phone?: string | null;
+    website?: string | null;
+  };
+  /**
+   * Status of the listing
+   */
+  status?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
+  rejectionReason?: string | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  /**
+   * Number of views
+   */
+  views?: number | null;
+  favoritesCount?: number | null;
+  bookingsCount?: number | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  lastViewedAt?: string | null;
+  /**
+   * Tier of the listing
+   */
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
+  /**
+   * Keywords to help find this listing
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+    tiktok?: string | null;
+    twitch?: string | null;
+    x?: string | null;
+  };
+  youtubeLinks?:
+    | {
+        youtubeLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Type of event
+   */
+  type: (number | ListingType)[];
+  eventStatus: 'upcoming' | 'in-progress' | 'finished';
+  startDate: string;
+  endDate?: string | null;
+  /**
+   * Check if this is an all-day event
+   */
+  allDayEvent?: boolean | null;
+  capacity?: {
+    /**
+     * Maximum number of attendees
+     */
+    total?: number | null;
+    remaining?: number | null;
+  };
+  pricing: {
+    type: 'free' | 'paid' | 'contact';
+    amount?: number | null;
+    currency?: ('RON' | 'EUR' | 'USD') | null;
+  };
+  /**
+   * Last day to register for the event
+   */
+  registrationDeadline?: string | null;
+  /**
+   * Current number of participants registered
+   */
+  participants?: number | null;
+  /**
+   * Location where the event will be held
+   */
+  venue?: (number | null) | Location;
+  venueAddressDetails: {
+    venueAddress: string;
+    venueCity: number | City;
+    /**
+     * @minItems 2
+     * @maxItems 2
+     */
+    venueGeo: [number, number];
+  };
+  requirements?:
+    | {
+        requirement: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -704,12 +719,12 @@ export interface Service {
   favoritesCount?: number | null;
   bookingsCount?: number | null;
   rating?: number | null;
+  reviewCount?: number | null;
   lastViewedAt?: string | null;
   /**
    * Tier of the listing
    */
   tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
-  reviewCount?: number | null;
   /**
    * Keywords to help find this listing
    */
@@ -935,11 +950,13 @@ export interface Review {
         relationTo: 'services';
         value: number | Service;
       };
+  listingType: 'location' | 'event' | 'service';
   user: number | Profile;
   /**
    * Status of the review
    */
   status?: ('pending' | 'approved' | 'rejected') | null;
+  rejectionReason?: string | null;
   /**
    * Rating of the review
    */
@@ -947,7 +964,7 @@ export interface Review {
   /**
    * Comment of the review
    */
-  comment: string;
+  comment?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1208,8 +1225,11 @@ export interface ProfilesSelect<T extends boolean = true> {
  */
 export interface FavoritesSelect<T extends boolean = true> {
   user?: T;
-  createdAt?: T;
+  target?: T;
+  kind?: T;
+  targetKey?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1269,9 +1289,9 @@ export interface EventsSelect<T extends boolean = true> {
   favoritesCount?: T;
   bookingsCount?: T;
   rating?: T;
+  reviewCount?: T;
   lastViewedAt?: T;
   tier?: T;
-  reviewCount?: T;
   tags?:
     | T
     | {
@@ -1360,9 +1380,9 @@ export interface LocationsSelect<T extends boolean = true> {
   favoritesCount?: T;
   bookingsCount?: T;
   rating?: T;
+  reviewCount?: T;
   lastViewedAt?: T;
   tier?: T;
-  reviewCount?: T;
   tags?:
     | T
     | {
@@ -1449,9 +1469,9 @@ export interface ServicesSelect<T extends boolean = true> {
   favoritesCount?: T;
   bookingsCount?: T;
   rating?: T;
+  reviewCount?: T;
   lastViewedAt?: T;
   tier?: T;
-  reviewCount?: T;
   tags?:
     | T
     | {
@@ -1567,8 +1587,10 @@ export interface ListingRankSelect<T extends boolean = true> {
  */
 export interface ReviewsSelect<T extends boolean = true> {
   listing?: T;
+  listingType?: T;
   user?: T;
   status?: T;
+  rejectionReason?: T;
   rating?: T;
   comment?: T;
   updatedAt?: T;

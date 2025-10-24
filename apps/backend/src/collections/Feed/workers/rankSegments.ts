@@ -1,7 +1,7 @@
 // rankSegments.ts - Worker to compute ranking scores per segment
 
 import type { Payload } from 'payload'
-import type { Aggregate, Location, Event, Service } from '@/payload-types'
+import type { Aggregate, Location, Event, Service, City } from '@/payload-types'
 import { computeScore, type ListingSignals, type NormBounds, defaultWeights } from '../scoring'
 
 // Helper to build a polymorphic relationship reference for Payload filters/values
@@ -220,6 +220,110 @@ async function rankSegment(
         },
       })
     }
+  }
+}
+
+/**
+ * Rank a single listing across all its segments (city|type) for a given kind.
+ * This recomputes the *entire* segment(s) so normalization bounds are correct.
+ */
+export async function rankSingle(
+  payload: Payload,
+  kind: Kind,
+  targetId: number | string,
+): Promise<void> {
+  try {
+    // Load the target listing
+    const listing = (await payload.findByID({
+      collection: kind,
+      id: String(targetId),
+      depth: 0,
+    })) as Listing | null
+
+    if (!listing) {
+      console.warn(`[Feed] rankSingle: ${kind} ${String(targetId)} not found`)
+      return
+    }
+
+    if (!listing.city) {
+      console.warn(`[Feed] rankSingle: ${kind} ${listing.id} has no city; skipping`)
+      return
+    }
+
+    // Resolve city id
+    const cityId =
+      typeof listing.city === 'object' && listing.city !== null && 'id' in listing.city
+        ? String((listing.city as City).id)
+        : String(listing.city)
+
+    // Resolve type ids (supports hasMany)
+    const rawTypes = Array.isArray((listing as Listing).type)
+      ? (listing as Listing).type
+      : [(listing as Listing).type]
+    const typeIds = rawTypes
+      .filter(Boolean)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((t: any) =>
+        typeof t === 'object' && t !== null && 'id' in t ? String(t.id) : String(t),
+      )
+
+    if (!typeIds.length) {
+      console.warn(`[Feed] rankSingle: ${kind} ${listing.id} has no type; skipping`)
+      return
+    }
+
+    // Preload aggregates for this kind and map by target id
+    const aggsRes = await payload.find({
+      collection: 'aggregates',
+      where: { kind: { equals: kind } },
+      limit: 10000,
+      depth: 0,
+      pagination: false,
+    })
+    const aggregateMap = new Map<string, Aggregate>()
+    for (const agg of aggsRes.docs as Aggregate[]) {
+      const targetIdStr =
+        typeof agg.target === 'object' && agg.target !== null && 'value' in agg.target
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            String((agg.target as any).value)
+          : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            String((agg as any).target)
+      aggregateMap.set(targetIdStr, agg)
+    }
+
+    // For each type, build the segment and re-rank that whole segment
+    for (const typeId of typeIds) {
+      const segmentKey = `${cityId}|${typeId}`
+
+      // Fetch all listings in this segment
+      const segmentListingsRes = await payload.find({
+        collection: kind,
+        where: {
+          and: [{ city: { equals: cityId } }, { type: { equals: typeId } }],
+        },
+        limit: 10000,
+        depth: 0,
+        pagination: false,
+      })
+
+      const items: Array<{ listing: Listing; aggregate: Aggregate }> = []
+      for (const l of segmentListingsRes.docs as Listing[]) {
+        const agg = aggregateMap.get(String(l.id))
+        if (!agg) continue
+        items.push({ listing: l, aggregate: agg })
+      }
+
+      if (!items.length) {
+        console.warn(
+          `[Feed] rankSingle: segment ${segmentKey} has no items with aggregates; skipping`,
+        )
+        continue
+      }
+
+      await rankSegment(payload, kind, segmentKey, items)
+    }
+  } catch (e) {
+    console.error(`[Feed] rankSingle error for ${kind} ${String(targetId)}:`, e)
   }
 }
 

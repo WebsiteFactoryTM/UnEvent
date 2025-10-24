@@ -19,6 +19,15 @@ export const Reviews: CollectionConfig = {
       required: true,
     },
     {
+      name: 'listingType',
+      type: 'select',
+      options: ['location', 'event', 'service'],
+      required: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'user',
       type: 'relationship',
       relationTo: 'profiles',
@@ -32,7 +41,13 @@ export const Reviews: CollectionConfig = {
       index: true,
       admin: {
         description: 'Status of the review',
+        position: 'sidebar',
       },
+    },
+    {
+      name: 'rejectionReason',
+      type: 'textarea',
+      admin: { condition: (data) => data?.status === 'rejected', position: 'sidebar' },
     },
     {
       name: 'rating',
@@ -47,8 +62,7 @@ export const Reviews: CollectionConfig = {
     },
     {
       name: 'comment',
-      type: 'text',
-      required: true,
+      type: 'textarea',
       admin: {
         description: 'Comment of the review',
       },

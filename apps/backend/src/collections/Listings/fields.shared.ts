@@ -24,6 +24,7 @@ export const sharedListingFields: Field[] = [
       position: 'sidebar',
       description: 'Owner of the listing',
     },
+    maxDepth: 1,
   },
   { name: 'description', type: 'textarea' },
   { name: 'city', type: 'relationship', relationTo: 'cities', index: true },
@@ -84,6 +85,8 @@ export const sharedListingFields: Field[] = [
     admin: { readOnly: true },
     index: true,
   },
+  { name: 'reviewCount', type: 'number', defaultValue: 0, admin: { readOnly: true } },
+
   {
     name: 'lastViewedAt',
     type: 'date',
@@ -109,7 +112,6 @@ export const sharedListingFields: Field[] = [
     },
   },
 
-  { name: 'reviewCount', type: 'number', defaultValue: 0, admin: { readOnly: true } },
   {
     name: 'tags',
     type: 'array',

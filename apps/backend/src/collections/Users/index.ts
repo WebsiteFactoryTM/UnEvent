@@ -35,6 +35,7 @@ export const Users: CollectionConfig = {
       type: 'relationship',
       relationTo: 'profiles',
       hasMany: false,
+      maxDepth: 0,
     },
     {
       name: 'avatarURL',
