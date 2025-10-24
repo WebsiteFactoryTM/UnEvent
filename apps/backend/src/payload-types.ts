@@ -408,7 +408,7 @@ export interface Event {
   /**
    * Status of the listing
    */
-  status?: ('pending' | 'approved' | 'rejected') | null;
+  status?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
@@ -534,7 +534,7 @@ export interface Location {
   /**
    * Status of the listing
    */
-  status?: ('pending' | 'approved' | 'rejected') | null;
+  status?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
@@ -693,7 +693,7 @@ export interface Service {
   /**
    * Status of the listing
    */
-  status?: ('pending' | 'approved' | 'rejected') | null;
+  status?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;

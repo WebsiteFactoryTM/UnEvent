@@ -51,7 +51,7 @@ export const sharedListingFields: Field[] = [
   {
     name: 'status',
     type: 'select',
-    options: ['pending', 'approved', 'rejected'],
+    options: ['pending', 'approved', 'rejected', 'draft'],
     defaultValue: 'pending',
     index: true,
     admin: {
