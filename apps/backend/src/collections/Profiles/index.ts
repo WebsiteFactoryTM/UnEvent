@@ -1,12 +1,13 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin } from '@/collections/_access/roles'
 import { updateUserRoles } from './hooks/afterChange/updateUserRoles'
-import { updateMemberSince } from './hooks/updateMemberSince'
-import { linkProfileToUserAfterChange } from './hooks/linkProfileToUser'
+import { updateMemberSince } from './hooks/beforeChange/updateMemberSince'
+import { linkProfileToUserAfterChange } from './hooks/afterOperation/linkProfileToUser'
 import { updateUserAvatar } from './hooks/afterChange/updateUserAvatar'
 
 import { createSlugField } from '../../utils/slugifySlug'
 import type { Profile } from '@/payload-types'
+import { updateUserDisplayName } from './hooks/afterChange/updateUserDisplayName'
 
 export const Profiles: CollectionConfig = {
   slug: 'profiles',
@@ -30,7 +31,7 @@ export const Profiles: CollectionConfig = {
   },
   hooks: {
     beforeChange: [updateMemberSince],
-    afterChange: [updateUserRoles, updateUserAvatar],
+    afterChange: [updateUserRoles, updateUserAvatar, updateUserDisplayName],
     afterOperation: [linkProfileToUserAfterChange],
   },
   timestamps: true,
@@ -41,9 +42,6 @@ export const Profiles: CollectionConfig = {
       relationTo: 'users',
       required: true,
       hasMany: false,
-      // admin: {
-      //   readOnly: true,
-      // },
     },
     {
       name: 'slug',

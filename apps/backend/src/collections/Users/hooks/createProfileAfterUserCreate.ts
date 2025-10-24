@@ -22,7 +22,8 @@ export const createProfileAfterUserCreate: CollectionAfterOperationHook = async 
       collection: 'profiles',
       data: {
         user: user.id,
-        name: (user.email || '').split('@')[0] || 'User',
+        name: user?.displayName || (user.email || '').split('@')[0] || 'User',
+        displayName: user?.displayName || (user.email || '').split('@')[0] || 'User',
         userType,
       },
     })
