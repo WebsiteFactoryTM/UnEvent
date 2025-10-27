@@ -3,7 +3,7 @@ import { spawn } from 'child_process'
 import { config } from 'dotenv'
 import { fileURLToPath } from 'url'
 import { dirname, resolve } from 'path'
-import { existsSync } from 'fs'
+import { existsSync, readdirSync } from 'fs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -37,20 +37,48 @@ if (!DATABASE_URI) {
   process.exit(1)
 }
 
-const migrationFile = resolve(__dirname, '../postgress_migrations/001_add_custom_indexes.sql')
+// Get all migration files from the migrations directory
+const migrationsDir = resolve(__dirname, '../postgress_migrations')
+const migrationFiles = readdirSync(migrationsDir)
+  .filter((file) => file.endsWith('.sql'))
+  .map((file) => resolve(migrationsDir, file))
+  .sort() // Sort alphabetically (001_, 002_, etc.)
 
-console.log('Running migration:', migrationFile)
+if (migrationFiles.length === 0) {
+  console.log('ℹ️  No migration files found')
+  process.exit(0)
+}
+
+console.log(`Found ${migrationFiles.length} migration file(s):`)
+migrationFiles.forEach((file) => console.log(`  - ${file.split('/').pop()}`))
 console.log('Database:', DATABASE_URI.replace(/:([^:@]+)@/, ':****@')) // Hide password
 
-const psql = spawn('psql', [DATABASE_URI, '-f', migrationFile], {
-  stdio: 'inherit',
-  env: { ...process.env, DATABASE_URI },
-})
-
-psql.on('close', (code) => {
-  if (code !== 0) {
-    console.error(`Migration failed with exit code ${code}`)
-    process.exit(code)
+// Function to run migrations sequentially
+function runNextMigration(index = 0) {
+  if (index >= migrationFiles.length) {
+    console.log('🎉 All migrations completed successfully!')
+    return
   }
-  console.log('Migration completed successfully!')
-})
+
+  const migrationFile = migrationFiles[index]
+  console.log(
+    `\nRunning migration ${index + 1}/${migrationFiles.length}: ${migrationFile.split('/').pop()}`,
+  )
+
+  const psql = spawn('psql', [DATABASE_URI, '-f', migrationFile], {
+    stdio: 'inherit',
+    env: { ...process.env, DATABASE_URI },
+  })
+
+  psql.on('close', (code) => {
+    if (code !== 0) {
+      console.error(`Migration ${index + 1} failed with exit code ${code}`)
+      process.exit(code)
+    }
+    // Run next migration
+    runNextMigration(index + 1)
+  })
+}
+
+// Start running migrations
+runNextMigration()
