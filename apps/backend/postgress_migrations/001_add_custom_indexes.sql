@@ -15,6 +15,10 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_locations_city_rating_desc
   ON public.locations (city_id, rating DESC)
   WHERE status = 'approved';
 
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_locations_tier_sponsored
+  ON public.locations (tier)
+  WHERE status = 'approved' AND tier = 'sponsored';
+
 -- Relationship table indexes for type and facilities
 CREATE INDEX CONCURRENTLY IF NOT EXISTS locations_rels_type_composite_idx
   ON public.locations_rels (listing_types_id, parent_id)
@@ -40,6 +44,10 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_services_city_rating_desc
   ON public.services (city_id, rating DESC)
   WHERE status = 'approved';
 
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_services_tier_sponsored
+  ON public.services (tier)
+  WHERE status = 'approved' AND tier = 'sponsored';
+
 -- Relationship table indexes
 CREATE INDEX CONCURRENTLY IF NOT EXISTS services_rels_type_composite_idx
   ON public.services_rels (listing_types_id, parent_id)
@@ -56,6 +64,10 @@ CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS uq_srv_rels_type_unique
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_events_city_updated_desc
   ON public.events (city_id, updated_at DESC)
   WHERE status = 'approved';
+
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_events_tier_sponsored
+  ON public.events (tier)
+  WHERE status = 'approved' AND tier = 'sponsored';
 
 -- Event-specific indexes
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_events_city_status_start_asc
