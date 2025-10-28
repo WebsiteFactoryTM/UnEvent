@@ -16,4 +16,5 @@ rules:
   - Use absolute imports (via `tsconfig.json` paths) — no long relative imports.
   - Commit messages and file names should use **kebab-case**.
   - Use **.env.example** files for each app to define required environment variables.
+  - When commiting to git, please make sure to group commits based on the source of the files the changes are coming from. Group frontend changes for files changed in apps/frontend, and group backend changes for files changed in apps/backend
 ---
