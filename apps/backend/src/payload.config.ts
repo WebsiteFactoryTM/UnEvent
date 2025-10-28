@@ -26,6 +26,7 @@ import { Aggregates } from './collections/Feed/Aggregates'
 import { MetricsDaily } from './collections/Feed/MetricsDaily'
 import { Reviews } from './collections/Reviews'
 
+import { incrementView } from './endpoints/recordViews'
 import { initFeedSchedulers } from './schedulers/feed'
 
 const filename = fileURLToPath(import.meta.url)
@@ -56,6 +57,11 @@ export default buildConfig({
       path: '/feed',
       method: 'get',
       handler: feedHandler,
+    },
+    {
+      path: '/increment-view',
+      method: 'post',
+      handler: incrementView,
     },
   ],
   collections: [
@@ -212,6 +218,6 @@ export default buildConfig({
     }),
   ],
   onInit: async (payload) => {
-    // initFeedSchedulers(payload)
+    initFeedSchedulers(payload)
   },
 })

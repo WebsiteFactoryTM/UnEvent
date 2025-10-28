@@ -1,26 +1,7 @@
 // counters.ts - Redis-based hot path counters for views, favorites, and bookings
 
-import Redis from 'ioredis'
+import { getRedis } from '@/utils/redis'
 import type { Payload } from 'payload'
-
-// Lazy initialization - only connect when needed
-let redisClient: Redis | null = null
-
-function getRedis(): Redis {
-  if (!redisClient) {
-    redisClient = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-      password: process.env.REDIS_PASSWORD,
-      db: parseInt(process.env.REDIS_DB || '0', 10),
-      retryStrategy: (times) => {
-        const delay = Math.min(times * 50, 2000)
-        return delay
-      },
-    })
-  }
-  return redisClient
-}
 
 /**
  * Generate Redis key for a metric counter
@@ -195,15 +176,5 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
     console.log(`[Feed] Flushed ${keys.length} counter keys to metrics_daily`)
   } catch (error) {
     console.error('[Feed] Error flushing counters:', error)
-  }
-}
-
-/**
- * Close Redis connection (for graceful shutdown)
- */
-export function closeRedis(): void {
-  if (redisClient) {
-    redisClient.disconnect()
-    redisClient = null
   }
 }

@@ -11,7 +11,8 @@ export type Kind = (typeof kindOptions)[number]
 
 export const Favorites: CollectionConfig = {
   slug: 'favorites',
-  admin: { useAsTitle: 'targetKey' },
+  admin: { useAsTitle: 'targetKey', group: 'Engagement' },
+  timestamps: true,
   versions: false,
   access: {
     read: ({ req }) => isAdminOrSelf({ req }), // only logged-in users see theirs (tighten if needed)
