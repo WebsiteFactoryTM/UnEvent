@@ -86,7 +86,6 @@ export const sharedListingFields: Field[] = [
     index: true,
   },
   { name: 'reviewCount', type: 'number', defaultValue: 0, admin: { readOnly: true } },
-
   {
     name: 'lastViewedAt',
     type: 'date',
@@ -169,5 +168,11 @@ export const sharedListingFields: Field[] = [
         type: 'text',
       },
     ],
+  },
+  {
+    name: 'isFavoritedByViewer',
+    type: 'checkbox',
+    defaultValue: false,
+    admin: { readOnly: true },
   },
 ]

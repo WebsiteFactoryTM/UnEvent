@@ -1,6 +1,10 @@
 import { CollectionConfig } from 'payload'
-import { requireRole } from '../_access/roles'
-import { isOwnerOrAdmin } from '../_access/roles'
+import { isOwnerOrAdmin, isLoggedIn } from '../_access/roles'
+import { attachOwner } from './hooks/beforeChange/attachOwner'
+import { recalcReviewAggregates } from './hooks/afterOperation/recalcReviewAggregates'
+
+export const kindOptions = ['locations', 'events', 'services'] as const
+export type Kind = (typeof kindOptions)[number]
 
 export const Reviews: CollectionConfig = {
   slug: 'reviews',
@@ -8,7 +12,14 @@ export const Reviews: CollectionConfig = {
     useAsTitle: 'id',
   },
   access: {
-    read: ({ req }) => requireRole(['admin'])({ req }),
+    read: () => true,
+    create: ({ req }) => isLoggedIn({ req }),
+    update: ({ req }) => isOwnerOrAdmin({ req }),
+    delete: ({ req }) => isOwnerOrAdmin({ req }),
+  },
+  hooks: {
+    beforeChange: [attachOwner],
+    afterOperation: [recalcReviewAggregates],
   },
   timestamps: true,
   fields: [
@@ -17,11 +28,12 @@ export const Reviews: CollectionConfig = {
       type: 'relationship',
       relationTo: ['locations', 'events', 'services'],
       required: true,
+      maxDepth: 0,
     },
     {
       name: 'listingType',
       type: 'select',
-      options: ['location', 'event', 'service'],
+      options: ['locations', 'events', 'services'],
       required: true,
       admin: {
         position: 'sidebar',
@@ -32,6 +44,7 @@ export const Reviews: CollectionConfig = {
       type: 'relationship',
       relationTo: 'profiles',
       required: true,
+      maxDepth: 0,
     },
     {
       name: 'status',
@@ -49,6 +62,14 @@ export const Reviews: CollectionConfig = {
       type: 'textarea',
       admin: { condition: (data) => data?.status === 'rejected', position: 'sidebar' },
     },
+
+    {
+      name: 'comment',
+      type: 'textarea',
+      admin: {
+        description: 'Comment of the review',
+      },
+    },
     {
       name: 'rating',
       type: 'number',
@@ -60,12 +81,41 @@ export const Reviews: CollectionConfig = {
         description: 'Rating of the review',
       },
     },
+    // Add this after the existing rating field
     {
-      name: 'comment',
-      type: 'textarea',
+      name: 'criteriaRatings',
+      type: 'array',
+      required: false,
       admin: {
-        description: 'Comment of the review',
+        description: 'Detailed rating criteria (optional)',
       },
+      fields: [
+        {
+          name: 'criteria',
+          type: 'select',
+          required: true,
+          options: [
+            // Dynamic options based on listingType could be implemented via hooks
+            // For now, provide common criteria that can be filtered client-side
+            { label: 'Cleanliness', value: 'cleanliness' },
+            { label: 'Location', value: 'location' },
+            { label: 'Amenities', value: 'amenities' },
+            { label: 'Organization', value: 'organization' },
+            { label: 'Entertainment', value: 'entertainment' },
+            { label: 'Value', value: 'value' },
+            { label: 'Quality', value: 'quality' },
+            { label: 'Timeliness', value: 'timeliness' },
+            { label: 'Communication', value: 'communication' },
+          ],
+        },
+        {
+          name: 'rating',
+          type: 'number',
+          min: 0,
+          max: 5,
+          required: true,
+        },
+      ],
     },
   ],
 }

@@ -386,6 +386,7 @@ export interface Location {
         id?: string | null;
       }[]
     | null;
+  isFavoritedByViewer?: boolean | null;
   /**
    * Type of location
    */
@@ -623,6 +624,7 @@ export interface Event {
         id?: string | null;
       }[]
     | null;
+  isFavoritedByViewer?: boolean | null;
   /**
    * Type of event
    */
@@ -749,6 +751,7 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
+  isFavoritedByViewer?: boolean | null;
   /**
    * Type of service
    */
@@ -950,7 +953,7 @@ export interface Review {
         relationTo: 'services';
         value: number | Service;
       };
-  listingType: 'location' | 'event' | 'service';
+  listingType: 'locations' | 'events' | 'services';
   user: number | Profile;
   /**
    * Status of the review
@@ -958,13 +961,32 @@ export interface Review {
   status?: ('pending' | 'approved' | 'rejected') | null;
   rejectionReason?: string | null;
   /**
+   * Comment of the review
+   */
+  comment?: string | null;
+  /**
    * Rating of the review
    */
   rating: number;
   /**
-   * Comment of the review
+   * Detailed rating criteria (optional)
    */
-  comment?: string | null;
+  criteriaRatings?:
+    | {
+        criteria:
+          | 'cleanliness'
+          | 'location'
+          | 'amenities'
+          | 'organization'
+          | 'entertainment'
+          | 'value'
+          | 'quality'
+          | 'timeliness'
+          | 'communication';
+        rating: number;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1315,6 +1337,7 @@ export interface EventsSelect<T extends boolean = true> {
         youtubeLink?: T;
         id?: T;
       };
+  isFavoritedByViewer?: T;
   type?: T;
   eventStatus?: T;
   startDate?: T;
@@ -1406,6 +1429,7 @@ export interface LocationsSelect<T extends boolean = true> {
         youtubeLink?: T;
         id?: T;
       };
+  isFavoritedByViewer?: T;
   type?: T;
   suitableFor?: T;
   capacity?:
@@ -1495,6 +1519,7 @@ export interface ServicesSelect<T extends boolean = true> {
         youtubeLink?: T;
         id?: T;
       };
+  isFavoritedByViewer?: T;
   type?: T;
   suitableFor?: T;
   pricing?:
@@ -1591,8 +1616,15 @@ export interface ReviewsSelect<T extends boolean = true> {
   user?: T;
   status?: T;
   rejectionReason?: T;
-  rating?: T;
   comment?: T;
+  rating?: T;
+  criteriaRatings?:
+    | T
+    | {
+        criteria?: T;
+        rating?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

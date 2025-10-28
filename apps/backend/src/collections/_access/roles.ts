@@ -44,3 +44,5 @@ export const requireRole =
     if (user.roles?.includes('admin')) return true // admin override
     return allowedRoles.some((r) => user.roles?.includes(r))
   }
+
+export const isLoggedIn: Access = ({ req }) => !!req.user
