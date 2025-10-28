@@ -19,6 +19,7 @@
     "build:backend": "pnpm --filter @unevent/backend build",
     "start:backend": "pnpm --filter @unevent/backend start",
     "generate:types": "pnpm --filter @unevent/backend generate:types",
-    "seed": "pnpm --filter @unevent/backend seed"
+    "seed": "pnpm --filter @unevent/backend seed",
+    "setup-symlinks": "./scripts/setup-symlinks.sh"
   }
 }
