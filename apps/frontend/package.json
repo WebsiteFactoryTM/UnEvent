@@ -50,6 +50,7 @@
     "next": "15.5.4",
     "next-auth": "^4.24.12",
     "next-themes": "latest",
+    "qs-esm": "^7.0.2",
     "react": "19.1.0",
     "react-day-picker": "9.8.0",
     "react-dom": "19.1.0",
