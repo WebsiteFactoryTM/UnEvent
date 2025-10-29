@@ -30,6 +30,7 @@ export const Reviews: CollectionConfig = {
       relationTo: ['locations', 'events', 'services'],
       required: true,
       maxDepth: 0,
+      index: true,
     },
     {
       name: 'listingType',
@@ -45,7 +46,7 @@ export const Reviews: CollectionConfig = {
       type: 'relationship',
       relationTo: 'profiles',
       required: true,
-      maxDepth: 0,
+      maxDepth: 2,
     },
     {
       name: 'status',
@@ -74,7 +75,7 @@ export const Reviews: CollectionConfig = {
     {
       name: 'rating',
       type: 'number',
-      min: 0,
+      min: 1,
       max: 5,
       required: true,
       index: true,
@@ -112,7 +113,7 @@ export const Reviews: CollectionConfig = {
         {
           name: 'rating',
           type: 'number',
-          min: 0,
+          min: 1,
           max: 5,
           required: true,
         },
