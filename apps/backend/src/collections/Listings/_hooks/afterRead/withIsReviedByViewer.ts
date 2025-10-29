@@ -1,5 +1,9 @@
 // src/hooks/afterRead/withHasReviewedByViewer.ts
 import type { CollectionAfterReadHook } from 'payload'
+const polyRef = (k: 'locations' | 'events' | 'services', id: string | number) => ({
+  relationTo: k,
+  value: typeof id === 'number' ? id : Number(id),
+})
 
 export const withHasReviewedByViewer: CollectionAfterReadHook = async ({
   req,
@@ -7,29 +11,35 @@ export const withHasReviewedByViewer: CollectionAfterReadHook = async ({
   collection,
 }) => {
   try {
+    if (!req.query?.includeReviewState) {
+      return doc
+    }
     const user = req.user
+
     if (!user) return doc
 
     const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
     if (!profileId) return doc
 
     // Look up review by this user for this listing
-    const reviews = await req.payload.find({
+    const reviews = await req.payload.count({
       collection: 'reviews',
       where: {
         and: [
           { user: { equals: profileId } },
-          { 'listing.relationTo': { equals: collection.slug } },
-          { 'listing.value': { equals: doc.id } },
+          {
+            listing: {
+              equals: polyRef(collection.slug as 'locations' | 'events' | 'services', doc.id),
+            },
+          },
         ],
       },
-      limit: 1,
-      depth: 0,
     })
+    console.log('reviews', reviews.totalDocs)
 
     return {
       ...doc,
-      hasReviewedByViewer: reviews.docs.length > 0,
+      hasReviewedByViewer: reviews.totalDocs > 0 ? true : false,
     }
   } catch (err) {
     console.error('withHasReviewedByViewer error', err)

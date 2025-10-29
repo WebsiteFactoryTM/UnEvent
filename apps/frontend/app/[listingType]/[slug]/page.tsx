@@ -31,6 +31,8 @@ import type { ListingType } from "@/types/listings";
 import { Listing } from "@/types/listings";
 import { Event, Media, Location } from "@/types/payload-types";
 import { getListingTypeSlug } from "@/lib/getListingType";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -76,11 +78,19 @@ export default async function DetailPage({
   const { listingType, slug } = await params;
   if (!listingTypes.includes(listingType as any)) notFound();
 
+  const session = await getServerSession(authOptions);
+  const accessToken = session?.accessToken;
+
   const listingTypeUrl = getListingTypeSlug(listingType);
   let listing: Listing | null = null;
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingTypeUrl}?where[slug][equals]=${slug}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingTypeUrl}?where[slug][equals]=${slug}&includeReviewState=true`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
     );
     const data = await response.json();
     listing = data.docs[0];
@@ -150,6 +160,7 @@ export default async function DetailPage({
                 listingId={listing?.id ?? null}
                 listingRating={listing?.rating ?? null}
                 listingReviewCount={listing?.reviewCount ?? null}
+                hasReviewedByViewer={listing?.hasReviewedByViewer ?? false}
               />
             </div>
 

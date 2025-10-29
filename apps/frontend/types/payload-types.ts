@@ -393,6 +393,7 @@ export interface Location {
       }[]
     | null;
   isFavoritedByViewer?: boolean | null;
+  hasReviewedByViewer?: boolean | null;
   /**
    * Type of location
    */
@@ -638,6 +639,7 @@ export interface Event {
       }[]
     | null;
   isFavoritedByViewer?: boolean | null;
+  hasReviewedByViewer?: boolean | null;
   /**
    * Type of event
    */
@@ -765,6 +767,7 @@ export interface Service {
       }[]
     | null;
   isFavoritedByViewer?: boolean | null;
+  hasReviewedByViewer?: boolean | null;
   /**
    * Type of service
    */
@@ -1358,6 +1361,7 @@ export interface EventsSelect<T extends boolean = true> {
         id?: T;
       };
   isFavoritedByViewer?: T;
+  hasReviewedByViewer?: T;
   type?: T;
   eventStatus?: T;
   startDate?: T;
@@ -1450,6 +1454,7 @@ export interface LocationsSelect<T extends boolean = true> {
         id?: T;
       };
   isFavoritedByViewer?: T;
+  hasReviewedByViewer?: T;
   type?: T;
   suitableFor?: T;
   capacity?:
@@ -1540,6 +1545,7 @@ export interface ServicesSelect<T extends boolean = true> {
         id?: T;
       };
   isFavoritedByViewer?: T;
+  hasReviewedByViewer?: T;
   type?: T;
   suitableFor?: T;
   pricing?:

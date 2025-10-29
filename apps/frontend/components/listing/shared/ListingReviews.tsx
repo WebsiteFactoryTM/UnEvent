@@ -17,11 +17,13 @@ export function ListingReviews({
   listingId,
   listingRating,
   listingReviewCount,
+  hasReviewedByViewer,
 }: {
   type: ListingType;
   listingId: number | null;
   listingRating: number | null;
   listingReviewCount: number | null;
+  hasReviewedByViewer: boolean;
 }) {
   return (
     <div className="glass-card p-4 sm:p-6 space-y-6">
@@ -39,7 +41,11 @@ export function ListingReviews({
       </div>
 
       {/* Add review button */}
-      <ReviewForm type={type} listingId={listingId as number} />
+      <ReviewForm
+        type={type}
+        listingId={listingId as number}
+        hasReviewedByViewer={hasReviewedByViewer}
+      />
 
       {/* Reviews list */}
       <Suspense

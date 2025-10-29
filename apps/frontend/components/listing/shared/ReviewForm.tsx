@@ -15,9 +15,11 @@ import { useSession } from "next-auth/react";
 const ReviewForm = ({
   type,
   listingId,
+  hasReviewedByViewer,
 }: {
   type: ListingType;
   listingId: number;
+  hasReviewedByViewer: boolean;
 }) => {
   const { data: session } = useSession();
   const user = session?.user;
@@ -50,6 +52,16 @@ const ReviewForm = ({
       <div className="p-4 rounded-lg border border-border space-y-4">
         <p className="text-sm text-muted-foreground">
           Pentru a putea lasa o recenzie, trebuie sa te autentifici.
+        </p>
+      </div>
+    );
+  }
+
+  if (hasReviewedByViewer) {
+    return (
+      <div className="p-4 rounded-lg border border-border space-y-4">
+        <p className="text-sm text-muted-foreground">
+          Ai deja o recenzie pentru acestă listare.
         </p>
       </div>
     );
