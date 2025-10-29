@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   FaUser,
   FaUserShield,
@@ -21,22 +21,27 @@ import {
   FaEnvelope,
   FaHeart,
   FaRightFromBracket,
-} from "react-icons/fa6"
-import { useCurrentUser } from "@/lib/auth/useCurrentUser"
+} from "react-icons/fa6";
 
-export function UserMenu() {
-  const { data: user, isLoading } = useCurrentUser()
-  const router = useRouter()
+import { signOut, useSession } from "next-auth/react";
+import { Session } from "next-auth";
+
+export function UserMenu({
+  initialSession,
+}: {
+  initialSession: Session | null;
+}) {
+  const { data: session } = useSession({ required: false });
+
+  const user = session?.user || initialSession?.user;
+  const router = useRouter();
 
   const handleLogout = () => {
     // TODO: Implement logout logic
-    console.log("[v0] Logout clicked")
-    router.push("/")
-  }
-
-  if (isLoading) {
-    return <div className="h-9 w-9 rounded-full bg-white/10 animate-pulse" />
-  }
+    signOut({
+      callbackUrl: "/",
+    });
+  };
 
   if (!user) {
     return (
@@ -48,21 +53,21 @@ export function UserMenu() {
       >
         <Link href="/auth/autentificare">Autentificare</Link>
       </Button>
-    )
+    );
   }
 
-  const initials = user.displayName
-    ? user.displayName
+  const initials = user.name
+    ? user.name
         .split(" ")
         .map((n) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2)
-    : user.email[0].toUpperCase()
+    : user.email?.[0]?.toUpperCase() || "";
 
-  const hasHostRole = user.roles.includes("host")
-  const hasProviderRole = user.roles.includes("provider")
-  const hasOrganizerRole = user.roles.includes("organizer")
+  const hasHostRole = user.roles?.includes("host");
+  const hasProviderRole = user.roles?.includes("provider");
+  const hasOrganizerRole = user.roles?.includes("organizer");
 
   return (
     <DropdownMenu>
@@ -72,28 +77,45 @@ export function UserMenu() {
           aria-label="Deschide meniul utilizatorului"
         >
           <Avatar className="h-9 w-9 border border-white/20">
-            <AvatarImage src={user.avatarURL || undefined} alt={user.displayName || user.email} />
-            <AvatarFallback className="bg-white/10 text-white text-sm">{initials}</AvatarFallback>
+            <AvatarImage
+              src={user.avatar || undefined}
+              alt={user.name || user.email}
+            />
+            <AvatarFallback className="bg-white/10 text-white text-sm">
+              {initials}
+            </AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 bg-black border-white/20 text-white">
+      <DropdownMenuContent
+        align="end"
+        className="w-56 bg-black border-white/20 text-white"
+      >
         <DropdownMenuItem asChild>
-          <Link href="/cont/profil" className="flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/cont/profil"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <FaUser className="h-4 w-4" />
             Profil & Verificare
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href="/cont/roluri" className="flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/cont/roluri"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <FaUserShield className="h-4 w-4" />
             Roluri & Permisiuni
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href="/cont/securitate" className="flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/cont/securitate"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <FaLock className="h-4 w-4" />
             Securitate
           </Link>
@@ -102,21 +124,30 @@ export function UserMenu() {
         <DropdownMenuSeparator className="bg-white/10" />
 
         <DropdownMenuItem asChild>
-          <Link href="/cont/locatiile-mele" className="flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/cont/locatiile-mele"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <FaLocationDot className="h-4 w-4" />
             Locațiile Mele
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href="/cont/serviciile-mele" className="flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/cont/serviciile-mele"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <FaBriefcase className="h-4 w-4" />
             Serviciile Mele
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href="/cont/evenimentele-mele" className="flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/cont/evenimentele-mele"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <FaCalendarDays className="h-4 w-4" />
             Evenimentele Mele
           </Link>
@@ -125,14 +156,20 @@ export function UserMenu() {
         <DropdownMenuSeparator className="bg-white/10" />
 
         <DropdownMenuItem asChild>
-          <Link href="/cont/mesaje" className="flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/cont/mesaje"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <FaEnvelope className="h-4 w-4" />
             Mesaje
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href="/cont/favorite" className="flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/cont/favorite"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <FaHeart className="h-4 w-4" />
             Favorite
           </Link>
@@ -140,11 +177,14 @@ export function UserMenu() {
 
         <DropdownMenuSeparator className="bg-white/10" />
 
-        <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer text-red-400">
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="flex items-center gap-2 cursor-pointer text-red-400"
+        >
           <FaRightFromBracket className="h-4 w-4" />
           Deconectare
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
