@@ -1,0 +1,58 @@
+import type { ListingType } from "@/types/listings";
+import EventReviews from "@/components/listing/event/EventReviews";
+import { LocationReviews } from "@/components/listing/location/LocationReviews";
+import ServiceReviews from "@/components/listing/service/ServiceReviews";
+import { useReviews } from "@/hooks/useReviews";
+import { Suspense, useState } from "react";
+import { FaStar } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
+import ListingReviewsList from "./ListingReviewsList";
+import ReviewForm from "./ReviewForm";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export function ListingReviews({
+  type,
+  listingId,
+  listingRating,
+  listingReviewCount,
+}: {
+  type: ListingType;
+  listingId: number | null;
+  listingRating: number | null;
+  listingReviewCount: number | null;
+}) {
+  return (
+    <div className="glass-card p-4 sm:p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl sm:text-2xl font-bold">Recenzii</h2>
+        {listingRating && listingReviewCount && (
+          <div className="flex items-center gap-2">
+            <FaStar className="h-5 w-5 text-yellow-500" />
+            <span className="text-2xl font-bold">{listingRating}</span>
+            <span className="text-sm text-muted-foreground">
+              ({listingReviewCount} recenzii)
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Add review button */}
+      <ReviewForm type={type} listingId={listingId as number} />
+
+      {/* Reviews list */}
+      <Suspense
+        fallback={
+          <div className="space-y-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton key={index} className="h-10 w-full" />
+            ))}
+          </div>
+        }
+      >
+        <ListingReviewsList type={type} listingId={listingId as number} />
+      </Suspense>
+    </div>
+  );
+}
