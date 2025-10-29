@@ -1,16 +1,16 @@
-import type { User, Profile } from "@/types/payload-types"
-import type { LocationMock } from "./home/locations"
-import type { ServiceMock } from "./home/services"
-import type { EventMock } from "./home/events"
+import type { User, Profile } from "@/types/payload-types copy";
+import type { LocationMock } from "./home/locations";
+import type { ServiceMock } from "./home/services";
+import type { EventMock } from "./home/events";
 
 // Review type (not in Payload, local to profile page)
 export interface ReviewMock {
-  id: number
-  authorName: string
-  authorAvatar?: string
-  rating: number
-  date: string
-  comment: string
+  id: number;
+  authorName: string;
+  authorAvatar?: string;
+  rating: number;
+  date: string;
+  comment: string;
 }
 
 // Mock user with profile
@@ -66,7 +66,7 @@ export const mockProfileUser: User & { profile: Profile } = {
     createdAt: "2024-01-15T10:00:00Z",
     updatedAt: "2025-01-10T15:30:00Z",
   },
-}
+};
 
 // Mock listings for this profile
 export const mockProfileLocations: LocationMock[] = [
@@ -92,7 +92,7 @@ export const mockProfileLocations: LocationMock[] = [
     verified: true,
     rating: { average: 4.8, count: 17 },
   },
-]
+];
 
 export const mockProfileServices: ServiceMock[] = [
   {
@@ -104,7 +104,7 @@ export const mockProfileServices: ServiceMock[] = [
     verified: true,
     rating: { average: 5.0, count: 34 },
   },
-]
+];
 
 export const mockProfileEvents: EventMock[] = [
   {
@@ -119,7 +119,7 @@ export const mockProfileEvents: EventMock[] = [
     verified: true,
     rating: { average: 4.9, count: 45 },
   },
-]
+];
 
 // Mock reviews
 export const mockProfileReviews: ReviewMock[] = [
@@ -132,4 +132,4 @@ export const mockProfileReviews: ReviewMock[] = [
     comment:
       "Experiență excelentă! Ernest a organizat evenimentul nostru corporate impecabil. Locația a fost perfectă și toate detaliile au fost gestionate profesional. Recomand cu încredere!",
   },
-]
+];

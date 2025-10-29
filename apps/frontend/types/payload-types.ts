@@ -59,699 +59,1645 @@ export type SupportedTimezones =
   | "Pacific/Guam"
   | "Pacific/Noumea"
   | "Pacific/Auckland"
-  | "Pacific/Fiji"
+  | "Pacific/Fiji";
 
 export interface Config {
   auth: {
-    users: UserAuthOperations
-  }
-  blocks: {}
+    users: UserAuthOperations;
+  };
+  blocks: {};
   collections: {
-    users: User
-    media: Media
-    profiles: Profile
-    favorites: Favorite
-    "listing-types": ListingType
-    cities: City
-    events: Event
-    locations: Location
-    services: Service
-    facilities: Facility
-    "metrics-daily": MetricsDaily
-    aggregates: Aggregate
-    "listing-rank": ListingRank
-    reviews: Review
-    search: Search
-    "payload-locked-documents": PayloadLockedDocument
-    "payload-preferences": PayloadPreference
-    "payload-migrations": PayloadMigration
-  }
-  collectionsJoins: {}
+    users: User;
+    media: Media;
+    profiles: Profile;
+    favorites: Favorite;
+    "listing-types": ListingType;
+    cities: City;
+    events: Event;
+    locations: Location;
+    services: Service;
+    facilities: Facility;
+    "metrics-daily": MetricsDaily;
+    aggregates: Aggregate;
+    "listing-rank": ListingRank;
+    reviews: Review;
+    search: Search;
+    "payload-locked-documents": PayloadLockedDocument;
+    "payload-preferences": PayloadPreference;
+    "payload-migrations": PayloadMigration;
+  };
+  collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>
-    media: MediaSelect<false> | MediaSelect<true>
-    profiles: ProfilesSelect<false> | ProfilesSelect<true>
-    favorites: FavoritesSelect<false> | FavoritesSelect<true>
-    "listing-types": ListingTypesSelect<false> | ListingTypesSelect<true>
-    cities: CitiesSelect<false> | CitiesSelect<true>
-    events: EventsSelect<false> | EventsSelect<true>
-    locations: LocationsSelect<false> | LocationsSelect<true>
-    services: ServicesSelect<false> | ServicesSelect<true>
-    facilities: FacilitiesSelect<false> | FacilitiesSelect<true>
-    "metrics-daily": MetricsDailySelect<false> | MetricsDailySelect<true>
-    aggregates: AggregatesSelect<false> | AggregatesSelect<true>
-    "listing-rank": ListingRankSelect<false> | ListingRankSelect<true>
-    reviews: ReviewsSelect<false> | ReviewsSelect<true>
-    search: SearchSelect<false> | SearchSelect<true>
-    "payload-locked-documents": PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>
-    "payload-preferences": PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>
-    "payload-migrations": PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>
-  }
+    users: UsersSelect<false> | UsersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    profiles: ProfilesSelect<false> | ProfilesSelect<true>;
+    favorites: FavoritesSelect<false> | FavoritesSelect<true>;
+    "listing-types": ListingTypesSelect<false> | ListingTypesSelect<true>;
+    cities: CitiesSelect<false> | CitiesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    locations: LocationsSelect<false> | LocationsSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    facilities: FacilitiesSelect<false> | FacilitiesSelect<true>;
+    "metrics-daily": MetricsDailySelect<false> | MetricsDailySelect<true>;
+    aggregates: AggregatesSelect<false> | AggregatesSelect<true>;
+    "listing-rank": ListingRankSelect<false> | ListingRankSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    search: SearchSelect<false> | SearchSelect<true>;
+    "payload-locked-documents":
+      | PayloadLockedDocumentsSelect<false>
+      | PayloadLockedDocumentsSelect<true>;
+    "payload-preferences":
+      | PayloadPreferencesSelect<false>
+      | PayloadPreferencesSelect<true>;
+    "payload-migrations":
+      | PayloadMigrationsSelect<false>
+      | PayloadMigrationsSelect<true>;
+  };
   db: {
-    defaultIDType: number
-  }
-  globals: {}
-  globalsSelect: {}
-  locale: null
+    defaultIDType: number;
+  };
+  globals: {};
+  globalsSelect: {};
+  locale: null;
   user: User & {
-    collection: "users"
-  }
+    collection: "users";
+  };
   jobs: {
-    tasks: unknown
-    workflows: unknown
-  }
+    tasks: unknown;
+    workflows: unknown;
+  };
 }
-
 export interface UserAuthOperations {
   forgotPassword: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   login: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   registerFirstUser: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   unlock: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
 export interface User {
-  id: number
-  displayName?: string | null
-  profile?: (number | null) | Profile
-  avatarURL?: string | null
-  roles: ("organizer" | "host" | "provider" | "client" | "admin")[]
-  status?: ("active" | "pending" | "suspended") | null
-  agreeTermsAndConditions: boolean
-  agreePrivacyPolicy: boolean
-  updatedAt: string
-  createdAt: string
-  email: string
-  resetPasswordToken?: string | null
-  resetPasswordExpiration?: string | null
-  salt?: string | null
-  hash?: string | null
-  loginAttempts?: number | null
-  lockUntil?: string | null
+  id: number;
+  displayName?: string | null;
+  profile?: (number | null) | Profile;
+  avatarURL?: string | null;
+  roles: ("organizer" | "host" | "provider" | "client" | "admin")[];
+  status?: ("active" | "pending" | "suspended") | null;
+  agreeTermsAndConditions: boolean;
+  agreePrivacyPolicy: boolean;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
   sessions?:
     | {
-        id: string
-        createdAt?: string | null
-        expiresAt: string
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
       }[]
-    | null
-  password?: string | null
+    | null;
+  password?: string | null;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profiles".
+ */
 export interface Profile {
-  id: number
-  user: number | User
-  userType?: ("organizer" | "host" | "provider" | "client")[] | null
+  id: number;
+  user: number | User;
+  /**
+   * URL-friendly identifier
+   */
+  slug?: string | null;
+  userType?: ("organizer" | "host" | "provider" | "client")[] | null;
   /**
    * Full name or business name
    */
-  name: string
+  name: string;
   /**
    * Profile avatar
    */
-  avatar?: (number | null) | Media
+  avatar?: (number | null) | Media;
   /**
    * Display name
    */
-  displayName?: string | null
+  displayName?: string | null;
   /**
    * Short bio or tagline
    */
-  bio?: string | null
+  bio?: string | null;
   /**
    * Primary contact number
    */
-  phone?: string | null
+  phone?: string | null;
   /**
    * Personal or business website
    */
-  website?: string | null
+  website?: string | null;
   /**
    * Primary city of operation
    */
-  city?: string | null
+  city?: string | null;
   socialMedia?: {
     /**
      * Facebook profile/page URL
      */
-    facebook?: string | null
+    facebook?: string | null;
     /**
      * Instagram profile URL
      */
-    instagram?: string | null
+    instagram?: string | null;
     /**
      * LinkedIn profile URL
      */
-    linkedin?: string | null
+    linkedin?: string | null;
     /**
      * YouTube channel URL
      */
-    youtube?: string | null
+    youtube?: string | null;
     /**
      * TikTok profile URL
      */
-    tiktok?: string | null
+    tiktok?: string | null;
     /**
      * Twitch profile URL
      */
-    twitch?: string | null
+    twitch?: string | null;
     /**
      * X profile URL
      */
-    x?: string | null
-  }
+    x?: string | null;
+  };
   verified?: {
-    status?: ("none" | "pending" | "approved" | "rejected") | null
+    status?: ("none" | "pending" | "approved" | "rejected") | null;
     documents?:
       | {
-          type?: ("id" | "company" | "other") | null
-          file: number | Media
-          notes?: string | null
-          id?: string | null
+          type?: ("id" | "company" | "other") | null;
+          file: number | Media;
+          notes?: string | null;
+          id?: string | null;
         }[]
-      | null
+      | null;
     verificationData?: {
-      fullName?: string | null
-      address?: string | null
-      isCompany?: boolean | null
-      companyName?: string | null
-      cui?: string | null
-      companyAddress?: string | null
-    }
-  }
+      fullName?: string | null;
+      address?: string | null;
+      isCompany?: boolean | null;
+      companyName?: string | null;
+      cui?: string | null;
+      companyAddress?: string | null;
+    };
+  };
   rating?: {
-    average?: number | null
-    count?: number | null
-  }
-  favorites?: (number | Favorite)[] | null
-  memberSince?: string | null
-  lastOnline?: string | null
-  views?: number | null
-  updatedAt: string
-  createdAt: string
+    average?: number | null;
+    count?: number | null;
+  };
+  favorites?: (number | Favorite)[] | null;
+  memberSince?: string | null;
+  lastOnline?: string | null;
+  views?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
 export interface Media {
-  id: number
-  alt: string
-  updatedAt: string
-  createdAt: string
-  url?: string | null
-  thumbnailURL?: string | null
-  filename?: string | null
-  mimeType?: string | null
-  filesize?: number | null
-  width?: number | null
-  height?: number | null
-  focalX?: number | null
-  focalY?: number | null
+  id: number;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "favorites".
+ */
 export interface Favorite {
-  id: number
-  user?: (number | null) | User
-  createdAt: string
-  updatedAt: string
+  id: number;
+  user: number | Profile;
+  target:
+    | {
+        relationTo: "locations";
+        value: number | Location;
+      }
+    | {
+        relationTo: "events";
+        value: number | Event;
+      }
+    | {
+        relationTo: "services";
+        value: number | Service;
+      };
+  kind: "locations" | "events" | "services";
+  targetKey: string;
+  updatedAt: string;
+  createdAt: string;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations".
+ */
+export interface Location {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier
+   */
+  slug?: string | null;
+  /**
+   * Owner of the listing
+   */
+  owner: number | Profile;
+  description?: string | null;
+  city?: (number | null) | City;
+  address?: string | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  geo?: [number, number] | null;
+  contact?: {
+    email?: string | null;
+    phone?: string | null;
+    website?: string | null;
+  };
+  /**
+   * Status of the listing
+   */
+  status?: ("pending" | "approved" | "rejected" | "draft") | null;
+  rejectionReason?: string | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  /**
+   * Number of views
+   */
+  views?: number | null;
+  favoritesCount?: number | null;
+  bookingsCount?: number | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  lastViewedAt?: string | null;
+  /**
+   * Tier of the listing
+   */
+  tier?: ("new" | "standard" | "sponsored" | "recommended") | null;
+  /**
+   * Keywords to help find this listing
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+    tiktok?: string | null;
+    twitch?: string | null;
+    x?: string | null;
+  };
+  youtubeLinks?:
+    | {
+        youtubeLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  isFavoritedByViewer?: boolean | null;
+  /**
+   * Type of location
+   */
+  type: (number | ListingType)[];
+  /**
+   * Type of event suitable for this location
+   */
+  suitableFor: (number | ListingType)[];
+  capacity?: {
+    /**
+     * Indoor capacity
+     */
+    indoor?: number | null;
+    /**
+     * Outdoor capacity
+     */
+    outdoor?: number | null;
+    /**
+     * Seating capacity
+     */
+    seating?: number | null;
+    /**
+     * Parking spots
+     */
+    parking?: number | null;
+  };
+  /**
+   * Surface area in square meters (m²)
+   */
+  surface?: number | null;
+  pricing: {
+    type: "fixed" | "from" | "contact";
+    amount?: number | null;
+    currency?: ("RON" | "EUR" | "USD") | null;
+    period?: ("hour" | "day" | "event") | null;
+  };
+  availability: {
+    type: "always" | "custom" | "appointment";
+    schedule?:
+      | {
+          day:
+            | "monday"
+            | "tuesday"
+            | "wednesday"
+            | "thursday"
+            | "friday"
+            | "saturday"
+            | "sunday";
+          startTime: string;
+          endTime: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Select facilities available at this location
+   */
+  facilities?: (number | Facility)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities".
+ */
+export interface City {
+  id: number;
+  /**
+   * The official name of the city
+   */
+  name: string;
+  /**
+   * Auto-generated from city name. Used in URLs and lookups.
+   */
+  slug?: string | null;
+  country?: string | null;
+  /**
+   * The ISO 3166-1 alpha-2 code for the country
+   */
+  county?: string | null;
+  /**
+   * Where this city data originated from
+   */
+  source?: ("seeded" | "google" | "user") | null;
+  /**
+   * Geographic coordinates (latitude, longitude)
+   *
+   * @minItems 2
+   * @maxItems 2
+   */
+  geo: [number, number];
+  /**
+   * Number of times this city is referenced
+   */
+  usageCount?: number | null;
+  /**
+   * Indicates if this city data has been verified by admins
+   */
+  verified?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-types".
+ */
 export interface ListingType {
-  id: number
+  id: number;
   /**
    * URL-friendly identifier (e.g., logodna, sala-evenimente)
    */
-  slug: string
+  slug?: string | null;
   /**
    * Display name (e.g., Logodnă, Sală de evenimente)
    */
-  title: string
+  title: string;
   /**
    * Category header (e.g., NUNȚI & CEREMONII DE FAMILIE)
    */
-  category: string
+  category: string;
   /**
    * Slugified category name
    */
-  categorySlug: string
+  categorySlug?: string | null;
   /**
    * Which taxonomy type this belongs to
    */
-  type: "events" | "locations" | "services"
+  type: "events" | "locations" | "services";
   /**
    * Order within category (maintains the defined hierarchy)
    */
-  sortOrder: number
+  sortOrder: number;
   /**
    * Whether this taxonomy item is active/available
    */
-  isActive?: boolean | null
-  updatedAt: string
-  createdAt: string
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "facilities".
+ */
+export interface Facility {
+  id: number;
+  /**
+   * URL-friendly identifier (e.g., open-space, meeting-room)
+   */
+  slug?: string | null;
+  /**
+   * Display name (e.g., Open Space, Meeting Room)
+   */
+  title: string;
+  /**
+   * Category header (e.g., SPAȚIU & CONFIGURARE, MOBILIER & SETUP)
+   */
+  category: string;
+  /**
+   * Slugified category name
+   */
+  categorySlug?: string | null;
+  /**
+   * Order within category (maintains the defined hierarchy)
+   */
+  sortOrder: number;
+  /**
+   * Whether this taxonomy item is active/available
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier
+   */
+  slug?: string | null;
+  /**
+   * Owner of the listing
+   */
+  owner: number | Profile;
+  description?: string | null;
+  city?: (number | null) | City;
+  address?: string | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  geo?: [number, number] | null;
+  contact?: {
+    email?: string | null;
+    phone?: string | null;
+    website?: string | null;
+  };
+  /**
+   * Status of the listing
+   */
+  status?: ("pending" | "approved" | "rejected" | "draft") | null;
+  rejectionReason?: string | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  /**
+   * Number of views
+   */
+  views?: number | null;
+  favoritesCount?: number | null;
+  bookingsCount?: number | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  lastViewedAt?: string | null;
+  /**
+   * Tier of the listing
+   */
+  tier?: ("new" | "standard" | "sponsored" | "recommended") | null;
+  /**
+   * Keywords to help find this listing
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+    tiktok?: string | null;
+    twitch?: string | null;
+    x?: string | null;
+  };
+  youtubeLinks?:
+    | {
+        youtubeLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  isFavoritedByViewer?: boolean | null;
+  /**
+   * Type of event
+   */
+  type: (number | ListingType)[];
+  eventStatus: "upcoming" | "in-progress" | "finished";
+  startDate: string;
+  endDate?: string | null;
+  /**
+   * Check if this is an all-day event
+   */
+  allDayEvent?: boolean | null;
+  capacity?: {
+    /**
+     * Maximum number of attendees
+     */
+    total?: number | null;
+    remaining?: number | null;
+  };
+  pricing: {
+    type: "free" | "paid" | "contact";
+    amount?: number | null;
+    currency?: ("RON" | "EUR" | "USD") | null;
+  };
+  /**
+   * Last day to register for the event
+   */
+  registrationDeadline?: string | null;
+  /**
+   * Current number of participants registered
+   */
+  participants?: number | null;
+  /**
+   * Location where the event will be held
+   */
+  venue?: (number | null) | Location;
+  venueAddressDetails: {
+    venueAddress: string;
+    venueCity: number | City;
+    /**
+     * @minItems 2
+     * @maxItems 2
+     */
+    venueGeo: [number, number];
+  };
+  requirements?:
+    | {
+        requirement: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier
+   */
+  slug?: string | null;
+  /**
+   * Owner of the listing
+   */
+  owner: number | Profile;
+  description?: string | null;
+  city?: (number | null) | City;
+  address?: string | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  geo?: [number, number] | null;
+  contact?: {
+    email?: string | null;
+    phone?: string | null;
+    website?: string | null;
+  };
+  /**
+   * Status of the listing
+   */
+  status?: ("pending" | "approved" | "rejected" | "draft") | null;
+  rejectionReason?: string | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  /**
+   * Number of views
+   */
+  views?: number | null;
+  favoritesCount?: number | null;
+  bookingsCount?: number | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  lastViewedAt?: string | null;
+  /**
+   * Tier of the listing
+   */
+  tier?: ("new" | "standard" | "sponsored" | "recommended") | null;
+  /**
+   * Keywords to help find this listing
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+    tiktok?: string | null;
+    twitch?: string | null;
+    x?: string | null;
+  };
+  youtubeLinks?:
+    | {
+        youtubeLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  isFavoritedByViewer?: boolean | null;
+  /**
+   * Type of service
+   */
+  type: (number | ListingType)[];
+  /**
+   * Type of event suitable for this service
+   */
+  suitableFor: (number | ListingType)[];
+  pricing: {
+    type: "fixed" | "from" | "contact";
+    amount?: number | null;
+    currency?: ("RON" | "EUR" | "USD") | null;
+    period?: ("hour" | "day" | "event") | null;
+  };
+  availability: {
+    type: "always" | "custom" | "appointment";
+    schedule?:
+      | {
+          day:
+            | "monday"
+            | "tuesday"
+            | "wednesday"
+            | "thursday"
+            | "friday"
+            | "saturday"
+            | "sunday";
+          startTime: string;
+          endTime: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  features?:
+    | {
+        feature: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Raw daily counters for views, favorites, and bookings
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "metrics-daily".
+ */
+export interface MetricsDaily {
+  id: number;
+  /**
+   * The listing this metric belongs to
+   */
+  target:
+    | {
+        relationTo: "locations";
+        value: number | Location;
+      }
+    | {
+        relationTo: "events";
+        value: number | Event;
+      }
+    | {
+        relationTo: "services";
+        value: number | Service;
+      };
+  /**
+   * Type of listing for faster filtering
+   */
+  kind: "locations" | "events" | "services";
+  /**
+   * UTC date (YYYY-MM-DD) for this metric snapshot
+   */
+  date: string;
+  /**
+   * Number of views on this date
+   */
+  views?: number | null;
+  /**
+   * Number of favorites added on this date
+   */
+  favorites?: number | null;
+  /**
+   * Number of bookings made on this date
+   */
+  bookings?: number | null;
+}
+/**
+ * Precomputed rolling windows and aggregated metrics per listing
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aggregates".
+ */
+export interface Aggregate {
+  id: number;
+  /**
+   * The listing this aggregate belongs to
+   */
+  target:
+    | {
+        relationTo: "locations";
+        value: number | Location;
+      }
+    | {
+        relationTo: "events";
+        value: number | Event;
+      }
+    | {
+        relationTo: "services";
+        value: number | Service;
+      };
+  /**
+   * Type of listing for faster filtering
+   */
+  kind: "locations" | "events" | "services";
+  /**
+   * Total views in last 7 days
+   */
+  views7d?: number | null;
+  /**
+   * Total views in last 30 days
+   */
+  views30d?: number | null;
+  /**
+   * Total bookings in last 7 days
+   */
+  bookings7d?: number | null;
+  /**
+   * Total bookings in last 30 days
+   */
+  bookings30d?: number | null;
+  /**
+   * Total favorites count (all time)
+   */
+  favorites?: number | null;
+  /**
+   * Total number of reviews
+   */
+  reviewsCount?: number | null;
+  /**
+   * Average rating (1-5)
+   */
+  avgRating?: number | null;
+  /**
+   * Bayesian rating to dampen small sample sizes
+   */
+  bayesRating?: number | null;
+}
+/**
+ * Precomputed ranking scores per segment (city+type) for fast feed queries
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-rank".
+ */
+export interface ListingRank {
+  id: number;
+  /**
+   * The listing being ranked
+   */
+  target:
+    | {
+        relationTo: "locations";
+        value: number | Location;
+      }
+    | {
+        relationTo: "events";
+        value: number | Event;
+      }
+    | {
+        relationTo: "services";
+        value: number | Service;
+      };
+  /**
+   * Type of listing for faster filtering
+   */
+  kind: "locations" | "events" | "services";
+  /**
+   * Segment identifier (e.g., "timisoara|locatii" for city+type)
+   */
+  segmentKey: string;
+  /**
+   * Computed ranking score (0-100+)
+   */
+  score: number;
+  /**
+   * Timestamp when this score was last computed
+   */
+  calculatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: number;
+  listing:
+    | {
+        relationTo: "locations";
+        value: number | Location;
+      }
+    | {
+        relationTo: "events";
+        value: number | Event;
+      }
+    | {
+        relationTo: "services";
+        value: number | Service;
+      };
+  listingType: "locations" | "events" | "services";
+  user: number | Profile;
+  /**
+   * Status of the review
+   */
+  status?: ("pending" | "approved" | "rejected") | null;
+  rejectionReason?: string | null;
+  /**
+   * Comment of the review
+   */
+  comment?: string | null;
+  /**
+   * Rating of the review
+   */
+  rating: number;
+  /**
+   * Detailed rating criteria (optional)
+   */
+  criteriaRatings?:
+    | {
+        criteria:
+          | "cleanliness"
+          | "location"
+          | "amenities"
+          | "organization"
+          | "entertainment"
+          | "value"
+          | "quality"
+          | "timeliness"
+          | "communication";
+        rating: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "search".
+ */
+export interface Search {
+  id: number;
+  title?: string | null;
+  priority?: number | null;
+  doc:
+    | {
+        relationTo: "locations";
+        value: number | Location;
+      }
+    | {
+        relationTo: "services";
+        value: number | Service;
+      }
+    | {
+        relationTo: "events";
+        value: number | Event;
+      }
+    | {
+        relationTo: "profiles";
+        value: number | Profile;
+      };
+  description?: string | null;
+  address?: string | null;
+  cityName?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents".
+ */
 export interface PayloadLockedDocument {
-  id: number
+  id: number;
   document?:
     | ({
-        relationTo: "users"
-        value: number | User
+        relationTo: "users";
+        value: number | User;
       } | null)
     | ({
-        relationTo: "media"
-        value: number | Media
+        relationTo: "media";
+        value: number | Media;
       } | null)
     | ({
-        relationTo: "profiles"
-        value: number | Profile
+        relationTo: "profiles";
+        value: number | Profile;
       } | null)
     | ({
-        relationTo: "favorites"
-        value: number | Favorite
+        relationTo: "favorites";
+        value: number | Favorite;
       } | null)
     | ({
-        relationTo: "listing-types"
-        value: number | ListingType
+        relationTo: "listing-types";
+        value: number | ListingType;
       } | null)
-  globalSlug?: string | null
+    | ({
+        relationTo: "cities";
+        value: number | City;
+      } | null)
+    | ({
+        relationTo: "events";
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: "locations";
+        value: number | Location;
+      } | null)
+    | ({
+        relationTo: "services";
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: "facilities";
+        value: number | Facility;
+      } | null)
+    | ({
+        relationTo: "metrics-daily";
+        value: number | MetricsDaily;
+      } | null)
+    | ({
+        relationTo: "aggregates";
+        value: number | Aggregate;
+      } | null)
+    | ({
+        relationTo: "listing-rank";
+        value: number | ListingRank;
+      } | null)
+    | ({
+        relationTo: "reviews";
+        value: number | Review;
+      } | null)
+    | ({
+        relationTo: "search";
+        value: number | Search;
+      } | null);
+  globalSlug?: string | null;
   user: {
-    relationTo: "users"
-    value: number | User
-  }
-  updatedAt: string
-  createdAt: string
+    relationTo: "users";
+    value: number | User;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences".
+ */
 export interface PayloadPreference {
-  id: number
+  id: number;
   user: {
-    relationTo: "users"
-    value: number | User
-  }
-  key?: string | null
+    relationTo: "users";
+    value: number | User;
+  };
+  key?: string | null;
   value?:
     | {
-        [k: string]: unknown
+        [k: string]: unknown;
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null
-  updatedAt: string
-  createdAt: string
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations".
+ */
 export interface PayloadMigration {
-  id: number
-  name?: string | null
-  batch?: number | null
-  updatedAt: string
-  createdAt: string
+  id: number;
+  name?: string | null;
+  batch?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
-
-export interface City {
-  id: number
-  name: string
-  slug: string
-  updatedAt: string
-  createdAt: string
-}
-
-export interface Event {
-  id: number
-  title: string
-  slug: string
-  description: string
-  date: string
-  location: number | Location
-  organizer: number | User
-  services: (number | Service)[]
-  facilities: (number | Facility)[]
-  reviews: (number | Review)[]
-  rating?: {
-    average?: number | null
-    count?: number | null
-  }
-  updatedAt: string
-  createdAt: string
-}
-
-export interface Location {
-  id: number
-  name: string
-  slug: string
-  address: string
-  city: number | City
-  services: (number | Service)[]
-  facilities: (number | Facility)[]
-  events: (number | Event)[]
-  rating?: {
-    average?: number | null
-    count?: number | null
-  }
-  updatedAt: string
-  createdAt: string
-}
-
-export interface Service {
-  id: number
-  name: string
-  slug: string
-  description: string
-  type: "events" | "locations"
-  location?: number | Location
-  event?: number | Event
-  rating?: {
-    average?: number | null
-    count?: number | null
-  }
-  updatedAt: string
-  createdAt: string
-}
-
-export interface Facility {
-  id: number
-  name: string
-  slug: string
-  description: string
-  location: number | Location
-  event: number | Event
-  rating?: {
-    average?: number | null
-    count?: number | null
-  }
-  updatedAt: string
-  createdAt: string
-}
-
-export interface MetricsDaily {
-  id: number
-  date: string
-  views: number
-  clicks: number
-  updatedAt: string
-  createdAt: string
-}
-
-export interface Aggregate {
-  id: number
-  name: string
-  slug: string
-  description: string
-  type: "city" | "service" | "facility"
-  city?: number | City
-  service?: number | Service
-  facility?: number | Facility
-  rating?: {
-    average?: number | null
-    count?: number | null
-  }
-  updatedAt: string
-  createdAt: string
-}
-
-export interface ListingRank {
-  id: number
-  listing: number | ListingType
-  rank: number
-  updatedAt: string
-  createdAt: string
-}
-
-export interface Review {
-  id: number
-  listing: number | ListingType
-  user: number | User
-  rating: number
-  comment: string
-  updatedAt: string
-  createdAt: string
-}
-
-export interface Search {
-  id: number
-  query: string
-  results: (number | ListingType)[]
-  updatedAt: string
-  createdAt: string
-}
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
 export interface UsersSelect<T extends boolean = true> {
-  displayName?: T
-  profile?: T
-  avatarURL?: T
-  roles?: T
-  status?: T
-  agreeTermsAndConditions?: T
-  agreePrivacyPolicy?: T
-  updatedAt?: T
-  createdAt?: T
-  email?: T
-  resetPasswordToken?: T
-  resetPasswordExpiration?: T
-  salt?: T
-  hash?: T
-  loginAttempts?: T
-  lockUntil?: T
+  displayName?: T;
+  profile?: T;
+  avatarURL?: T;
+  roles?: T;
+  status?: T;
+  agreeTermsAndConditions?: T;
+  agreePrivacyPolicy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
   sessions?:
     | T
     | {
-        id?: T
-        createdAt?: T
-        expiresAt?: T
-      }
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
 export interface MediaSelect<T extends boolean = true> {
-  alt?: T
-  updatedAt?: T
-  createdAt?: T
-  url?: T
-  thumbnailURL?: T
-  filename?: T
-  mimeType?: T
-  filesize?: T
-  width?: T
-  height?: T
-  focalX?: T
-  focalY?: T
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profiles_select".
+ */
 export interface ProfilesSelect<T extends boolean = true> {
-  user?: T
-  userType?: T
-  name?: T
-  avatar?: T
-  displayName?: T
-  bio?: T
-  phone?: T
-  website?: T
-  city?: T
+  user?: T;
+  slug?: T;
+  userType?: T;
+  name?: T;
+  avatar?: T;
+  displayName?: T;
+  bio?: T;
+  phone?: T;
+  website?: T;
+  city?: T;
   socialMedia?:
     | T
     | {
-        facebook?: T
-        instagram?: T
-        linkedin?: T
-        youtube?: T
-        tiktok?: T
-        twitch?: T
-        x?: T
-      }
+        facebook?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+        tiktok?: T;
+        twitch?: T;
+        x?: T;
+      };
   verified?:
     | T
     | {
-        status?: T
+        status?: T;
         documents?:
           | T
           | {
-              type?: T
-              file?: T
-              notes?: T
-              id?: T
-            }
+              type?: T;
+              file?: T;
+              notes?: T;
+              id?: T;
+            };
         verificationData?:
           | T
           | {
-              fullName?: T
-              address?: T
-              isCompany?: T
-              companyName?: T
-              cui?: T
-              companyAddress?: T
-            }
-      }
+              fullName?: T;
+              address?: T;
+              isCompany?: T;
+              companyName?: T;
+              cui?: T;
+              companyAddress?: T;
+            };
+      };
   rating?:
     | T
     | {
-        average?: T
-        count?: T
-      }
-  favorites?: T
-  memberSince?: T
-  lastOnline?: T
-  views?: T
-  updatedAt?: T
-  createdAt?: T
+        average?: T;
+        count?: T;
+      };
+  favorites?: T;
+  memberSince?: T;
+  lastOnline?: T;
+  views?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "favorites_select".
+ */
 export interface FavoritesSelect<T extends boolean = true> {
-  user?: T
-  createdAt?: T
-  updatedAt?: T
+  user?: T;
+  target?: T;
+  kind?: T;
+  targetKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-types_select".
+ */
 export interface ListingTypesSelect<T extends boolean = true> {
-  slug?: T
-  title?: T
-  category?: T
-  categorySlug?: T
-  type?: T
-  sortOrder?: T
-  isActive?: T
-  updatedAt?: T
-  createdAt?: T
+  slug?: T;
+  title?: T;
+  category?: T;
+  categorySlug?: T;
+  type?: T;
+  sortOrder?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities_select".
+ */
 export interface CitiesSelect<T extends boolean = true> {
-  name?: T
-  slug?: T
-  updatedAt?: T
-  createdAt?: T
+  name?: T;
+  slug?: T;
+  country?: T;
+  county?: T;
+  source?: T;
+  geo?: T;
+  usageCount?: T;
+  verified?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
 export interface EventsSelect<T extends boolean = true> {
-  title?: T
-  slug?: T
-  description?: T
-  date?: T
-  location?: T
-  organizer?: T
-  services?: T
-  facilities?: T
-  reviews?: T
-  rating?: T
-  updatedAt?: T
-  createdAt?: T
+  title?: T;
+  slug?: T;
+  owner?: T;
+  description?: T;
+  city?: T;
+  address?: T;
+  geo?: T;
+  contact?:
+    | T
+    | {
+        email?: T;
+        phone?: T;
+        website?: T;
+      };
+  status?: T;
+  rejectionReason?: T;
+  featuredImage?: T;
+  gallery?: T;
+  views?: T;
+  favoritesCount?: T;
+  bookingsCount?: T;
+  rating?: T;
+  reviewCount?: T;
+  lastViewedAt?: T;
+  tier?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+        tiktok?: T;
+        twitch?: T;
+        x?: T;
+      };
+  youtubeLinks?:
+    | T
+    | {
+        youtubeLink?: T;
+        id?: T;
+      };
+  isFavoritedByViewer?: T;
+  type?: T;
+  eventStatus?: T;
+  startDate?: T;
+  endDate?: T;
+  allDayEvent?: T;
+  capacity?:
+    | T
+    | {
+        total?: T;
+        remaining?: T;
+      };
+  pricing?:
+    | T
+    | {
+        type?: T;
+        amount?: T;
+        currency?: T;
+      };
+  registrationDeadline?: T;
+  participants?: T;
+  venue?: T;
+  venueAddressDetails?:
+    | T
+    | {
+        venueAddress?: T;
+        venueCity?: T;
+        venueGeo?: T;
+      };
+  requirements?:
+    | T
+    | {
+        requirement?: T;
+        description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations_select".
+ */
 export interface LocationsSelect<T extends boolean = true> {
-  name?: T
-  slug?: T
-  address?: T
-  city?: T
-  services?: T
-  facilities?: T
-  events?: T
-  rating?: T
-  updatedAt?: T
-  createdAt?: T
+  title?: T;
+  slug?: T;
+  owner?: T;
+  description?: T;
+  city?: T;
+  address?: T;
+  geo?: T;
+  contact?:
+    | T
+    | {
+        email?: T;
+        phone?: T;
+        website?: T;
+      };
+  status?: T;
+  rejectionReason?: T;
+  featuredImage?: T;
+  gallery?: T;
+  views?: T;
+  favoritesCount?: T;
+  bookingsCount?: T;
+  rating?: T;
+  reviewCount?: T;
+  lastViewedAt?: T;
+  tier?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+        tiktok?: T;
+        twitch?: T;
+        x?: T;
+      };
+  youtubeLinks?:
+    | T
+    | {
+        youtubeLink?: T;
+        id?: T;
+      };
+  isFavoritedByViewer?: T;
+  type?: T;
+  suitableFor?: T;
+  capacity?:
+    | T
+    | {
+        indoor?: T;
+        outdoor?: T;
+        seating?: T;
+        parking?: T;
+      };
+  surface?: T;
+  pricing?:
+    | T
+    | {
+        type?: T;
+        amount?: T;
+        currency?: T;
+        period?: T;
+      };
+  availability?:
+    | T
+    | {
+        type?: T;
+        schedule?:
+          | T
+          | {
+              day?: T;
+              startTime?: T;
+              endTime?: T;
+              id?: T;
+            };
+      };
+  facilities?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
 export interface ServicesSelect<T extends boolean = true> {
-  name?: T
-  slug?: T
-  description?: T
-  type?: T
-  location?: T
-  event?: T
-  rating?: T
-  updatedAt?: T
-  createdAt?: T
+  title?: T;
+  slug?: T;
+  owner?: T;
+  description?: T;
+  city?: T;
+  address?: T;
+  geo?: T;
+  contact?:
+    | T
+    | {
+        email?: T;
+        phone?: T;
+        website?: T;
+      };
+  status?: T;
+  rejectionReason?: T;
+  featuredImage?: T;
+  gallery?: T;
+  views?: T;
+  favoritesCount?: T;
+  bookingsCount?: T;
+  rating?: T;
+  reviewCount?: T;
+  lastViewedAt?: T;
+  tier?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+        tiktok?: T;
+        twitch?: T;
+        x?: T;
+      };
+  youtubeLinks?:
+    | T
+    | {
+        youtubeLink?: T;
+        id?: T;
+      };
+  isFavoritedByViewer?: T;
+  type?: T;
+  suitableFor?: T;
+  pricing?:
+    | T
+    | {
+        type?: T;
+        amount?: T;
+        currency?: T;
+        period?: T;
+      };
+  availability?:
+    | T
+    | {
+        type?: T;
+        schedule?:
+          | T
+          | {
+              day?: T;
+              startTime?: T;
+              endTime?: T;
+              id?: T;
+            };
+      };
+  features?:
+    | T
+    | {
+        feature?: T;
+        description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "facilities_select".
+ */
 export interface FacilitiesSelect<T extends boolean = true> {
-  name?: T
-  slug?: T
-  description?: T
-  location?: T
-  event?: T
-  rating?: T
-  updatedAt?: T
-  createdAt?: T
+  slug?: T;
+  title?: T;
+  category?: T;
+  categorySlug?: T;
+  sortOrder?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "metrics-daily_select".
+ */
 export interface MetricsDailySelect<T extends boolean = true> {
-  date?: T
-  views?: T
-  clicks?: T
-  updatedAt?: T
-  createdAt?: T
+  target?: T;
+  kind?: T;
+  date?: T;
+  views?: T;
+  favorites?: T;
+  bookings?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aggregates_select".
+ */
 export interface AggregatesSelect<T extends boolean = true> {
-  name?: T
-  slug?: T
-  description?: T
-  type?: T
-  city?: T
-  service?: T
-  facility?: T
-  rating?: T
-  updatedAt?: T
-  createdAt?: T
+  target?: T;
+  kind?: T;
+  views7d?: T;
+  views30d?: T;
+  bookings7d?: T;
+  bookings30d?: T;
+  favorites?: T;
+  reviewsCount?: T;
+  avgRating?: T;
+  bayesRating?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-rank_select".
+ */
 export interface ListingRankSelect<T extends boolean = true> {
-  listing?: T
-  rank?: T
-  updatedAt?: T
-  createdAt?: T
+  target?: T;
+  kind?: T;
+  segmentKey?: T;
+  score?: T;
+  calculatedAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
 export interface ReviewsSelect<T extends boolean = true> {
-  listing?: T
-  user?: T
-  rating?: T
-  comment?: T
-  updatedAt?: T
-  createdAt?: T
+  listing?: T;
+  listingType?: T;
+  user?: T;
+  status?: T;
+  rejectionReason?: T;
+  comment?: T;
+  rating?: T;
+  criteriaRatings?:
+    | T
+    | {
+        criteria?: T;
+        rating?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "search_select".
+ */
 export interface SearchSelect<T extends boolean = true> {
-  query?: T
-  results?: T
-  updatedAt?: T
-  createdAt?: T
+  title?: T;
+  priority?: T;
+  doc?: T;
+  description?: T;
+  address?: T;
+  cityName?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents_select".
+ */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
-  document?: T
-  globalSlug?: T
-  user?: T
-  updatedAt?: T
-  createdAt?: T
+  document?: T;
+  globalSlug?: T;
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences_select".
+ */
 export interface PayloadPreferencesSelect<T extends boolean = true> {
-  user?: T
-  key?: T
-  value?: T
-  updatedAt?: T
-  createdAt?: T
+  user?: T;
+  key?: T;
+  value?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations_select".
+ */
 export interface PayloadMigrationsSelect<T extends boolean = true> {
-  name?: T
-  batch?: T
-  updatedAt?: T
-  createdAt?: T
+  name?: T;
+  batch?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
-
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auth".
+ */
 export interface Auth {
-  [k: string]: unknown
-}
-
-declare module "payload" {
-  export interface GeneratedTypes extends Config {}
+  [k: string]: unknown;
 }

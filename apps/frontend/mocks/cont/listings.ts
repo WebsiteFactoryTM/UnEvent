@@ -1,4 +1,4 @@
-import type { Location, Service, Event } from "@/types/payload-types"
+import type { Location, Service, Event } from "@/types/payload-types copy";
 
 export const mockLocations: Location[] = [
   {
@@ -6,7 +6,8 @@ export const mockLocations: Location[] = [
     title: "Conacul Elegant - Sală Evenimente",
     slug: "conacul-elegant",
     owner: 1,
-    description: "Sală elegantă pentru nunți și evenimente speciale, capacitate 200 persoane.",
+    description:
+      "Sală elegantă pentru nunți și evenimente speciale, capacitate 200 persoane.",
     city: {
       id: 1,
       name: "București",
@@ -69,7 +70,7 @@ export const mockLocations: Location[] = [
     createdAt: "2024-11-10T14:00:00Z",
     updatedAt: "2024-12-18T09:15:00Z",
   },
-]
+];
 
 export const mockServices: Service[] = [
   {
@@ -103,7 +104,7 @@ export const mockServices: Service[] = [
     createdAt: "2024-02-20T11:00:00Z",
     updatedAt: "2024-12-19T16:45:00Z",
   },
-]
+];
 
 export const mockEvents: Event[] = [
   {
@@ -111,7 +112,8 @@ export const mockEvents: Event[] = [
     title: "Târg de Nunți București 2025",
     slug: "targ-nunti-bucuresti-2025",
     owner: 1,
-    description: "Cel mai mare târg de nunți din România cu peste 100 de expozanți.",
+    description:
+      "Cel mai mare târg de nunți din România cu peste 100 de expozanți.",
     city: {
       id: 1,
       name: "București",
@@ -155,4 +157,4 @@ export const mockEvents: Event[] = [
     createdAt: "2024-10-05T09:00:00Z",
     updatedAt: "2024-12-21T12:00:00Z",
   },
-]
+];

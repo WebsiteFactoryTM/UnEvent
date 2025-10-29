@@ -1,4 +1,4 @@
-import type { Profile, User } from "@/types/payload-types"
+import type { Profile, User } from "@/types/payload-types copy";
 
 export const mockCurrentUser: User = {
   id: 1,
@@ -11,7 +11,7 @@ export const mockCurrentUser: User = {
   agreePrivacyPolicy: true,
   createdAt: "2024-01-15T10:00:00Z",
   updatedAt: "2024-12-20T15:30:00Z",
-}
+};
 
 export const mockProfile: Profile = {
   id: 1,
@@ -53,4 +53,4 @@ export const mockProfile: Profile = {
   views: 1543,
   createdAt: "2024-01-15T10:00:00Z",
   updatedAt: "2024-12-20T15:30:00Z",
-}
+};

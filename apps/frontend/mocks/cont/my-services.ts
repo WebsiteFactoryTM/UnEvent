@@ -1,16 +1,16 @@
-import type { Service, City, User } from "@/types/payload-types"
+import type { Service, City, User } from "@/types/payload-types copy";
 
 // Extended Service type with all needed fields for the account area
 export interface MyService extends Omit<Service, "city" | "owner"> {
-  title: string
-  owner: number | User
-  city: number | City | null
-  status: "pending" | "approved" | "rejected" | "sponsored" | null
-  rejectionReason?: string | null
-  views?: number | null
-  tier?: "free" | "basic" | "premium" | "sponsored" | null
-  featuredImage?: string | null
-  category?: string | null // Service category for badge/icon
+  title: string;
+  owner: number | User;
+  city: number | City | null;
+  status: "pending" | "approved" | "rejected" | "sponsored" | null;
+  rejectionReason?: string | null;
+  views?: number | null;
+  tier?: "free" | "basic" | "premium" | "sponsored" | null;
+  featuredImage?: string | null;
+  category?: string | null; // Service category for badge/icon
 }
 
 export const mockMyServices: MyService[] = [
@@ -24,7 +24,13 @@ export const mockMyServices: MyService[] = [
     type: "events",
     category: "Catering",
     owner: 1,
-    city: { id: 1, name: "București", slug: "bucuresti", createdAt: "2024-01-15", updatedAt: "2024-01-15" },
+    city: {
+      id: 1,
+      name: "București",
+      slug: "bucuresti",
+      createdAt: "2024-01-15",
+      updatedAt: "2024-01-15",
+    },
     status: "approved",
     views: 1247,
     tier: "premium",
@@ -46,7 +52,13 @@ export const mockMyServices: MyService[] = [
     type: "events",
     category: "Fotografie",
     owner: 1,
-    city: { id: 2, name: "Cluj-Napoca", slug: "cluj-napoca", createdAt: "2024-02-10", updatedAt: "2024-02-10" },
+    city: {
+      id: 2,
+      name: "Cluj-Napoca",
+      slug: "cluj-napoca",
+      createdAt: "2024-02-10",
+      updatedAt: "2024-02-10",
+    },
     status: "pending",
     views: 523,
     tier: "basic",
@@ -68,9 +80,16 @@ export const mockMyServices: MyService[] = [
     type: "events",
     category: "Muzică",
     owner: 1,
-    city: { id: 3, name: "Timișoara", slug: "timisoara", createdAt: "2024-02-20", updatedAt: "2024-02-20" },
+    city: {
+      id: 3,
+      name: "Timișoara",
+      slug: "timisoara",
+      createdAt: "2024-02-20",
+      updatedAt: "2024-02-20",
+    },
     status: "rejected",
-    rejectionReason: "Vă rugăm să adăugați certificări profesionale și referințe verificabile.",
+    rejectionReason:
+      "Vă rugăm să adăugați certificări profesionale și referințe verificabile.",
     views: 234,
     tier: "free",
     featuredImage: "/dj-professional-equipment.jpg",
@@ -91,7 +110,13 @@ export const mockMyServices: MyService[] = [
     type: "events",
     category: "Decorațiuni",
     owner: 1,
-    city: { id: 1, name: "București", slug: "bucuresti", createdAt: "2024-01-15", updatedAt: "2024-01-15" },
+    city: {
+      id: 1,
+      name: "București",
+      slug: "bucuresti",
+      createdAt: "2024-01-15",
+      updatedAt: "2024-01-15",
+    },
     status: "sponsored",
     views: 2156,
     tier: "sponsored",
@@ -113,7 +138,13 @@ export const mockMyServices: MyService[] = [
     type: "events",
     category: "Papetărie",
     owner: 1,
-    city: { id: 4, name: "Brașov", slug: "brasov", createdAt: "2024-03-01", updatedAt: "2024-03-01" },
+    city: {
+      id: 4,
+      name: "Brașov",
+      slug: "brasov",
+      createdAt: "2024-03-01",
+      updatedAt: "2024-03-01",
+    },
     status: "approved",
     views: 678,
     tier: "basic",
@@ -125,4 +156,4 @@ export const mockMyServices: MyService[] = [
     createdAt: "2024-02-14T16:45:00Z",
     updatedAt: "2024-02-14T16:45:00Z",
   },
-]
+];

@@ -1,4 +1,4 @@
-import type { Location, City } from "@/types/payload-types"
+import type { Location, City } from "@/types/payload-types copy";
 
 // Mock city data
 const mockCities: City[] = [
@@ -41,7 +41,7 @@ const mockCities: City[] = [
     updatedAt: "2024-01-15T10:00:00Z",
     createdAt: "2024-01-01T00:00:00Z",
   },
-]
+];
 
 // Mock locations for "Locațiile mele" page
 export const mockMyLocations: Location[] = [
@@ -209,7 +209,8 @@ export const mockMyLocations: Location[] = [
     title: "Castel Bran Events",
     slug: "castel-bran-events",
     owner: 1,
-    description: "Locație istorică cu arhitectură medievală, perfectă pentru nunți de poveste și evenimente tematice.",
+    description:
+      "Locație istorică cu arhitectură medievală, perfectă pentru nunți de poveste și evenimente tematice.",
     city: mockCities[0],
     address: "Str. Castelului nr. 1, București",
     geo: [44.4512, 26.0891],
@@ -264,4 +265,4 @@ export const mockMyLocations: Location[] = [
     updatedAt: "2024-03-09T11:00:00Z",
     createdAt: "2023-03-10T08:00:00Z",
   },
-]
+];

@@ -1,24 +1,24 @@
-import type { User, City, Media } from "@/types/payload-types"
+import type { User, City, Media } from "@/types/payload-types copy";
 
 // Extended Event type for "Evenimentele mele" with all necessary fields
 export interface MyEvent {
-  id: number
-  title: string
-  slug: string
-  owner: number | User
-  description: string
-  city: number | City | null
-  status: "pending" | "approved" | "rejected" | "sponsored" | null
-  rejectionReason?: string | null
-  featuredImage?: (number | null) | Media
-  views?: number | null
-  tier?: ("free" | "basic" | "premium" | "sponsored") | null
-  startDate: string
-  endDate: string
-  participants?: number | null
-  eventStatus?: "upcoming" | "active" | "completed" | null
-  createdAt: string
-  updatedAt: string
+  id: number;
+  title: string;
+  slug: string;
+  owner: number | User;
+  description: string;
+  city: number | City | null;
+  status: "pending" | "approved" | "rejected" | "sponsored" | null;
+  rejectionReason?: string | null;
+  featuredImage?: (number | null) | Media;
+  views?: number | null;
+  tier?: ("free" | "basic" | "premium" | "sponsored") | null;
+  startDate: string;
+  endDate: string;
+  participants?: number | null;
+  eventStatus?: "upcoming" | "active" | "completed" | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const mockMyEvents: MyEvent[] = [
@@ -27,8 +27,15 @@ export const mockMyEvents: MyEvent[] = [
     title: "Târg de Nunți București 2024",
     slug: "targ-de-nunti-bucuresti-2024",
     owner: 1,
-    description: "Cel mai mare târg de nunți din România cu peste 100 de expozanți și demonstrații live.",
-    city: { id: 1, name: "București", slug: "bucuresti", createdAt: "2024-01-01", updatedAt: "2024-01-01" },
+    description:
+      "Cel mai mare târg de nunți din România cu peste 100 de expozanți și demonstrații live.",
+    city: {
+      id: 1,
+      name: "București",
+      slug: "bucuresti",
+      createdAt: "2024-01-01",
+      updatedAt: "2024-01-01",
+    },
     status: "approved",
     featuredImage: null,
     views: 2847,
@@ -45,8 +52,15 @@ export const mockMyEvents: MyEvent[] = [
     title: "Workshop Fotografie de Nuntă",
     slug: "workshop-fotografie-de-nunta",
     owner: 1,
-    description: "Învață tehnicile profesionale de fotografie de nuntă de la cei mai buni fotografi din țară.",
-    city: { id: 2, name: "Cluj-Napoca", slug: "cluj-napoca", createdAt: "2024-01-01", updatedAt: "2024-01-01" },
+    description:
+      "Învață tehnicile profesionale de fotografie de nuntă de la cei mai buni fotografi din țară.",
+    city: {
+      id: 2,
+      name: "Cluj-Napoca",
+      slug: "cluj-napoca",
+      createdAt: "2024-01-01",
+      updatedAt: "2024-01-01",
+    },
     status: "approved",
     featuredImage: null,
     views: 1523,
@@ -63,8 +77,15 @@ export const mockMyEvents: MyEvent[] = [
     title: "Gala Furnizorilor de Evenimente",
     slug: "gala-furnizorilor-de-evenimente",
     owner: 1,
-    description: "Eveniment de networking pentru profesioniștii din industria evenimentelor.",
-    city: { id: 3, name: "Timișoara", slug: "timisoara", createdAt: "2024-01-01", updatedAt: "2024-01-01" },
+    description:
+      "Eveniment de networking pentru profesioniștii din industria evenimentelor.",
+    city: {
+      id: 3,
+      name: "Timișoara",
+      slug: "timisoara",
+      createdAt: "2024-01-01",
+      updatedAt: "2024-01-01",
+    },
     status: "pending",
     featuredImage: null,
     views: 892,
@@ -83,9 +104,16 @@ export const mockMyEvents: MyEvent[] = [
     owner: 1,
     description:
       "Conferință dedicată celor care doresc să învețe despre planificarea și organizarea evenimentelor de succes.",
-    city: { id: 4, name: "Brașov", slug: "brasov", createdAt: "2024-01-01", updatedAt: "2024-01-01" },
+    city: {
+      id: 4,
+      name: "Brașov",
+      slug: "brasov",
+      createdAt: "2024-01-01",
+      updatedAt: "2024-01-01",
+    },
     status: "rejected",
-    rejectionReason: "Descrierea evenimentului nu conține suficiente detalii despre agenda și speakerii invitați.",
+    rejectionReason:
+      "Descrierea evenimentului nu conține suficiente detalii despre agenda și speakerii invitați.",
     featuredImage: null,
     views: 456,
     tier: "free",
@@ -101,8 +129,15 @@ export const mockMyEvents: MyEvent[] = [
     title: "Expoziție Decorațiuni Nunți",
     slug: "expozitie-decoratiuni-nunti",
     owner: 1,
-    description: "Expoziție cu cele mai noi tendințe în decorațiuni pentru nunți și evenimente speciale.",
-    city: { id: 5, name: "Iași", slug: "iasi", createdAt: "2024-01-01", updatedAt: "2024-01-01" },
+    description:
+      "Expoziție cu cele mai noi tendințe în decorațiuni pentru nunți și evenimente speciale.",
+    city: {
+      id: 5,
+      name: "Iași",
+      slug: "iasi",
+      createdAt: "2024-01-01",
+      updatedAt: "2024-01-01",
+    },
     status: "approved",
     featuredImage: null,
     views: 1876,
@@ -114,4 +149,4 @@ export const mockMyEvents: MyEvent[] = [
     createdAt: "2024-10-01T08:00:00Z",
     updatedAt: new Date().toISOString(),
   },
-]
+];
