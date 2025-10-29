@@ -24,7 +24,7 @@ export const sharedListingFields: Field[] = [
       position: 'sidebar',
       description: 'Owner of the listing',
     },
-    maxDepth: 1,
+    maxDepth: 2,
   },
   { name: 'description', type: 'textarea' },
   { name: 'city', type: 'relationship', relationTo: 'cities', index: true },
@@ -171,6 +171,12 @@ export const sharedListingFields: Field[] = [
   },
   {
     name: 'isFavoritedByViewer',
+    type: 'checkbox',
+    defaultValue: false,
+    admin: { readOnly: true },
+  },
+  {
+    name: 'hasReviewedByViewer',
     type: 'checkbox',
     defaultValue: false,
     admin: { readOnly: true },

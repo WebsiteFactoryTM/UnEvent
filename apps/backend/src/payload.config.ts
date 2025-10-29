@@ -47,6 +47,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  cors: ['http://localhost:3000'],
   endpoints: [
     {
       path: '/seed',
