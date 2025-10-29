@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { FaStar } from "react-icons/fa6"
-import type { ReviewMock } from "@/mocks/profile"
-import type { Profile } from "@/types/payload-types"
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { FaStar } from "react-icons/fa6";
+import type { ReviewMock } from "@/mocks/profile";
+import type { Profile } from "@/types/payload-types copy";
 
 interface ProfileReviewsProps {
-  reviews: ReviewMock[]
-  rating?: Profile["rating"]
+  reviews: ReviewMock[];
+  rating?: Profile["rating"];
 }
 
 export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
-  const hasReviews = reviews.length > 0
-  const avgRating = rating?.average || 0
-  const totalReviews = rating?.count || 0
+  const hasReviews = reviews.length > 0;
+  const avgRating = rating?.average || 0;
+  const totalReviews = rating?.count || 0;
 
   // Calculate rating distribution (mock for now)
   const distribution = hasReviews
@@ -27,11 +27,13 @@ export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
         { stars: 2, count: reviews.filter((r) => r.rating === 2).length },
         { stars: 1, count: reviews.filter((r) => r.rating === 1).length },
       ]
-    : []
+    : [];
 
   return (
     <div className="glass-card p-6 space-y-6 animate-fade-in-up animation-delay-300">
-      <h2 className="text-2xl font-bold">Evaluări și recenzii ({totalReviews})</h2>
+      <h2 className="text-2xl font-bold">
+        Evaluări și recenzii ({totalReviews})
+      </h2>
 
       {hasReviews ? (
         <div className="space-y-6">
@@ -40,11 +42,14 @@ export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
             {/* Average Rating */}
             <div className="space-y-2">
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-bold">{avgRating.toFixed(1)}</span>
+                <span className="text-5xl font-bold">
+                  {avgRating.toFixed(1)}
+                </span>
                 <FaStar className="h-8 w-8 text-yellow-500" />
               </div>
               <p className="text-muted-foreground">
-                Bazat pe {totalReviews} {totalReviews === 1 ? "recenzie" : "recenzii"}
+                Bazat pe {totalReviews}{" "}
+                {totalReviews === 1 ? "recenzie" : "recenzii"}
               </p>
             </div>
 
@@ -53,8 +58,13 @@ export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
               {distribution.map((item) => (
                 <div key={item.stars} className="flex items-center gap-3">
                   <span className="text-sm w-8">{item.stars} ★</span>
-                  <Progress value={(item.count / totalReviews) * 100} className="flex-1" />
-                  <span className="text-sm text-muted-foreground w-8">{item.count}</span>
+                  <Progress
+                    value={(item.count / totalReviews) * 100}
+                    className="flex-1"
+                  />
+                  <span className="text-sm text-muted-foreground w-8">
+                    {item.count}
+                  </span>
                 </div>
               ))}
             </div>
@@ -66,8 +76,13 @@ export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
               <Card key={review.id} className="glass-card">
                 <CardHeader className="flex flex-row items-start gap-4 space-y-0">
                   <Avatar>
-                    <AvatarImage src={review.authorAvatar || "/placeholder.svg"} alt={review.authorName} />
-                    <AvatarFallback>{review.authorName.charAt(0)}</AvatarFallback>
+                    <AvatarImage
+                      src={review.authorAvatar || "/placeholder.svg"}
+                      alt={review.authorName}
+                    />
+                    <AvatarFallback>
+                      {review.authorName.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
@@ -91,7 +106,9 @@ export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">{review.comment}</p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {review.comment}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -105,10 +122,14 @@ export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
         </div>
       ) : (
         <div className="text-center py-12 space-y-4">
-          <p className="text-muted-foreground">Acest profil nu are încă recenzii.</p>
-          <Button className="glow-on-hover">Fii primul care lasă o evaluare</Button>
+          <p className="text-muted-foreground">
+            Acest profil nu are încă recenzii.
+          </p>
+          <Button className="glow-on-hover">
+            Fii primul care lasă o evaluare
+          </Button>
         </div>
       )}
     </div>
-  )
+  );
 }

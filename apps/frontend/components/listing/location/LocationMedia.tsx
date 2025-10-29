@@ -1,36 +1,36 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { FaChevronLeft, FaChevronRight, FaXmark } from "react-icons/fa6"
-import type { Location } from "@/payload-types"
+import { useState } from "react";
+import Image from "next/image";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { FaChevronLeft, FaChevronRight, FaXmark } from "react-icons/fa6";
+import type { Location } from "@/types/payload-types";
 
 interface LocationMediaProps {
-  location: Location
+  location: Location;
 }
 
 export function LocationMedia({ location }: LocationMediaProps) {
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const gallery = location.gallery || []
+  const gallery = location.gallery || [];
 
   const openLightbox = (index: number) => {
-    setCurrentIndex(index)
-    setLightboxOpen(true)
-  }
+    setCurrentIndex(index);
+    setLightboxOpen(true);
+  };
 
   const nextImage = () => {
-    setCurrentIndex((prev) => (prev + 1) % gallery.length)
-  }
+    setCurrentIndex((prev) => (prev + 1) % gallery.length);
+  };
 
   const prevImage = () => {
-    setCurrentIndex((prev) => (prev - 1 + gallery.length) % gallery.length)
-  }
+    setCurrentIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
+  };
 
-  if (gallery.length === 0) return null
+  if (gallery.length === 0) return null;
 
   return (
     <>
@@ -54,8 +54,8 @@ export function LocationMedia({ location }: LocationMediaProps) {
         {gallery.length > 1 && (
           <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2">
             {gallery.slice(1, 15).map((media, index) => {
-              const mediaObj = typeof media === "object" ? media : null
-              if (!mediaObj) return null
+              const mediaObj = typeof media === "object" ? media : null;
+              if (!mediaObj) return null;
 
               return (
                 <div
@@ -70,7 +70,7 @@ export function LocationMedia({ location }: LocationMediaProps) {
                     className="object-cover"
                   />
                 </div>
-              )
+              );
             })}
           </div>
         )}
@@ -109,9 +109,9 @@ export function LocationMedia({ location }: LocationMediaProps) {
 
             <div className="relative w-full h-full">
               {(() => {
-                const media = gallery[currentIndex]
-                const mediaObj = typeof media === "object" ? media : null
-                if (!mediaObj) return null
+                const media = gallery[currentIndex];
+                const mediaObj = typeof media === "object" ? media : null;
+                if (!mediaObj) return null;
 
                 return (
                   <Image
@@ -120,12 +120,12 @@ export function LocationMedia({ location }: LocationMediaProps) {
                     fill
                     className="object-contain"
                   />
-                )
+                );
               })()}
             </div>
           </div>
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

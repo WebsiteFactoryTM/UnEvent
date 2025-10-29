@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   FaPhone,
   FaEnvelope,
@@ -16,16 +16,16 @@ import {
   FaShareNodes,
   FaFlag,
   FaMessage,
-} from "react-icons/fa6"
-import type { User, Profile } from "@/types/payload-types"
+} from "react-icons/fa6";
+import type { User, Profile } from "@/types/payload-types copy";
 
 interface ProfileSidebarProps {
-  user: User & { profile: Profile }
+  user: User & { profile: Profile };
 }
 
 export function ProfileSidebar({ user }: ProfileSidebarProps) {
-  const profile = user.profile
-  const socials = profile.socialMedia
+  const profile = user.profile;
+  const socials = profile.socialMedia;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -34,16 +34,16 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
           title: profile.displayName || profile.name,
           text: profile.bio || "",
           url: window.location.href,
-        })
+        });
       } catch (err) {
-        console.log("Share cancelled")
+        console.log("Share cancelled");
       }
     } else {
       // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href)
-      alert("Link copiat în clipboard!")
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link copiat în clipboard!");
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -54,18 +54,29 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
         </CardHeader>
         <CardContent className="space-y-2">
           {profile.phone && (
-            <Button asChild variant="outline" className="w-full justify-start gap-2 bg-transparent">
+            <Button
+              asChild
+              variant="outline"
+              className="w-full justify-start gap-2 bg-transparent"
+            >
               <a href={`tel:${profile.phone}`}>
                 <FaPhone className="h-4 w-4" />
                 Sună
               </a>
             </Button>
           )}
-          <Button variant="outline" className="w-full justify-start gap-2 bg-transparent">
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-2 bg-transparent"
+          >
             <FaMessage className="h-4 w-4" />
             Trimite mesaj
           </Button>
-          <Button asChild variant="outline" className="w-full justify-start gap-2 bg-transparent">
+          <Button
+            asChild
+            variant="outline"
+            className="w-full justify-start gap-2 bg-transparent"
+          >
             <a href={`mailto:${user.email}`}>
               <FaEnvelope className="h-4 w-4" />
               Trimite email
@@ -82,8 +93,16 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             {profile.website && (
-              <Button asChild variant="outline" className="w-full justify-start gap-2 bg-transparent">
-                <a href={profile.website} target="_blank" rel="noopener noreferrer">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full justify-start gap-2 bg-transparent"
+              >
+                <a
+                  href={profile.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <FaGlobe className="h-4 w-4" />
                   Website
                 </a>
@@ -96,42 +115,72 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
                 <div className="flex flex-wrap gap-2">
                   {socials.facebook && (
                     <Button size="icon" variant="outline" asChild>
-                      <a href={socials.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                      <a
+                        href={socials.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Facebook"
+                      >
                         <FaFacebook className="h-4 w-4" />
                       </a>
                     </Button>
                   )}
                   {socials.instagram && (
                     <Button size="icon" variant="outline" asChild>
-                      <a href={socials.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                      <a
+                        href={socials.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Instagram"
+                      >
                         <FaInstagram className="h-4 w-4" />
                       </a>
                     </Button>
                   )}
                   {socials.linkedin && (
                     <Button size="icon" variant="outline" asChild>
-                      <a href={socials.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                      <a
+                        href={socials.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="LinkedIn"
+                      >
                         <FaLinkedin className="h-4 w-4" />
                       </a>
                     </Button>
                   )}
                   {socials.youtube && (
                     <Button size="icon" variant="outline" asChild>
-                      <a href={socials.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                      <a
+                        href={socials.youtube}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="YouTube"
+                      >
                         <FaYoutube className="h-4 w-4" />
                       </a>
                     </Button>
                   )}
                   {socials.tiktok && (
                     <Button size="icon" variant="outline" asChild>
-                      <a href={socials.tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                      <a
+                        href={socials.tiktok}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="TikTok"
+                      >
                         <FaTiktok className="h-4 w-4" />
                       </a>
                     </Button>
                   )}
                   {socials.x && (
                     <Button size="icon" variant="outline" asChild>
-                      <a href={socials.x} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+                      <a
+                        href={socials.x}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="X (Twitter)"
+                      >
                         <FaXTwitter className="h-4 w-4" />
                       </a>
                     </Button>
@@ -146,7 +195,11 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
       {/* Share & Report */}
       <Card className="glass-card animate-fade-in-up animation-delay-300">
         <CardContent className="pt-6 space-y-2">
-          <Button onClick={handleShare} variant="outline" className="w-full justify-start gap-2 bg-transparent">
+          <Button
+            onClick={handleShare}
+            variant="outline"
+            className="w-full justify-start gap-2 bg-transparent"
+          >
             <FaShareNodes className="h-4 w-4" />
             Distribuie profil
           </Button>
@@ -160,5 +213,5 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
