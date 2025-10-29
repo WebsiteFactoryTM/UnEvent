@@ -1,35 +1,35 @@
-import type { User } from "@/types/payload-types"
+import type { User } from "@/types/payload-types copy";
 
 // Sign up payload
 export interface SignUpPayload {
-  email: string
-  password: string
-  displayName?: string
-  agreeTermsAndConditions: boolean
-  agreePrivacyPolicy: boolean
-  roles: string[]
+  email: string;
+  password: string;
+  displayName?: string;
+  agreeTermsAndConditions: boolean;
+  agreePrivacyPolicy: boolean;
+  roles: string[];
 }
 
 // Login payload
 export interface LoginPayload {
-  email: string
-  password: string
+  email: string;
+  password: string;
 }
 
 // Auth response
 export interface AuthResponse {
-  user: User
-  token: string
-  message?: string
+  user: User;
+  token: string;
+  message?: string;
 }
 
 // Error response
 export interface AuthError {
-  message: string
-  field?: string
+  message: string;
+  field?: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
 /**
  * Sign up a new user
@@ -46,11 +46,11 @@ export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
   // return response.json()
 
   // Mock response for now
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // Simulate validation error
   if (payload.email === "test@error.com") {
-    throw new Error("Această adresă de email este deja înregistrată.")
+    throw new Error("Această adresă de email este deja înregistrată.");
   }
 
   const mockUser: User = {
@@ -58,7 +58,13 @@ export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
     email: payload.email,
     displayName: payload.displayName || null,
     avatarURL: null,
-    roles: payload.roles as ("organizer" | "host" | "provider" | "client" | "admin")[],
+    roles: payload.roles as (
+      | "organizer"
+      | "host"
+      | "provider"
+      | "client"
+      | "admin"
+    )[],
     status: "active",
     agreeTermsAndConditions: payload.agreeTermsAndConditions,
     agreePrivacyPolicy: payload.agreePrivacyPolicy,
@@ -73,13 +79,13 @@ export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
     lockUntil: null,
     sessions: null,
     password: null,
-  }
+  };
 
   return {
     user: mockUser,
     token: "mock-jwt-token-" + mockUser.id,
     message: "Cont creat cu succes.",
-  }
+  };
 }
 
 /**
@@ -97,11 +103,13 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
   // return response.json()
 
   // Mock response for now
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // Simulate authentication error
   if (payload.password === "wrongpassword") {
-    throw new Error("Autentificarea a eșuat. Verifică datele și încearcă din nou.")
+    throw new Error(
+      "Autentificarea a eșuat. Verifică datele și încearcă din nou.",
+    );
   }
 
   const mockUser: User = {
@@ -124,13 +132,13 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
     lockUntil: null,
     sessions: null,
     password: null,
-  }
+  };
 
   return {
     user: mockUser,
     token: "mock-jwt-token-" + mockUser.id,
     message: "Autentificat cu succes.",
-  }
+  };
 }
 
 /**
@@ -149,11 +157,11 @@ export async function getCurrentUser(): Promise<User | null> {
   // return response.json()
 
   // Mock response for now - simulating a logged-in user
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   // Return null to simulate not logged in
   // Change this to return a mock user to test the logged-in state
-  return null
+  return null;
 
   // Uncomment below to test logged-in state with different roles:
   /*
