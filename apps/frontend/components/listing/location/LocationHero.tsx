@@ -9,7 +9,7 @@ import {
   FaInstagram,
 } from "react-icons/fa6";
 import type { Location } from "@/types/payload-types";
-import { LocationActions } from "./LocationActions";
+import { ListingActions } from "../shared/ListingActions";
 
 interface LocationHeroProps {
   location: Location;
@@ -77,7 +77,12 @@ export function LocationHero({ location }: LocationHeroProps) {
       </div>
 
       {/* Actions */}
-      <LocationActions location={location} />
+      <ListingActions
+        title={location.title}
+        description={location.description ?? ""}
+        id={location.id}
+        isFavoritedByViewer={location.isFavoritedByViewer ?? false}
+      />
 
       {/* Contact details */}
       {(contact?.phone ||

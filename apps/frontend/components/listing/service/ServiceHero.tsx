@@ -1,6 +1,6 @@
 import { FaStar, FaLocationDot } from "react-icons/fa6";
 import type { Service, Profile } from "@/types/payload-types";
-import ServiceActions from "./ServiceActions";
+import { ListingActions } from "../shared/ListingActions";
 
 interface ServiceHeroProps {
   service: Service;
@@ -103,7 +103,12 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
         </div>
 
         {/* Actions */}
-        <ServiceActions service={service} />
+        <ListingActions
+          title={service.title}
+          description={service.description ?? ""}
+          id={service.id}
+          isFavoritedByViewer={service.isFavoritedByViewer ?? false}
+        />
 
         {/* Contact Info */}
         {(service.contact?.phone ||

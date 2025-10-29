@@ -3,6 +3,7 @@ import { sharedListingFields } from '../fields.shared'
 import { attachOwner, autoSlug, setDefaultStatus } from '../_hooks/beforeValidate'
 import { approvedOnlyPublic, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
+import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 
 export const Locations: CollectionConfig = {
   slug: 'locations',
@@ -19,7 +20,7 @@ export const Locations: CollectionConfig = {
   },
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
-    afterRead: [withIsFavoritedByViewer],
+    afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
   },
   fields: [
     ...sharedListingFields,

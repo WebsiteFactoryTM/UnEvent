@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { FaHeart, FaShareNodes, FaFlag, FaEnvelope } from "react-icons/fa6"
-import { Button } from "@/components/ui/button"
-import type { Service } from "@/payload-types"
+import { useState } from "react";
+import { FaHeart, FaShareNodes, FaFlag, FaEnvelope } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
+import type { Service } from "@/types/payload-types";
 
 interface ServiceActionsProps {
-  service: Service
+  service: Service;
 }
 
 export default function ServiceActions({ service }: ServiceActionsProps) {
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [isFavorited, setIsFavorited] = useState(false);
 
   const handleFavorite = () => {
-    setIsFavorited(!isFavorited)
+    setIsFavorited(!isFavorited);
     // TODO: Implement favorite functionality
-  }
+  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -24,26 +24,26 @@ export default function ServiceActions({ service }: ServiceActionsProps) {
           title: service.title,
           text: service.description?.slice(0, 100),
           url: window.location.href,
-        })
+        });
       } catch (err) {
-        console.error("Error sharing:", err)
+        console.error("Error sharing:", err);
       }
     } else {
       // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href)
-      alert("Link copiat în clipboard!")
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link copiat în clipboard!");
     }
-  }
+  };
 
   const handleReport = () => {
     // TODO: Implement report functionality
-    alert("Funcționalitate de raportare în dezvoltare")
-  }
+    alert("Funcționalitate de raportare în dezvoltare");
+  };
 
   const handleMessage = () => {
     // TODO: Implement messaging functionality
-    alert("Funcționalitate de mesagerie în dezvoltare")
-  }
+    alert("Funcționalitate de mesagerie în dezvoltare");
+  };
 
   return (
     <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-3">
@@ -55,7 +55,9 @@ export default function ServiceActions({ service }: ServiceActionsProps) {
         aria-label={isFavorited ? "Elimină din favorite" : "Adaugă la favorite"}
       >
         <FaHeart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
-        <span className="hidden sm:inline">{isFavorited ? "Salvat" : "Salvează"}</span>
+        <span className="hidden sm:inline">
+          {isFavorited ? "Salvat" : "Salvează"}
+        </span>
       </Button>
 
       <Button
@@ -80,10 +82,14 @@ export default function ServiceActions({ service }: ServiceActionsProps) {
         <span className="hidden sm:inline">Raportează</span>
       </Button>
 
-      <Button onClick={handleMessage} size="sm" className="gap-2 col-span-3 sm:col-span-1 sm:ml-auto">
+      <Button
+        onClick={handleMessage}
+        size="sm"
+        className="gap-2 col-span-3 sm:col-span-1 sm:ml-auto"
+      >
         <FaEnvelope className="h-4 w-4" />
         Trimite mesaj
       </Button>
     </div>
-  )
+  );
 }

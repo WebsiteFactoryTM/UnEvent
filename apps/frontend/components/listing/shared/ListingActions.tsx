@@ -21,10 +21,9 @@ import {
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import type { Location } from "@/types/payload-types";
 import { useToast } from "@/hooks/use-toast";
 
-interface LocationActionsProps {
+interface ListingActionsProps {
   title: string;
   id: number;
 
@@ -32,12 +31,12 @@ interface LocationActionsProps {
   description: string;
 }
 
-export function LocationActions({
+export function ListingActions({
   title,
   description,
   id,
   isFavoritedByViewer,
-}: LocationActionsProps) {
+}: ListingActionsProps) {
   const [isFavorite, setIsFavorite] = useState(isFavoritedByViewer);
   const { toast } = useToast();
 

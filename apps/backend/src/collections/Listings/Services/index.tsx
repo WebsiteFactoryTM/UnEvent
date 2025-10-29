@@ -3,6 +3,7 @@ import { sharedListingFields } from '../fields.shared'
 import { autoSlug, attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
 import { isOwnerOrAdmin, requireRole, approvedOnlyPublic } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
+import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 
 export const Services: CollectionConfig = {
   slug: 'services',
@@ -19,7 +20,7 @@ export const Services: CollectionConfig = {
   },
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
-    afterRead: [withIsFavoritedByViewer],
+    afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
   },
   fields: [
     ...sharedListingFields,

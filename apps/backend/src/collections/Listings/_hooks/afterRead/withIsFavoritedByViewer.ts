@@ -12,7 +12,7 @@ export const withIsFavoritedByViewer: CollectionAfterReadHook = async ({
     const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
     if (!profileId) return doc
 
-    const favorites = await req.payload.find({
+    const favorites = await req.payload.count({
       collection: 'favorites',
       where: {
         and: [
@@ -24,13 +24,11 @@ export const withIsFavoritedByViewer: CollectionAfterReadHook = async ({
           },
         ],
       },
-      limit: 1,
-      depth: 0,
     })
 
     return {
       ...doc,
-      isFavoritedByViewer: favorites.docs.length > 0,
+      isFavoritedByViewer: favorites.totalDocs > 0 ? true : false,
     }
   } catch {
     return doc

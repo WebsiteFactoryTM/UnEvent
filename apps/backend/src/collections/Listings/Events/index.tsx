@@ -3,6 +3,7 @@ import { sharedListingFields } from '../fields.shared'
 import { autoSlug, attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
 import { approvedOnlyPublic, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
+import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -22,7 +23,7 @@ export const Events: CollectionConfig = {
   // Individual indexes are set on fields that support them
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
-    afterRead: [withIsFavoritedByViewer],
+    afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
   },
   fields: [
     ...sharedListingFields,
