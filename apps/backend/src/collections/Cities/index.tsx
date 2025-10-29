@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { beforeChange } from './hooks/beforeChange'
 import { importCitiesFromCsv } from './endpoints/importCsv'
+import { approvedOnlyPublic, isAdmin } from '../_access/roles'
 
 const Cities: CollectionConfig = {
   slug: 'cities',
@@ -15,6 +16,12 @@ const Cities: CollectionConfig = {
     //     },
     //   ],
     // },
+  },
+  access: {
+    read: ({ req }) => true,
+    create: ({ req }) => isAdmin({ req }),
+    update: ({ req }) => isAdmin({ req }),
+    delete: ({ req }) => isAdmin({ req }),
   },
   fields: [
     {
