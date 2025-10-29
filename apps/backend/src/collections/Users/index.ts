@@ -19,6 +19,7 @@ export const Users: CollectionConfig = {
   auth: {
     // verify: true,
     maxLoginAttempts: 3,
+    tokenExpiration: 24 * 60 * 60, // 1 day
   },
   fields: [
     // Email added by default
