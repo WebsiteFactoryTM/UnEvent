@@ -1,20 +1,32 @@
-import Image from "next/image"
-import Link from "next/link"
-import { FaStar, FaFacebook, FaInstagram, FaYoutube, FaLinkedin } from "react-icons/fa6"
-import { Button } from "@/components/ui/button"
-import type { Service, Profile, Media } from "@/payload-types"
+import Image from "next/image";
+import Link from "next/link";
+import {
+  FaStar,
+  FaFacebook,
+  FaInstagram,
+  FaYoutube,
+  FaLinkedin,
+} from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
+import type { Service, Profile, Media } from "@/types/payload-types";
 
 interface ServiceProviderCardProps {
-  service: Service
+  service: Service;
 }
 
-export default function ServiceProviderCard({ service }: ServiceProviderCardProps) {
-  const provider = typeof service.owner === "object" ? (service.owner as Profile) : null
+export default function ServiceProviderCard({
+  service,
+}: ServiceProviderCardProps) {
+  const provider =
+    typeof service.owner === "object" ? (service.owner as Profile) : null;
 
-  if (!provider) return null
+  if (!provider) return null;
 
-  const avatar = provider.avatar && typeof provider.avatar === "object" ? (provider.avatar as Media) : null
-  const isVerified = provider.verified?.status === "approved"
+  const avatar =
+    provider.avatar && typeof provider.avatar === "object"
+      ? (provider.avatar as Media)
+      : null;
+  const isVerified = provider.verified?.status === "approved";
 
   return (
     <div className="glass-card p-6 md:p-8 space-y-6">
@@ -23,9 +35,15 @@ export default function ServiceProviderCard({ service }: ServiceProviderCardProp
       <div className="flex flex-col sm:flex-row gap-6">
         {/* Avatar */}
         {avatar && (
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="relative w-24 h-24 rounded-full overflow-hidden">
-              <Image src={avatar.url || ""} alt={avatar.alt} fill className="object-cover" sizes="96px" />
+              <Image
+                src={avatar.url || ""}
+                alt={avatar.alt}
+                fill
+                className="object-cover"
+                sizes="96px"
+              />
             </div>
           </div>
         )}
@@ -45,13 +63,17 @@ export default function ServiceProviderCard({ service }: ServiceProviderCardProp
             {provider.rating && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <FaStar className="w-4 h-4 text-yellow-500" />
-                <span className="font-semibold text-foreground">{provider.rating.average?.toFixed(1)}</span>
+                <span className="font-semibold text-foreground">
+                  {provider.rating.average?.toFixed(1)}
+                </span>
                 <span>· {provider.rating.count} recenzii</span>
               </div>
             )}
           </div>
 
-          {provider.bio && <p className="text-muted-foreground text-sm">{provider.bio}</p>}
+          {provider.bio && (
+            <p className="text-muted-foreground text-sm">{provider.bio}</p>
+          )}
 
           {/* Contact & Social */}
           <div className="space-y-3">
@@ -127,12 +149,15 @@ export default function ServiceProviderCard({ service }: ServiceProviderCardProp
 
           {/* View Profile Button */}
           <Link href={`/profil/${provider.slug}`}>
-            <Button variant="outline" className="w-full sm:w-auto bg-transparent">
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto bg-transparent"
+            >
               Vezi profilul complet
             </Button>
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

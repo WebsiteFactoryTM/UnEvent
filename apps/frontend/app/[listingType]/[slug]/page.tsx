@@ -1,67 +1,173 @@
-import type { Metadata } from "next"
-import { notFound } from "next/navigation"
-import { listingTypes, getListingTypeLabel } from "@/config/archives"
-import { prettifySlug } from "@/lib/slug"
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { listingTypes } from "@/config/archives";
+import { prettifySlug } from "@/lib/slug";
+import {
+  mockEvent,
+  mockReviews as mockEventReviews,
+  mockSimilarEvents,
+} from "@/mocks/eveniment";
+import {
+  mockLocation,
+  mockReviews as mockLocationReviews,
+  mockSimilarLocations,
+} from "@/mocks/locatie";
+import {
+  mockService,
+  mockReviews as mockServiceReviews,
+  mockSimilarServices,
+} from "@/mocks/serviciu";
+import { normalizeToViewModel } from "@/components/listing/shared/normalize";
+import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
+import { ListingMedia } from "@/components/listing/shared/ListingMedia";
+import { ListingHero } from "@/components/listing/shared/ListingHero";
+import { ListingDescription } from "@/components/listing/shared/ListingDescription";
+import { ListingVideos } from "@/components/listing/shared/ListingVideos";
+import { ListingMap } from "@/components/listing/shared/ListingMap";
+import { ListingProviderCard } from "@/components/listing/shared/ListingProviderCard";
+import { ListingReviews } from "@/components/listing/shared/ListingReviews";
+import { buildJsonLd } from "@/components/listing/shared/jsonld";
+import type { ListingType } from "@/types/listings";
+import { Listing } from "@/types/listings";
+import { Event, Media, Location } from "@/types/payload-types";
+import { getListingTypeSlug } from "@/lib/getListingType";
 
-export const revalidate = 3600 // ISR: revalidate every hour
+export const revalidate = 3600; // ISR: revalidate every hour
 
 export async function generateMetadata({
   params,
 }: {
-  params: { listingType: string; slug: string }
+  params: { listingType: string; slug: string };
 }): Promise<Metadata> {
-  const prettyName = prettifySlug(params.slug)
+  const { listingType, slug } = await params;
+  if (!listingTypes.includes(listingType as any))
+    return { title: "Pagină negăsită | UN:EVENT" };
+
+  // Fetch mock data per type (UI-only)
+  const data =
+    listingType === "evenimente"
+      ? mockEvent
+      : listingType === "locatii"
+        ? mockLocation
+        : mockService;
+  const vm = normalizeToViewModel(listingType as ListingType, data);
+  const title = vm.title || prettifySlug(slug);
+  const description = vm.description?.slice(0, 160) || `${title}`;
 
   return {
-    title: `${prettyName} | UN:EVENT`,
-    description: `Detalii despre ${prettyName}.`,
-  }
+    title: `${title} | UN:EVENT`,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: vm.featuredImageUrl
+        ? [{ url: vm.featuredImageUrl, width: 1200, height: 630, alt: title }]
+        : [],
+      type: "website",
+    },
+  };
 }
 
-export default function DetailPage({
+export default async function DetailPage({
   params,
 }: {
-  params: { listingType: string; slug: string }
+  params: { listingType: string; slug: string };
 }) {
-  if (!listingTypes.includes(params.listingType as any)) {
-    notFound()
+  const { listingType, slug } = await params;
+  if (!listingTypes.includes(listingType as any)) notFound();
+
+  const listingTypeUrl = getListingTypeSlug(listingType);
+  let listing: Listing | null = null;
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingTypeUrl}?where[slug][equals]=${slug}`,
+    );
+    const data = await response.json();
+    listing = data.docs[0];
+    // console.log(listing);
+  } catch (error) {
+    console.error(error);
+    notFound();
   }
 
-  const listingLabel = getListingTypeLabel(params.listingType)
-  const prettyName = prettifySlug(params.slug)
+  const city = typeof listing?.city === "object" ? listing?.city : null;
+  const cityName = city?.name ?? "";
+  const citySlug = city?.slug ?? "";
+  const title = listing?.title ?? "";
+  const description = listing?.description ?? "";
+
+  const jsonLd = buildJsonLd(listingType as ListingType, listing);
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-7xl mx-auto space-y-8">
-          {/* Breadcrumbs */}
-          <nav className="text-sm text-muted-foreground">
-            <ol className="flex items-center gap-2">
-              <li>
-                <a href="/" className="hover:text-foreground">
-                  Acasă
-                </a>
-              </li>
-              <li>/</li>
-              <li>
-                <a href={`/${params.listingType}`} className="hover:text-foreground">
-                  {listingLabel}
-                </a>
-              </li>
-              <li>/</li>
-              <li className="text-foreground font-medium">{prettyName}</li>
-            </ol>
-          </nav>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-          {/* Header */}
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-balance capitalize">{prettyName}</h1>
-            <p className="text-lg text-muted-foreground text-pretty">
-              Pagină detaliu (placeholder). Vom lega conținutul real ulterior.
-            </p>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-6 space-y-8">
+          <ListingBreadcrumbs
+            type={listingType as ListingType}
+            cityName={cityName}
+            citySlug={citySlug}
+            title={title ?? ""}
+          />
+
+          <ListingMedia
+            type={listingType as ListingType}
+            title={title}
+            featuredImage={listing?.featuredImage as Media}
+            gallery={listing?.gallery as Media[]}
+          />
+
+          <ListingHero
+            listingType={listingType as ListingType}
+            listing={listing as Listing}
+          />
+
+          <ListingDescription description={description} />
+
+          {Array.isArray(listing?.youtubeLinks) &&
+            listing?.youtubeLinks.length > 0 && (
+              <ListingVideos youtubeLinks={listing?.youtubeLinks} />
+            )}
+
+          <ListingMap
+            cityName={cityName}
+            venue={
+              (listing as Event)?.venue
+                ? ((listing as Event).venue as Location)
+                : undefined
+            }
+            address={listing?.address ?? ""}
+          />
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <ListingReviews
+                type={listingType as ListingType}
+                listingId={listing?.id ?? null}
+                listingRating={listing?.rating ?? null}
+                listingReviewCount={listing?.reviewCount ?? null}
+              />
+            </div>
+
+            <div className="space-y-6">
+              <ListingProviderCard
+                type={listingType as ListingType}
+                listing={listing as Listing}
+              />
+            </div>
           </div>
+
+          {/* <ListingRecommendations
+            type={listingType as ListingType}
+            data={raw}
+            similar={similar}
+          /> */}
         </div>
       </div>
-    </div>
-  )
+    </>
+  );
 }

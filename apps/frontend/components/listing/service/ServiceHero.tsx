@@ -1,15 +1,17 @@
-import { FaStar, FaLocationDot } from "react-icons/fa6"
-import type { Service, Profile } from "@/payload-types"
-import ServiceActions from "./ServiceActions"
+import { FaStar, FaLocationDot } from "react-icons/fa6";
+import type { Service, Profile } from "@/types/payload-types";
+import ServiceActions from "./ServiceActions";
 
 interface ServiceHeroProps {
-  service: Service
+  service: Service;
 }
 
 export default function ServiceHero({ service }: ServiceHeroProps) {
-  const provider = typeof service.owner === "object" ? (service.owner as Profile) : null
-  const cityName = typeof service.city === "object" && service.city ? service.city.name : ""
-  const isVerified = provider?.verified?.status === "approved"
+  const provider =
+    typeof service.owner === "object" ? (service.owner as Profile) : null;
+  const cityName =
+    typeof service.city === "object" && service.city ? service.city.name : "";
+  const isVerified = provider?.verified?.status === "approved";
 
   const serviceCategories =
     service.type && service.type.length > 0
@@ -17,7 +19,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
           .map((t) => (typeof t === "object" ? t.title : ""))
           .filter(Boolean)
           .join(", ")
-      : ""
+      : "";
 
   const suitableFor =
     service.suitableFor && service.suitableFor.length > 0
@@ -25,14 +27,14 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
           .map((t) => (typeof t === "object" ? t.title : ""))
           .filter(Boolean)
           .join(", ")
-      : ""
+      : "";
 
   const priceText =
     service.pricing?.type === "contact"
       ? "La cerere"
       : service.pricing?.amount
         ? `de la ${service.pricing.amount} ${service.pricing.currency || "RON"}${service.pricing.period ? ` / ${service.pricing.period === "hour" ? "oră" : service.pricing.period === "day" ? "zi" : "eveniment"}` : ""}`
-        : ""
+        : "";
 
   return (
     <div className="glass-card p-6 md:p-8 space-y-6">
@@ -41,7 +43,9 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
         {/* Provider Name & Badges */}
         <div className="space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <h1 className="text-2xl md:text-3xl font-bold">{provider?.name || service.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold">
+              {provider?.name || service.title}
+            </h1>
             <div className="flex flex-wrap gap-2">
               {isVerified && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
@@ -61,7 +65,9 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
             {service.rating && service.reviewCount && (
               <div className="flex items-center gap-1">
                 <FaStar className="w-4 h-4 text-yellow-500" />
-                <span className="font-semibold text-foreground">{service.rating.toFixed(1)}</span>
+                <span className="font-semibold text-foreground">
+                  {service.rating.toFixed(1)}
+                </span>
                 <span>· {service.reviewCount} recenzii</span>
               </div>
             )}
@@ -100,7 +106,9 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
         <ServiceActions service={service} />
 
         {/* Contact Info */}
-        {(service.contact?.phone || service.contact?.email || service.contact?.website) && (
+        {(service.contact?.phone ||
+          service.contact?.email ||
+          service.contact?.website) && (
           <div className="pt-4 border-t border-border">
             <h3 className="text-lg font-semibold mb-3">Contact</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -138,5 +146,5 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,20 +1,25 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { FaStar, FaLocationDot, FaGlobe, FaFacebook, FaInstagram } from "react-icons/fa6"
-import type { Event } from "@/payload-types"
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  FaStar,
+  FaLocationDot,
+  FaGlobe,
+  FaFacebook,
+  FaInstagram,
+} from "react-icons/fa6";
+import type { City, Event } from "@/types/payload-types";
 
 interface EventOrganizerCardProps {
-  event: Event
+  event: Event;
 }
 
 export function EventOrganizerCard({ event }: EventOrganizerCardProps) {
-  const owner = typeof event.owner === "object" ? event.owner : null
-  if (!owner) return null
+  const owner = typeof event.owner === "object" ? event.owner : null;
+  if (!owner) return null;
 
-  const avatar = typeof owner.avatar === "object" ? owner.avatar : null
-  const ownerCity = typeof owner.city === "object" ? owner.city?.name : owner.city
+  const avatar = typeof owner.avatar === "object" ? owner.avatar : null;
 
   return (
     <div className="glass-card p-4 sm:p-6 space-y-4">
@@ -22,7 +27,7 @@ export function EventOrganizerCard({ event }: EventOrganizerCardProps) {
 
       <div className="flex items-start gap-4">
         {/* Avatar */}
-        <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+        <div className="relative w-16 h-16 rounded-full overflow-hidden shrink-0">
           <Image
             src={avatar?.url || "/placeholder.svg?height=64&width=64"}
             alt={owner.name}
@@ -35,17 +40,19 @@ export function EventOrganizerCard({ event }: EventOrganizerCardProps) {
         <div className="flex-1 space-y-2">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold">{owner.displayName || owner.name}</h3>
+              <h3 className="font-semibold">
+                {owner.displayName || owner.name}
+              </h3>
               {owner.verified?.status === "approved" && (
                 <Badge variant="secondary" className="text-xs">
                   Verificat
                 </Badge>
               )}
             </div>
-            {ownerCity && (
+            {owner.city && (
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <FaLocationDot className="h-3 w-3" />
-                <span>{ownerCity}</span>
+                <span>{owner.city}</span>
               </div>
             )}
           </div>
@@ -54,19 +61,32 @@ export function EventOrganizerCard({ event }: EventOrganizerCardProps) {
             <div className="flex items-center gap-1 text-sm">
               <FaStar className="h-4 w-4 text-yellow-500" />
               <span className="font-semibold">{owner.rating.average}</span>
-              {owner.rating.count && <span className="text-muted-foreground">· {owner.rating.count} recenzii</span>}
+              {owner.rating.count && (
+                <span className="text-muted-foreground">
+                  · {owner.rating.count} recenzii
+                </span>
+              )}
             </div>
           )}
         </div>
       </div>
 
       {/* Bio */}
-      {owner.bio && <p className="text-sm text-muted-foreground line-clamp-3">{owner.bio}</p>}
+      {owner.bio && (
+        <p className="text-sm text-muted-foreground line-clamp-3">
+          {owner.bio}
+        </p>
+      )}
 
       {/* Links */}
       <div className="space-y-2">
         {owner.website && (
-          <Button variant="outline" size="sm" className="w-full justify-start gap-2 bg-transparent" asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start gap-2 bg-transparent"
+            asChild
+          >
             <a href={owner.website} target="_blank" rel="noopener noreferrer">
               <FaGlobe className="h-4 w-4" />
               Website
@@ -74,24 +94,35 @@ export function EventOrganizerCard({ event }: EventOrganizerCardProps) {
           </Button>
         )}
 
-        {owner.socialMedia && Object.values(owner.socialMedia).some((link) => link) && (
-          <div className="flex gap-2">
-            {owner.socialMedia.facebook && (
-              <Button variant="outline" size="icon" asChild>
-                <a href={owner.socialMedia.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                  <FaFacebook className="h-4 w-4" />
-                </a>
-              </Button>
-            )}
-            {owner.socialMedia.instagram && (
-              <Button variant="outline" size="icon" asChild>
-                <a href={owner.socialMedia.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                  <FaInstagram className="h-4 w-4" />
-                </a>
-              </Button>
-            )}
-          </div>
-        )}
+        {owner.socialMedia &&
+          Object.values(owner.socialMedia).some((link) => link) && (
+            <div className="flex gap-2">
+              {owner.socialMedia.facebook && (
+                <Button variant="outline" size="icon" asChild>
+                  <a
+                    href={owner.socialMedia.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                  >
+                    <FaFacebook className="h-4 w-4" />
+                  </a>
+                </Button>
+              )}
+              {owner.socialMedia.instagram && (
+                <Button variant="outline" size="icon" asChild>
+                  <a
+                    href={owner.socialMedia.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                  >
+                    <FaInstagram className="h-4 w-4" />
+                  </a>
+                </Button>
+              )}
+            </div>
+          )}
       </div>
 
       {/* Actions */}
@@ -105,5 +136,5 @@ export function EventOrganizerCard({ event }: EventOrganizerCardProps) {
         </Button>
       </div>
     </div>
-  )
+  );
 }
