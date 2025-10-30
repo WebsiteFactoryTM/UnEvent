@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { FaStar, FaCalendar, FaTicket, FaUsers } from "react-icons/fa6";
 import type { Event } from "@/types/payload-types";
 import EventActions from "./EventActions";
+import { ListingActions } from "../shared/ListingActions";
 
 interface EventHeroProps {
   event: Event;
@@ -59,8 +60,9 @@ export default function EventHero({ event }: EventHeroProps) {
         </div>
 
         {/* Rating and meta */}
+
         <div className="flex flex-wrap items-center gap-4 text-sm">
-          {event?.rating && event?.reviewCount && (
+          {event?.rating && event?.reviewCount ? (
             <div className="flex items-center gap-1">
               <FaStar className="h-4 w-4 text-yellow-500" />
               <span className="font-semibold">{event?.rating}</span>
@@ -68,7 +70,7 @@ export default function EventHero({ event }: EventHeroProps) {
                 · {event?.reviewCount} recenzii
               </span>
             </div>
-          )}
+          ) : null}
           <span className="text-muted-foreground">{cityName}</span>
           <span className="text-muted-foreground">{eventType}</span>
           <span className="font-semibold text-foreground">{priceText}</span>
@@ -114,10 +116,11 @@ export default function EventHero({ event }: EventHeroProps) {
       </div>
 
       {/* Actions */}
-      <EventActions
+      <ListingActions
+        listingType="evenimente"
         title={event?.title}
         id={event?.id}
-        capacity={event?.capacity?.total ?? 0}
+        description={event?.description ?? ""}
         isFavoritedByViewer={event?.isFavoritedByViewer ?? false}
       />
     </div>

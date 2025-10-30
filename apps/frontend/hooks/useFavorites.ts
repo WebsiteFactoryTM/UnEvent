@@ -7,6 +7,8 @@ import {
   type ToggleFavoriteResponse,
 } from "@/lib/api/favorites";
 import { getListingTypeSlug } from "@/lib/getListingType";
+import { favoritesKeys } from "@/lib/react-query/favorites.keys";
+import { listingsKeys } from "@/lib/react-query/listings.keys";
 
 type FrontendListingType = "evenimente" | "locatii" | "servicii";
 
@@ -23,7 +25,10 @@ export function useFavorites({
   const queryClient = useQueryClient();
 
   // Shared key for the favorite state so multiple components stay in sync
-  const favoriteKey = ["favorite", getListingTypeSlug(listingType), listingId];
+  const favoriteKey = favoritesKeys.listing(
+    getListingTypeSlug(listingType),
+    listingId,
+  );
 
   // Seed cache with initial flag if provided
   if (
@@ -63,8 +68,16 @@ export function useFavorites({
     },
     onSettled: async () => {
       // Invalidate listing queries so derived fields (counts, flags) refresh
+      // Invalidate listing detail and listing lists for this type
       await queryClient.invalidateQueries({
-        queryKey: ["listing", getListingTypeSlug(listingType), listingId],
+        queryKey: listingsKeys.detail(
+          getListingTypeSlug(listingType),
+          listingId,
+        ),
+        exact: false,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: listingsKeys._type(getListingTypeSlug(listingType)),
         exact: false,
       });
     },

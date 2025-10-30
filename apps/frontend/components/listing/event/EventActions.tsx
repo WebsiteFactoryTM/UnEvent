@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FaHeart, FaShareNodes, FaFlag, FaTicket } from "react-icons/fa6";
 import type { Event } from "@/types/payload-types";
+import { useFavorites } from "@/hooks/useFavorites";
 
 interface EventActionsProps {
   title: string;
@@ -17,12 +18,12 @@ export default function EventActions({
   capacity,
   isFavoritedByViewer,
 }: EventActionsProps) {
-  const [isFavorited, setIsFavorited] = useState(isFavoritedByViewer);
+  const { isFavorited, toggle } = useFavorites({
+    listingType: "evenimente",
+    listingId: id,
+    initialIsFavorited: isFavoritedByViewer,
+  });
   const [isParticipating, setIsParticipating] = useState(false);
-
-  const handleFavorite = () => {
-    setIsFavorited(!isFavorited);
-  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -47,7 +48,7 @@ export default function EventActions({
       <Button
         variant="outline"
         size="sm"
-        onClick={handleFavorite}
+        onClick={() => toggle()}
         className={`gap-2 ${isFavorited ? "bg-red-500/10 border-red-500/50" : ""}`}
       >
         <FaHeart className={`h-4 w-4 ${isFavorited ? "fill-red-500" : ""}`} />

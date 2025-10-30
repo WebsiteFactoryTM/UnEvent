@@ -82,6 +82,7 @@ export function LocationHero({ location }: LocationHeroProps) {
         description={location.description ?? ""}
         id={location.id}
         isFavoritedByViewer={location.isFavoritedByViewer ?? false}
+        listingType="locatii"
       />
 
       {/* Contact details */}

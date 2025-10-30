@@ -1,8 +1,12 @@
 "use client";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FaHeart, FaShareNodes, FaFlag, FaEnvelope } from "react-icons/fa6";
+import {
+  FaHeart,
+  FaShareNodes,
+  FaFlag,
+  FaEnvelope,
+  FaTicket,
+} from "react-icons/fa6";
 import {
   Dialog,
   DialogContent,
@@ -22,13 +26,16 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useFavorites } from "@/hooks/useFavorites";
+import { ListingType } from "@/types/listings";
+import { useState } from "react";
 
 interface ListingActionsProps {
   title: string;
   id: number;
-
   isFavoritedByViewer: boolean;
   description: string;
+  listingType: ListingType;
 }
 
 export function ListingActions({
@@ -36,15 +43,21 @@ export function ListingActions({
   description,
   id,
   isFavoritedByViewer,
+  listingType,
 }: ListingActionsProps) {
-  const [isFavorite, setIsFavorite] = useState(isFavoritedByViewer);
+  const { isFavorited, toggle } = useFavorites({
+    listingType: listingType as ListingType,
+    listingId: id,
+    initialIsFavorited: isFavoritedByViewer,
+  });
   const { toast } = useToast();
+  const [isParticipating, setIsParticipating] = useState(false);
 
   const handleFavorite = () => {
-    setIsFavorite(!isFavorite);
+    toggle();
     toast({
-      title: isFavorite ? "Eliminat din favorite" : "Adăugat la favorite",
-      description: isFavorite
+      title: isFavorited ? "Eliminat din favorite" : "Adăugat la favorite",
+      description: isFavorited
         ? "Listarea a fost eliminată din favorite."
         : "Listarea a fost adăugată la favorite.",
     });
@@ -71,17 +84,26 @@ export function ListingActions({
     }
   };
 
+  const handleReport = () => {
+    console.log("[v0] Report event:", id);
+  };
+
+  const handleParticipate = () => {
+    setIsParticipating(!isParticipating);
+    console.log("[v0] Participate in event:", id);
+  };
+
   return (
     <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-3">
       <Button
         onClick={handleFavorite}
-        variant={isFavorite ? "default" : "outline"}
+        variant={isFavorited ? "default" : "outline"}
         size="sm"
         className="gap-2"
       >
-        <FaHeart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
+        <FaHeart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
         <span className="hidden sm:inline">
-          {isFavorite ? "Salvat" : "Salvează"}
+          {isFavorited ? "Salvat" : "Salvează"}
         </span>
       </Button>
 
@@ -123,7 +145,17 @@ export function ListingActions({
           </div>
         </DialogContent>
       </Dialog>
-
+      {listingType === "evenimente" && (
+        <Button
+          size="sm"
+          onClick={handleParticipate}
+          className="col-span-3 sm:col-span-1 sm:ml-auto gap-2 bg-primary hover:bg-primary/90"
+          // disabled={capacity?.remaining === 0}
+        >
+          <FaTicket className="h-4 w-4" />
+          {isParticipating ? "Anulează participarea" : "Participă la eveniment"}
+        </Button>
+      )}
       <Sheet>
         <SheetTrigger asChild>
           <Button
