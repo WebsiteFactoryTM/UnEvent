@@ -29,7 +29,7 @@ export default function ServiceProviderCard({
   const isVerified = provider.verified?.status === "approved";
 
   return (
-    <div className="glass-card p-6 md:p-8 space-y-6">
+    <div className="glass-card p-4 md:p-6 space-y-6">
       <h2 className="text-2xl font-bold">Furnizor</h2>
 
       <div className="flex flex-col sm:flex-row gap-6">

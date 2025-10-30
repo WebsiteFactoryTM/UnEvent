@@ -1,38 +1,49 @@
-import type { Metadata } from "next"
-import { notFound } from "next/navigation"
-import { mockLocation, mockReviews, mockSimilarLocations } from "@/mocks/locatie"
-import { LocationBreadcrumbs } from "@/components/listing/location/LocationBreadcrumbs"
-import { LocationHero } from "@/components/listing/location/LocationHero"
-import { LocationMedia } from "@/components/listing/location/LocationMedia"
-import { LocationDescription } from "@/components/listing/location/LocationDescription"
-import { LocationVideos } from "@/components/listing/location/LocationVideos"
-import { LocationFacilities } from "@/components/listing/location/LocationFacilities"
-import { LocationCapacity } from "@/components/listing/location/LocationCapacity"
-import { LocationAddressMap } from "@/components/listing/location/LocationAddressMap"
-import { LocationHostCard } from "@/components/listing/location/LocationHostCard"
-import { LocationReviews } from "@/components/listing/location/LocationReviews"
-import { LocationRecommendations } from "@/components/listing/location/LocationRecommendations"
-import { ScrollToTop } from "@/components/ScrollToTop"
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import {
+  mockLocation,
+  mockReviews,
+  mockSimilarLocations,
+} from "@/mocks/locatie";
+import { LocationBreadcrumbs } from "@/components/listing/location/LocationBreadcrumbs";
+import { LocationHero } from "@/components/listing/location/LocationHero";
+import { LocationMedia } from "@/components/listing/location/LocationMedia";
+import { LocationDescription } from "@/components/listing/location/LocationDescription";
+import { LocationVideos } from "@/components/listing/location/LocationVideos";
+import { LocationFacilities } from "@/components/listing/location/LocationFacilities";
+import { LocationCapacity } from "@/components/listing/location/LocationCapacity";
+import { LocationAddressMap } from "@/components/listing/location/LocationAddressMap";
+import { LocationHostCard } from "@/components/listing/location/LocationHostCard";
+import { LocationReviews } from "@/components/listing/location/LocationReviews";
+import { LocationRecommendations } from "@/components/listing/location/LocationRecommendations";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 // TODO: Replace with real data fetching
 async function getLocation(slug: string) {
   // For UI-only testing, return mock data for any slug
   // In production, this will fetch real data based on the slug
-  return mockLocation
+  return mockLocation;
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params
-  const location = await getLocation(slug)
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const location = await getLocation(slug);
 
   if (!location) {
     return {
       title: "Locație negăsită | UN:EVENT",
-    }
+    };
   }
 
-  const cityName = typeof location.city === "object" ? location.city.name : "România"
-  const description = location.description?.slice(0, 160) || `${location.title} - locație ${cityName}`
+  const cityName =
+    typeof location.city === "object" ? location.city.name : "România";
+  const description =
+    location.description?.slice(0, 160) ||
+    `${location.title} - locație ${cityName}`;
 
   return {
     title: `${location.title} – locație ${cityName} | UN:EVENT`,
@@ -50,18 +61,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ],
       type: "website",
     },
-  }
+  };
 }
 
-export default async function LocationPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
-  const location = await getLocation(slug)
+export default async function LocationPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const location = await getLocation(slug);
 
   if (!location) {
-    notFound()
+    notFound();
   }
 
-  const cityName = typeof location.city === "object" ? location.city.name : "România"
+  const cityName =
+    typeof location.city === "object" ? location.city.name : "România";
 
   // JSON-LD structured data
   const jsonLd = {
@@ -94,12 +110,15 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
       }),
     ...(location.contact?.phone && { telephone: location.contact.phone }),
     ...(location.contact?.website && { url: location.contact.website }),
-  }
+  };
 
   return (
     <>
       <ScrollToTop />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -115,16 +134,19 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
           <div className="space-y-6">
             <LocationDescription location={location} />
             <LocationVideos location={location} />
-            <LocationFacilities location={location} />
+            <LocationFacilities facilities={location.facilities || []} />
             <LocationCapacity location={location} />
             <LocationAddressMap location={location} />
             <LocationHostCard location={location} />
             <LocationReviews location={location} reviews={mockReviews} />
           </div>
 
-          <LocationRecommendations currentLocation={location} similarLocations={mockSimilarLocations} />
+          <LocationRecommendations
+            currentLocation={location}
+            similarLocations={mockSimilarLocations}
+          />
         </div>
       </div>
     </>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import type { ListingType } from "./ListingTypes";
+import type { ListingType } from "@/types/listings";
 
 export function buildJsonLd(type: ListingType, data: any) {
   if (type === "evenimente") return buildEventJsonLd(data);

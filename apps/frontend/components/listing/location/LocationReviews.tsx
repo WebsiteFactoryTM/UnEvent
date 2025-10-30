@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FaStar } from "react-icons/fa6";
-import type { Location, Review } from "@/payload-types";
+import type { Location, Review } from "@/types/payload-types";
 
 interface LocationReviewsProps {
   location: Location;

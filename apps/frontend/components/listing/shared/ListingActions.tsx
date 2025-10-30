@@ -156,36 +156,38 @@ export function ListingActions({
           {isParticipating ? "Anulează participarea" : "Participă la eveniment"}
         </Button>
       )}
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            size="sm"
-            className="gap-2 col-span-3 sm:col-span-1 sm:ml-auto"
-          >
-            <FaEnvelope className="h-4 w-4" />
-            Trimite mesaj
-          </Button>
-        </SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Mesagerie directă</SheetTitle>
-            <SheetDescription>
-              Trimite un mesaj direct proprietarului acestei locații.
-            </SheetDescription>
-          </SheetHeader>
-          <div className="space-y-4 mt-6">
-            <div>
-              <Label htmlFor="message">Mesajul tău</Label>
-              <Textarea
-                id="message"
-                placeholder="Scrie mesajul tău aici..."
-                className="mt-2 min-h-[200px]"
-              />
+      {listingType !== "evenimente" && (
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              size="sm"
+              className="gap-2 col-span-3 sm:col-span-1 sm:ml-auto"
+            >
+              <FaEnvelope className="h-4 w-4" />
+              Trimite mesaj
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Mesagerie directă</SheetTitle>
+              <SheetDescription>
+                Trimite un mesaj direct proprietarului acestei locații.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="space-y-4 mt-6">
+              <div>
+                <Label htmlFor="message">Mesajul tău</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Scrie mesajul tău aici..."
+                  className="mt-2 min-h-[200px]"
+                />
+              </div>
+              <Button className="w-full">Trimite mesaj</Button>
             </div>
-            <Button className="w-full">Trimite mesaj</Button>
-          </div>
-        </SheetContent>
-      </Sheet>
+          </SheetContent>
+        </Sheet>
+      )}
     </div>
   );
 }

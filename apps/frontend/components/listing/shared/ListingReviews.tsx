@@ -1,5 +1,5 @@
 import type { ListingType } from "@/types/listings";
-
+import { Suspense, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 
 import ListingReviewsList from "./ListingReviewsList";
@@ -22,15 +22,16 @@ export function ListingReviews({
     <div className="glass-card p-4 sm:p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl sm:text-2xl font-bold">Recenzii</h2>
-        {listingRating && listingReviewCount && (
+        {listingRating && listingReviewCount ? (
           <div className="flex items-center gap-2">
             <FaStar className="h-5 w-5 text-yellow-500" />
             <span className="text-2xl font-bold">{listingRating}</span>
             <span className="text-sm text-muted-foreground">
-              ({listingReviewCount} recenzii)
+              ({listingReviewCount}{" "}
+              {listingReviewCount === 1 ? "recenzie" : "recenzii"})
             </span>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Add review button */}

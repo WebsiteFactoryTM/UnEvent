@@ -14,11 +14,20 @@ import { ListingReviews } from "@/components/listing/shared/ListingReviews";
 import { buildJsonLd } from "@/components/listing/shared/jsonld";
 import type { ListingType } from "@/types/listings";
 import { Listing } from "@/types/listings";
-import { Event, Media, Location } from "@/types/payload-types";
+import {
+  Event,
+  Media,
+  Location,
+  Facility,
+  Service,
+} from "@/types/payload-types";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { fetchListing } from "@/lib/api/listings";
+import { LocationFacilities } from "@/components/listing/location/LocationFacilities";
+import { LocationCapacity } from "@/components/listing/location/LocationCapacity";
+import { ServiceOfferTags } from "@/components/listing/service/ServiceOfferTags";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -77,43 +86,64 @@ export default async function DetailPage({
             listingType={listingType as ListingType}
             listing={listing as Listing}
           />
+          <div className="space-y-6">
+            <ListingDescription description={description} />
 
-          <ListingDescription description={description} />
+            {Array.isArray(listing?.youtubeLinks) &&
+              listing?.youtubeLinks.length > 0 && (
+                <ListingVideos youtubeLinks={listing?.youtubeLinks} />
+              )}
 
-          {Array.isArray(listing?.youtubeLinks) &&
-            listing?.youtubeLinks.length > 0 && (
-              <ListingVideos youtubeLinks={listing?.youtubeLinks} />
+            {/* Services Offered */}
+            {(listing as Service)?.features ? (
+              <ServiceOfferTags service={listing as Service} />
+            ) : null}
+
+            <ListingMap
+              cityName={cityName}
+              venue={
+                (listing as Event)?.venue
+                  ? ((listing as Event).venue as Location)
+                  : undefined
+              }
+              address={listing?.address ?? ""}
+            />
+            {listingType === "locatii" && (
+              <>
+                <LocationFacilities
+                  facilities={
+                    ((listing as Location)?.facilities as Facility[]) || []
+                  }
+                />
+                <LocationCapacity
+                  capacity={
+                    (listing as Location)?.capacity as Location["capacity"]
+                  }
+                  surface={
+                    (listing as Location)?.surface as Location["surface"]
+                  }
+                />
+              </>
             )}
 
-          <ListingMap
-            cityName={cityName}
-            venue={
-              (listing as Event)?.venue
-                ? ((listing as Event).venue as Location)
-                : undefined
-            }
-            address={listing?.address ?? ""}
-          />
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
-              <ListingReviews
-                type={listingType as ListingType}
-                listingId={listing?.id ?? null}
-                listingRating={listing?.rating ?? null}
-                listingReviewCount={listing?.reviewCount ?? null}
-                hasReviewedByViewer={listing?.hasReviewedByViewer ?? false}
-              />
-            </div>
-
-            <div className="space-y-6">
-              <ListingProviderCard
-                type={listingType as ListingType}
-                listing={listing as Listing}
-              />
+            <div className="grid lg:grid-cols-2 gap-8">
+              <div className="lg:col-span-1">
+                <ListingReviews
+                  type={listingType as ListingType}
+                  listingId={listing?.id ?? null}
+                  listingRating={listing?.rating ?? null}
+                  listingReviewCount={listing?.reviewCount ?? null}
+                  hasReviewedByViewer={listing?.hasReviewedByViewer ?? false}
+                />
+              </div>
+              <div className="lg:col-span-1">
+                <ListingProviderCard
+                  type={listingType as ListingType}
+                  listing={listing as Listing}
+                />
+              </div>
             </div>
           </div>
-
           {/* <ListingRecommendations
             type={listingType as ListingType}
             data={raw}

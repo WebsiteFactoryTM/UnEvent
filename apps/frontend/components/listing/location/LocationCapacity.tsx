@@ -1,19 +1,22 @@
-import { FaUsers, FaSquareParking, FaChair } from "react-icons/fa6"
-import type { Location } from "@/payload-types"
+import { FaUsers, FaSquareParking, FaChair } from "react-icons/fa6";
+import type { Location } from "@/types/payload-types";
 
 interface LocationCapacityProps {
-  location: Location
+  capacity: Location["capacity"];
+  surface: Location["surface"];
 }
 
-export function LocationCapacity({ location }: LocationCapacityProps) {
-  const capacity = location.capacity
-
-  if (!capacity) return null
+export function LocationCapacity({ capacity, surface }: LocationCapacityProps) {
+  if (!capacity) return null;
 
   const hasCapacityData =
-    capacity.indoor || capacity.outdoor || capacity.seating || capacity.parking || location.surface
+    capacity.indoor ||
+    capacity.outdoor ||
+    capacity.seating ||
+    capacity.parking ||
+    surface;
 
-  if (!hasCapacityData) return null
+  if (!hasCapacityData) return null;
 
   return (
     <div className="glass-card p-4 sm:p-6 space-y-4">
@@ -60,15 +63,15 @@ export function LocationCapacity({ location }: LocationCapacityProps) {
           </div>
         )}
 
-        {location.surface && (
+        {surface && (
           <div className="feature-card p-4 space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <span className="font-semibold">Suprafață</span>
             </div>
-            <p className="text-2xl font-bold">{location.surface} m²</p>
+            <p className="text-2xl font-bold">{surface} m²</p>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

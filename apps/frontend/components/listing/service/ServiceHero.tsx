@@ -62,7 +62,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
 
           {/* Rating & Location */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-            {service.rating && service.reviewCount && (
+            {service.rating && service.reviewCount ? (
               <div className="flex items-center gap-1">
                 <FaStar className="w-4 h-4 text-yellow-500" />
                 <span className="font-semibold text-foreground">
@@ -70,7 +70,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
                 </span>
                 <span>· {service.reviewCount} recenzii</span>
               </div>
-            )}
+            ) : null}
             {cityName && (
               <div className="flex items-center gap-1">
                 <FaLocationDot className="w-4 h-4" />
