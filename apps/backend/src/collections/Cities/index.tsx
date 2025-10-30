@@ -49,7 +49,7 @@ const Cities: CollectionConfig = {
       type: 'text',
       defaultValue: 'Romania',
       admin: {
-        position: 'sidebar',
+        description: 'The country of the city',
       },
     },
     {
@@ -57,11 +57,11 @@ const Cities: CollectionConfig = {
       type: 'text',
       defaultValue: 'Romania',
       admin: {
-        position: 'sidebar',
         description: 'The ISO 3166-1 alpha-2 code for the country',
       },
       index: true,
     },
+
     {
       name: 'source',
       type: 'select',
@@ -85,6 +85,14 @@ const Cities: CollectionConfig = {
       },
     },
     {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'The image of the city',
+      },
+    },
+    {
       name: 'usageCount',
       type: 'number',
       defaultValue: 0,
@@ -100,6 +108,15 @@ const Cities: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Indicates if this city data has been verified by admins',
+      },
+    },
+    {
+      name: 'featured',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Indicates if this city is featured',
       },
     },
   ],

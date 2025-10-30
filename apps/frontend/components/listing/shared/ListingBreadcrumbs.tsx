@@ -1,4 +1,4 @@
-import type { ListingType } from "./ListingTypes";
+import type { ListingType } from "@/types/listings";
 
 import Link from "next/link";
 import { FaHouse, FaChevronRight } from "react-icons/fa6";
@@ -30,7 +30,7 @@ export function ListingBreadcrumbs({
       <FaChevronRight className="w-3 h-3" />
 
       <Link
-        href="/evenimente"
+        href={`/${type}`}
         className="hover:text-foreground transition-colors"
       >
         {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -39,7 +39,7 @@ export function ListingBreadcrumbs({
       <FaChevronRight className="w-3 h-3" />
 
       <Link
-        href={`/evenimente?city=${citySlug}`}
+        href={`/${type}/oras/${citySlug}`}
         className="hover:text-foreground transition-colors"
       >
         {cityName}

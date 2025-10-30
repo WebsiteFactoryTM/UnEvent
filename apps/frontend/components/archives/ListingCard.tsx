@@ -1,31 +1,43 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { FaLocationDot, FaHeart, FaStar, FaEye, FaUsers, FaCalendar } from "react-icons/fa6"
-import Image from "next/image"
-import Link from "next/link"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  FaLocationDot,
+  FaHeart,
+  FaStar,
+  FaEye,
+  FaUsers,
+  FaCalendar,
+} from "react-icons/fa6";
+import Image from "next/image";
+import Link from "next/link";
 
 interface ListingCardProps {
-  id: number
-  name: string
-  slug: string
-  description: string
-  image: string
-  city: string
-  type: string
-  verified: boolean
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+  city: string;
+  type: string;
+  verified: boolean;
   rating?: {
-    average: number
-    count: number
-  }
-  views: number
-  listingType: "locatii" | "servicii" | "evenimente"
-  capacity?: number
-  priceRange?: string
-  date?: string
-  participants?: number
+    average: number;
+    count: number;
+  };
+  views: number;
+  listingType: "locatii" | "servicii" | "evenimente";
+  capacity?: number;
+  priceRange?: string;
+  date?: string;
+  participants?: number;
 }
 
 export function ListingCard({
@@ -49,8 +61,17 @@ export function ListingCard({
     <Card className="glass-card overflow-hidden h-full flex flex-col">
       <CardHeader className="p-0 relative">
         <div className="relative h-48 w-full">
-          <Image src={image || "/placeholder.svg"} alt={name} fill className="object-cover" />
-          {verified && <Badge className="absolute top-2 left-2 bg-green-500/90 backdrop-blur-sm">Verificat</Badge>}
+          <Image
+            src={image || "/placeholder.svg"}
+            alt={name}
+            fill
+            className="object-cover"
+          />
+          {verified && (
+            <Badge className="absolute top-2 left-2 bg-green-500/90 backdrop-blur-sm">
+              Verificat
+            </Badge>
+          )}
           <Button
             size="icon"
             variant="ghost"
@@ -63,7 +84,9 @@ export function ListingCard({
 
       <CardContent className="flex-1 p-4 space-y-3">
         <h3 className="font-semibold text-lg line-clamp-2">{name}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-3">{description}</p>
+        <p className="text-sm text-muted-foreground line-clamp-3">
+          {description}
+        </p>
 
         <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
@@ -100,13 +123,17 @@ export function ListingCard({
           <Badge variant="outline">{type}</Badge>
         </div>
 
-        {priceRange && <p className="text-sm font-semibold text-foreground">{priceRange}</p>}
+        {priceRange && (
+          <p className="text-sm font-semibold text-foreground">{priceRange}</p>
+        )}
 
         {rating && (
           <div className="flex items-center gap-1 text-sm">
             <FaStar className="h-4 w-4 text-yellow-500" />
             <span className="font-semibold">{rating.average}</span>
-            <span className="text-muted-foreground">· {rating.count} recenzii</span>
+            <span className="text-muted-foreground">
+              · {rating.count} recenzii
+            </span>
           </div>
         )}
       </CardContent>
@@ -117,5 +144,5 @@ export function ListingCard({
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

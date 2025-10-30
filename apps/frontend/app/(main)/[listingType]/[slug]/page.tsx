@@ -45,7 +45,11 @@ export default async function DetailPage({
   const accessToken = session?.accessToken;
 
   const listingTypeUrl = getListingTypeSlug(listingType);
-  const { data, error } = await fetchListing(listingTypeUrl, slug, accessToken);
+  const { data, error } = await fetchListing(
+    listingTypeUrl as ListingType,
+    slug,
+    accessToken,
+  );
   if (error || !data) {
     notFound();
   }
@@ -164,8 +168,9 @@ export async function generateMetadata({
     return { title: "Pagină negăsită | UN:EVENT" };
 
   // Fetch mock data per type (UI-only)
+  const listingTypeUrl = getListingTypeSlug(listingType);
   const { data, error } = await fetchListing(
-    getListingTypeSlug(listingType),
+    listingTypeUrl as ListingType,
     slug,
     undefined,
   );

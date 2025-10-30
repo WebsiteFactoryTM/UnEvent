@@ -456,6 +456,9 @@ export interface City {
    * Auto-generated from city name. Used in URLs and lookups.
    */
   slug?: string | null;
+  /**
+   * The country of the city
+   */
   country?: string | null;
   /**
    * The ISO 3166-1 alpha-2 code for the country
@@ -473,6 +476,10 @@ export interface City {
    */
   geo: [number, number];
   /**
+   * The image of the city
+   */
+  image?: (number | null) | Media;
+  /**
    * Number of times this city is referenced
    */
   usageCount?: number | null;
@@ -480,6 +487,10 @@ export interface City {
    * Indicates if this city data has been verified by admins
    */
   verified?: boolean | null;
+  /**
+   * Indicates if this city is featured
+   */
+  featured?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1282,8 +1293,10 @@ export interface CitiesSelect<T extends boolean = true> {
   county?: T;
   source?: T;
   geo?: T;
+  image?: T;
   usageCount?: T;
   verified?: T;
+  featured?: T;
   updatedAt?: T;
   createdAt?: T;
 }
