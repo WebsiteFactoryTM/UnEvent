@@ -46,8 +46,7 @@ export default async function DetailPage({
 
   const listingTypeUrl = getListingTypeSlug(listingType);
   const { data, error } = await fetchListing(listingTypeUrl, slug, accessToken);
-  if (error) {
-    console.error(error);
+  if (error || !data) {
     notFound();
   }
   listing = data;

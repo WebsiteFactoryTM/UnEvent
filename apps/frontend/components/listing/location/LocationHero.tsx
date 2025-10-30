@@ -19,14 +19,14 @@ export function LocationHero({ location }: LocationHeroProps) {
   const cityName =
     typeof location?.city === "object" ? location?.city?.name : "România";
   const locationType =
-    Array.isArray(location.type) && location.type.length > 0
+    Array.isArray(location?.type) && location?.type?.length > 0
       ? typeof location.type[0] === "object"
-        ? location.type[0].title
+        ? location?.type[0]?.title
         : "Locație"
       : "Locație";
 
-  const contact = location.contact;
-  const socialLinks = location.socialLinks;
+  const contact = location?.contact;
+  const socialLinks = location?.socialLinks;
 
   return (
     <div className="glass-card p-4 sm:p-6 space-y-6">

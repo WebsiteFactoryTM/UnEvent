@@ -24,7 +24,7 @@ export function LocationCapacity({ capacity, surface }: LocationCapacityProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {capacity.indoor && (
-          <div className="feature-card p-4 space-y-2">
+          <div className=" p-4 space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <FaUsers className="h-5 w-5" />
               <span className="font-semibold">Interior</span>
@@ -34,7 +34,7 @@ export function LocationCapacity({ capacity, surface }: LocationCapacityProps) {
         )}
 
         {capacity.outdoor && (
-          <div className="feature-card p-4 space-y-2">
+          <div className=" p-4 space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <FaUsers className="h-5 w-5" />
               <span className="font-semibold">Exterior</span>
@@ -44,7 +44,7 @@ export function LocationCapacity({ capacity, surface }: LocationCapacityProps) {
         )}
 
         {capacity.seating && (
-          <div className="feature-card p-4 space-y-2">
+          <div className=" p-4 space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <FaChair className="h-5 w-5" />
               <span className="font-semibold">Locuri pe scaune</span>
@@ -54,7 +54,7 @@ export function LocationCapacity({ capacity, surface }: LocationCapacityProps) {
         )}
 
         {capacity.parking && (
-          <div className="feature-card p-4 space-y-2">
+          <div className=" p-4 space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <FaSquareParking className="h-5 w-5" />
               <span className="font-semibold">Parcare</span>
@@ -64,7 +64,7 @@ export function LocationCapacity({ capacity, surface }: LocationCapacityProps) {
         )}
 
         {surface && (
-          <div className="feature-card p-4 space-y-2">
+          <div className=" p-4 space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <span className="font-semibold">Suprafață</span>
             </div>
