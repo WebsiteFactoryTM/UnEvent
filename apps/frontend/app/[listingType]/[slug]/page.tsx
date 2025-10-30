@@ -2,22 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { listingTypes } from "@/config/archives";
 import { prettifySlug } from "@/lib/slug";
-import {
-  mockEvent,
-  mockReviews as mockEventReviews,
-  mockSimilarEvents,
-} from "@/mocks/eveniment";
-import {
-  mockLocation,
-  mockReviews as mockLocationReviews,
-  mockSimilarLocations,
-} from "@/mocks/locatie";
-import {
-  mockService,
-  mockReviews as mockServiceReviews,
-  mockSimilarServices,
-} from "@/mocks/serviciu";
-import { normalizeToViewModel } from "@/components/listing/shared/normalize";
+
 import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
 import { ListingMedia } from "@/components/listing/shared/ListingMedia";
 import { ListingHero } from "@/components/listing/shared/ListingHero";
@@ -33,42 +18,9 @@ import { Event, Media, Location } from "@/types/payload-types";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
+import { fetchListing } from "@/lib/api/listings";
 
 export const revalidate = 3600; // ISR: revalidate every hour
-
-export async function generateMetadata({
-  params,
-}: {
-  params: { listingType: string; slug: string };
-}): Promise<Metadata> {
-  const { listingType, slug } = await params;
-  if (!listingTypes.includes(listingType as any))
-    return { title: "Pagină negăsită | UN:EVENT" };
-
-  // Fetch mock data per type (UI-only)
-  const data =
-    listingType === "evenimente"
-      ? mockEvent
-      : listingType === "locatii"
-        ? mockLocation
-        : mockService;
-  const vm = normalizeToViewModel(listingType as ListingType, data);
-  const title = vm.title || prettifySlug(slug);
-  const description = vm.description?.slice(0, 160) || `${title}`;
-
-  return {
-    title: `${title} | UN:EVENT`,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: vm.featuredImageUrl
-        ? [{ url: vm.featuredImageUrl, width: 1200, height: 630, alt: title }]
-        : [],
-      type: "website",
-    },
-  };
-}
 
 export default async function DetailPage({
   params,
@@ -78,28 +30,18 @@ export default async function DetailPage({
   const { listingType, slug } = await params;
   if (!listingTypes.includes(listingType as any)) notFound();
 
+  let listing: Listing | null = null;
+
   const session = await getServerSession(authOptions);
   const accessToken = session?.accessToken;
 
   const listingTypeUrl = getListingTypeSlug(listingType);
-  let listing: Listing | null = null;
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingTypeUrl}?where[slug][equals]=${slug}&includeReviewState=true`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-    const data = await response.json();
-    listing = data.docs[0];
-    // console.log(listing);
-  } catch (error) {
+  const { data, error } = await fetchListing(listingTypeUrl, slug, accessToken);
+  if (error) {
     console.error(error);
     notFound();
   }
-
+  listing = data;
   const city = typeof listing?.city === "object" ? listing?.city : null;
   const cityName = city?.name ?? "";
   const citySlug = city?.slug ?? "";
@@ -181,4 +123,50 @@ export default async function DetailPage({
       </div>
     </>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { listingType: string; slug: string };
+}): Promise<Metadata> {
+  const { listingType, slug } = await params;
+  if (!listingTypes.includes(listingType as any))
+    return { title: "Pagină negăsită | UN:EVENT" };
+
+  // Fetch mock data per type (UI-only)
+  const { data, error } = await fetchListing(
+    getListingTypeSlug(listingType),
+    slug,
+    undefined,
+  );
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
+  const featuredImage =
+    typeof data?.featuredImage === "object" ? data?.featuredImage?.url : null;
+  const title = data?.title || prettifySlug(slug);
+  const description = data?.description?.slice(0, 160) || `${title}`;
+
+  return {
+    title: `${title} | UN:EVENT`,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: featuredImage
+        ? [
+            {
+              url: featuredImage,
+              width: 1200,
+              height: 630,
+              alt: title,
+            },
+          ]
+        : [],
+      type: "website",
+    },
+  };
 }
