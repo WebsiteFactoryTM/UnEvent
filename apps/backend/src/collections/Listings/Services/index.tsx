@@ -4,7 +4,7 @@ import { autoSlug, attachOwner, setDefaultStatus } from '../_hooks/beforeValidat
 import { isOwnerOrAdmin, requireRole, approvedOnlyPublic } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
-
+import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
 export const Services: CollectionConfig = {
   slug: 'services',
   admin: {
@@ -21,6 +21,7 @@ export const Services: CollectionConfig = {
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
+    afterChange: [revalidateListing],
   },
   fields: [
     ...sharedListingFields,

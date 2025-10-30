@@ -4,7 +4,7 @@ import { attachOwner, autoSlug, setDefaultStatus } from '../_hooks/beforeValidat
 import { approvedOnlyPublic, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
-
+import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
 export const Locations: CollectionConfig = {
   slug: 'locations',
   admin: {
@@ -21,6 +21,7 @@ export const Locations: CollectionConfig = {
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
+    afterChange: [revalidateListing],
   },
   fields: [
     ...sharedListingFields,

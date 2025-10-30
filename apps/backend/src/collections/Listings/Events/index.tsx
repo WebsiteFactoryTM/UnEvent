@@ -4,6 +4,7 @@ import { autoSlug, attachOwner, setDefaultStatus } from '../_hooks/beforeValidat
 import { approvedOnlyPublic, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
+import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -24,6 +25,7 @@ export const Events: CollectionConfig = {
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
+    afterChange: [revalidateListing],
   },
   fields: [
     ...sharedListingFields,
