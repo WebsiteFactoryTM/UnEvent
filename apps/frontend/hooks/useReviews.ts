@@ -13,21 +13,14 @@ import {
   type ListingCollectionSlug,
   type PaginatedResult,
 } from "@/lib/api/reviews";
+import { reviewsKeys } from "@/lib/react-query/reviews.keys";
 import { ListingType } from "@/types/listings";
 
 function toCollectionSlug(type: ListingType): ListingCollectionSlug {
   return frontendTypeToCollectionSlug(type);
 }
 
-function getQueryKey(
-  listingType: ListingCollectionSlug,
-  listingId: number | null,
-  page: number,
-  limit: number,
-  status: "approved" | "pending" | "rejected",
-) {
-  return ["reviews", listingType, listingId, { page, limit, status }];
-}
+// Keys are centralized in reviews.keys
 
 export interface UseReviewsOptions {
   page?: number;
@@ -44,7 +37,10 @@ export function useReviews(
   const queryClient = useQueryClient();
 
   const queryKey = useMemo(
-    () => getQueryKey(collectionSlug, listingId, page, limit, status),
+    () =>
+      listingId != null
+        ? reviewsKeys.list(collectionSlug, listingId, { page, limit, status })
+        : (["reviews", collectionSlug, null, { page, limit, status }] as const),
     [collectionSlug, listingId, page, limit, status],
   );
 
@@ -59,9 +55,18 @@ export function useReviews(
         limit,
         status,
       }),
-    staleTime: 0,
+    // staleTime: 0,
     gcTime: 1000 * 60 * 5,
   });
+
+  // Local flag to reflect that the current viewer has submitted a review for this listing
+  const userSubmittedKey = useMemo(
+    () =>
+      listingId != null
+        ? ["reviews", "user-submitted", collectionSlug, listingId]
+        : null,
+    [collectionSlug, listingId],
+  );
 
   const mutation = useMutation<
     Review,
@@ -82,17 +87,30 @@ export function useReviews(
         (session as any)?.accessToken,
       ),
     onSuccess: async () => {
-      // Invalidate all review queries for this listing (any page/limit/status)
       if (listingId != null) {
+        // Mark locally that the user has submitted a review for this listing
+        if (userSubmittedKey) {
+          queryClient.setQueryData<boolean>(userSubmittedKey, true);
+        }
         await queryClient.invalidateQueries({
-          queryKey: ["reviews", collectionSlug, listingId],
+          queryKey: reviewsKeys._listing(collectionSlug, listingId),
           exact: false,
         });
-      } else {
-        await queryClient.invalidateQueries({ queryKey, exact: true });
       }
     },
   });
+
+  // Derive hasUserReview from local flag or, if available, from fetched reviews matching viewer (best-effort)
+  const hasUserReview = useMemo(() => {
+    if (userSubmittedKey) {
+      const local = queryClient.getQueryData<boolean>(userSubmittedKey);
+      if (local) return true;
+    }
+    // Best-effort: if the fetched reviews include one by the same user profile, mark true
+    // Note: session.user.id is the User ID; Reviews.user relates to Profile, so this may not always match.
+    // We keep this conservative and rely primarily on the local flag above after submission.
+    return false;
+  }, [queryClient, userSubmittedKey]);
 
   return {
     reviews: query.data?.docs ?? [],
@@ -104,5 +122,6 @@ export function useReviews(
     addReview: mutation.mutate,
     addReviewAsync: mutation.mutateAsync,
     isAdding: mutation.isPending,
+    hasUserReview,
   };
 }

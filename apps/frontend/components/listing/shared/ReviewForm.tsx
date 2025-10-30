@@ -23,7 +23,10 @@ const ReviewForm = ({
 }) => {
   const { data: session } = useSession();
   const user = session?.user;
-  const { addReview, isAdding } = useReviews({ type, listingId });
+  const { addReview, isAdding, hasUserReview } = useReviews({
+    type,
+    listingId,
+  });
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   const { register, handleSubmit, setValue, watch, reset } =
@@ -57,7 +60,7 @@ const ReviewForm = ({
     );
   }
 
-  if (hasReviewedByViewer) {
+  if (hasReviewedByViewer || hasUserReview) {
     return (
       <div className="p-4 rounded-lg border border-border space-y-4">
         <p className="text-sm text-muted-foreground">

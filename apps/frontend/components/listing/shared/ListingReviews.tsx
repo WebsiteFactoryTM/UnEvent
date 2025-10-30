@@ -1,16 +1,9 @@
 import type { ListingType } from "@/types/listings";
-import EventReviews from "@/components/listing/event/EventReviews";
-import { LocationReviews } from "@/components/listing/location/LocationReviews";
-import ServiceReviews from "@/components/listing/service/ServiceReviews";
-import { useReviews } from "@/hooks/useReviews";
-import { Suspense, useState } from "react";
+
 import { FaStar } from "react-icons/fa6";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
+
 import ListingReviewsList from "./ListingReviewsList";
 import ReviewForm from "./ReviewForm";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export function ListingReviews({
   type,
@@ -47,18 +40,7 @@ export function ListingReviews({
         hasReviewedByViewer={hasReviewedByViewer}
       />
 
-      {/* Reviews list */}
-      <Suspense
-        fallback={
-          <div className="space-y-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton key={index} className="h-10 w-full" />
-            ))}
-          </div>
-        }
-      >
-        <ListingReviewsList type={type} listingId={listingId as number} />
-      </Suspense>
+      <ListingReviewsList type={type} listingId={listingId as number} />
     </div>
   );
 }

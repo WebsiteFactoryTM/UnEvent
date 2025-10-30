@@ -45,12 +45,12 @@ export async function fetchReviews({
   if (!API_URL) throw new Error("Missing NEXT_PUBLIC_API_URL");
 
   const query = {
-    listing: {
-      relationTo: { equals: listingType },
-      value: { equals: listingId },
-    },
+    "listing.relationTo": { equals: listingType },
+    "listing.value": { equals: listingId },
     status: { equals: status },
+    listingType: { equals: listingType },
   } as const;
+
   // This query could be much more complex
   // and qs-esm would handle it beautifully
   const stringifiedQuery = stringify(
@@ -62,6 +62,7 @@ export async function fetchReviews({
     },
     { addQueryPrefix: true },
   );
+
   try {
     const res = await fetch(`${API_URL}/api/reviews${stringifiedQuery}`);
 
