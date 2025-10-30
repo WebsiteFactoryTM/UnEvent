@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { Providers } from "./providers";
+import { Providers } from "@/app/providers";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
 import "./globals.css";
