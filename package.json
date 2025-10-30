@@ -16,10 +16,20 @@
     "down:infra": "docker compose down",
     "ps": "docker compose ps",
     "dev:backend": "pnpm --filter @unevent/backend dev",
+    "dev:frontend": "pnpm --filter @unevent/frontend dev",
     "build:backend": "pnpm --filter @unevent/backend build",
     "start:backend": "pnpm --filter @unevent/backend start",
     "generate:types": "pnpm --filter @unevent/backend generate:types",
     "seed": "pnpm --filter @unevent/backend seed",
     "setup-symlinks": "./scripts/setup-symlinks.sh"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0",
+      "@types/react": "19.1.8",
+      "@types/react-dom": "19.1.6",
+      "typescript": "^5"
+    }
   }
 }
