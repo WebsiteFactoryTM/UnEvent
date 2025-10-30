@@ -6,6 +6,7 @@ import seedLocations from '@/scripts/seed/seed-locations'
 import seedCities from '@/scripts/seed/seed-cities'
 import seedEvents from '@/scripts/seed/seed-events'
 import seedServices from '@/scripts/seed/seed-services'
+import seedListings from '@/scripts/seed/seed-listings'
 
 // Script must define a "script" function export that accepts the sanitized config
 export const seed: PayloadHandler = async (req) => {
@@ -15,11 +16,7 @@ export const seed: PayloadHandler = async (req) => {
     return new Response('Unauthorized', { status: 401 })
   }
 
-  // await seedFacilities(req.payload)
-  // await seedListingTypes(req.payload)
-  // await seedCities(req.payload)
-  // await seedLocations(req.payload)
-  // await seedEvents(req.payload)
-  await seedServices(req.payload)
+  // Listings-only seeding (media -> locations -> events -> services)
+  await seedListings(req.payload)
   return new Response('Successfully seeded!', { status: 200 })
 }

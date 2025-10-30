@@ -1,20 +1,20 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { FaChevronRight, FaHouse } from "react-icons/fa6"
-import { ScrollToTop } from "@/components/ScrollToTop"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { FaChevronRight, FaHouse } from "react-icons/fa6";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 export const metadata: Metadata = {
   title: "Politica de Cookie | UN:EVENT",
   description:
     "Politica de utilizare a cookie-urilor pe platforma UN:EVENT. Informații despre tipurile de cookie-uri folosite, scopurile acestora și cum le puteți gestiona.",
-}
+};
 
 export default function PoliticaCookiePage() {
   return (
     <>
       <ScrollToTop />
-      <div className="min-h-screen bg-background py-8 md:py-12">
-        <div className="container max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-background py-8 sm:py-12 lg:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
           {/* Breadcrumbs */}
           <nav className="mb-6 md:mb-8 flex items-center gap-2 text-sm text-muted-foreground">
             <Link href="/" className="hover:text-foreground transition-colors">
@@ -27,16 +27,23 @@ export default function PoliticaCookiePage() {
           {/* Main Content */}
           <article className="glass-card p-4 sm:p-6 lg:p-8 space-y-6 md:space-y-8">
             <header className="space-y-4 border-b border-border pb-6">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Politica de Cookie — UN:EVENT</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+                Politica de Cookie — UN:EVENT
+              </h1>
               <div className="bg-muted/30 border border-border/50 rounded-lg p-4 sm:p-6 space-y-2 text-sm">
-                <p className="text-muted-foreground">Versiunea 1.0 – actualizat la 12 septembrie 2025</p>
+                <p className="text-muted-foreground">
+                  Versiunea 1.0 – actualizat la 12 septembrie 2025
+                </p>
                 <div className="space-y-1 text-foreground/80">
                   <p className="font-semibold">SC PIXEL FACTORY SRL</p>
                   <p>CUI: 47452355 / Reg. Com.: J35/154/2023</p>
                   <p>Sediu social: Str. Bega, nr. 47, Ghiroda, Timiș</p>
                   <p>
                     E-mail:{" "}
-                    <a href="mailto:contact@unevent.ro" className="text-primary hover:underline">
+                    <a
+                      href="mailto:contact@unevent.ro"
+                      className="text-primary hover:underline"
+                    >
                       contact@unevent.ro
                     </a>
                   </p>
@@ -52,25 +59,33 @@ export default function PoliticaCookiePage() {
                   1) Cine suntem și ce acoperă acest document
                 </h2>
                 <p>
-                  Platforma UN:EVENT (unevent.ro) este administrată de SC PIXEL FACTORY SRL. Această Politică explică
-                  modul în care folosim cookie-uri și tehnologii similare (ex. localStorage, SDK-uri, pixeli, web
-                  beacons) pe site și în aplicație.
+                  Platforma UN:EVENT (unevent.ro) este administrată de SC PIXEL
+                  FACTORY SRL. Această Politică explică modul în care folosim
+                  cookie-uri și tehnologii similare (ex. localStorage, SDK-uri,
+                  pixeli, web beacons) pe site și în aplicație.
                 </p>
                 <p>
                   Pentru informații despre prelucrarea datelor personale, vedeți{" "}
-                  <Link href="/politica-de-confidentialitate" className="text-primary hover:underline">
+                  <Link
+                    href="/politica-de-confidentialitate"
+                    className="text-primary hover:underline"
+                  >
                     Politica de confidențialitate
                   </Link>{" "}
                   și{" "}
-                  <Link href="/termeni-si-conditii" className="text-primary hover:underline">
+                  <Link
+                    href="/termeni-si-conditii"
+                    className="text-primary hover:underline"
+                  >
                     Termeni și condiții
                   </Link>
                   .
                 </p>
                 <p>
-                  În UE/SEE folosim cookie-uri necesare fără consimțământ și solicităm consimțământul dvs. prealabil
-                  pentru cookie-uri de preferințe, statistici/analitice și marketing (conform GDPR și normelor
-                  ePrivacy).
+                  În UE/SEE folosim cookie-uri necesare fără consimțământ și
+                  solicităm consimțământul dvs. prealabil pentru cookie-uri de
+                  preferințe, statistici/analitice și marketing (conform GDPR și
+                  normelor ePrivacy).
                 </p>
               </section>
 
@@ -81,17 +96,21 @@ export default function PoliticaCookiePage() {
                 </h2>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>
-                    <strong>Cookie-urile</strong> sunt fișiere text mici plasate pe dispozitivul dvs. pentru a permite
-                    funcții (autentificare, securitate), a reține preferințe (limbă, oraș), a măsura utilizarea
-                    (analitice) sau a personaliza reclame (marketing).
+                    <strong>Cookie-urile</strong> sunt fișiere text mici plasate
+                    pe dispozitivul dvs. pentru a permite funcții
+                    (autentificare, securitate), a reține preferințe (limbă,
+                    oraș), a măsura utilizarea (analitice) sau a personaliza
+                    reclame (marketing).
                   </li>
                   <li>
-                    <strong>LocalStorage/SessionStorage</strong> stochează local setări/app state (ex.: oraș selectat,
-                    starea consimțământului).
+                    <strong>LocalStorage/SessionStorage</strong> stochează local
+                    setări/app state (ex.: oraș selectat, starea
+                    consimțământului).
                   </li>
                   <li>
-                    <strong>Pixeli/web beacons/SDK-uri</strong> sunt fragmente de cod folosite pentru măsurare și
-                    marketing (ex.: Meta Pixel, TikTok Events).
+                    <strong>Pixeli/web beacons/SDK-uri</strong> sunt fragmente
+                    de cod folosite pentru măsurare și marketing (ex.: Meta
+                    Pixel, TikTok Events).
                   </li>
                 </ul>
               </section>
@@ -108,8 +127,8 @@ export default function PoliticaCookiePage() {
                       1. Strict necesare (fără consimțământ)
                     </h3>
                     <p className="text-sm sm:text-base text-foreground/90">
-                      Asigură funcționarea de bază: autentificare, securitate, anti-fraudă, încărcare pagini, gestionare
-                      consimțământ.
+                      Asigură funcționarea de bază: autentificare, securitate,
+                      anti-fraudă, încărcare pagini, gestionare consimțământ.
                     </p>
                   </div>
 
@@ -127,8 +146,8 @@ export default function PoliticaCookiePage() {
                       3. Statistici/Analitice (necesită consimțământ)
                     </h3>
                     <p className="text-sm sm:text-base text-foreground/90">
-                      Măsoară traficul și performanța (ex.: Google Analytics). Datele sunt agregate/anonimizate pe cât
-                      posibil.
+                      Măsoară traficul și performanța (ex.: Google Analytics).
+                      Datele sunt agregate/anonimizate pe cât posibil.
                     </p>
                   </div>
 
@@ -137,15 +156,18 @@ export default function PoliticaCookiePage() {
                       4. Marketing (necesită consimțământ)
                     </h3>
                     <p className="text-sm sm:text-base text-foreground/90">
-                      Remarketing, măsurarea conversiilor și personalizarea reclamelor (ex.: Meta, TikTok).
+                      Remarketing, măsurarea conversiilor și personalizarea
+                      reclamelor (ex.: Meta, TikTok).
                     </p>
                   </div>
                 </div>
 
                 <p className="text-sm text-muted-foreground mt-4">
-                  <strong>Geolocalizare aproximativă din IP:</strong> putem deduce orașul pentru a vă afișa conținut
-                  relevant (ex.: evenimente/locații din apropiere). Această deducere se poate stoca în localStorage sau
-                  cookie de preferință (dacă permiteți).
+                  <strong>Geolocalizare aproximativă din IP:</strong> putem
+                  deduce orașul pentru a vă afișa conținut relevant (ex.:
+                  evenimente/locații din apropiere). Această deducere se poate
+                  stoca în localStorage sau cookie de preferință (dacă
+                  permiteți).
                 </p>
               </section>
 
@@ -156,17 +178,23 @@ export default function PoliticaCookiePage() {
                 </h2>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>
-                    <strong>Strict necesare:</strong> interes legitim (art. 6(1)(f) GDPR).
+                    <strong>Strict necesare:</strong> interes legitim (art.
+                    6(1)(f) GDPR).
                   </li>
                   <li>
-                    <strong>Preferințe/Analitice/Marketing:</strong> consimțământ (art. 6(1)(a) GDPR), obținut prin
+                    <strong>Preferințe/Analitice/Marketing:</strong>{" "}
+                    consimțământ (art. 6(1)(a) GDPR), obținut prin
                     bannerul/caseta de Setări cookie.
                   </li>
                   <li>
-                    Vă puteți retrage sau modifica opțiunile oricând din „Setări cookie" (link persistent în footer sau
-                    în pictograma cookie de pe site).
+                    Vă puteți retrage sau modifica opțiunile oricând din „Setări
+                    cookie" (link persistent în footer sau în pictograma cookie
+                    de pe site).
                   </li>
-                  <li>Stocăm o dovadă a consimțământului (versiune, dată/ora, categorii alese) pentru conformitate.</li>
+                  <li>
+                    Stocăm o dovadă a consimțământului (versiune, dată/ora,
+                    categorii alese) pentru conformitate.
+                  </li>
                 </ul>
               </section>
 
@@ -176,51 +204,72 @@ export default function PoliticaCookiePage() {
                   5) Ce cookie-uri folosim (exemple)
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Lista exactă poate varia în timp și este afișată în bannerul de consimțământ. Mai jos sunt exemple
-                  frecvente folosite de platforme ca a noastră; unele pot fi active, altele nu. Lista din banner este
-                  întotdeauna autoritativă.
+                  Lista exactă poate varia în timp și este afișată în bannerul
+                  de consimțământ. Mai jos sunt exemple frecvente folosite de
+                  platforme ca a noastră; unele pot fi active, altele nu. Lista
+                  din banner este întotdeauna autoritativă.
                 </p>
 
                 {/* 5.1 Strict necesare */}
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">5.1. Strict necesare</h3>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    5.1. Strict necesare
+                  </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                       <thead>
                         <tr className="border-b border-border">
-                          <th className="text-left p-2 sm:p-3 font-semibold">Nume</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Furnizor</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Scop</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Durată</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Tip</th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Nume
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Furnizor
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Scop
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Durată
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Tip
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
                         <tr>
                           <td className="p-2 sm:p-3">ue_session</td>
                           <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">Sesiune login, menținere stare utilizator</td>
+                          <td className="p-2 sm:p-3">
+                            Sesiune login, menținere stare utilizator
+                          </td>
                           <td className="p-2 sm:p-3">Sesiune</td>
                           <td className="p-2 sm:p-3">1st party</td>
                         </tr>
                         <tr>
                           <td className="p-2 sm:p-3">ue_csrf</td>
                           <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">Protecție CSRF formulare</td>
+                          <td className="p-2 sm:p-3">
+                            Protecție CSRF formulare
+                          </td>
                           <td className="p-2 sm:p-3">Sesiune</td>
                           <td className="p-2 sm:p-3">1st party</td>
                         </tr>
                         <tr>
                           <td className="p-2 sm:p-3">ue_consent</td>
                           <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">Reținere opțiuni consimțământ</td>
+                          <td className="p-2 sm:p-3">
+                            Reținere opțiuni consimțământ
+                          </td>
                           <td className="p-2 sm:p-3">6–12 luni</td>
                           <td className="p-2 sm:p-3">1st party</td>
                         </tr>
                         <tr>
                           <td className="p-2 sm:p-3">__cf_bm</td>
                           <td className="p-2 sm:p-3">CDN / securitate</td>
-                          <td className="p-2 sm:p-3">Anti-bot/anti-abuz, performanță</td>
+                          <td className="p-2 sm:p-3">
+                            Anti-bot/anti-abuz, performanță
+                          </td>
                           <td className="p-2 sm:p-3">Până la 30 min</td>
                           <td className="p-2 sm:p-3">3rd party</td>
                         </tr>
@@ -231,30 +280,46 @@ export default function PoliticaCookiePage() {
 
                 {/* 5.2 Preferințe */}
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">5.2. Preferințe</h3>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    5.2. Preferințe
+                  </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                       <thead>
                         <tr className="border-b border-border">
-                          <th className="text-left p-2 sm:p-3 font-semibold">Nume</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Furnizor</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Scop</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Durată</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Tip</th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Nume
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Furnizor
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Scop
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Durată
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Tip
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
                         <tr>
                           <td className="p-2 sm:p-3">ue_city</td>
                           <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">Reține orașul preferat/detectat</td>
+                          <td className="p-2 sm:p-3">
+                            Reține orașul preferat/detectat
+                          </td>
                           <td className="p-2 sm:p-3">1–6 luni</td>
                           <td className="p-2 sm:p-3">1st party</td>
                         </tr>
                         <tr>
                           <td className="p-2 sm:p-3">ue_lang</td>
                           <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">Reține limba interfeței</td>
+                          <td className="p-2 sm:p-3">
+                            Reține limba interfeței
+                          </td>
                           <td className="p-2 sm:p-3">6–12 luni</td>
                           <td className="p-2 sm:p-3">1st party</td>
                         </tr>
@@ -268,72 +333,112 @@ export default function PoliticaCookiePage() {
 
                 {/* 5.3 Statistici/Analitice */}
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">5.3. Statistici/Analitice</h3>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    5.3. Statistici/Analitice
+                  </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                       <thead>
                         <tr className="border-b border-border">
-                          <th className="text-left p-2 sm:p-3 font-semibold">Nume</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Furnizor</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Scop</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Durată</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Tip</th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Nume
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Furnizor
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Scop
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Durată
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Tip
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
                         <tr>
                           <td className="p-2 sm:p-3">_ga, _ga_*, _gid</td>
                           <td className="p-2 sm:p-3">Google Analytics</td>
-                          <td className="p-2 sm:p-3">Măsurare trafic & sesiuni</td>
+                          <td className="p-2 sm:p-3">
+                            Măsurare trafic & sesiuni
+                          </td>
                           <td className="p-2 sm:p-3">24 h – 24 luni</td>
                           <td className="p-2 sm:p-3">3rd party</td>
                         </tr>
                         <tr>
-                          <td className="p-2 sm:p-3">_hjSessionUser_*, _hjSession_*</td>
+                          <td className="p-2 sm:p-3">
+                            _hjSessionUser_*, _hjSession_*
+                          </td>
                           <td className="p-2 sm:p-3">Hotjar</td>
-                          <td className="p-2 sm:p-3">Analiză UX (hărți, sesiuni)</td>
+                          <td className="p-2 sm:p-3">
+                            Analiză UX (hărți, sesiuni)
+                          </td>
                           <td className="p-2 sm:p-3">24 h – 12 luni</td>
                           <td className="p-2 sm:p-3">3rd party</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
-                  <p className="text-xs text-muted-foreground">* utilizat doar dacă este activat în banner.</p>
+                  <p className="text-xs text-muted-foreground">
+                    * utilizat doar dacă este activat în banner.
+                  </p>
                 </div>
 
                 {/* 5.4 Marketing */}
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">5.4. Marketing</h3>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    5.4. Marketing
+                  </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                       <thead>
                         <tr className="border-b border-border">
-                          <th className="text-left p-2 sm:p-3 font-semibold">Nume</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Furnizor</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Scop</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Durată</th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">Tip</th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Nume
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Furnizor
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Scop
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Durată
+                          </th>
+                          <th className="text-left p-2 sm:p-3 font-semibold">
+                            Tip
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
                         <tr>
                           <td className="p-2 sm:p-3">_fbp, _fbc</td>
                           <td className="p-2 sm:p-3">Meta (Facebook)</td>
-                          <td className="p-2 sm:p-3">Remarketing & conversii</td>
+                          <td className="p-2 sm:p-3">
+                            Remarketing & conversii
+                          </td>
                           <td className="p-2 sm:p-3">3–24 luni</td>
                           <td className="p-2 sm:p-3">3rd party</td>
                         </tr>
                         <tr>
-                          <td className="p-2 sm:p-3">_ttp, _tt_enable_cookie</td>
+                          <td className="p-2 sm:p-3">
+                            _ttp, _tt_enable_cookie
+                          </td>
                           <td className="p-2 sm:p-3">TikTok</td>
-                          <td className="p-2 sm:p-3">Remarketing & conversii</td>
+                          <td className="p-2 sm:p-3">
+                            Remarketing & conversii
+                          </td>
                           <td className="p-2 sm:p-3">13 luni</td>
                           <td className="p-2 sm:p-3">3rd party</td>
                         </tr>
                         <tr>
                           <td className="p-2 sm:p-3">_gcl_au</td>
                           <td className="p-2 sm:p-3">Google Ads</td>
-                          <td className="p-2 sm:p-3">Conversii & experimentare ads</td>
+                          <td className="p-2 sm:p-3">
+                            Conversii & experimentare ads
+                          </td>
                           <td className="p-2 sm:p-3">3 luni</td>
                           <td className="p-2 sm:p-3">3rd party</td>
                         </tr>
@@ -349,40 +454,50 @@ export default function PoliticaCookiePage() {
                   6) Cookie-uri plasate de terți (third-party)
                 </h2>
                 <p>
-                  Unele module aparțin terților (ex.: Google, Meta, TikTok, eventual Hotjar). Aceștia pot folosi
-                  cookie-urile și pentru propriile scopuri (în limitele politicilor lor). Vă recomandăm să consultați
-                  politicile publice ale acestor furnizori. Activăm terții numai dacă acordați consimțământul pentru
+                  Unele module aparțin terților (ex.: Google, Meta, TikTok,
+                  eventual Hotjar). Aceștia pot folosi cookie-urile și pentru
+                  propriile scopuri (în limitele politicilor lor). Vă recomandăm
+                  să consultați politicile publice ale acestor furnizori.
+                  Activăm terții numai dacă acordați consimțământul pentru
                   categoriile aferente.
                 </p>
               </section>
 
               {/* Section 7 */}
               <section className="space-y-4">
-                <h2 className="text-xl sm:text-2xl font-semibold text-foreground">7) Controlul asupra cookie-urilor</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+                  7) Controlul asupra cookie-urilor
+                </h2>
 
                 <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 sm:p-6 space-y-3">
-                  <h3 className="text-base sm:text-lg font-semibold text-foreground">Cum vă gestionați preferințele</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-foreground">
+                    Cum vă gestionați preferințele
+                  </h3>
                   <ul className="space-y-2 text-sm sm:text-base text-foreground/90">
                     <li className="flex gap-2">
                       <span className="text-green-500 mt-1">•</span>
                       <span>
-                        <strong>Setări cookie (recomandat):</strong> folosiți linkul „Setări cookie" disponibil
-                        permanent în site pentru a accepta/respinge granular categoriile.
+                        <strong>Setări cookie (recomandat):</strong> folosiți
+                        linkul „Setări cookie" disponibil permanent în site
+                        pentru a accepta/respinge granular categoriile.
                       </span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-green-500 mt-1">•</span>
                       <span>
-                        <strong>Browser:</strong> puteți șterge/bloca cookie-uri din setările browserului. Atenție:
-                        blocarea cookie-urilor necesare poate afecta funcționarea site-ului (login, coș, formulare,
-                        etc.).
+                        <strong>Browser:</strong> puteți șterge/bloca cookie-uri
+                        din setările browserului. Atenție: blocarea
+                        cookie-urilor necesare poate afecta funcționarea
+                        site-ului (login, coș, formulare, etc.).
                       </span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-green-500 mt-1">•</span>
                       <span>
-                        <strong>Preferințe publicitate:</strong> platforme precum YourOnlineChoices/EDAA, NAI, DAA
-                        permit gestionarea preferințelor de publicitate comportamentală la nivel de browser.
+                        <strong>Preferințe publicitate:</strong> platforme
+                        precum YourOnlineChoices/EDAA, NAI, DAA permit
+                        gestionarea preferințelor de publicitate comportamentală
+                        la nivel de browser.
                       </span>
                     </li>
                   </ul>
@@ -391,18 +506,22 @@ export default function PoliticaCookiePage() {
 
               {/* Section 8 */}
               <section className="space-y-4">
-                <h2 className="text-xl sm:text-2xl font-semibold text-foreground">8) Durată de stocare</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+                  8) Durată de stocare
+                </h2>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>
                     <strong>Sesiune:</strong> se șterg când închideți browserul.
                   </li>
                   <li>
-                    <strong>Persistente:</strong> rămân pe dispozitiv până la expirare sau ștergere manuală (de obicei
-                    1–24 luni, în funcție de scop).
+                    <strong>Persistente:</strong> rămân pe dispozitiv până la
+                    expirare sau ștergere manuală (de obicei 1–24 luni, în
+                    funcție de scop).
                   </li>
                   <li>
-                    Duratele concrete pentru fiecare cookie activ sunt prezentate în banner sau în tabelul din această
-                    pagină, dacă este generat automat.
+                    Duratele concrete pentru fiecare cookie activ sunt
+                    prezentate în banner sau în tabelul din această pagină, dacă
+                    este generat automat.
                   </li>
                 </ul>
               </section>
@@ -414,15 +533,18 @@ export default function PoliticaCookiePage() {
                 </h2>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>
-                    Putem salva în localStorage preferințe precum oraș, limbă, filtre pentru a îmbunătăți experiența.
+                    Putem salva în localStorage preferințe precum oraș, limbă,
+                    filtre pentru a îmbunătăți experiența.
                   </li>
                   <li>
-                    Orașul aproximativ dedus din IP poate fi folosit pentru a pre-selecta conținut local. Nu păstrăm
-                    istoricul IP în scop de marketing fără consimțământ.
+                    Orașul aproximativ dedus din IP poate fi folosit pentru a
+                    pre-selecta conținut local. Nu păstrăm istoricul IP în scop
+                    de marketing fără consimțământ.
                   </li>
                   <li>
-                    Evenimentele de tracking (ex.: AddToCart, Lead) se trimit numai dacă ați optat pentru categoriile
-                    relevante (Analitice/Marketing).
+                    Evenimentele de tracking (ex.: AddToCart, Lead) se trimit
+                    numai dacă ați optat pentru categoriile relevante
+                    (Analitice/Marketing).
                   </li>
                 </ul>
               </section>
@@ -433,11 +555,16 @@ export default function PoliticaCookiePage() {
                   10) Verificări identitate (KYC „light") și cookie-uri
                 </h2>
                 <p>
-                  Dacă activăm fluxuri de verificare identitate/reprezentare (ex.: pentru listeri), acestea pot utiliza
-                  cookie-uri necesare pentru sesiune/securitate și, după caz, tehnologii terțe de verificare (doar dacă
-                  sunt inițiate de dvs.). Nu folosim aceste date în scop de marketing. Detaliile despre datele personale
-                  sunt în{" "}
-                  <Link href="/politica-de-confidentialitate" className="text-primary hover:underline">
+                  Dacă activăm fluxuri de verificare identitate/reprezentare
+                  (ex.: pentru listeri), acestea pot utiliza cookie-uri necesare
+                  pentru sesiune/securitate și, după caz, tehnologii terțe de
+                  verificare (doar dacă sunt inițiate de dvs.). Nu folosim
+                  aceste date în scop de marketing. Detaliile despre datele
+                  personale sunt în{" "}
+                  <Link
+                    href="/politica-de-confidentialitate"
+                    className="text-primary hover:underline"
+                  >
                     Politica de confidențialitate
                   </Link>
                   .
@@ -446,11 +573,14 @@ export default function PoliticaCookiePage() {
 
               {/* Section 11 */}
               <section className="space-y-4">
-                <h2 className="text-xl sm:text-2xl font-semibold text-foreground">11) Transferuri în afara SEE</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+                  11) Transferuri în afara SEE
+                </h2>
                 <p>
-                  Dacă activăm servicii ale unor furnizori din afara SEE, transferul se realizează în baza mecanismelor
-                  legale (ex.: EU–US Data Privacy Framework, Clauze Contractuale Standard) și a măsurilor
-                  tehnice/organizatorice adecvate.
+                  Dacă activăm servicii ale unor furnizori din afara SEE,
+                  transferul se realizează în baza mecanismelor legale (ex.:
+                  EU–US Data Privacy Framework, Clauze Contractuale Standard) și
+                  a măsurilor tehnice/organizatorice adecvate.
                 </p>
               </section>
 
@@ -460,20 +590,27 @@ export default function PoliticaCookiePage() {
                   12) Actualizări ale Politicii de Cookie
                 </h2>
                 <p>
-                  Putem actualiza această Politică pentru a reflecta modificări operaționale, tehnice sau legale. Vom
-                  publica versiunea curentă și data. Continuarea utilizării site-ului după publicare înseamnă acceptarea
-                  modificărilor (cu excepția cazului în care legea cere reconfirmarea consimțământului).
+                  Putem actualiza această Politică pentru a reflecta modificări
+                  operaționale, tehnice sau legale. Vom publica versiunea
+                  curentă și data. Continuarea utilizării site-ului după
+                  publicare înseamnă acceptarea modificărilor (cu excepția
+                  cazului în care legea cere reconfirmarea consimțământului).
                 </p>
               </section>
 
               {/* Section 13 */}
               <section className="space-y-4">
-                <h2 className="text-xl sm:text-2xl font-semibold text-foreground">13) Contact</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+                  13) Contact
+                </h2>
                 <p>Întrebări despre cookie-uri sau preferințele dvs.:</p>
                 <ul className="space-y-2 ml-4">
                   <li>
                     Email:{" "}
-                    <a href="mailto:contact@unevent.ro" className="text-primary hover:underline">
+                    <a
+                      href="mailto:contact@unevent.ro"
+                      className="text-primary hover:underline"
+                    >
                       contact@unevent.ro
                     </a>
                   </li>
@@ -489,16 +626,23 @@ export default function PoliticaCookiePage() {
                 <div className="bg-muted/30 border border-border/50 rounded-lg p-4 sm:p-6 space-y-3 text-sm sm:text-base">
                   <ul className="space-y-2 list-disc list-inside">
                     <li>
-                      Folosim cookie-uri necesare (fără consimțământ) și cookie-uri de preferințe/analitice/marketing
-                      (cu consimțământ).
+                      Folosim cookie-uri necesare (fără consimțământ) și
+                      cookie-uri de preferințe/analitice/marketing (cu
+                      consimțământ).
                     </li>
-                    <li>Vă puteți gestiona opțiunile în „Setări cookie" oricând.</li>
                     <li>
-                      Lista exactă de cookie-uri active este afișată în banner și poate diferi de exemplele de aici.
+                      Vă puteți gestiona opțiunile în „Setări cookie" oricând.
+                    </li>
+                    <li>
+                      Lista exactă de cookie-uri active este afișată în banner
+                      și poate diferi de exemplele de aici.
                     </li>
                     <li>
                       Pentru date personale și drepturile dvs., consultați{" "}
-                      <Link href="/politica-de-confidentialitate" className="text-primary hover:underline">
+                      <Link
+                        href="/politica-de-confidentialitate"
+                        className="text-primary hover:underline"
+                      >
                         Politica de confidențialitate
                       </Link>
                       .
@@ -510,12 +654,15 @@ export default function PoliticaCookiePage() {
 
             {/* Footer */}
             <footer className="border-t border-border pt-6 text-sm text-muted-foreground">
-              <p>Prin utilizarea platformei UN:EVENT, confirmați că ați citit și înțeles această Politică de Cookie.</p>
+              <p>
+                Prin utilizarea platformei UN:EVENT, confirmați că ați citit și
+                înțeles această Politică de Cookie.
+              </p>
               <p className="mt-2">Ultima actualizare: 12 septembrie 2025</p>
             </footer>
           </article>
         </div>
       </div>
     </>
-  )
+  );
 }

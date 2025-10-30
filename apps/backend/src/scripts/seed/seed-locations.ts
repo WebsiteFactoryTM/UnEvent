@@ -2,7 +2,10 @@ import { Payload } from 'payload'
 import { promises as fs } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import slugify from 'slugify'
 import type { Location } from '../../payload-types'
+import { seedMedia } from './seed-media'
+import { mapListingToMedia } from '@/data/seed/media/rename'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,25 +24,51 @@ async function seedLocations(payload: Payload) {
     const locationItems = await loadLocationData()
 
     console.log(`Found ${locationItems.length} locations`)
-
-    // Clear existing data
-    await payload.delete({
-      collection: 'locations',
-      where: {},
-    })
-
-    console.log('Cleared existing location data')
+    const { mediaMap } = await seedMedia(payload)
 
     // Insert new data
     let created = 0
     for (const item of locationItems) {
       try {
-        await payload.create({
+        const slug = slugify(item.title || '', { lower: true, strict: true, trim: true })
+
+        const featuredFilename = (mapListingToMedia.Locations || []).find(
+          (f: string) => path.parse(f).name === slug,
+        )
+        const featuredImageId = featuredFilename ? mediaMap[featuredFilename] : undefined
+
+        const bucket: string[] = mapListingToMedia.Locations || []
+        const idx = featuredFilename ? bucket.indexOf(featuredFilename) : -1
+        const galleryFilenames: string[] = []
+        if (idx >= 0) {
+          for (let i = 1; i <= 2 && bucket.length > 1; i++) {
+            const next = bucket[(idx + i) % bucket.length]
+            galleryFilenames.push(next)
+          }
+        }
+        const galleryIds = galleryFilenames.map((fn) => mediaMap[fn]).filter(Boolean)
+
+        const dataWithMedia = {
+          ...item,
+          ...(featuredImageId ? { featuredImage: featuredImageId } : {}),
+          ...(galleryIds.length > 0 ? { gallery: galleryIds } : {}),
+        }
+
+        const existing = await payload.find({
           collection: 'locations',
-          data: item,
+          where: { slug: { equals: slug } },
+          limit: 1,
         })
-        created++
-        console.log(`Created location: ${item.title}`)
+
+        if (existing.totalDocs > 0) {
+          const doc = existing.docs[0]
+          await payload.update({ collection: 'locations', id: doc.id, data: dataWithMedia })
+          console.log(`Updated location: ${item.title}`)
+        } else {
+          await payload.create({ collection: 'locations', data: dataWithMedia })
+          created++
+          console.log(`Created location: ${item.title}`)
+        }
       } catch (error) {
         console.error(`Failed to create location "${item.title}":`, error)
       }
