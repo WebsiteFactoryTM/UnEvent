@@ -20,14 +20,17 @@ import {
   Location,
   Facility,
   Service,
+  City,
 } from "@/types/payload-types";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
-import { fetchListing } from "@/lib/api/listings";
+import { fetchListing, fetchSimilarListings } from "@/lib/api/listings";
 import { LocationFacilities } from "@/components/listing/location/LocationFacilities";
 import { LocationCapacity } from "@/components/listing/location/LocationCapacity";
 import { ServiceOfferTags } from "@/components/listing/service/ServiceOfferTags";
+import { ListingRecommendations } from "@/components/listing/shared/ListingRecommendations";
+import { ListingType as SuitableForType } from "@/types/payload-types";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -39,21 +42,24 @@ export default async function DetailPage({
   const { listingType, slug } = await params;
   if (!listingTypes.includes(listingType as any)) notFound();
 
-  let listing: Listing | null = null;
+  // let listing: Listing | null = null;
 
   const session = await getServerSession(authOptions);
   const accessToken = session?.accessToken;
 
   const listingTypeUrl = getListingTypeSlug(listingType);
-  const { data, error } = await fetchListing(
+  const {
+    data: listing,
+    error,
+  }: { data: Listing | null; error: Error | null } = await fetchListing(
     listingTypeUrl as ListingType,
     slug,
     accessToken,
   );
-  if (error || !data) {
+  if (error || !listing) {
     notFound();
   }
-  listing = data;
+  // listing = data;
   const city = typeof listing?.city === "object" ? listing?.city : null;
   const cityName = city?.name ?? "";
   const citySlug = city?.slug ?? "";
@@ -61,6 +67,14 @@ export default async function DetailPage({
   const description = listing?.description ?? "";
 
   const jsonLd = buildJsonLd(listingType as ListingType, listing);
+
+  const similarListings = await fetchSimilarListings(
+    "servicii",
+    (listing as Location | Service)?.suitableFor as SuitableForType[],
+    city as City,
+    10,
+    accessToken,
+  );
 
   return (
     <>
@@ -147,11 +161,13 @@ export default async function DetailPage({
               </div>
             </div>
           </div>
-          {/* <ListingRecommendations
-            type={listingType as ListingType}
-            data={raw}
-            similar={similar}
-          /> */}
+          <ListingRecommendations
+            typeRecommendations={listingType as ListingType}
+            city={city as City}
+            suitableFor={
+              (listing as Location | Service)?.suitableFor as SuitableForType[]
+            }
+          />
         </div>
       </div>
     </>

@@ -1,15 +1,21 @@
-import { ListingCard } from "@/components/archives/ListingCard"
-import type { Service, Media, Profile, City } from "@/payload-types"
+import { ListingCard } from "@/components/archives/ListingCard";
+import type { Service, Media, Profile, City } from "@/types/payload-types";
 
 interface ServiceRecommendationsProps {
-  service: Service
-  similarServices: Service[]
+  service: Service;
+  similarServices: Service[];
 }
 
-export default function ServiceRecommendations({ service, similarServices }: ServiceRecommendationsProps) {
-  const cityName = typeof service.city === "object" && service.city ? service.city.name : "România"
+export default function ServiceRecommendations({
+  service,
+  similarServices,
+}: ServiceRecommendationsProps) {
+  const cityName =
+    typeof service.city === "object" && service.city
+      ? service.city.name
+      : "România";
 
-  if (similarServices.length === 0) return null
+  if (similarServices.length === 0) return null;
 
   return (
     <div className="glass-card p-6 md:p-8 space-y-6">
@@ -18,28 +24,33 @@ export default function ServiceRecommendations({ service, similarServices }: Ser
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {similarServices.map((similarService) => {
           const featuredImage =
-            similarService.featuredImage && typeof similarService.featuredImage === "object"
+            similarService.featuredImage &&
+            typeof similarService.featuredImage === "object"
               ? (similarService.featuredImage as Media)
-              : null
+              : null;
 
           const owner =
-            similarService.owner && typeof similarService.owner === "object" ? (similarService.owner as Profile) : null
+            similarService.owner && typeof similarService.owner === "object"
+              ? (similarService.owner as Profile)
+              : null;
 
           const city =
-            similarService.city && typeof similarService.city === "object" ? (similarService.city as City) : null
+            similarService.city && typeof similarService.city === "object"
+              ? (similarService.city as City)
+              : null;
 
           const serviceType =
             Array.isArray(similarService.type) && similarService.type.length > 0
               ? typeof similarService.type[0] === "object"
                 ? similarService.type[0].title
                 : "Serviciu"
-              : "Serviciu"
+              : "Serviciu";
 
-          const verified = owner?.verified?.status === "verified"
+          const verified = owner?.verified?.status === "verified";
 
           const priceRange = similarService.pricing?.amount
             ? `de la ${similarService.pricing.amount} ${similarService.pricing.currency || "RON"} / ${similarService.pricing.period || "eveniment"}`
-            : undefined
+            : undefined;
 
           return (
             <ListingCard
@@ -64,9 +75,9 @@ export default function ServiceRecommendations({ service, similarServices }: Ser
               listingType="servicii"
               priceRange={priceRange}
             />
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }

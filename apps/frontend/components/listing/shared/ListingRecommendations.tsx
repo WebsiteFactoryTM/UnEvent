@@ -1,30 +1,27 @@
 "use client";
 
 import type { ListingType } from "@/types/listings";
+import { City, ListingType as SuitableForType } from "@/types/payload-types";
 import EventRecommendations from "@/components/listing/event/EventRecommendations";
 import { LocationRecommendations } from "@/components/listing/location/LocationRecommendations";
 import ServiceRecommendations from "@/components/listing/service/ServiceRecommendations";
 
 export function ListingRecommendations({
-  type,
-  data,
-  similar,
+  typeRecommendations,
+  city,
+  suitableFor,
 }: {
-  type: ListingType;
-  data: any;
-  similar: any[];
+  typeRecommendations: ListingType;
+  city: City;
+  suitableFor: (number | SuitableForType)[];
 }) {
-  if (type === "evenimente") {
-    const cityName =
-      typeof data?.city === "object" && data?.city ? data.city.name : "România";
-    return <EventRecommendations cityName={cityName} similarEvents={similar} />;
-  }
-  if (type === "locatii")
-    return (
-      <LocationRecommendations
-        currentLocation={data}
-        similarLocations={similar}
-      />
-    );
-  return <ServiceRecommendations service={data} similarServices={similar} />;
+  // console.log("city", city);
+  // console.log("suitableFor", suitableFor);
+  // console.log("typeRecommendations", typeRecommendations);
+
+  return (
+    <div>
+      <h2>Recomandări</h2>
+    </div>
+  );
 }

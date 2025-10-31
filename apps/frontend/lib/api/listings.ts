@@ -1,6 +1,7 @@
 import { Listing } from "@/types/listings";
 import { ListingType } from "@/types/listings";
 import { frontendTypeToCollectionSlug } from "./reviews";
+import { City, ListingType as SuitableForType } from "@/types/payload-types";
 
 export const fetchListing = async (
   listingType: ListingType,
@@ -77,5 +78,53 @@ export const fetchTopListings = async (
     throw new Error(
       `Failed to fetch top listings: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
+  }
+};
+
+export const fetchSimilarListings = async (
+  listingType: ListingType,
+  suitableFor: (number | SuitableForType)[],
+  city: City,
+  limit: number = 10,
+  accessToken?: string,
+): Promise<Listing[]> => {
+  try {
+    const collectionSlug = frontendTypeToCollectionSlug(listingType);
+    const url = new URL(
+      `/api/${collectionSlug}`,
+      process.env.NEXT_PUBLIC_API_URL,
+    );
+
+    url.searchParams.set("limit", String(limit));
+    url.searchParams.set("sort", "rating:asc");
+
+    suitableFor.forEach((item, i) => {
+      const id = typeof item === "number" ? item : item.id;
+      url.searchParams.set(`where[suitableFor][in][${i}]`, String(id));
+    });
+    url.searchParams.set("where[city][equals]", city.id.toString());
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      next: {
+        tags: [`${collectionSlug}_similar_listings_${city.slug}_${limit}`],
+        revalidate: 3600,
+      },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+    const data = await response.json();
+    console.log("Data from similar listings", data);
+    return data.docs as Listing[];
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error(errorMessage);
+    throw new Error(`Failed to fetch similar listings: ${errorMessage}`);
   }
 };
