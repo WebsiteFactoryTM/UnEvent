@@ -31,18 +31,17 @@ import { LocationCapacity } from "@/components/listing/location/LocationCapacity
 import { ServiceOfferTags } from "@/components/listing/service/ServiceOfferTags";
 import { ListingRecommendations } from "@/components/listing/shared/ListingRecommendations";
 import { ListingType as SuitableForType } from "@/types/payload-types";
+// import { RecommendedListings } from "@/components/home/carousels/RecommendedLocations";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
 export default async function DetailPage({
   params,
 }: {
-  params: { listingType: string; slug: string };
+  params: Promise<{ listingType: string; slug: string }>;
 }) {
   const { listingType, slug } = await params;
   if (!listingTypes.includes(listingType as any)) notFound();
-
-  // let listing: Listing | null = null;
 
   const session = await getServerSession(authOptions);
   const accessToken = session?.accessToken;
@@ -59,7 +58,7 @@ export default async function DetailPage({
   if (error || !listing) {
     notFound();
   }
-  // listing = data;
+
   const city = typeof listing?.city === "object" ? listing?.city : null;
   const cityName = city?.name ?? "";
   const citySlug = city?.slug ?? "";
@@ -67,14 +66,6 @@ export default async function DetailPage({
   const description = listing?.description ?? "";
 
   const jsonLd = buildJsonLd(listingType as ListingType, listing);
-
-  const similarListings = await fetchSimilarListings(
-    "servicii",
-    (listing as Location | Service)?.suitableFor as SuitableForType[],
-    city as City,
-    10,
-    accessToken,
-  );
 
   return (
     <>
@@ -161,13 +152,68 @@ export default async function DetailPage({
               </div>
             </div>
           </div>
-          <ListingRecommendations
-            typeRecommendations={listingType as ListingType}
-            city={city as City}
-            suitableFor={
-              (listing as Location | Service)?.suitableFor as SuitableForType[]
-            }
-          />
+          {listingType === "evenimente" && (
+            <ListingRecommendations
+              typeRecommendations={"evenimente" as ListingType}
+              city={city as City}
+              suitableFor={
+                (listing as Location | Service)?.suitableFor as (
+                  | number
+                  | SuitableForType
+                )[]
+              }
+              label="Explorează alte evenimente in aceeasi zona"
+              listingId={listing?.id}
+            />
+          )}
+
+          {["evenimente", "servicii"].includes(listingType) && (
+            <ListingRecommendations
+              typeRecommendations={"locatii" as ListingType}
+              city={city as City}
+              suitableFor={
+                (listing as Location | Service)?.suitableFor as (
+                  | number
+                  | SuitableForType
+                )[]
+              }
+              listingId={listing?.id}
+              label="Locații recomandate"
+              subLabel="Pentru evenimentul tău"
+            />
+          )}
+
+          {["locatii", "evenimente"].includes(listingType) && (
+            <ListingRecommendations
+              typeRecommendations={"servicii" as ListingType}
+              city={city as City}
+              suitableFor={
+                (listing as Location | Service)?.suitableFor as (
+                  | number
+                  | SuitableForType
+                )[]
+              }
+              listingId={listing?.id}
+              label="Servicii recomandate"
+              subLabel="Pentru evenimentul tău"
+            />
+          )}
+
+          {listingType !== "evenimente" && (
+            <ListingRecommendations
+              typeRecommendations={listingType as ListingType}
+              city={city as City}
+              suitableFor={
+                (listing as Location | Service)?.suitableFor as (
+                  | number
+                  | SuitableForType
+                )[]
+              }
+              label={`${listingType.charAt(0).toUpperCase() + listingType.slice(1)} similare`}
+              subLabel="Pentru evenimentul tău"
+              listingId={listing?.id}
+            />
+          )}
         </div>
       </div>
     </>
@@ -177,7 +223,7 @@ export default async function DetailPage({
 export async function generateMetadata({
   params,
 }: {
-  params: { listingType: string; slug: string };
+  params: Promise<{ listingType: string; slug: string }>;
 }): Promise<Metadata> {
   const { listingType, slug } = await params;
   if (!listingTypes.includes(listingType as any))

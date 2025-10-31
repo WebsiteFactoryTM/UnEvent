@@ -1,13 +1,24 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { FaLocationDot, FaUsers, FaHeart, FaStar } from "react-icons/fa6"
-import { mockLocations } from "@/mocks/home/locations"
-import Image from "next/image"
-import Link from "next/link"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { FaLocationDot, FaUsers, FaHeart, FaStar } from "react-icons/fa6";
+import { mockLocations } from "@/mocks/home/locations";
+import Image from "next/image";
+import Link from "next/link";
 
 export function RecommendedLocations() {
   return (
@@ -29,7 +40,10 @@ export function RecommendedLocations() {
         >
           <CarouselContent>
             {mockLocations.map((location) => (
-              <CarouselItem key={location.id} className="md:basis-1/2 lg:basis-1/3">
+              <CarouselItem
+                key={location.id}
+                className="md:basis-1/2 lg:basis-1/3"
+              >
                 <Card className="glass-card overflow-hidden h-full flex flex-col">
                   <CardHeader className="p-0 relative">
                     <div className="relative h-48 w-full">
@@ -40,7 +54,9 @@ export function RecommendedLocations() {
                         className="object-cover"
                       />
                       {location.verified && (
-                        <Badge className="absolute top-2 left-2 bg-green-500/90 backdrop-blur-sm">Verificat</Badge>
+                        <Badge className="absolute top-2 left-2 bg-green-500/90 backdrop-blur-sm">
+                          Verificat
+                        </Badge>
                       )}
                       <Button
                         size="icon"
@@ -53,8 +69,12 @@ export function RecommendedLocations() {
                   </CardHeader>
 
                   <CardContent className="flex-1 p-4 space-y-3">
-                    <h3 className="font-semibold text-lg line-clamp-2">{location.title}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-3">{location.description}</p>
+                    <h3 className="font-semibold text-lg line-clamp-2">
+                      {location.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-3">
+                      {location.description}
+                    </p>
 
                     <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
@@ -71,8 +91,12 @@ export function RecommendedLocations() {
                     {location.rating && (
                       <div className="flex items-center gap-1 text-sm">
                         <FaStar className="h-4 w-4 text-yellow-500" />
-                        <span className="font-semibold">{location.rating.average}</span>
-                        <span className="text-muted-foreground">· {location.rating.count} recenzii</span>
+                        <span className="font-semibold">
+                          {location.rating.average}
+                        </span>
+                        <span className="text-muted-foreground">
+                          · {location.rating.count} recenzii
+                        </span>
                       </div>
                     )}
                   </CardContent>
@@ -91,5 +115,5 @@ export function RecommendedLocations() {
         </Carousel>
       </div>
     </section>
-  )
+  );
 }

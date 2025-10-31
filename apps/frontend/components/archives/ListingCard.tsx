@@ -18,6 +18,7 @@ import {
 } from "react-icons/fa6";
 import Image from "next/image";
 import Link from "next/link";
+import type { Location } from "@/types/payload-types";
 
 interface ListingCardProps {
   id: number;
@@ -34,7 +35,7 @@ interface ListingCardProps {
   };
   views: number;
   listingType: "locatii" | "servicii" | "evenimente";
-  capacity?: number;
+  capacity?: Location["capacity"];
   priceRange?: string;
   date?: string;
   participants?: number;
@@ -57,6 +58,7 @@ export function ListingCard({
   date,
   participants,
 }: ListingCardProps) {
+  const { indoor } = capacity || {};
   return (
     <Card className="glass-card overflow-hidden h-full flex flex-col">
       <CardHeader className="p-0 relative">
@@ -94,10 +96,10 @@ export function ListingCard({
             <span>{city}</span>
           </div>
 
-          {capacity && (
+          {indoor && (
             <div className="flex items-center gap-1">
               <FaUsers className="h-4 w-4" />
-              <span>{capacity} persoane</span>
+              <span>{indoor} persoane</span>
             </div>
           )}
 

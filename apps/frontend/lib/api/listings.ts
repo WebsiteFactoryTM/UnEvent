@@ -83,8 +83,9 @@ export const fetchTopListings = async (
 
 export const fetchSimilarListings = async (
   listingType: ListingType,
-  suitableFor: (number | SuitableForType)[],
-  city: City,
+  listingId?: number,
+  city?: City,
+  suitableFor?: (number | SuitableForType)[],
   limit: number = 10,
   accessToken?: string,
 ): Promise<Listing[]> => {
@@ -98,18 +99,28 @@ export const fetchSimilarListings = async (
     url.searchParams.set("limit", String(limit));
     url.searchParams.set("sort", "rating:asc");
 
-    suitableFor.forEach((item, i) => {
-      const id = typeof item === "number" ? item : item.id;
-      url.searchParams.set(`where[suitableFor][in][${i}]`, String(id));
-    });
-    url.searchParams.set("where[city][equals]", city.id.toString());
+    if (suitableFor) {
+      suitableFor?.forEach((item, i) => {
+        const id = typeof item === "number" ? item : item.id;
+        url.searchParams.set(`where[suitableFor][in][${i}]`, String(id));
+      });
+    }
+    if (city) {
+      url.searchParams.set("where[city][equals]", city.id.toString());
+    }
+
+    if (listingId) {
+      url.searchParams.set("where[id][not_equals]", listingId.toString());
+    }
 
     const response = await fetch(url.toString(), {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
       next: {
-        tags: [`${collectionSlug}_similar_listings_${city.slug}_${limit}`],
+        tags: [
+          `${collectionSlug}_recommended_listings_${city?.slug ?? ""}_${limit}`,
+        ],
         revalidate: 3600,
       },
     });
@@ -119,7 +130,7 @@ export const fetchSimilarListings = async (
       throw new Error(errorMessage);
     }
     const data = await response.json();
-    console.log("Data from similar listings", data);
+
     return data.docs as Listing[];
   } catch (error) {
     const errorMessage =

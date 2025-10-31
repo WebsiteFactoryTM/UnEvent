@@ -3,7 +3,10 @@ import { listingsKeys } from "./listings.keys";
 import { fetchJson } from "./utils";
 import { fetchSimilarListings } from "@/lib/api/listings";
 import type { ListingType } from "@/types/listings";
-import type { City, ListingType as SuitableForType } from "@/types/payload-types";
+import type {
+  City,
+  ListingType as SuitableForType,
+} from "@/types/payload-types";
 import type { Listing } from "@/types/listings";
 
 export function useListings(
@@ -30,26 +33,38 @@ export function useListingDetail(type: string, id: number | string) {
 
 export function useSimilarListings(
   listingType: ListingType,
-  suitableFor: (number | SuitableForType)[],
-  city: City,
+  listingId?: number,
+  city?: City,
+  suitableFor?: (number | SuitableForType)[],
   limit: number = 10,
   accessToken?: string,
   enabled: boolean = true,
 ) {
-  const suitableForIds = suitableFor.map((item) =>
+  const suitableForIds = suitableFor?.map((item) =>
     typeof item === "number" ? item : item.id,
   );
 
+  // Avoid firing until we have any filter context (city or suitableFor)
+  const hasFilters = Boolean((suitableForIds && suitableForIds.length) || city);
+  const isEnabled = enabled && hasFilters;
+
   return useQuery<Listing[]>({
     queryKey: listingsKeys.list("similar", listingType, {
-      cityId: city.id,
+      listingId: listingId ?? undefined,
+      cityId: city?.id ?? undefined,
       suitableForIds,
       limit,
     }),
     queryFn: () =>
-      fetchSimilarListings(listingType, suitableFor, city, limit, accessToken),
-    enabled,
+      fetchSimilarListings(
+        listingType,
+        listingId,
+        city,
+        suitableFor,
+        limit,
+        accessToken,
+      ),
+    enabled: isEnabled,
     staleTime: 60 * 60 * 1000,
   });
 }
-
