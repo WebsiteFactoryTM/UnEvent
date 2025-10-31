@@ -167,7 +167,7 @@ export default async function DetailPage({
             />
           )}
 
-          {["evenimente", "servicii"].includes(listingType) && (
+          {listingType === "servicii" && (
             <ListingRecommendations
               typeRecommendations={"locatii" as ListingType}
               city={city as City}
@@ -183,7 +183,7 @@ export default async function DetailPage({
             />
           )}
 
-          {["locatii", "evenimente"].includes(listingType) && (
+          {listingType === "locatii" && (
             <ListingRecommendations
               typeRecommendations={"servicii" as ListingType}
               city={city as City}
