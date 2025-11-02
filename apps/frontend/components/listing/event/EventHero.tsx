@@ -9,8 +9,6 @@ interface EventHeroProps {
 }
 
 export default function EventHero({ event }: EventHeroProps) {
-  console.log(event);
-
   const cityName =
     typeof event?.city === "object" ? event?.city?.name : "România";
   const eventType =

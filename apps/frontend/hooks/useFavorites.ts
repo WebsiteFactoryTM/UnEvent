@@ -45,6 +45,8 @@ export function useFavorites({
     { previous?: boolean }
   >({
     mutationFn: async () => {
+      console.log("triggering favorite mutation");
+
       const slug = getListingTypeSlug(listingType);
       return toggleFavorite(
         slug as "events" | "locations" | "services",
@@ -62,6 +64,7 @@ export function useFavorites({
       if (ctx?.previous !== undefined) {
         queryClient.setQueryData<boolean>(favoriteKey, ctx.previous);
       }
+      return Promise.reject(_err);
     },
     onSuccess: (data) => {
       queryClient.setQueryData<boolean>(favoriteKey, data.isFavorite);
@@ -93,5 +96,6 @@ export function useFavorites({
     toggle: mutation.mutate,
     toggleAsync: mutation.mutateAsync,
     isToggling: mutation.isPending,
+    error: mutation.error,
   };
 }

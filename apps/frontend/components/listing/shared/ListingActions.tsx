@@ -45,7 +45,7 @@ export function ListingActions({
   isFavoritedByViewer,
   listingType,
 }: ListingActionsProps) {
-  const { isFavorited, toggle } = useFavorites({
+  const { isFavorited, toggleAsync } = useFavorites({
     listingType: listingType as ListingType,
     listingId: id,
     initialIsFavorited: isFavoritedByViewer,
@@ -53,14 +53,36 @@ export function ListingActions({
   const { toast } = useToast();
   const [isParticipating, setIsParticipating] = useState(false);
 
-  const handleFavorite = () => {
-    toggle();
-    toast({
-      title: isFavorited ? "Eliminat din favorite" : "Adăugat la favorite",
-      description: isFavorited
-        ? "Listarea a fost eliminată din favorite."
-        : "Listarea a fost adăugată la favorite.",
-    });
+  const handleFavorite = async () => {
+    try {
+      const result = await toggleAsync();
+      toast({
+        title: result.isFavorite
+          ? "Adăugat la favorite"
+          : "Eliminat din favorite",
+        description: result.isFavorite
+          ? "Listarea a fost adăugată la favorite."
+          : "Listarea a fost eliminată din favorite.",
+      });
+    } catch (e) {
+      const err = e as any;
+      const status = err?.status as number | undefined;
+      const message = (err?.message as string | undefined) || "";
+      if (status === 401 || /unauthorized/i.test(message)) {
+        toast({
+          title: "Autentificare necesară",
+          description: "Trebuie să te autentifici pentru a adăuga la favorite.",
+          variant: "destructive",
+        } as any);
+      } else {
+        toast({
+          title: "Eroare",
+          description:
+            message || "Nu am putut actualiza favoritele. Încearcă din nou.",
+          variant: " ",
+        } as any);
+      }
+    }
   };
 
   const handleShare = async () => {

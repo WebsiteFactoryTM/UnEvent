@@ -19,6 +19,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type { Location } from "@/types/payload-types";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useToast } from "@/hooks/use-toast";
 
 interface ListingCardProps {
   id: number;
@@ -39,6 +41,7 @@ interface ListingCardProps {
   priceRange?: string;
   date?: string;
   participants?: number;
+  initialIsFavorited?: boolean;
 }
 
 export function ListingCard({
@@ -57,8 +60,48 @@ export function ListingCard({
   priceRange,
   date,
   participants,
+  initialIsFavorited,
 }: ListingCardProps) {
   const { indoor } = capacity || {};
+  const { toast } = useToast();
+  const { toggleAsync, isFavorited, error } = useFavorites({
+    listingType,
+    listingId: id,
+    initialIsFavorited: initialIsFavorited ?? false,
+  });
+
+  const handleFavorite = async () => {
+    try {
+      const result = await toggleAsync();
+      toast({
+        title: result.isFavorite
+          ? "Adăugat la favorite"
+          : "Eliminat din favorite",
+        description: result.isFavorite
+          ? "Listarea a fost adăugată la favorite."
+          : "Listarea a fost eliminată din favorite.",
+      });
+    } catch (e) {
+      const err = e as any;
+      const status = err?.status as number | undefined;
+      const message = (err?.message as string | undefined) || "";
+      if (status === 401 || /unauthorized/i.test(message)) {
+        toast({
+          title: "Autentificare necesară",
+          description: "Trebuie să te autentifici pentru a adăuga la favorite.",
+          variant: "destructive",
+        } as any);
+      } else {
+        toast({
+          title: "Eroare",
+          description:
+            message || "Nu am putut actualiza favoritele. Încearcă din nou.",
+          variant: "destructive",
+        } as any);
+      }
+    }
+  };
+
   return (
     <Card className="glass-card overflow-hidden h-full flex flex-col">
       <CardHeader className="p-0 relative">
@@ -78,8 +121,11 @@ export function ListingCard({
             size="icon"
             variant="ghost"
             className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
+            onClick={handleFavorite}
           >
-            <FaHeart className="h-4 w-4" />
+            <FaHeart
+              className={`h-4 w-4 ${isFavorited ? "fill-red-500" : ""}`}
+            />
           </Button>
         </div>
       </CardHeader>
@@ -121,23 +167,22 @@ export function ListingCard({
             <FaEye className="h-4 w-4" />
             <span>{views.toLocaleString("ro-RO")}</span>
           </div>
-
-          <Badge variant="outline">{type}</Badge>
         </div>
+        <Badge variant="outline">{type.slice(0, 100)}...</Badge>
 
-        {priceRange && (
+        {priceRange ?? (
           <p className="text-sm font-semibold text-foreground">{priceRange}</p>
         )}
 
-        {rating && (
+        {rating && rating.average && rating.count ? (
           <div className="flex items-center gap-1 text-sm">
             <FaStar className="h-4 w-4 text-yellow-500" />
-            <span className="font-semibold">{rating.average}</span>
+            <span className="font-semibold">{rating?.average}</span>
             <span className="text-muted-foreground">
-              · {rating.count} recenzii
+              · {rating?.count} recenzii
             </span>
           </div>
-        )}
+        ) : null}
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
