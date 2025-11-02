@@ -110,8 +110,12 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    homeListings: HomeListing;
+  };
+  globalsSelect: {
+    homeListings: HomeListingsSelect<false> | HomeListingsSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -1692,6 +1696,32 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Listings displayed on the home page
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homeListings".
+ */
+export interface HomeListing {
+  id: number;
+  featuredLocations?: (number | Location)[] | null;
+  topServices?: (number | Service)[] | null;
+  upcomingEvents?: (number | Event)[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homeListings_select".
+ */
+export interface HomeListingsSelect<T extends boolean = true> {
+  featuredLocations?: T;
+  topServices?: T;
+  upcomingEvents?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

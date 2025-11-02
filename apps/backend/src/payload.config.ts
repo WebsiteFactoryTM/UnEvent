@@ -28,6 +28,8 @@ import { Reviews } from './collections/Reviews'
 
 import { incrementView } from './endpoints/recordViews'
 import { initFeedSchedulers } from './schedulers/feed'
+import { HomeConfig } from './collections/HomeConfig'
+import { homeHandler } from './endpoints/homeListings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -60,6 +62,11 @@ export default buildConfig({
       handler: feedHandler,
     },
     {
+      path: '/home',
+      method: 'get',
+      handler: homeHandler,
+    },
+    {
       path: '/increment-view',
       method: 'post',
       handler: incrementView,
@@ -81,6 +88,7 @@ export default buildConfig({
     ListingRank,
     Reviews,
   ],
+  globals: [HomeConfig],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

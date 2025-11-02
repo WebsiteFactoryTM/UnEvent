@@ -1,0 +1,134 @@
+import { Event, Location, Service } from '@/payload-types'
+import { Payload, PayloadHandler, PayloadRequest } from 'payload'
+
+type ShapedHomeListings = {
+  featuredLocations: Location[]
+  topServices: Service[]
+  upcomingEvents: Event[]
+  newListings: Location[]
+}
+
+type RawHomeListings = {
+  featuredLocations?: (number | Location)[] | null | undefined
+  topServices?: (number | Service)[] | null | undefined
+  upcomingEvents?: (number | Event)[] | null | undefined
+}
+
+export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
+  const { payload } = req
+  try {
+    let homeListings: RawHomeListings | null = null
+
+    homeListings = await req.payload.findGlobal({
+      slug: 'homeListings',
+      depth: 2,
+    })
+    const newListings = await payload.find({
+      collection: 'locations',
+      where: { status: { equals: 'approved' } },
+      limit: 6,
+      sort: '-createdAt',
+      depth: 1,
+    })
+
+    if (!homeListings) {
+      homeListings = await getHomeListings(req.payload)
+    }
+
+    const finalListings = { ...homeListings, newListings: newListings.docs }
+
+    const shaped = shapeHomeResponse(finalListings as ShapedHomeListings)
+    return new Response(JSON.stringify(shaped), { status: 200 })
+  } catch (error) {
+    console.error(error)
+    return new Response('Internal server error', { status: 500 })
+  }
+}
+
+const getHomeListings = async (
+  payload: Payload,
+): Promise<{
+  featuredLocations: (number | Location)[] | null | undefined
+  topServices: (number | Service)[] | null | undefined
+  upcomingEvents: (number | Event)[] | null | undefined
+  newListings: (number | Location)[] | null | undefined
+}> => {
+  try {
+    const [featuredLocations, topServices, upcomingEvents, newListings] = await Promise.all([
+      payload.find({
+        collection: 'locations',
+        where: { featured: { equals: true }, status: { equals: 'approved' } },
+        limit: 6,
+        sort: '-rating',
+        depth: 1,
+      }),
+      payload.find({
+        collection: 'services',
+        where: { status: { equals: 'approved' } },
+        limit: 6,
+        sort: '-rating',
+        depth: 1,
+      }),
+      payload.find({
+        collection: 'events',
+        where: { status: { equals: 'approved' } },
+        limit: 6,
+        sort: 'startDate',
+        depth: 1,
+      }),
+      payload.find({
+        collection: 'locations',
+        where: { status: { equals: 'approved' } },
+        limit: 6,
+        sort: '-createdAt',
+        depth: 1,
+      }),
+    ])
+
+    return {
+      featuredLocations: featuredLocations.docs,
+      topServices: topServices.docs,
+      upcomingEvents: upcomingEvents.docs,
+      newListings: newListings.docs,
+    }
+  } catch (err) {
+    payload.logger.error('Home endpoint error:', err)
+    throw new Error('Failed to fetch home data')
+  }
+}
+
+function shapeHomeResponse(home: {
+  featuredLocations: Partial<Location>[] | null | undefined
+  topServices: Partial<Service>[] | null | undefined
+  upcomingEvents: Partial<Event>[] | null | undefined
+  newListings: Partial<Location>[] | null | undefined
+}) {
+  return {
+    featuredLocations: home.featuredLocations?.map(shapeListing),
+    topServices: home.topServices?.map(shapeListing),
+    upcomingEvents: home.upcomingEvents?.map(shapeListing),
+    newListings: home.newListings?.map(shapeListing),
+  }
+}
+
+function shapeListing(
+  doc: Partial<Location> | Partial<Service> | Partial<Event>,
+): Partial<Location | Service | Event> {
+  return {
+    id: doc?.id,
+    title: doc?.title,
+    slug: doc?.slug,
+    rating: typeof doc?.rating === 'number' ? doc.rating : undefined,
+    reviewCount: typeof doc?.reviewCount === 'number' ? doc.reviewCount : undefined,
+    tier: doc?.tier,
+    featuredImage: typeof doc?.featuredImage === 'object' ? doc.featuredImage : null,
+    city: typeof doc?.city === 'object' ? doc.city : null,
+    description: doc?.description,
+    capacity: (doc as Location)?.capacity,
+    startDate: (doc as Event)?.startDate,
+    endDate: (doc as Event)?.endDate,
+    type: doc?.type,
+    isFavoritedByViewer:
+      typeof doc?.isFavoritedByViewer === 'boolean' ? doc.isFavoritedByViewer : false,
+  }
+}
