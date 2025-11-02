@@ -1,9 +1,20 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import {
   FaLocationDot,
   FaCalendarDays,
@@ -13,12 +24,24 @@ import {
   FaUsers,
   FaWrench,
   FaCircleCheck,
-} from "react-icons/fa6"
-import { mockNewListings } from "@/mocks/home/new-listings"
-import Image from "next/image"
-import Link from "next/link"
+} from "react-icons/fa6";
+import { mockNewListings } from "@/mocks/home/new-listings";
+import Image from "next/image";
+import Link from "next/link";
+import { CarouselSkeleton } from "./CarouselSkeleton";
+import { ListingCard } from "@/components/archives/ListingCard";
+import { City, Media } from "@/types/payload-types";
+import { ListingType } from "@/types/listings";
 
-export function NewListings() {
+export function NewListings({ newListings }: { newListings: any }) {
+  if (!newListings) return <CarouselSkeleton count={3} showAvatar={false} />;
+
+  if (newListings.length === 0)
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        <p>Nu sunt rezultate pentru această căutare</p>
+      </div>
+    );
   return (
     <section className="container mx-auto px-4 py-12">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -37,9 +60,12 @@ export function NewListings() {
           className="w-full"
         >
           <CarouselContent>
-            {mockNewListings.map((listing) => (
-              <CarouselItem key={`${listing.type}-${listing.id}`} className="md:basis-1/2 lg:basis-1/3">
-                <Card className="glass-card overflow-hidden h-full flex flex-col">
+            {newListings?.map((listing: any) => (
+              <CarouselItem
+                key={`${listing.type}-${listing.id}`}
+                className="md:basis-1/2 lg:basis-1/3"
+              >
+                {/* <Card className="glass-card overflow-hidden h-full flex flex-col">
                   <CardHeader className="p-0 relative">
                     <div className="relative h-48 w-full">
                       <Image
@@ -48,7 +74,9 @@ export function NewListings() {
                         fill
                         className="object-cover"
                       />
-                      <Badge className="absolute top-2 left-2 bg-blue-500/90 backdrop-blur-sm">Nou</Badge>
+                      <Badge className="absolute top-2 left-2 bg-blue-500/90 backdrop-blur-sm">
+                        Nou
+                      </Badge>
                       {listing.verified && (
                         <Badge className="absolute top-2 left-16 bg-green-500/90 backdrop-blur-sm flex items-center gap-1">
                           <FaCircleCheck className="h-3 w-3" />
@@ -66,9 +94,13 @@ export function NewListings() {
                   </CardHeader>
 
                   <CardContent className="flex-1 p-4 space-y-3">
-                    <h3 className="font-semibold text-lg line-clamp-2">{listing.title}</h3>
+                    <h3 className="font-semibold text-lg line-clamp-2">
+                      {listing.title}
+                    </h3>
                     {listing.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-3">{listing.description}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-3">
+                        {listing.description}
+                      </p>
                     )}
 
                     <div className="space-y-2 text-sm text-muted-foreground">
@@ -81,12 +113,16 @@ export function NewListings() {
                           {listing.capacity && (
                             <div className="flex items-center gap-2">
                               <FaUsers className="h-4 w-4" />
-                              <span>Capacitate: {listing.capacity} persoane</span>
+                              <span>
+                                Capacitate: {listing.capacity} persoane
+                              </span>
                             </div>
                           )}
                           {listing.listingType && (
                             <div className="flex items-center gap-2">
-                              <span className="font-medium">{listing.listingType}</span>
+                              <span className="font-medium">
+                                {listing.listingType}
+                              </span>
                             </div>
                           )}
                         </>
@@ -96,7 +132,11 @@ export function NewListings() {
                         <>
                           <div className="flex items-center gap-2">
                             <FaWrench className="h-4 w-4" />
-                            <span>{listing.serviceType}</span>
+                            <span>
+                              {listing.type
+                                .map((type: any) => type.title)
+                                .join(", ")}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
                             <FaLocationDot className="h-4 w-4" />
@@ -128,8 +168,12 @@ export function NewListings() {
                     {listing.rating && (
                       <div className="flex items-center gap-1 text-sm">
                         <FaStar className="h-4 w-4 text-yellow-500" />
-                        <span className="font-semibold">{listing.rating.average}</span>
-                        <span className="text-muted-foreground">· {listing.rating.count} recenzii</span>
+                        <span className="font-semibold">
+                          {listing.rating.average}
+                        </span>
+                        <span className="text-muted-foreground">
+                          · {listing.rating.count} recenzii
+                        </span>
                       </div>
                     )}
                   </CardContent>
@@ -139,17 +183,41 @@ export function NewListings() {
                       <Link
                         href={
                           listing.type === "location"
-                            ? `/locatii/${listing.id}`
+                            ? `/locatii/${listing.slug}`
                             : listing.type === "service"
-                              ? `/servicii/${listing.id}`
-                              : `/evenimente/${listing.id}`
+                              ? `/servicii/${listing.slug}`
+                              : `/evenimente/${listing.slug}`
                         }
                       >
                         Vezi detalii
                       </Link>
                     </Button>
                   </CardFooter>
-                </Card>
+                </Card> */}
+                <ListingCard
+                  key={`${listing.slug}`}
+                  id={listing.id}
+                  name={listing.title}
+                  slug={listing.slug || ""}
+                  description={listing.description || ""}
+                  image={
+                    (listing.featuredImage as Media | null)?.url ||
+                    "/placeholder.svg"
+                  }
+                  city={(listing.city as City | null)?.name || "România"}
+                  type={listing.type.map((type: any) => type.title).join(", ")}
+                  verified={listing.status === "approved"}
+                  rating={
+                    listing.rating && listing.reviewCount
+                      ? {
+                          average: listing.rating,
+                          count: listing.reviewCount,
+                        }
+                      : undefined
+                  }
+                  views={listing.views || 0}
+                  listingType={"locatii" as ListingType}
+                />
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -158,5 +226,5 @@ export function NewListings() {
         </Carousel>
       </div>
     </section>
-  )
+  );
 }

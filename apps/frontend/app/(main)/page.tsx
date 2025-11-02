@@ -9,6 +9,7 @@ import { NewListings } from "@/components/home/carousels/NewListings";
 import { CTAEarn } from "@/components/home/CTAEarn";
 import { AboutSlider } from "@/components/home/AboutSlider";
 import { CarouselSkeleton } from "@/components/home/carousels/CarouselSkeleton";
+import { fetchHomeListings } from "@/lib/api/home";
 
 export const metadata: Metadata = {
   title: "Locații de nuntă, săli evenimente, DJ & catering | UN:EVENT",
@@ -18,7 +19,17 @@ export const metadata: Metadata = {
     "locații de nuntă,săli evenimente,DJ evenimente,trupă nuntă,catering evenimente,formații muzică,foto-video evenimente,închiriere spații,organizare evenimente,locații petreceri,săli conferințe,evenimente România",
 };
 
-export default function HomePage() {
+export const revalidate = 3600; // ISR: revalidate every hour
+
+export default async function HomePage() {
+  let homeListings = null;
+  try {
+    homeListings = await fetchHomeListings();
+    // console.log(homeListings);
+  } catch (error) {
+    console.error("Error fetching home listings:", error);
+  }
+
   return (
     <main className="min-h-screen">
       <Hero />
@@ -26,19 +37,21 @@ export default function HomePage() {
       <CTAInline />
 
       <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-        <RecommendedLocations />
+        <RecommendedLocations
+          featuredLocations={homeListings?.featuredLocations}
+        />
       </Suspense>
 
       <Suspense fallback={<CarouselSkeleton count={3} showAvatar={true} />}>
-        <RecommendedServices />
+        <RecommendedServices topServices={homeListings?.topServices} />
       </Suspense>
 
       <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-        <PopularEvents />
+        <PopularEvents upcomingEvents={homeListings?.upcomingEvents} />
       </Suspense>
 
       <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-        <NewListings />
+        <NewListings newListings={homeListings?.newListings} />
       </Suspense>
 
       <CTAEarn />
