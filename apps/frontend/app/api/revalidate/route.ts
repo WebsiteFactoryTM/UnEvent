@@ -6,7 +6,6 @@ export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get("slug");
   const secret = req.nextUrl.searchParams.get("secret");
 
-  console.log(collection, slug, secret);
   if (
     !secret ||
     secret !== process.env.NEXT_PRIVATE_REVALIDATION_KEY ||
@@ -20,6 +19,7 @@ export async function GET(req: NextRequest) {
 
   if (typeof collection === "string" && typeof slug === "string") {
     revalidateTag(`${collection}_${slug}`);
+    revalidateTag(`home-listings`);
     return NextResponse.json({ revalidated: true, now: Date.now() });
   }
 
