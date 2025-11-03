@@ -1,22 +1,28 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { listingTypes, getListingTypeLabel } from "@/config/archives";
-import { archiveLocations } from "@/mocks/archives/locations";
-import { archiveServices } from "@/mocks/archives/services";
-import { archiveEvents } from "@/mocks/archives/events";
-import { ListingCard } from "@/components/archives/ListingCard";
-import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
+import {
+  listingTypes,
+  getListingTypeLabel,
+  getTypesByListingType,
+} from "@/config/archives";
 import { AddListingButton } from "@/components/archives/AddListingButton";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import Link from "next/link";
-import Image from "next/image";
-import { City, Media } from "@/types/payload-types";
-import { getPopularCities } from "@/lib/api/cities";
-import { Listing, ListingType } from "@/types/listings";
-import { fetchTopListings } from "@/lib/api/listings";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
-export const revalidate = 86400; // ISR: revalidate every day (24 hours)
+import {
+  fetchHubFeaturedListings,
+  fetchHubPopularCities,
+  fetchHubTopByCity,
+  fetchHubTypeaheadCities,
+} from "@/lib/api/hub";
+import { City } from "@/types/payload-types";
+import { CityTypeahead } from "@/components/hub/CityTypeahead";
+import { OccasionChips } from "@/components/hub/OccasionChips";
+import { CityRow } from "@/components/hub/CityRow";
+import FeaturedGrid from "@/components/hub/FeaturedGrid";
+import PopularSearches from "@/components/hub/PopularSearches";
+import { normalizeListing, type ListingCardData } from "@/lib/normalizers/hub";
+export const revalidate = 3600; // ISR: revalidate every hour
 
 export async function generateStaticParams() {
   return listingTypes.map((listingType) => ({
@@ -30,11 +36,23 @@ export async function generateMetadata({
   params: Promise<{ listingType: string }>;
 }): Promise<Metadata> {
   const { listingType } = await params;
-  const label = getListingTypeLabel(listingType);
+  const titles: Record<string, string> = {
+    locatii: "Locații pentru evenimente în România | UN:EVENT",
+    servicii: "Servicii pentru evenimente în România | UN:EVENT",
+    evenimente: "Evenimente în România | UN:EVENT",
+  };
+  const descriptions: Record<string, string> = {
+    locatii: "Descoperă locații verificate pentru evenimente în toată România.",
+    servicii: "Găsește servicii pentru evenimente — verificate și recenzate.",
+    evenimente: "Evenimente în toată România — descoperă ce urmează.",
+  };
 
+  const title = titles[listingType] || "UN:EVENT";
+  const description = descriptions[listingType] || "";
   return {
-    title: `Top 15 ${label} în România | UnEvent`,
-    description: `Descoperă cele mai bune ${label.toLowerCase()} din România. Verificate, recenzii reale și oferte exclusive.`,
+    title,
+    description,
+    alternates: { canonical: `/${listingType}` },
   };
 }
 
@@ -51,107 +69,121 @@ export default async function ListingTypePage({
   const session = await getServerSession(authOptions);
   const accessToken = (session as any)?.accessToken as string | undefined;
 
-  const [popularCities, listings] = await Promise.all([
-    getPopularCities(),
-    fetchTopListings(listingType as ListingType, 15, accessToken),
+  const [popularCities, typeaheadCities, featured] = await Promise.all([
+    fetchHubPopularCities(6),
+    fetchHubTypeaheadCities(50),
+    fetchHubFeaturedListings(listingType as any, 12, accessToken),
   ]);
-  const label = getListingTypeLabel(listingType);
+
+  // Load top listings per city in parallel
+  const cityRows = await Promise.all(
+    popularCities.map(async (c: City) => {
+      const items = await fetchHubTopByCity(
+        listingType as any,
+        c.id,
+        9,
+        accessToken,
+      );
+      const normalized: ListingCardData[] = items.map((it) =>
+        normalizeListing(listingType as any, it),
+      );
+      return {
+        citySlug: c.slug!,
+        cityLabel: c.name,
+        items: normalized,
+      };
+    }),
+  );
+
+  const featuredNormalized: ListingCardData[] = featured.map((it) =>
+    normalizeListing(listingType as any, it),
+  );
+
+  const options = getTypesByListingType(listingType).map((t) => ({
+    slug: t.slug,
+    label: t.label,
+  }));
+
+  // Popular searches: build a small set of deep links from city/type combos
+  const popularSearchChips = cityRows.slice(0, 4).flatMap((row) =>
+    options.slice(0, 3).map((opt) => ({
+      citySlug: row.citySlug,
+      cityLabel: row.cityLabel,
+      typeSlug: opt.slug,
+      typeLabel: opt.label,
+    })),
+  );
+
+  const h1Titles: Record<string, string> = {
+    locatii: "Locații pentru evenimente în România",
+    servicii: "Servicii pentru evenimente în România",
+    evenimente: "Evenimente în România",
+  };
+  const h1 = h1Titles[listingType];
 
   return (
     <>
       <ScrollToTop />
-
       <div className="min-h-screen">
         <div className="container mx-auto px-4 py-12">
-          <div className="max-w-7xl mx-auto space-y-8">
-            {/* Header with add button */}
+          <div className="max-w-7xl mx-auto space-y-12">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="space-y-4 flex-1">
                 <h1 className="text-4xl md:text-5xl font-bold text-balance">
-                  Top {label} în România
+                  {h1}
                 </h1>
                 <p className="text-lg text-muted-foreground text-pretty">
-                  Descoperă cele mai bune {label.toLowerCase()} din România
-                  verificate și recenzate de comunitatea noastră.
+                  Orientare rapidă: caută un oraș, explorează tipuri relevante
+                  și descoperă recomandările noastre.
                 </p>
               </div>
               <AddListingButton listingType={listingType as any} />
             </div>
 
-            {/* Filter Component */}
-            <ArchiveFilter listingType={listingType as any} />
+            {/* City typeahead */}
+            <section className="space-y-4">
+              <h2 className="sr-only">Caută după oraș</h2>
+              <CityTypeahead
+                listingType={listingType as any}
+                cities={typeaheadCities}
+              />
+            </section>
 
-            <section className="py-12">
-              <h2 className="text-5xl font-semibold mb-6 text-center">
-                Caută după oraș
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {popularCities.map((city: City) => {
-                  const image = city.image as Media | null;
-                  if (image === null) return null;
-                  return (
-                    <Link
-                      key={city.slug}
-                      href={`/${listingType}/oras/${city.slug}`}
-                      className="glass-card relative rounded-xl overflow-hidden group"
-                    >
-                      <Image
-                        src={image?.url || "/placeholder.jpg"}
-                        alt={image?.alt || city.name}
-                        width={100}
-                        height={100}
-                        className="object-cover w-full h-64 transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <span className="text-white text-xl font-semibold">
-                          {city.name}
-                        </span>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
+            {/* Occasion/type chips */}
+            <section className="space-y-4">
+              <h2 className="sr-only">Tipuri populare</h2>
+              <OccasionChips
+                listingType={listingType as any}
+                options={options}
+                cities={typeaheadCities}
+              />
             </section>
-            <div className="flex justify-center">
-              <h3 className="text-3xl font-semibold mb-6 text-center">Sau</h3>
-            </div>
-            <section className="py-16 bg-muted/30">
-              <h2 className="text-5xl font-semibold mb-6 text-center">
-                Alege top {label} din România
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {listings.slice(0, 6).map((listing, index) => (
-                  <ListingCard
-                    key={`${listing.slug}-${index}`}
-                    id={listing.id}
-                    name={listing.title}
-                    slug={listing.slug || ""}
-                    description={listing.description || ""}
-                    image={{
-                      url:
-                        (listing.featuredImage as Media)?.url ||
-                        "/placeholder.svg",
-                      alt:
-                        (listing.featuredImage as Media)?.alt || listing.title,
-                    }}
-                    city={(listing.city as City | null)?.name || "România"}
-                    type={listingType}
-                    verified={listing.status === "approved"}
-                    rating={
-                      listing.rating && listing.reviewCount
-                        ? {
-                            average: listing.rating,
-                            count: listing.reviewCount,
-                          }
-                        : undefined
-                    }
-                    views={listing.views || 0}
-                    listingType={listingType as ListingType}
-                    initialIsFavorited={(listing as any)?.isFavoritedByViewer}
-                  />
-                ))}
-              </div>
-            </section>
+
+            {/* Popular city rows */}
+            {cityRows.map((row) => {
+              if (row.items.length < 2) return null;
+              return (
+                <CityRow
+                  key={row.citySlug}
+                  listingType={listingType as any}
+                  citySlug={row.citySlug}
+                  cityLabel={row.cityLabel}
+                  items={row.items}
+                />
+              );
+            })}
+
+            {/* Featured national */}
+            <FeaturedGrid
+              listingType={listingType as any}
+              items={featuredNormalized}
+            />
+
+            {/* Popular searches chips */}
+            <PopularSearches
+              listingType={listingType as any}
+              items={popularSearchChips}
+            />
           </div>
         </div>
       </div>
