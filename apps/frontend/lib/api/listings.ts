@@ -1,7 +1,11 @@
+"use server";
 import { Listing } from "@/types/listings";
 import { ListingType } from "@/types/listings";
 import { frontendTypeToCollectionSlug } from "./reviews";
 import { City, ListingType as SuitableForType } from "@/types/payload-types";
+import { getRedis } from "../redis";
+import { redisKey } from "../react-query/utils";
+import { listingsKeys } from "../cacheKeys";
 
 export const fetchListing = async (
   listingType: ListingType,
@@ -89,7 +93,26 @@ export const fetchSimilarListings = async (
   limit: number = 10,
   accessToken?: string,
 ): Promise<Listing[]> => {
+  const redis = getRedis();
+  const cacheKey = redisKey(
+    listingsKeys.list("similar", frontendTypeToCollectionSlug(listingType), {
+      listingId: listingId ?? undefined,
+      cityId: city?.id ?? undefined,
+      suitableForIds: suitableFor?.map((item) =>
+        typeof item === "number" ? item : item.id,
+      ),
+      limit,
+    }),
+  );
   try {
+    const cachedData = await redis.get(cacheKey);
+
+    if (cachedData) {
+      console.log("Cached data found for similar listings");
+      return JSON.parse(cachedData);
+    }
+
+    console.log("🌐 Fetching similar listings from API...");
     const collectionSlug = frontendTypeToCollectionSlug(listingType);
     const url = new URL(
       `/api/${collectionSlug}`,
@@ -117,12 +140,6 @@ export const fetchSimilarListings = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-      next: {
-        tags: [
-          `${collectionSlug}_recommended_listings_${city?.slug ?? ""}_${limit}`,
-        ],
-        revalidate: 3600,
-      },
     });
     if (!response.ok) {
       const errorMessage = await response.text();
@@ -130,12 +147,15 @@ export const fetchSimilarListings = async (
       throw new Error(errorMessage);
     }
     const data = await response.json();
-
+    await redis.set(cacheKey, JSON.stringify(data.docs as Listing[]), "EX", 60);
     return data.docs as Listing[];
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
     console.error(errorMessage);
-    throw new Error(`Failed to fetch similar listings: ${errorMessage}`);
+    // optional: fallback to last cached data if available
+    const fallback = await redis.get(cacheKey);
+    if (fallback) return JSON.parse(fallback);
+    throw new Error("No cached similar listings available");
   }
 };
