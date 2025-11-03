@@ -32,15 +32,50 @@ import { CarouselSkeleton } from "./CarouselSkeleton";
 import { ListingCard } from "@/components/archives/ListingCard";
 import { City, Media } from "@/types/payload-types";
 import { ListingType } from "@/types/listings";
+import { useQuery } from "@tanstack/react-query";
+import { fetchHomeListings } from "@/lib/api/home";
 
-export function NewListings({ newListings }: { newListings: any }) {
-  if (!newListings) return <CarouselSkeleton count={3} showAvatar={false} />;
+export function NewListings() {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["listings", "home"],
+    queryFn: fetchHomeListings,
+    staleTime: 1000 * 60 * 5,
+  });
 
+  const newListings = data?.newListings ?? [];
+
+  // 1️⃣ Loading skeleton
+  if (isLoading) return <CarouselSkeleton count={3} showAvatar={true} />;
+
+  // 2️⃣ Error state
+  if (isError)
+    return (
+      <section className="container mx-auto px-4 py-12 text-center">
+        <p className="text-muted-foreground">
+          Nu s-au putut încărca listările noi.
+        </p>
+        <p className="text-sm text-muted-foreground/70">
+          {error instanceof Error ? error.message : "A apărut o eroare."}
+        </p>
+        <Button
+          onClick={() => location.reload()}
+          variant="outline"
+          className="mt-4"
+        >
+          Reîncarcă pagina
+        </Button>
+      </section>
+    );
+
+  // 3️⃣ Empty list
   if (newListings.length === 0)
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p>Nu sunt rezultate pentru această căutare</p>
-      </div>
+      <section className="container mx-auto px-4 py-12 text-center text-muted-foreground">
+        <p>Momentan nu există listări noi.</p>
+        <Button asChild variant="ghost" className="mt-2">
+          <Link href="/servicii">Vezi toate serviciile</Link>
+        </Button>
+      </section>
     );
   return (
     <section className="container mx-auto px-4 py-12">
@@ -48,7 +83,7 @@ export function NewListings({ newListings }: { newListings: any }) {
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold">Listări noi</h2>
           <Button asChild variant="ghost">
-            <Link href="/listari-noi">Vezi toate</Link>
+            <Link href="/locatii">Vezi toate</Link>
           </Button>
         </div>
 
@@ -217,6 +252,7 @@ export function NewListings({ newListings }: { newListings: any }) {
                   }
                   views={listing.views || 0}
                   listingType={"locatii" as ListingType}
+                  initialIsFavorited={listing.isFavoritedByViewer}
                 />
               </CarouselItem>
             ))}

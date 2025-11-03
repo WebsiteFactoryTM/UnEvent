@@ -10,6 +10,10 @@ import { CTAEarn } from "@/components/home/CTAEarn";
 import { AboutSlider } from "@/components/home/AboutSlider";
 import { CarouselSkeleton } from "@/components/home/carousels/CarouselSkeleton";
 import { fetchHomeListings } from "@/lib/api/home";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { getQueryClient } from "@/lib/react-query";
 
 export const metadata: Metadata = {
   title: "Locații de nuntă, săli evenimente, DJ & catering | UN:EVENT",
@@ -19,44 +23,56 @@ export const metadata: Metadata = {
     "locații de nuntă,săli evenimente,DJ evenimente,trupă nuntă,catering evenimente,formații muzică,foto-video evenimente,închiriere spații,organizare evenimente,locații petreceri,săli conferințe,evenimente România",
 };
 
-export const revalidate = 3600; // ISR: revalidate every hour
+export const revalidate = 60; // ISR: revalidate every hour
 
 export default async function HomePage() {
-  let homeListings = null;
+  const queryClient = getQueryClient();
+
   try {
-    homeListings = await fetchHomeListings();
-    // console.log(homeListings);
+    await queryClient.prefetchQuery({
+      queryKey: ["listings", "home"],
+      queryFn: fetchHomeListings,
+    });
   } catch (error) {
-    console.error("Error fetching home listings:", error);
+    console.error("⚠️ Failed to prefetch home listings:", error);
+    // Optionally, set an empty cache value so components can handle it gracefully
+    queryClient.setQueryData(["listings", "home"], {
+      recommended: [],
+      topServices: [],
+      upcomingEvents: [],
+      newListings: [],
+    });
   }
 
   return (
-    <main className="min-h-screen">
-      <Hero />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <main className="min-h-screen">
+        <Hero />
 
-      <CTAInline />
+        <CTAInline />
 
-      <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-        <RecommendedLocations
-          featuredLocations={homeListings?.featuredLocations}
-        />
-      </Suspense>
+        <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
+          <RecommendedLocations
+          // featuredLocations={homeListings?.featuredLocations}
+          />
+        </Suspense>
 
-      <Suspense fallback={<CarouselSkeleton count={3} showAvatar={true} />}>
-        <RecommendedServices topServices={homeListings?.topServices} />
-      </Suspense>
+        <Suspense fallback={<CarouselSkeleton count={3} showAvatar={true} />}>
+          <RecommendedServices />
+        </Suspense>
 
-      <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-        <PopularEvents upcomingEvents={homeListings?.upcomingEvents} />
-      </Suspense>
+        <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
+          <PopularEvents />
+        </Suspense>
 
-      <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-        <NewListings newListings={homeListings?.newListings} />
-      </Suspense>
+        <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
+          <NewListings />
+        </Suspense>
 
-      <CTAEarn />
+        <CTAEarn />
 
-      <AboutSlider />
-    </main>
+        <AboutSlider />
+      </main>
+    </HydrationBoundary>
   );
 }

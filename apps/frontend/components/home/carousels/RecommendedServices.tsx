@@ -20,15 +20,50 @@ import { FaLocationDot, FaHeart, FaStar } from "react-icons/fa6";
 import { mockServices } from "@/mocks/home/services";
 import Link from "next/link";
 import { CarouselSkeleton } from "./CarouselSkeleton";
+import { useQuery } from "@tanstack/react-query";
+import { fetchHomeListings } from "@/lib/api/home";
 
-export function RecommendedServices({ topServices }: { topServices: any }) {
-  if (!topServices) return <CarouselSkeleton count={3} showAvatar={true} />;
+export function RecommendedServices() {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["listings", "home"],
+    queryFn: fetchHomeListings,
+    staleTime: 1000 * 60 * 5,
+  });
 
+  const topServices = data?.topServices ?? [];
+
+  // 1️⃣ Loading skeleton
+  if (isLoading) return <CarouselSkeleton count={3} showAvatar={true} />;
+
+  // 2️⃣ Error state
+  if (isError)
+    return (
+      <section className="container mx-auto px-4 py-12 text-center">
+        <p className="text-muted-foreground">
+          Nu s-au putut încărca serviciile recomandate.
+        </p>
+        <p className="text-sm text-muted-foreground/70">
+          {error instanceof Error ? error.message : "A apărut o eroare."}
+        </p>
+        <Button
+          onClick={() => location.reload()}
+          variant="outline"
+          className="mt-4"
+        >
+          Reîncarcă pagina
+        </Button>
+      </section>
+    );
+
+  // 3️⃣ Empty list
   if (topServices.length === 0)
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p>Nu sunt rezultate pentru această căutare</p>
-      </div>
+      <section className="container mx-auto px-4 py-12 text-center text-muted-foreground">
+        <p>Momentan nu există servicii recomandate.</p>
+        <Button asChild variant="ghost" className="mt-2">
+          <Link href="/servicii">Vezi toate serviciile</Link>
+        </Button>
+      </section>
     );
   return (
     <section className="container mx-auto px-4 py-12 bg-muted/30">

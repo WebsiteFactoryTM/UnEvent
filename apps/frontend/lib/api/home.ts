@@ -1,11 +1,22 @@
+"use server";
+
+import { authOptions } from "@/auth";
+import { getServerSession } from "next-auth";
+
 export const fetchHomeListings = async () => {
+  const session = await getServerSession(authOptions);
+  const accessToken = session?.accessToken;
+
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/home`,
       {
         next: {
           tags: ["home-listings"],
-          revalidate: 3600,
+          revalidate: 1800, // 30 minutes
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
       },
     );
