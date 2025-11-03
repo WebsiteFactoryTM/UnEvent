@@ -25,15 +25,12 @@ import {
 
 import { signOut, useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { Loader2 } from "lucide-react";
 
-export function UserMenu({
-  initialSession,
-}: {
-  initialSession: Session | null;
-}) {
-  const { data: session } = useSession({ required: false });
+export function UserMenu() {
+  const { data: session, status } = useSession({ required: false });
+  const user = session?.user;
 
-  const user = session?.user || initialSession?.user;
   const router = useRouter();
 
   const handleLogout = () => {
@@ -43,7 +40,7 @@ export function UserMenu({
     });
   };
 
-  if (!user) {
+  if (status === "unauthenticated") {
     return (
       <Button
         asChild
@@ -56,18 +53,30 @@ export function UserMenu({
     );
   }
 
-  const initials = user.name
+  if (status === "loading") {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="border-white/20 text-white hover:bg-white/10 hover:text-white bg-transparent"
+      >
+        <Loader2 className="h-4 w-4 animate-spin" />
+      </Button>
+    );
+  }
+
+  const initials = user?.name
     ? user.name
         .split(" ")
         .map((n) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2)
-    : user.email?.[0]?.toUpperCase() || "";
+    : user?.email?.[0]?.toUpperCase() || "";
 
-  const hasHostRole = user.roles?.includes("host");
-  const hasProviderRole = user.roles?.includes("provider");
-  const hasOrganizerRole = user.roles?.includes("organizer");
+  const hasHostRole = user?.roles?.includes("host");
+  const hasProviderRole = user?.roles?.includes("provider");
+  const hasOrganizerRole = user?.roles?.includes("organizer");
 
   return (
     <DropdownMenu>
@@ -78,8 +87,8 @@ export function UserMenu({
         >
           <Avatar className="h-9 w-9 border border-white/20">
             <AvatarImage
-              src={user.avatar || undefined}
-              alt={user.name || user.email}
+              src={user?.avatar || undefined}
+              alt={user?.name || user?.email || ""}
             />
             <AvatarFallback className="bg-white/10 text-white text-sm">
               {initials}

@@ -7,8 +7,9 @@ import { MobileMenu } from "./MobileMenu";
 import { ThemeToggle } from "./ThemeToggle";
 import { FaLocationDot, FaCakeCandles, FaCalendarDays } from "react-icons/fa6";
 import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 
-export function Header({ session }: { session: Session | null }) {
+export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_24px_-2px_rgba(0,0,0,0.12),0_8px_16px_-4px_rgba(0,0,0,0.08)]">
       <div className="container mx-auto px-4">
@@ -42,7 +43,7 @@ export function Header({ session }: { session: Session | null }) {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <div className="hidden md:block">
-              <UserMenu initialSession={session} />
+              <UserMenu />
             </div>
             <div className="md:hidden">
               <MobileMenu />

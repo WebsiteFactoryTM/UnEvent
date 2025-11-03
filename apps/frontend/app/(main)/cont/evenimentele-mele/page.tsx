@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { mockMyEvents, type MyEvent } from "@/mocks/cont/my-events";
 import { AddEventModal } from "@/components/cont/events/AddEventModal";
-import type { City } from "@/types/payload-types copy";
+import type { City } from "@/types/payload-types";
 
 // Helper to get city name from City object or ID
 function getCityName(city: number | City | null | undefined): string {

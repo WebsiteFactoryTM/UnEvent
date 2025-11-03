@@ -7,9 +7,6 @@ import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
 import "./globals.css";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
-
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -26,13 +23,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
-
   return (
     <html lang="ro" suppressHydrationWarning>
       <body className={`${manrope.variable} font-sans antialiased`}>
         <Providers>
-          <Header session={session} />
+          <Header />
           <main className="pt-16">{children}</main>
           <Footer />
         </Providers>

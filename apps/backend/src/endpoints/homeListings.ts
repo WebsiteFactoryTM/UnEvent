@@ -130,8 +130,6 @@ function shapeHomeResponse(home: {
 function shapeListing(
   doc: Partial<Location> | Partial<Service> | Partial<Event>,
 ): Partial<Location | Service | Event> {
-  console.log(doc.isFavoritedByViewer)
-
   return {
     id: doc?.id,
     title: doc?.title,

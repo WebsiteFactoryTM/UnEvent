@@ -1,12 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import {
   FaLocationDot,
   FaBriefcase,
@@ -17,34 +22,37 @@ import {
   FaEnvelope,
   FaHeart,
   FaRightFromBracket,
-} from "react-icons/fa6"
-import { useCurrentUser } from "@/lib/auth/useCurrentUser"
-import { HamburgerIcon } from "./HamburgerIcon"
+} from "react-icons/fa6";
+
+import { HamburgerIcon } from "./HamburgerIcon";
+import { useSession } from "next-auth/react";
 
 export function MobileMenu() {
-  const [open, setOpen] = useState(false)
-  const { data: user } = useCurrentUser()
-  const router = useRouter()
+  const [open, setOpen] = useState(false);
+
+  const { data: session, status } = useSession({ required: false });
+  const user = session?.user;
+  const router = useRouter();
 
   const handleLogout = () => {
-    console.log("[v0] Logout clicked")
-    setOpen(false)
-    router.push("/")
-  }
+    console.log("[v0] Logout clicked");
+    setOpen(false);
+    router.push("/");
+  };
 
   const handleNavigation = (href: string) => {
-    setOpen(false)
-    router.push(href)
-  }
+    setOpen(false);
+    router.push(href);
+  };
 
-  const initials = user?.displayName
-    ? user.displayName
+  const initials = user?.name
+    ? user.name
         .split(" ")
         .map((n) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2)
-    : user?.email[0].toUpperCase()
+    : user?.email?.[0]?.toUpperCase() || "";
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -58,18 +66,29 @@ export function MobileMenu() {
           <HamburgerIcon isOpen={open} />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[320px] border-border/50 p-0 overflow-y-auto">
+      <SheetContent
+        side="right"
+        className="w-[320px] border-border/50 p-0 overflow-y-auto"
+      >
+        <SheetTitle className="sr-only">Meniu</SheetTitle>
         <div className="flex flex-col min-h-full p-6">
           <Link
             href="/"
             onClick={() => setOpen(false)}
             className="flex justify-center mb-6 hover:opacity-80 transition-opacity animate-fade-in-up"
           >
-            <img src="/logo-unevent-white.png" alt="UN:EVENT" className="h-5 w-auto" />
+            <img
+              src="/logo-unevent-white.png"
+              alt="UN:EVENT"
+              className="h-5 w-auto"
+            />
           </Link>
 
           {!user && (
-            <div className="mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+            <div
+              className="mb-6 animate-fade-in-up"
+              style={{ animationDelay: "0.1s" }}
+            >
               <Button
                 onClick={() => handleNavigation("/auth/autentificare")}
                 className="w-full bg-white/10 hover:bg-white/20 text-foreground border border-border/50 backdrop-blur-sm shadow-glow-sm"
@@ -85,12 +104,21 @@ export function MobileMenu() {
               style={{ animationDelay: "0.1s" }}
             >
               <Avatar className="h-12 w-12 border border-border/50 shadow-glow-sm">
-                <AvatarImage src={user.avatarURL || undefined} alt={user.displayName || user.email} />
-                <AvatarFallback className="bg-white/10 text-foreground">{initials}</AvatarFallback>
+                <AvatarImage
+                  src={user.avatar || undefined}
+                  alt={user.name || user.email || ""}
+                />
+                <AvatarFallback className="bg-white/10 text-foreground">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate text-foreground">{user.displayName || user.email}</p>
-                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                <p className="text-sm font-medium truncate text-foreground">
+                  {user.name || user.email || ""}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user.email || ""}
+                </p>
               </div>
             </div>
           )}
@@ -220,5 +248,5 @@ export function MobileMenu() {
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
