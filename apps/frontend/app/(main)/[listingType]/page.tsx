@@ -14,6 +14,8 @@ import { City, Media } from "@/types/payload-types";
 import { getPopularCities } from "@/lib/api/cities";
 import { Listing, ListingType } from "@/types/listings";
 import { fetchTopListings } from "@/lib/api/listings";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 export const revalidate = 86400; // ISR: revalidate every day (24 hours)
 
 export async function generateStaticParams() {
@@ -46,9 +48,12 @@ export default async function ListingTypePage({
     notFound();
   }
 
+  const session = await getServerSession(authOptions);
+  const accessToken = (session as any)?.accessToken as string | undefined;
+
   const [popularCities, listings] = await Promise.all([
     getPopularCities(),
-    fetchTopListings(listingType as ListingType, 15),
+    fetchTopListings(listingType as ListingType, 15, accessToken),
   ]);
   const label = getListingTypeLabel(listingType);
 
@@ -139,6 +144,7 @@ export default async function ListingTypePage({
                     }
                     views={listing.views || 0}
                     listingType={listingType as ListingType}
+                    initialIsFavorited={(listing as any)?.isFavoritedByViewer}
                   />
                 ))}
               </div>
