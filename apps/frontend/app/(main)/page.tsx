@@ -2,18 +2,15 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Hero } from "@/components/home/Hero";
 import { CTAInline } from "@/components/home/CTAInline";
-import { RecommendedLocations } from "@/components/home/carousels/RecommendedLocations";
-import { RecommendedServices } from "@/components/home/carousels/RecommendedServices";
-import { PopularEvents } from "@/components/home/carousels/PopularEvents";
-import { NewListings } from "@/components/home/carousels/NewListings";
+
 import { CTAEarn } from "@/components/home/CTAEarn";
 import { AboutSlider } from "@/components/home/AboutSlider";
 import { CarouselSkeleton } from "@/components/home/carousels/CarouselSkeleton";
 import { fetchHomeListings } from "@/lib/api/home";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
+
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/react-query";
+import HomeCarousel from "@/components/home/carousels/HomeCarousel";
 
 export const metadata: Metadata = {
   title: "Locații de nuntă, săli evenimente, DJ & catering | UN:EVENT",
@@ -40,7 +37,9 @@ export default async function HomePage() {
       recommended: [],
       topServices: [],
       upcomingEvents: [],
-      newListings: [],
+      newLocations: [],
+      newServices: [],
+      newEvents: [],
     });
   }
 
@@ -52,21 +51,51 @@ export default async function HomePage() {
         <CTAInline />
 
         <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-          <RecommendedLocations
-          // featuredLocations={homeListings?.featuredLocations}
+          <HomeCarousel
+            listingType="locatii"
+            category="featuredLocations"
+            label="Locații recomandate"
           />
         </Suspense>
 
         <Suspense fallback={<CarouselSkeleton count={3} showAvatar={true} />}>
-          <RecommendedServices />
+          <HomeCarousel
+            listingType="servicii"
+            category="topServices"
+            label="Servicii recomandate"
+          />
         </Suspense>
 
         <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-          <PopularEvents />
+          <HomeCarousel
+            listingType="evenimente"
+            category="upcomingEvents"
+            label="Evenimente populare"
+          />
         </Suspense>
 
         <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
-          <NewListings />
+          <HomeCarousel
+            listingType="locatii"
+            category="newLocations"
+            label="Locații noi"
+          />
+        </Suspense>
+
+        <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
+          <HomeCarousel
+            listingType="servicii"
+            category="newServices"
+            label="Servicii noi"
+          />
+        </Suspense>
+
+        <Suspense fallback={<CarouselSkeleton count={3} showAvatar={false} />}>
+          <HomeCarousel
+            listingType="evenimente"
+            category="newEvents"
+            label="Evenimente noi"
+          />
         </Suspense>
 
         <CTAEarn />

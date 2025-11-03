@@ -127,10 +127,13 @@ export default async function ListingTypePage({
                     name={listing.title}
                     slug={listing.slug || ""}
                     description={listing.description || ""}
-                    image={
-                      (listing.featuredImage as Media | null)?.url ||
-                      "/placeholder.svg"
-                    }
+                    image={{
+                      url:
+                        (listing.featuredImage as Media)?.url ||
+                        "/placeholder.svg",
+                      alt:
+                        (listing.featuredImage as Media)?.alt || listing.title,
+                    }}
                     city={(listing.city as City | null)?.name || "România"}
                     type={listingType}
                     verified={listing.status === "approved"}

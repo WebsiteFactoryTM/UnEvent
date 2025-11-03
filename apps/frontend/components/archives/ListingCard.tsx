@@ -26,7 +26,10 @@ interface ListingCardProps {
   name: string;
   slug: string;
   description: string;
-  image: string;
+  image: {
+    url: string;
+    alt: string;
+  };
   city: string;
   type: string;
   verified: boolean;
@@ -68,8 +71,8 @@ export function ListingCard({
       <CardHeader className="p-0 relative">
         <div className="relative h-48 w-full">
           <Image
-            src={image || "/placeholder.svg"}
-            alt={name}
+            src={image.url || "/placeholder.svg"}
+            alt={image.alt}
             fill
             className="object-cover"
           />

@@ -5,7 +5,9 @@ type ShapedHomeListings = {
   featuredLocations: Location[]
   topServices: Service[]
   upcomingEvents: Event[]
-  newListings: Location[]
+  newLocations: Location[]
+  newServices: Service[]
+  newEvents: Event[]
 }
 
 type RawHomeListings = {
@@ -23,11 +25,25 @@ export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
       slug: 'homeListings',
       depth: 2,
     })
-    const newListings = await payload.find({
+    const newLocations = await payload.find({
       collection: 'locations',
       where: { status: { equals: 'approved' } },
       limit: 6,
       sort: '-createdAt',
+      depth: 2,
+    })
+    const newServices = await payload.find({
+      collection: 'services',
+      where: { status: { equals: 'approved' } },
+      limit: 6,
+      sort: '-createdAt',
+      depth: 2,
+    })
+    const newEvents = await payload.find({
+      collection: 'events',
+      where: { status: { equals: 'approved' } },
+      limit: 6,
+      sort: 'startDate',
       depth: 2,
     })
 
@@ -35,7 +51,12 @@ export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
       homeListings = await getHomeListings(req.payload)
     }
 
-    const finalListings = { ...homeListings, newListings: newListings.docs }
+    const finalListings = {
+      ...homeListings,
+      newLocations: newLocations.docs,
+      newServices: newServices.docs,
+      newEvents: newEvents.docs,
+    }
 
     const shaped = shapeHomeResponse(finalListings as ShapedHomeListings)
     return new Response(JSON.stringify(shaped), { status: 200 })
@@ -92,13 +113,17 @@ function shapeHomeResponse(home: {
   featuredLocations: Partial<Location>[] | null | undefined
   topServices: Partial<Service>[] | null | undefined
   upcomingEvents: Partial<Event>[] | null | undefined
-  newListings: Partial<Location>[] | null | undefined
+  newLocations: Partial<Location>[] | null | undefined
+  newServices: Partial<Service>[] | null | undefined
+  newEvents: Partial<Event>[] | null | undefined
 }) {
   return {
     featuredLocations: home.featuredLocations?.map(shapeListing),
     topServices: home.topServices?.map(shapeListing),
     upcomingEvents: home.upcomingEvents?.map(shapeListing),
-    newListings: home.newListings?.map(shapeListing),
+    newLocations: home.newLocations?.map(shapeListing),
+    newServices: home.newServices?.map(shapeListing),
+    newEvents: home.newEvents?.map(shapeListing),
   }
 }
 

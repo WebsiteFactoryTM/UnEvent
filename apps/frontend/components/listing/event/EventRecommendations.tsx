@@ -1,17 +1,20 @@
-import { ListingCard } from "@/components/archives/ListingCard"
+import { ListingCard } from "@/components/archives/ListingCard";
 
 interface EventRecommendationsProps {
-  cityName: string
-  similarEvents?: any[] // UI-only: not used, kept for compatibility
+  cityName: string;
+  similarEvents?: any[]; // UI-only: not used, kept for compatibility
 }
 
-export default function EventRecommendations({ cityName }: EventRecommendationsProps) {
+export default function EventRecommendations({
+  cityName,
+}: EventRecommendationsProps) {
   const mockEvents = [
     {
       id: 101,
       name: "Festival de Jazz în Parc",
       slug: "festival-jazz-parc-bucuresti",
-      description: "Bucură-te de cele mai bune trupe de jazz într-un cadru natural relaxant",
+      description:
+        "Bucură-te de cele mai bune trupe de jazz într-un cadru natural relaxant",
       image: "/jazz-festival-outdoor.jpg",
       city: cityName,
       type: "Festival",
@@ -27,7 +30,8 @@ export default function EventRecommendations({ cityName }: EventRecommendationsP
       id: 102,
       name: "Târg de Artă și Meșteșuguri",
       slug: "targ-arta-mestesuguri",
-      description: "Descoperă creații unice de la artiști și meșteșugari locali",
+      description:
+        "Descoperă creații unice de la artiști și meșteșugari locali",
       image: "/art-craft-fair.jpg",
       city: cityName,
       type: "Târg",
@@ -43,7 +47,8 @@ export default function EventRecommendations({ cityName }: EventRecommendationsP
       id: 103,
       name: "Concert Rock Sub Stele",
       slug: "concert-rock-sub-stele",
-      description: "O seară de rock autentic cu cele mai tari trupe din România",
+      description:
+        "O seară de rock autentic cu cele mai tari trupe din România",
       image: "/rock-concert-outdoor-night.jpg",
       city: cityName,
       type: "Concert",
@@ -55,7 +60,7 @@ export default function EventRecommendations({ cityName }: EventRecommendationsP
       participants: 780,
       priceRange: "75 RON",
     },
-  ]
+  ];
 
   return (
     <div className="glass-card p-6 md:p-8 space-y-6">
@@ -69,7 +74,10 @@ export default function EventRecommendations({ cityName }: EventRecommendationsP
             name={event.name}
             slug={event.slug}
             description={event.description}
-            image={event.image}
+            image={{
+              url: event.image,
+              alt: event.name,
+            }}
             city={event.city}
             type={event.type}
             verified={event.verified}
@@ -83,5 +91,5 @@ export default function EventRecommendations({ cityName }: EventRecommendationsP
         ))}
       </div>
     </div>
-  )
+  );
 }

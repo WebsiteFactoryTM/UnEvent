@@ -13,7 +13,7 @@ export const fetchHomeListings = async () => {
       {
         next: {
           tags: ["home-listings"],
-          revalidate: 1800, // 30 minutes
+          // revalidate: 1800, // 30 minutes
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,

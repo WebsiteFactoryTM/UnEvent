@@ -35,7 +35,6 @@ export const withHasReviewedByViewer: CollectionAfterReadHook = async ({
         ],
       },
     })
-    console.log('reviews', reviews.totalDocs)
 
     return {
       ...doc,

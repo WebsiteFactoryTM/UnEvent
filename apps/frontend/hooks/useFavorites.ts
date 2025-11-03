@@ -1,5 +1,4 @@
 "use client";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
@@ -42,13 +41,14 @@ export function useFavorites({
     enabled: !!(session as any)?.accessToken,
 
     staleTime: 5 * 60 * 1000,
+    initialData: initialIsFavorited ?? false,
   });
 
   const mutation = useMutation<
     ToggleFavoriteResponse,
     Error,
     void,
-    { previous?: boolean }
+    { previous: boolean }
   >({
     mutationFn: async () => {
       const slug = getListingTypeSlug(listingType);
@@ -60,12 +60,15 @@ export function useFavorites({
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: favoriteKey });
-      const previous = queryClient.getQueryData<boolean>(favoriteKey);
-      queryClient.setQueryData<boolean>(favoriteKey, (prev) => !prev);
+      const cached = queryClient.getQueryData<boolean>(favoriteKey);
+      const previous =
+        typeof cached === "boolean" ? cached : (initialIsFavorited ?? false);
+
+      queryClient.setQueryData<boolean>(favoriteKey, !previous);
       return { previous };
     },
     onError: (_err, _vars, ctx) => {
-      if (ctx?.previous !== undefined) {
+      if (ctx) {
         queryClient.setQueryData<boolean>(favoriteKey, ctx.previous);
       }
       return Promise.reject(_err);

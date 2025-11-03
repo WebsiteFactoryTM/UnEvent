@@ -210,7 +210,10 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
                     name={listing.title}
                     slug={slug || ""}
                     description={listing.description || ""}
-                    image={image?.url || "/placeholder.svg"}
+                    image={{
+                      url: image?.url || "/placeholder.svg",
+                      alt: listing.title,
+                    }}
                     city={city?.name || ""}
                     type={locationType}
                     verified={verified}
