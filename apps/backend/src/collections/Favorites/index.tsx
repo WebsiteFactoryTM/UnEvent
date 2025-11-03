@@ -5,6 +5,7 @@ import { bumpAggregatesFavorites } from './hooks/afterChange/bumpAggregatesFavor
 import { retractAggregatesFavorites } from './hooks/afterDelete/retractAggregatesFavorites'
 import { isAdminOrSelf } from '../_access/roles'
 import { toggleFavorites } from './endpoints/toggleFavorites'
+import { checkIfIsFavorited } from './endpoints/checkIfIsFavorited'
 
 export const kindOptions = ['locations', 'events', 'services'] as const
 export type Kind = (typeof kindOptions)[number]
@@ -25,6 +26,11 @@ export const Favorites: CollectionConfig = {
       path: '/toggle',
       method: 'post',
       handler: toggleFavorites,
+    },
+    {
+      path: '/checkIfIsFavorited',
+      method: 'get',
+      handler: checkIfIsFavorited,
     },
   ],
   hooks: {
