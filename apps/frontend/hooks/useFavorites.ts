@@ -6,8 +6,8 @@ import {
   type ToggleFavoriteResponse,
 } from "@/lib/api/favorites";
 import { getListingTypeSlug } from "@/lib/getListingType";
-import { favoritesKeys } from "@/lib/react-query/favorites.keys";
-import { listingsKeys } from "@/lib/react-query/listings.keys";
+import { favoritesKeys } from "@/lib/cacheKeys";
+import { listingsKeys } from "@/lib/cacheKeys";
 import { checkIfIsFavorited } from "@/lib/api/favorites";
 
 type FrontendListingType = "evenimente" | "locatii" | "servicii";
@@ -87,7 +87,7 @@ export function useFavorites({
         exact: false,
       });
       await queryClient.invalidateQueries({
-        queryKey: listingsKeys._type(getListingTypeSlug(listingType)),
+        queryKey: listingsKeys.type(getListingTypeSlug(listingType)),
         exact: false,
       });
     },

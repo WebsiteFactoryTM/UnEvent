@@ -29,3 +29,10 @@ export async function fetchJson<T>(
   }
   return res.json();
 }
+
+/**
+ * Converts a React Query key (array) into a Redis-safe string key.
+ */
+export function redisKey(queryKey: readonly unknown[]) {
+  return queryKey.map(String).join(":");
+}

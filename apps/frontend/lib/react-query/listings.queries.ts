@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { listingsKeys } from "./listings.keys";
+import { listingsKeys } from "../cacheKeys";
 import { fetchJson } from "./utils";
 import { fetchSimilarListings } from "@/lib/api/listings";
 import type { ListingType } from "@/types/listings";

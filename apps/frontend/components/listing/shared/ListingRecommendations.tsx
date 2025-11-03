@@ -109,7 +109,7 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
           className="w-full"
         >
           <CarouselContent>
-            {similarListings.map((listing: Listing) => {
+            {similarListings?.map((listing: Listing) => {
               const id = listing.id;
               const slug = listing.slug;
               const image =

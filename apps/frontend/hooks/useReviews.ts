@@ -13,7 +13,7 @@ import {
   type ListingCollectionSlug,
   type PaginatedResult,
 } from "@/lib/api/reviews";
-import { reviewsKeys } from "@/lib/react-query/reviews.keys";
+import { reviewsKeys } from "@/lib/cacheKeys";
 import { ListingType } from "@/types/listings";
 
 function toCollectionSlug(type: ListingType): ListingCollectionSlug {
@@ -93,7 +93,7 @@ export function useReviews(
           queryClient.setQueryData<boolean>(userSubmittedKey, true);
         }
         await queryClient.invalidateQueries({
-          queryKey: reviewsKeys._listing(collectionSlug, listingId),
+          queryKey: reviewsKeys.listing(collectionSlug, listingId),
           exact: false,
         });
       }
