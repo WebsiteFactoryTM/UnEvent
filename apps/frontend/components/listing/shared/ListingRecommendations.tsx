@@ -26,6 +26,7 @@ import {
 } from "@/types/payload-types";
 import { Listing, ListingType } from "@/types/listings";
 import { CarouselSkeleton } from "@/components/home/carousels/CarouselSkeleton";
+import { ListingCard } from "@/components/archives/ListingCard";
 
 interface ListingRecommendationsProps {
   typeRecommendations: ListingType;
@@ -58,7 +59,6 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
     city,
     suitableFor,
     limit,
-    accessToken,
   );
 
   if (isLoading) return <CarouselSkeleton count={3} showAvatar={false} />;
@@ -138,7 +138,7 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
 
               return (
                 <CarouselItem key={id} className="md:basis-1/2 lg:basis-1/3">
-                  <Card className="glass-card overflow-hidden h-full flex flex-col">
+                  {/* <Card className="glass-card overflow-hidden h-full flex flex-col">
                     <CardHeader className="p-0 relative">
                       <div className="relative h-48 w-full">
                         <Image
@@ -156,6 +156,7 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
                           size="icon"
                           variant="ghost"
                           className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
+                          onClick={handleFavorite}
                         >
                           <FaHeart className="h-4 w-4" />
                         </Button>
@@ -203,7 +204,30 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
                         </Link>
                       </Button>
                     </CardFooter>
-                  </Card>
+                  </Card> */}
+                  <ListingCard
+                    id={id}
+                    name={listing.title}
+                    slug={slug || ""}
+                    description={listing.description || ""}
+                    image={image?.url || "/placeholder.svg"}
+                    city={city?.name || ""}
+                    type={locationType}
+                    verified={verified}
+                    rating={
+                      rating
+                        ? { average: rating, count: reviewCount || 0 }
+                        : undefined
+                    }
+                    capacity={
+                      capacity as Location["capacity"] | null | undefined
+                    }
+                    views={listing.views || 0}
+                    listingType={typeRecommendations}
+                    initialIsFavorited={
+                      listing.isFavoritedByViewer as boolean | undefined
+                    }
+                  />
                 </CarouselItem>
               );
             })}

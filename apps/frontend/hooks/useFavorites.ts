@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
   toggleFavorite,
@@ -9,6 +9,7 @@ import {
 import { getListingTypeSlug } from "@/lib/getListingType";
 import { favoritesKeys } from "@/lib/react-query/favorites.keys";
 import { listingsKeys } from "@/lib/react-query/listings.keys";
+import { checkIfIsFavorited } from "@/lib/api/favorites";
 
 type FrontendListingType = "evenimente" | "locatii" | "servicii";
 
@@ -30,13 +31,18 @@ export function useFavorites({
     listingId,
   );
 
-  // Seed cache with initial flag if provided
-  if (
-    typeof initialIsFavorited === "boolean" &&
-    queryClient.getQueryData<boolean>(favoriteKey) === undefined
-  ) {
-    queryClient.setQueryData<boolean>(favoriteKey, initialIsFavorited);
-  }
+  const { data: isFavorited, isLoading } = useQuery<boolean, Error>({
+    queryKey: favoriteKey,
+    queryFn: () =>
+      checkIfIsFavorited(
+        getListingTypeSlug(listingType) as "events" | "locations" | "services",
+        listingId,
+        (session as any)?.accessToken,
+      ),
+    enabled: !!(session as any)?.accessToken,
+
+    staleTime: 5 * 60 * 1000,
+  });
 
   const mutation = useMutation<
     ToggleFavoriteResponse,
@@ -45,8 +51,6 @@ export function useFavorites({
     { previous?: boolean }
   >({
     mutationFn: async () => {
-      console.log("triggering favorite mutation");
-
       const slug = getListingTypeSlug(listingType);
       return toggleFavorite(
         slug as "events" | "locations" | "services",
@@ -86,16 +90,12 @@ export function useFavorites({
     },
   });
 
-  const isFavorited =
-    queryClient.getQueryData<boolean>(favoriteKey) ??
-    initialIsFavorited ??
-    false;
-
   return {
     isFavorited,
     toggle: mutation.mutate,
     toggleAsync: mutation.mutateAsync,
     isToggling: mutation.isPending,
+    isLoading: isLoading,
     error: mutation.error,
   };
 }

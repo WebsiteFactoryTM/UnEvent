@@ -8,6 +8,8 @@ import type {
   ListingType as SuitableForType,
 } from "@/types/payload-types";
 import type { Listing } from "@/types/listings";
+import { frontendTypeToCollectionSlug } from "@/lib/api/reviews";
+import { useSession } from "next-auth/react";
 
 export function useListings(
   ctx: string,
@@ -37,9 +39,10 @@ export function useSimilarListings(
   city?: City,
   suitableFor?: (number | SuitableForType)[],
   limit: number = 10,
-  accessToken?: string,
   enabled: boolean = true,
 ) {
+  const { data: session } = useSession();
+  const accessToken = session?.accessToken;
   const suitableForIds = suitableFor?.map((item) =>
     typeof item === "number" ? item : item.id,
   );
@@ -49,12 +52,16 @@ export function useSimilarListings(
   const isEnabled = enabled && hasFilters;
 
   return useQuery<Listing[]>({
-    queryKey: listingsKeys.list("similar", listingType, {
-      listingId: listingId ?? undefined,
-      cityId: city?.id ?? undefined,
-      suitableForIds,
-      limit,
-    }),
+    queryKey: listingsKeys.list(
+      "similar",
+      frontendTypeToCollectionSlug(listingType),
+      {
+        listingId: listingId ?? undefined,
+        cityId: city?.id ?? undefined,
+        suitableForIds,
+        limit,
+      },
+    ),
     queryFn: () =>
       fetchSimilarListings(
         listingType,

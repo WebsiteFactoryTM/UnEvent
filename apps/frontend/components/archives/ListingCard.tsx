@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Card,
   CardContent,
@@ -21,6 +19,7 @@ import Link from "next/link";
 import type { Location } from "@/types/payload-types";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
+import FavoriteButton from "../common/FavoriteButton";
 
 interface ListingCardProps {
   id: number;
@@ -37,7 +36,7 @@ interface ListingCardProps {
   };
   views: number;
   listingType: "locatii" | "servicii" | "evenimente";
-  capacity?: Location["capacity"];
+  capacity?: Location["capacity"] | null | undefined;
   priceRange?: string;
   date?: string;
   participants?: number;
@@ -63,44 +62,6 @@ export function ListingCard({
   initialIsFavorited,
 }: ListingCardProps) {
   const { indoor } = capacity || {};
-  const { toast } = useToast();
-  const { toggleAsync, isFavorited, error } = useFavorites({
-    listingType,
-    listingId: id,
-    initialIsFavorited: initialIsFavorited ?? false,
-  });
-
-  const handleFavorite = async () => {
-    try {
-      const result = await toggleAsync();
-      toast({
-        title: result.isFavorite
-          ? "Adăugat la favorite"
-          : "Eliminat din favorite",
-        description: result.isFavorite
-          ? "Listarea a fost adăugată la favorite."
-          : "Listarea a fost eliminată din favorite.",
-      });
-    } catch (e) {
-      const err = e as any;
-      const status = err?.status as number | undefined;
-      const message = (err?.message as string | undefined) || "";
-      if (status === 401 || /unauthorized/i.test(message)) {
-        toast({
-          title: "Autentificare necesară",
-          description: "Trebuie să te autentifici pentru a adăuga la favorite.",
-          variant: "destructive",
-        } as any);
-      } else {
-        toast({
-          title: "Eroare",
-          description:
-            message || "Nu am putut actualiza favoritele. Încearcă din nou.",
-          variant: "destructive",
-        } as any);
-      }
-    }
-  };
 
   return (
     <Card className="glass-card overflow-hidden h-full flex flex-col">
@@ -117,16 +78,11 @@ export function ListingCard({
               Verificat
             </Badge>
           )}
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
-            onClick={handleFavorite}
-          >
-            <FaHeart
-              className={`h-4 w-4 ${isFavorited ? "fill-red-500" : ""}`}
-            />
-          </Button>
+          <FavoriteButton
+            listingType={listingType}
+            listingId={id}
+            initialIsFavorited={initialIsFavorited}
+          />
         </div>
       </CardHeader>
 

@@ -19,7 +19,7 @@ export const toggleFavorite = async (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `JWT ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ entity: listingTypeSlug, id: listingId }),
     },
@@ -41,4 +41,34 @@ export const toggleFavorite = async (
     throw error;
   }
   return res.json();
+};
+
+export const checkIfIsFavorited = async (
+  listingTypeSlug: "events" | "locations" | "services",
+  listingId: number,
+  accessToken?: string,
+): Promise<boolean> => {
+  if (!accessToken) {
+    return false;
+  }
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/favorites/checkIfIsFavorited?targetKey=${listingTypeSlug}:${listingId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    if (!res.ok) {
+      return false;
+    }
+    const data = await res.json();
+
+    return data.isFavorited;
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : "Unknown error";
+    console.error("checkIfIsFavorited error", errMsg);
+    return false;
+  }
 };
