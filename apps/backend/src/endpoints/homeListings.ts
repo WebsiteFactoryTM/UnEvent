@@ -28,7 +28,7 @@ export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
       where: { status: { equals: 'approved' } },
       limit: 6,
       sort: '-createdAt',
-      depth: 1,
+      depth: 2,
     })
 
     if (!homeListings) {
@@ -51,10 +51,9 @@ const getHomeListings = async (
   featuredLocations: (number | Location)[] | null | undefined
   topServices: (number | Service)[] | null | undefined
   upcomingEvents: (number | Event)[] | null | undefined
-  newListings: (number | Location)[] | null | undefined
 }> => {
   try {
-    const [featuredLocations, topServices, upcomingEvents, newListings] = await Promise.all([
+    const [featuredLocations, topServices, upcomingEvents] = await Promise.all([
       payload.find({
         collection: 'locations',
         where: { featured: { equals: true }, status: { equals: 'approved' } },
@@ -76,20 +75,12 @@ const getHomeListings = async (
         sort: 'startDate',
         depth: 1,
       }),
-      payload.find({
-        collection: 'locations',
-        where: { status: { equals: 'approved' } },
-        limit: 6,
-        sort: '-createdAt',
-        depth: 1,
-      }),
     ])
 
     return {
       featuredLocations: featuredLocations.docs,
       topServices: topServices.docs,
       upcomingEvents: upcomingEvents.docs,
-      newListings: newListings.docs,
     }
   } catch (err) {
     payload.logger.error('Home endpoint error:', err)
@@ -114,6 +105,8 @@ function shapeHomeResponse(home: {
 function shapeListing(
   doc: Partial<Location> | Partial<Service> | Partial<Event>,
 ): Partial<Location | Service | Event> {
+  console.log(doc.isFavoritedByViewer)
+
   return {
     id: doc?.id,
     title: doc?.title,
@@ -128,7 +121,6 @@ function shapeListing(
     startDate: (doc as Event)?.startDate,
     endDate: (doc as Event)?.endDate,
     type: doc?.type,
-    isFavoritedByViewer:
-      typeof doc?.isFavoritedByViewer === 'boolean' ? doc.isFavoritedByViewer : false,
+    isFavoritedByViewer: doc.isFavoritedByViewer || false,
   }
 }
