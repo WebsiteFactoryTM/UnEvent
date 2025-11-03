@@ -42,19 +42,6 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
 
   const listings = data?.[category] ?? [];
 
-  const listingTypeLabel = useMemo(() => {
-    switch (listingType) {
-      case "locatii":
-        return "Locații";
-      case "servicii":
-        return "Servicii";
-      case "evenimente":
-        return "Evenimente";
-      default:
-        return "Listări";
-    }
-  }, [listingType]);
-
   // 1️⃣ Loading skeleton
   if (isLoading) return <CarouselSkeleton count={3} showAvatar={true} />;
 

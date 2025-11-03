@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { FaStar, FaCalendar, FaTicket, FaUsers } from "react-icons/fa6";
 import type { Event } from "@/types/payload-types";
-import EventActions from "./EventActions";
 import { ListingActions } from "../shared/ListingActions";
 
 interface EventHeroProps {

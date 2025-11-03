@@ -336,7 +336,7 @@ export default function DesprePage() {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <div className="glass-card p-4 md:p-6 space-y-4 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
+                <div className="glass-card p-4 md:p-6 space-y-4 rounded-lg bg-linear-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
                   <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
                     <FaMapPin className="w-6 h-6 text-blue-500 feature-icon" />
                   </div>
@@ -349,7 +349,7 @@ export default function DesprePage() {
                   </p>
                 </div>
 
-                <div className="glass-card p-4 md:p-6 space-y-4 rounded-lg bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20">
+                <div className="glass-card p-4 md:p-6 space-y-4 rounded-lg bg-linear-to-br from-green-500/10 to-green-600/5 border-green-500/20">
                   <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
                     <FaMusic className="w-6 h-6 text-green-500 feature-icon" />
                   </div>
@@ -362,7 +362,7 @@ export default function DesprePage() {
                   </p>
                 </div>
 
-                <div className="glass-card p-4 md:p-6 space-y-4 rounded-lg bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
+                <div className="glass-card p-4 md:p-6 space-y-4 rounded-lg bg-linear-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
                   <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center">
                     <FaCalendarDays className="w-6 h-6 text-purple-500 feature-icon" />
                   </div>
@@ -435,7 +435,7 @@ export default function DesprePage() {
 
             {/* Tonul nostru (Our Tone) */}
             <section className="space-y-6 md:space-y-8">
-              <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-6 md:p-12 backdrop-blur-sm border border-border/50">
+              <div className="bg-linear-to-r from-primary/5 to-secondary/5 rounded-xl p-6 md:p-12 backdrop-blur-sm border border-border/50">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-center mb-6 md:mb-8">
                   Tonul nostru (și promisiunea)
                 </h2>

@@ -19,12 +19,6 @@ export function ListingProviderCard({
   type: ListingType;
   listing: Listing;
 }) {
-  // if (type === "evenimente")
-  //   return <EventOrganizerCard event={listing as Event} />;
-  // if (type === "locatii")
-  //   return <LocationHostCard location={listing as Location} />;
-  // return <ServiceProviderCard service={listing as Service} />;
-
   const owner =
     typeof listing.owner === "object" ? (listing.owner as Profile) : null;
 
