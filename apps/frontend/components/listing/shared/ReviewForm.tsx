@@ -39,7 +39,6 @@ const ReviewForm = ({
   const rating = watch("rating");
 
   const handleOnSubmit = (data: CreateReviewInput) => {
-    console.log(data);
     addReview({
       listingType: frontendTypeToCollectionSlug(type),
       listingId,

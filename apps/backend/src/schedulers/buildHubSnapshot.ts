@@ -3,6 +3,7 @@ import { City, Event, HubSnapshot, ListingType, Location, Media, Service } from 
 import type { Payload } from 'payload'
 import cron from 'node-cron'
 import { revalidate } from '@/utils/revalidate'
+import { buildPopularSearchCombos } from '@/utils/popularSearchCombos'
 
 // Fallback cities if DB query returns nothing
 const TOP_CITIES_FALLBACK = [
@@ -29,7 +30,7 @@ export async function buildHubSnapshot(
   })
   const typeaheadCities =
     citiesRes.docs.length > 0
-      ? citiesRes.docs.slice(0, 6).map((c: any) => ({
+      ? citiesRes.docs.slice(0, 6).map((c: City) => ({
           slug: (c as City).slug as string,
           label: (c as City).name as string,
         }))
@@ -99,34 +100,15 @@ export async function buildHubSnapshot(
   // 3) Typeahead cities (use dynamic list)
 
   // 4) Popular search combos (static for now)
-  const popularSearchCombos = [
-    { citySlug: 'timisoara', cityLabel: 'Timișoara', typeSlug: 'nunta', typeLabel: 'Nuntă' },
-    {
-      citySlug: 'timisoara',
-      cityLabel: 'Timișoara',
-      typeSlug: 'conferinta',
-      typeLabel: 'Conferință',
-    },
-    { citySlug: 'bucuresti', cityLabel: 'București', typeSlug: 'nunta', typeLabel: 'Nuntă' },
-    {
-      citySlug: 'bucuresti',
-      cityLabel: 'București',
-      typeSlug: 'conferinta',
-      typeLabel: 'Conferință',
-    },
-    { citySlug: 'iasi', cityLabel: 'Iași', typeSlug: 'nunta', typeLabel: 'Nuntă' },
-    { citySlug: 'brasov', cityLabel: 'Brașov', typeSlug: 'nunta', typeLabel: 'Nuntă' },
-    { citySlug: 'constanta', cityLabel: 'Constanța', typeSlug: 'nunta', typeLabel: 'Nuntă' },
-    { citySlug: 'iasi', cityLabel: 'Iași', typeSlug: 'conferinta', typeLabel: 'Conferință' },
-    { citySlug: 'brasov', cityLabel: 'Brașov', typeSlug: 'conferinta', typeLabel: 'Conferință' },
-    {
-      citySlug: 'constanta',
-      cityLabel: 'Constanța',
-      typeSlug: 'conferinta',
-      typeLabel: 'Conferință',
-    },
-  ]
+  const popularSearchCombos = await buildPopularSearchCombos(
+    payload,
+    collection,
+    topCities,
+    topTypes,
+  )
+
   console.log(`[HubSnapshot] Found ${popularSearchCombos.length} popular search combos`)
+  console.log(popularSearchCombos)
 
   // 5) Upsert snapshot with new fields
   const data: Omit<HubSnapshot, 'id' | 'updatedAt' | 'createdAt'> = {

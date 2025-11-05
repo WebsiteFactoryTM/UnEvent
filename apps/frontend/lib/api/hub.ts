@@ -128,7 +128,6 @@ export async function fetchHubSnapshot(
     const collection = getListingTypeSlug(listingType);
     const url = new URL(`/api/hub`, API_URL);
     url.searchParams.set("listingType", collection);
-    console.log(url.toString());
 
     const res = await fetch(url.toString(), {
       headers: { Accept: "application/json" },

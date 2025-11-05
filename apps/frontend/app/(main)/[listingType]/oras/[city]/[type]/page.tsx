@@ -1,5 +1,5 @@
-import type { Metadata } from "next"
-import { notFound } from "next/navigation"
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import {
   listingTypes,
   cities,
@@ -7,51 +7,51 @@ import {
   getListingTypeLabel,
   getTypeLabel,
   getTypesByListingType,
-} from "@/config/archives"
-import { ArchiveFilter } from "@/components/archives/ArchiveFilter"
-import { AddListingButton } from "@/components/archives/AddListingButton"
+} from "@/config/archives";
+import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
+import { AddListingButton } from "@/components/archives/AddListingButton";
 
-export const revalidate = 3600 // ISR: revalidate every hour
+export const revalidate = 3600; // ISR: revalidate every hour
 
-export async function generateStaticParams() {
-  return listingTypes.flatMap((listingType) =>
-    cities.flatMap((c) =>
-      getTypesByListingType(listingType).map((t) => ({
-        listingType,
-        city: c.slug,
-        type: t.slug,
-      })),
-    ),
-  )
-}
+// export async function generateStaticParams() {
+//   return listingTypes.flatMap((listingType) =>
+//     cities.flatMap((c) =>
+//       getTypesByListingType(listingType).map((t) => ({
+//         listingType,
+//         city: c.slug,
+//         type: t.slug,
+//       })),
+//     ),
+//   )
+// }
 
 export async function generateMetadata({
   params,
 }: {
-  params: { listingType: string; city: string; type: string }
+  params: { listingType: string; city: string; type: string };
 }): Promise<Metadata> {
-  const listingLabel = getListingTypeLabel(params.listingType)
-  const cityLabel = getCityLabel(params.city)
-  const typeLabel = getTypeLabel(params.listingType, params.type)
+  const listingLabel = getListingTypeLabel(params.listingType);
+  const cityLabel = getCityLabel(params.city);
+  const typeLabel = getTypeLabel(params.listingType, params.type);
 
   return {
     title: `Top ${listingLabel} de ${typeLabel} ${cityLabel} | UN:EVENT`,
     description: `Descoperă cele mai bune ${listingLabel.toLowerCase()} de ${typeLabel.toLowerCase()} din ${cityLabel}.`,
-  }
+  };
 }
 
 export default function CityTypeArchivePage({
   params,
 }: {
-  params: { listingType: string; city: string; type: string }
+  params: { listingType: string; city: string; type: string };
 }) {
   if (!listingTypes.includes(params.listingType as any)) {
-    notFound()
+    notFound();
   }
 
-  const listingLabel = getListingTypeLabel(params.listingType)
-  const cityLabel = getCityLabel(params.city)
-  const typeLabel = getTypeLabel(params.listingType, params.type)
+  const listingLabel = getListingTypeLabel(params.listingType);
+  const cityLabel = getCityLabel(params.city);
+  const typeLabel = getTypeLabel(params.listingType, params.type);
 
   return (
     <div className="min-h-screen">
@@ -67,13 +67,19 @@ export default function CityTypeArchivePage({
               </li>
               <li>/</li>
               <li>
-                <a href={`/${params.listingType}`} className="hover:text-foreground">
+                <a
+                  href={`/${params.listingType}`}
+                  className="hover:text-foreground"
+                >
                   {listingLabel}
                 </a>
               </li>
               <li>/</li>
               <li>
-                <a href={`/${params.listingType}/oras/${params.city}`} className="hover:text-foreground">
+                <a
+                  href={`/${params.listingType}/oras/${params.city}`}
+                  className="hover:text-foreground"
+                >
                   {cityLabel}
                 </a>
               </li>
@@ -89,7 +95,8 @@ export default function CityTypeArchivePage({
                 Top {listingLabel} de {typeLabel} {cityLabel}
               </h1>
               <p className="text-lg text-muted-foreground text-pretty">
-                Arhivă tip în oraș (UI placeholder). Conectăm ulterior filtre și listări.
+                Arhivă tip în oraș (UI placeholder). Conectăm ulterior filtre și
+                listări.
               </p>
             </div>
             <AddListingButton listingType={params.listingType as any} />
@@ -99,5 +106,5 @@ export default function CityTypeArchivePage({
         </div>
       </div>
     </div>
-  )
+  );
 }

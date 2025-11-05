@@ -23,9 +23,7 @@ import {
   City,
 } from "@/types/payload-types";
 import { getListingTypeSlug } from "@/lib/getListingType";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
-import { fetchListing, fetchSimilarListings } from "@/lib/api/listings";
+import { fetchListing } from "@/lib/api/listings";
 import { LocationFacilities } from "@/components/listing/location/LocationFacilities";
 import { LocationCapacity } from "@/components/listing/location/LocationCapacity";
 import { ServiceOfferTags } from "@/components/listing/service/ServiceOfferTags";
@@ -33,7 +31,39 @@ import { ListingRecommendations } from "@/components/listing/shared/ListingRecom
 import { ListingType as SuitableForType } from "@/types/payload-types";
 // import { RecommendedListings } from "@/components/home/carousels/RecommendedLocations";
 
+import { fetchHubSnapshot } from "@/lib/api/hub";
+
 export const revalidate = 3600; // ISR: revalidate every hour
+
+export async function generateStaticParams() {
+  const types: ListingType[] = ["locatii", "servicii", "evenimente"];
+
+  const all = await Promise.all(
+    types.map(async (t) => {
+      try {
+        const s = await fetchHubSnapshot(t);
+        const fromFeatured = (s?.featured ?? [])
+          .slice(0, 80)
+          .map((i: any) => ({ listingType: t, slug: i.slug }));
+        const fromCities = (s?.popularCityRows ?? []).flatMap((row: any) =>
+          (row.items ?? [])
+            .slice(0, 10)
+            .map((i: any) => ({ listingType: t, slug: i.slug })),
+        );
+        return [...fromFeatured, ...fromCities];
+      } catch {
+        return [];
+      }
+    }),
+  );
+
+  // de-dup + cap
+  const map = new Map<string, { listingType: ListingType; slug: string }>();
+  for (const arr of all)
+    for (const p of arr) map.set(`${p.listingType}:${p.slug}`, p);
+
+  return Array.from(map.values()).slice(0, 400);
+}
 
 export default async function DetailPage({
   params,
@@ -43,9 +73,6 @@ export default async function DetailPage({
   const { listingType, slug } = await params;
   if (!listingTypes.includes(listingType as any)) notFound();
 
-  const session = await getServerSession(authOptions);
-  const accessToken = session?.accessToken;
-
   const listingTypeUrl = getListingTypeSlug(listingType);
   const {
     data: listing,
@@ -53,13 +80,11 @@ export default async function DetailPage({
   }: { data: Listing | null; error: Error | null } = await fetchListing(
     listingTypeUrl as ListingType,
     slug,
-    accessToken,
   );
+
   if (error || !listing) {
     notFound();
   }
-
-  console.log(listing);
 
   const city = typeof listing?.city === "object" ? listing?.city : null;
   const cityName = city?.name ?? "";
@@ -75,7 +100,6 @@ export default async function DetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6 space-y-8">
           <ListingBreadcrumbs

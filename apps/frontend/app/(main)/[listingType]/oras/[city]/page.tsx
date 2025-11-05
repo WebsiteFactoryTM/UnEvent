@@ -1,40 +1,45 @@
-import type { Metadata } from "next"
-import { notFound } from "next/navigation"
-import { listingTypes, cities, getCityLabel, getListingTypeLabel } from "@/config/archives"
-import { ArchiveFilter } from "@/components/archives/ArchiveFilter"
-import { AddListingButton } from "@/components/archives/AddListingButton"
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import {
+  listingTypes,
+  cities,
+  getCityLabel,
+  getListingTypeLabel,
+} from "@/config/archives";
+import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
+import { AddListingButton } from "@/components/archives/AddListingButton";
 
-export const revalidate = 3600 // ISR: revalidate every hour
+export const revalidate = 3600; // ISR: revalidate every hour
 
-export async function generateStaticParams() {
-  return listingTypes.flatMap((listingType) => cities.map((c) => ({ listingType, city: c.slug })))
-}
+// export async function generateStaticParams() {
+//   return listingTypes.flatMap((listingType) => cities.map((c) => ({ listingType, city: c.slug })))
+// }
 
 export async function generateMetadata({
   params,
 }: {
-  params: { listingType: string; city: string }
+  params: { listingType: string; city: string };
 }): Promise<Metadata> {
-  const listingLabel = getListingTypeLabel(params.listingType)
-  const cityLabel = getCityLabel(params.city)
+  const listingLabel = getListingTypeLabel(params.listingType);
+  const cityLabel = getCityLabel(params.city);
 
   return {
     title: `Top ${listingLabel} ${cityLabel} | UN:EVENT`,
     description: `Descoperă cele mai bune ${listingLabel.toLowerCase()} din ${cityLabel}.`,
-  }
+  };
 }
 
 export default function CityArchivePage({
   params,
 }: {
-  params: { listingType: string; city: string }
+  params: { listingType: string; city: string };
 }) {
   if (!listingTypes.includes(params.listingType as any)) {
-    notFound()
+    notFound();
   }
 
-  const listingLabel = getListingTypeLabel(params.listingType)
-  const cityLabel = getCityLabel(params.city)
+  const listingLabel = getListingTypeLabel(params.listingType);
+  const cityLabel = getCityLabel(params.city);
 
   return (
     <div className="min-h-screen">
@@ -50,7 +55,10 @@ export default function CityArchivePage({
               </li>
               <li>/</li>
               <li>
-                <a href={`/${params.listingType}`} className="hover:text-foreground">
+                <a
+                  href={`/${params.listingType}`}
+                  className="hover:text-foreground"
+                >
                   {listingLabel}
                 </a>
               </li>
@@ -66,7 +74,8 @@ export default function CityArchivePage({
                 Top {listingLabel} {cityLabel}
               </h1>
               <p className="text-lg text-muted-foreground text-pretty">
-                Arhivă oraș (UI placeholder). Conectăm ulterior filtre și listări.
+                Arhivă oraș (UI placeholder). Conectăm ulterior filtre și
+                listări.
               </p>
             </div>
             <AddListingButton listingType={params.listingType as any} />
@@ -76,5 +85,5 @@ export default function CityArchivePage({
         </div>
       </div>
     </div>
-  )
+  );
 }

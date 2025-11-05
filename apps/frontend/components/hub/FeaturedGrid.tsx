@@ -31,7 +31,7 @@ export default function FeaturedGrid({
           <ListingCard
             key={`${item.listingType}_${item.slug}_${item.id}`}
             id={item.id}
-            name={item.name}
+            name={item.title}
             slug={item.slug}
             description={item.description}
             image={item.image}

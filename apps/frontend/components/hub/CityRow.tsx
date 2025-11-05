@@ -51,7 +51,7 @@ export function CityRow({
             >
               <ListingCard
                 id={item.id}
-                name={item.name}
+                name={item.title}
                 slug={item.slug}
                 description={item.description}
                 image={item.image}

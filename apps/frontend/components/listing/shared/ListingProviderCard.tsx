@@ -34,8 +34,6 @@ export function ListingProviderCard({
     owner?.userType?.filter((role) => role !== "client") || ["client"],
   );
 
-  console.log(owner);
-
   return (
     <div className="glass-card p-4 md:p-6 space-y-6">
       <h2 className="text-2xl font-bold">{rolesLabel.join(", ")}</h2>

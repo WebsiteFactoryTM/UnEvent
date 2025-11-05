@@ -17,7 +17,7 @@ import {
   FaFlag,
   FaMessage,
 } from "react-icons/fa6";
-import type { User, Profile } from "@/types/payload-types copy";
+import type { User, Profile } from "@/types/payload-types";
 
 interface ProfileSidebarProps {
   user: User & { profile: Profile };
