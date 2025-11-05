@@ -2,12 +2,15 @@ import { promises as fs } from 'fs'
 import path from 'path'
 import { Payload } from 'payload'
 import { fileURLToPath } from 'url'
+import slugify from 'slugify'
 
 interface TaxonomyItem {
   title: string
   category: string
   type: 'events' | 'locations' | 'services'
   sortOrder: number
+  categorySlug: string
+  slug: string
 }
 
 interface TaxonomyCategory {
@@ -36,8 +39,10 @@ async function loadTaxonomyData(
       items.push({
         title: item.name,
         category: category.name,
+        categorySlug: slugify(category.name, { lower: true, strict: true, trim: true }),
         type,
         sortOrder,
+        slug: slugify(item.name, { lower: true, strict: true, trim: true }),
       })
       sortOrder++
     }
@@ -76,7 +81,11 @@ async function seedListingTypes(payload: Payload) {
       try {
         await payload.create({
           collection: 'listing-types',
-          data: item,
+          data: {
+            ...item,
+            usageCount: 0,
+            usageCountPublic: 0,
+          },
         })
         created++
       } catch (error) {

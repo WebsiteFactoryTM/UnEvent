@@ -1,0 +1,35 @@
+import type { PayloadRequest } from 'payload'
+import type { PayloadHandler } from 'payload'
+
+export const hubHandler: PayloadHandler = async (req: PayloadRequest) => {
+  try {
+    const listingType =
+      (req.query.listingType as 'locations' | 'services' | 'events') ?? 'locations'
+    const { docs } = await req.payload.find({
+      collection: 'hub-snapshots',
+      where: { listingType: { equals: listingType } },
+      limit: 1,
+      depth: 0,
+    })
+    const doc = docs[0]
+    if (!doc) return new Response(JSON.stringify({ error: 'snapshot not found' }), { status: 404 })
+
+    return new Response(
+      JSON.stringify({
+        listingType: doc.listingType,
+        typeaheadCities: doc.typeaheadCities,
+        popularCityRows: doc.popularCityRows,
+        featured: doc.featured,
+        popularSearchCombos: doc.popularSearchCombos,
+        topCities: doc.topCities,
+        topTypes: doc.topTypes,
+        generatedAt: doc.generatedAt,
+        algoVersion: doc.algoVersion,
+      }),
+      { headers: { 'Cache-Control': 'public, max-age=60, s-maxage=60' } },
+    )
+  } catch (error) {
+    console.error(error)
+    return new Response(JSON.stringify({ error: 'Error getting hub' }), { status: 500 })
+  }
+}

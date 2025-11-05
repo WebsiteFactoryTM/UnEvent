@@ -10,9 +10,9 @@ export function ListingBreadcrumbs({
   title,
 }: {
   type: ListingType;
-  cityName: string;
-  citySlug: string;
-  title: string;
+  cityName?: string;
+  citySlug?: string;
+  title?: string;
 }) {
   return (
     <nav
@@ -27,27 +27,38 @@ export function ListingBreadcrumbs({
         <FaHouse className="w-4 h-4" />
       </Link>
 
-      <FaChevronRight className="w-3 h-3" />
+      {type && (
+        <>
+          <FaChevronRight className="w-3 h-3" />
 
-      <Link
-        href={`/${type}`}
-        className="hover:text-foreground transition-colors"
-      >
-        {type.charAt(0).toUpperCase() + type.slice(1)}
-      </Link>
+          <Link
+            href={`/${type}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Link>
+        </>
+      )}
+      {citySlug && cityName && (
+        <>
+          <FaChevronRight className="w-3 h-3" />
+          <Link
+            href={`/${type}/oras/${citySlug}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {cityName}
+          </Link>
+        </>
+      )}
+      {title && (
+        <>
+          <FaChevronRight className="w-3 h-3" />
 
-      <FaChevronRight className="w-3 h-3" />
-
-      <Link
-        href={`/${type}/oras/${citySlug}`}
-        className="hover:text-foreground transition-colors"
-      >
-        {cityName}
-      </Link>
-
-      <FaChevronRight className="w-3 h-3" />
-
-      <span className="text-foreground font-medium line-clamp-1">{title}</span>
+          <span className="text-foreground font-medium line-clamp-1">
+            {title}
+          </span>
+        </>
+      )}
     </nav>
   );
 }

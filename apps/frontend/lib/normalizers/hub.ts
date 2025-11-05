@@ -10,7 +10,7 @@ import type { Listing, ListingType } from "@/types/listings";
 
 export type ListingCardData = {
   id: number;
-  name: string;
+  title: string;
   slug: string;
   description: string;
   image: { url: string; alt: string };
@@ -56,7 +56,7 @@ function cityToName(c?: number | City | null): string {
 export function normalizeLocation(listing: Location): ListingCardData {
   return {
     id: listing.id,
-    name: listing.title,
+    title: listing.title,
     slug: listing.slug || String(listing.id),
     description: listing.description || "",
     image: mediaToImage(listing.featuredImage, listing.title),
@@ -79,7 +79,7 @@ export function normalizeLocation(listing: Location): ListingCardData {
 export function normalizeService(listing: Service): ListingCardData {
   return {
     id: listing.id,
-    name: listing.title,
+    title: listing.title,
     slug: listing.slug || String(listing.id),
     description: listing.description || "",
     image: mediaToImage(listing.featuredImage, listing.title),
@@ -101,7 +101,7 @@ export function normalizeService(listing: Service): ListingCardData {
 export function normalizeEvent(listing: Event): ListingCardData {
   return {
     id: listing.id,
-    name: listing.title,
+    title: listing.title,
     slug: listing.slug || String(listing.id),
     description: listing.description || "",
     image: mediaToImage(listing.featuredImage, listing.title),

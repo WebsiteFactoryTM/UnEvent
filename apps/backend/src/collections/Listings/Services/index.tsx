@@ -5,6 +5,7 @@ import { isOwnerOrAdmin, requireRole, approvedOnlyPublic } from '@/collections/_
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
+
 export const Services: CollectionConfig = {
   slug: 'services',
   admin: {

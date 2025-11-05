@@ -59,6 +59,8 @@ export default async function DetailPage({
     notFound();
   }
 
+  console.log(listing);
+
   const city = typeof listing?.city === "object" ? listing?.city : null;
   const cityName = city?.name ?? "";
   const citySlug = city?.slug ?? "";
@@ -134,23 +136,18 @@ export default async function DetailPage({
               </>
             )}
 
-            <div className="grid lg:grid-cols-2 gap-8">
-              <div className="lg:col-span-1">
-                <ListingReviews
-                  type={listingType as ListingType}
-                  listingId={listing?.id ?? null}
-                  listingRating={listing?.rating ?? null}
-                  listingReviewCount={listing?.reviewCount ?? null}
-                  hasReviewedByViewer={listing?.hasReviewedByViewer ?? false}
-                />
-              </div>
-              <div className="lg:col-span-1">
-                <ListingProviderCard
-                  type={listingType as ListingType}
-                  listing={listing as Listing}
-                />
-              </div>
-            </div>
+            <ListingProviderCard
+              type={listingType as ListingType}
+              listing={listing as Listing}
+            />
+
+            <ListingReviews
+              type={listingType as ListingType}
+              listingId={listing?.id ?? null}
+              listingRating={listing?.rating ?? null}
+              listingReviewCount={listing?.reviewCount ?? null}
+              hasReviewedByViewer={listing?.hasReviewedByViewer ?? false}
+            />
           </div>
           {listingType === "evenimente" && (
             <ListingRecommendations
@@ -167,7 +164,7 @@ export default async function DetailPage({
             />
           )}
 
-          {listingType === "servicii" && (
+          {["servicii"].includes(listingType) && (
             <ListingRecommendations
               typeRecommendations={"locatii" as ListingType}
               city={city as City}

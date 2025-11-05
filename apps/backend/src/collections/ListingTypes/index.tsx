@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { createSlugField } from '../../utils/slugifySlug'
 import type { ListingType } from '@/payload-types'
+import { isAdmin } from '@/collections/_access/roles'
 
 export const ListingTypes: CollectionConfig = {
   slug: 'listing-types',
@@ -11,6 +12,9 @@ export const ListingTypes: CollectionConfig = {
   timestamps: true,
   access: {
     read: () => true, // public read access for taxonomy
+    create: ({ req }) => isAdmin({ req }),
+    update: ({ req }) => isAdmin({ req }),
+    delete: ({ req }) => isAdmin({ req }),
   },
   fields: [
     {
@@ -74,6 +78,34 @@ export const ListingTypes: CollectionConfig = {
       defaultValue: true,
       admin: {
         description: 'Whether this taxonomy item is active/available',
+      },
+    },
+    {
+      name: 'usageCount',
+      type: 'number',
+      defaultValue: 0,
+      index: true,
+      admin: {
+        description:
+          'Denormalized total of listings tagged cu acest tip (toate stările). Se actualizează prin hooks.',
+      },
+    },
+    {
+      name: 'usageCountPublic',
+      type: 'number',
+      defaultValue: 0,
+      index: true,
+      admin: {
+        description:
+          'Număr listări publice (ex. aprobate/publish) care folosesc acest tip. Se actualizează prin hooks.',
+      },
+    },
+    {
+      name: 'usageUpdatedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        description: 'Ultima actualizare a contoarelor de utilizare.',
       },
     },
   ],

@@ -81,6 +81,7 @@ export interface Config {
     aggregates: Aggregate;
     'listing-rank': ListingRank;
     reviews: Review;
+    'hub-snapshots': HubSnapshot;
     search: Search;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -102,6 +103,7 @@ export interface Config {
     aggregates: AggregatesSelect<false> | AggregatesSelect<true>;
     'listing-rank': ListingRankSelect<false> | ListingRankSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    'hub-snapshots': HubSnapshotsSelect<false> | HubSnapshotsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -532,6 +534,18 @@ export interface ListingType {
    * Whether this taxonomy item is active/available
    */
   isActive?: boolean | null;
+  /**
+   * Denormalized total of listings tagged cu acest tip (toate stările). Se actualizează prin hooks.
+   */
+  usageCount?: number | null;
+  /**
+   * Număr listări publice (ex. aprobate/publish) care folosesc acest tip. Se actualizează prin hooks.
+   */
+  usageCountPublic?: number | null;
+  /**
+   * Ultima actualizare a contoarelor de utilizare.
+   */
+  usageUpdatedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1009,6 +1023,89 @@ export interface Review {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hub-snapshots".
+ */
+export interface HubSnapshot {
+  id: number;
+  listingType: 'locations' | 'services' | 'events';
+  typeaheadCities?:
+    | {
+        slug: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  topCities?:
+    | {
+        slug: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  topTypes?:
+    | {
+        slug: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  popularCityRows?:
+    | {
+        citySlug: string;
+        cityLabel: string;
+        items?:
+          | {
+              listingId: number;
+              slug: string;
+              title: string;
+              cityLabel?: string | null;
+              imageUrl?: string | null;
+              verified?: boolean | null;
+              ratingAvg?: number | null;
+              ratingCount?: number | null;
+              description?: string | null;
+              type?: string | null;
+              capacity?: number | null;
+              startDate?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  featured?:
+    | {
+        listingId: number;
+        slug: string;
+        title: string;
+        cityLabel?: string | null;
+        imageUrl?: string | null;
+        verified?: boolean | null;
+        ratingAvg?: number | null;
+        ratingCount?: number | null;
+        description?: string | null;
+        type?: string | null;
+        capacity?: number | null;
+        startDate?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  popularSearchCombos?:
+    | {
+        citySlug: string;
+        cityLabel: string;
+        typeSlug: string;
+        typeLabel: string;
+        id?: string | null;
+      }[]
+    | null;
+  generatedAt: string;
+  algoVersion: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1034,10 +1131,15 @@ export interface Search {
     | {
         relationTo: 'profiles';
         value: number | Profile;
+      }
+    | {
+        relationTo: 'cities';
+        value: number | City;
       };
   description?: string | null;
   address?: string | null;
   cityName?: string | null;
+  type?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1103,6 +1205,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'reviews';
         value: number | Review;
+      } | null)
+    | ({
+        relationTo: 'hub-snapshots';
+        value: number | HubSnapshot;
       } | null)
     | ({
         relationTo: 'search';
@@ -1283,6 +1389,9 @@ export interface ListingTypesSelect<T extends boolean = true> {
   type?: T;
   sortOrder?: T;
   isActive?: T;
+  usageCount?: T;
+  usageCountPublic?: T;
+  usageUpdatedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1653,6 +1762,88 @@ export interface ReviewsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hub-snapshots_select".
+ */
+export interface HubSnapshotsSelect<T extends boolean = true> {
+  listingType?: T;
+  typeaheadCities?:
+    | T
+    | {
+        slug?: T;
+        label?: T;
+        id?: T;
+      };
+  topCities?:
+    | T
+    | {
+        slug?: T;
+        label?: T;
+        id?: T;
+      };
+  topTypes?:
+    | T
+    | {
+        slug?: T;
+        label?: T;
+        id?: T;
+      };
+  popularCityRows?:
+    | T
+    | {
+        citySlug?: T;
+        cityLabel?: T;
+        items?:
+          | T
+          | {
+              listingId?: T;
+              slug?: T;
+              title?: T;
+              cityLabel?: T;
+              imageUrl?: T;
+              verified?: T;
+              ratingAvg?: T;
+              ratingCount?: T;
+              description?: T;
+              type?: T;
+              capacity?: T;
+              startDate?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  featured?:
+    | T
+    | {
+        listingId?: T;
+        slug?: T;
+        title?: T;
+        cityLabel?: T;
+        imageUrl?: T;
+        verified?: T;
+        ratingAvg?: T;
+        ratingCount?: T;
+        description?: T;
+        type?: T;
+        capacity?: T;
+        startDate?: T;
+        id?: T;
+      };
+  popularSearchCombos?:
+    | T
+    | {
+        citySlug?: T;
+        cityLabel?: T;
+        typeSlug?: T;
+        typeLabel?: T;
+        id?: T;
+      };
+  generatedAt?: T;
+  algoVersion?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "search_select".
  */
 export interface SearchSelect<T extends boolean = true> {
@@ -1662,6 +1853,7 @@ export interface SearchSelect<T extends boolean = true> {
   description?: T;
   address?: T;
   cityName?: T;
+  type?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -1,8 +1,9 @@
 "use server";
 
-import type { City, Event, Location, Service } from "@/types/payload-types";
+import type { City, HubSnapshot } from "@/types/payload-types";
 import type { Listing, ListingType } from "@/types/listings";
 import { frontendTypeToCollectionSlug } from "@/lib/api/reviews";
+import { getListingTypeSlug } from "@/lib/getListingType";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -116,5 +117,28 @@ export async function fetchHubTopByCity(
   } catch (err) {
     console.error("fetchHubTopByCity error", err);
     return [] as Listing[];
+  }
+}
+
+export async function fetchHubSnapshot(
+  listingType: ListingType,
+): Promise<HubSnapshot | null> {
+  try {
+    if (!API_URL) return null;
+    const collection = getListingTypeSlug(listingType);
+    const url = new URL(`/api/hub`, API_URL);
+    url.searchParams.set("listingType", collection);
+    console.log(url.toString());
+
+    const res = await fetch(url.toString(), {
+      headers: { Accept: "application/json" },
+      next: { revalidate: 3600, tags: [`hub-${listingType}`] },
+    });
+
+    if (!res.ok) return null;
+    return (await res.json()) as HubSnapshot;
+  } catch (err) {
+    console.error("fetchHubSnapshot error", err);
+    return null;
   }
 }

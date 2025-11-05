@@ -17,6 +17,7 @@ export const seed: PayloadHandler = async (req) => {
   }
 
   // Listings-only seeding (media -> locations -> events -> services)
-  await seedListings(req.payload)
+  // await seedListings(req.payload)
+
   return new Response('Successfully seeded!', { status: 200 })
 }

@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 
   if (typeof collection === "string" && typeof slug === "string") {
     revalidateTag(`${collection}_${slug}`);
-    revalidateTag(`home-listings`);
+
     return NextResponse.json({ revalidated: true, now: Date.now() });
   }
 

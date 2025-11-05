@@ -21,7 +21,7 @@ export const fetchListing = async (
         },
         next: {
           tags: [`${listingType}_${slug}`],
-          revalidate: 3600,
+          // revalidate: 3600,
         },
       },
     );

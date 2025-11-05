@@ -30,6 +30,13 @@ import { incrementView } from './endpoints/recordViews'
 import { initFeedSchedulers } from './schedulers/feed'
 import { HomeConfig } from './collections/HomeConfig'
 import { homeHandler } from './endpoints/homeListings'
+import { HubSnapshots } from './collections/HubSnapshot'
+import { registerBuildHubSnapshotScheduler } from './schedulers/buildHubSnapshot'
+import { hubHandler } from './endpoints/hubEndpoint'
+import { regenerateHubHandler } from './endpoints/regenerateHub'
+import { ListingType } from './payload-types'
+import { registerSyncListingTypeCountersScheduler } from './schedulers/syncListingTypeCounters'
+import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -71,6 +78,16 @@ export default buildConfig({
       method: 'post',
       handler: incrementView,
     },
+    {
+      path: '/hub',
+      method: 'get',
+      handler: hubHandler,
+    },
+    {
+      path: '/regenerate-hub',
+      method: 'get',
+      handler: regenerateHubHandler,
+    },
   ],
   collections: [
     Users,
@@ -87,6 +104,7 @@ export default buildConfig({
     Aggregates,
     ListingRank,
     Reviews,
+    HubSnapshots,
   ],
   globals: [HomeConfig],
   editor: lexicalEditor(),
@@ -155,12 +173,13 @@ export default buildConfig({
     openapi({ openapiVersion: '3.0', metadata: { title: 'Dev API', version: '0.0.1' } }),
     swaggerUI({ docsUrl: '/swagger', specEndpoint: '/openapi.json', enabled: true }),
     searchPlugin({
-      collections: ['locations', 'services', 'events', 'profiles'],
+      collections: ['locations', 'services', 'events', 'profiles', 'cities'],
       defaultPriorities: {
         locations: 10,
         services: 20,
         events: 30,
         profiles: 40,
+        cities: 50,
       },
       searchOverrides: {
         fields: ({ defaultFields }: { defaultFields: Field[] }) => [
@@ -181,6 +200,13 @@ export default buildConfig({
           },
           {
             name: 'cityName',
+            type: 'text',
+            admin: {
+              readOnly: true,
+            },
+          },
+          {
+            name: 'type',
             type: 'text',
             admin: {
               readOnly: true,
@@ -217,16 +243,40 @@ export default buildConfig({
           }
         }
 
+        if (originalDoc?.type?.length) {
+          try {
+            const result = await payload.find({
+              collection: 'listing-types',
+              where: { id: { in: originalDoc.type } },
+              depth: 0,
+              limit: 100,
+            })
+            const labels = result.docs.map((d: ListingType) => d?.title).filter(Boolean)
+            searchDoc.type = labels // keep as array in index
+          } catch (e) {
+            console.error('Error fetching listing-types:', e)
+            searchDoc.type = []
+          }
+        } else {
+          searchDoc.type = []
+        }
+
         return {
           ...searchDoc,
+          title: originalDoc?.title || '',
           description: originalDoc?.description || '',
           address: originalDoc?.address || '',
-          cityName,
+          cityName: cityName || '',
+          type: searchDoc.type || [],
         }
       },
     }),
   ],
   onInit: async (payload) => {
     initFeedSchedulers(payload)
+    // hourly, staggered minutes
+    registerBuildHubSnapshotScheduler(payload)
+    registerSyncListingTypeCountersScheduler(payload)
+    registerSyncCityCountersScheduler(payload)
   },
 })

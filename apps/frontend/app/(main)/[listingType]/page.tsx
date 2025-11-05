@@ -7,22 +7,50 @@ import {
 } from "@/config/archives";
 import { AddListingButton } from "@/components/archives/AddListingButton";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
-import {
-  fetchHubFeaturedListings,
-  fetchHubPopularCities,
-  fetchHubTopByCity,
-  fetchHubTypeaheadCities,
-} from "@/lib/api/hub";
-import { City } from "@/types/payload-types";
+
+import { fetchHubSnapshot } from "@/lib/api/hub";
+import { HubSnapshot } from "@/types/payload-types";
 import { CityTypeahead } from "@/components/hub/CityTypeahead";
 import { OccasionChips } from "@/components/hub/OccasionChips";
 import { CityRow } from "@/components/hub/CityRow";
 import FeaturedGrid from "@/components/hub/FeaturedGrid";
 import PopularSearches from "@/components/hub/PopularSearches";
-import { normalizeListing, type ListingCardData } from "@/lib/normalizers/hub";
+import { type ListingCardData } from "@/lib/normalizers/hub";
+import { ListingType } from "@/types/listings";
+import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
 export const revalidate = 3600; // ISR: revalidate every hour
+
+const toCard = (
+  it: NonNullable<HubSnapshot["featured"]>[number],
+  listingType: ListingType,
+): ListingCardData => ({
+  id: it.listingId,
+  title: it.title,
+  slug: it.slug,
+  description: it.description || "",
+  image: { url: it.imageUrl || "/placeholder.svg", alt: it.title },
+  city: it.cityLabel || "România",
+  type: it.type || getListingTypeLabel(listingType),
+  verified: Boolean(it.verified),
+  rating:
+    typeof it.ratingAvg === "number" && typeof it.ratingCount === "number"
+      ? { average: it.ratingAvg, count: it.ratingCount }
+      : undefined,
+  views: 0,
+  listingType: listingType as any,
+  date: it.startDate || undefined,
+});
+
+const titles: Record<string, string> = {
+  locatii: "Locații pentru evenimente în România | UN:EVENT",
+  servicii: "Servicii pentru evenimente în România | UN:EVENT",
+  evenimente: "Evenimente în România | UN:EVENT",
+};
+const descriptions: Record<string, string> = {
+  locatii: "Descoperă locații verificate pentru evenimente în toată România.",
+  servicii: "Găsește servicii pentru evenimente — verificate și recenzate.",
+  evenimente: "Evenimente în toată România — descoperă ce urmează.",
+};
 
 export async function generateStaticParams() {
   return listingTypes.map((listingType) => ({
@@ -36,16 +64,6 @@ export async function generateMetadata({
   params: Promise<{ listingType: string }>;
 }): Promise<Metadata> {
   const { listingType } = await params;
-  const titles: Record<string, string> = {
-    locatii: "Locații pentru evenimente în România | UN:EVENT",
-    servicii: "Servicii pentru evenimente în România | UN:EVENT",
-    evenimente: "Evenimente în România | UN:EVENT",
-  };
-  const descriptions: Record<string, string> = {
-    locatii: "Descoperă locații verificate pentru evenimente în toată România.",
-    servicii: "Găsește servicii pentru evenimente — verificate și recenzate.",
-    evenimente: "Evenimente în toată România — descoperă ce urmează.",
-  };
 
   const title = titles[listingType] || "UN:EVENT";
   const description = descriptions[listingType] || "";
@@ -53,6 +71,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: `/${listingType}` },
+    metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_URL!),
   };
 }
 
@@ -66,53 +85,45 @@ export default async function ListingTypePage({
     notFound();
   }
 
-  const session = await getServerSession(authOptions);
-  const accessToken = (session as any)?.accessToken as string | undefined;
+  let snapshot: HubSnapshot | null = null;
+  try {
+    snapshot = await fetchHubSnapshot(listingType as ListingType);
+  } catch (e) {
+    // TODO: captureException(e) // Sentry if installed
+    snapshot = null;
+  }
+  const typeaheadCities =
+    snapshot?.typeaheadCities?.map((c) => ({
+      slug: c.slug,
+      label: c.label,
+    })) || [];
 
-  const [popularCities, typeaheadCities, featured] = await Promise.all([
-    fetchHubPopularCities(6),
-    fetchHubTypeaheadCities(50),
-    fetchHubFeaturedListings(listingType as any, 12, accessToken),
-  ]);
-
-  // Load top listings per city in parallel
-  const cityRows = await Promise.all(
-    popularCities.map(async (c: City) => {
-      const items = await fetchHubTopByCity(
-        listingType as any,
-        c.id,
-        9,
-        accessToken,
-      );
-      const normalized: ListingCardData[] = items.map((it) =>
-        normalizeListing(listingType as any, it),
-      );
-      return {
-        citySlug: c.slug!,
-        cityLabel: c.name,
-        items: normalized,
-      };
-    }),
-  );
-
-  const featuredNormalized: ListingCardData[] = featured.map((it) =>
-    normalizeListing(listingType as any, it),
-  );
-
-  const options = getTypesByListingType(listingType).map((t) => ({
-    slug: t.slug,
-    label: t.label,
+  const cityRows = (snapshot?.popularCityRows || []).map((row) => ({
+    citySlug: row.citySlug,
+    cityLabel: row.cityLabel,
+    items: (row.items || []).map((it) =>
+      toCard(it!, listingType as ListingType),
+    ),
   }));
 
-  // Popular searches: build a small set of deep links from city/type combos
-  const popularSearchChips = cityRows.slice(0, 4).flatMap((row) =>
-    options.slice(0, 3).map((opt) => ({
-      citySlug: row.citySlug,
-      cityLabel: row.cityLabel,
-      typeSlug: opt.slug,
-      typeLabel: opt.label,
-    })),
+  const featuredNormalized: ListingCardData[] = (snapshot?.featured || []).map(
+    (it) => toCard(it!, listingType as ListingType),
   );
+
+  const options =
+    (snapshot?.topTypes ?? []).map((t) => ({
+      slug: t.slug,
+      label: t.label,
+    })) ?? [];
+
+  // Popular searches: build a small set of deep links from city/type combos
+  const popularSearchChips =
+    (snapshot?.popularSearchCombos ?? []).map((it) => ({
+      citySlug: it.citySlug,
+      cityLabel: it.cityLabel,
+      typeSlug: it.typeSlug,
+      typeLabel: it.typeLabel,
+    })) ?? [];
 
   const h1Titles: Record<string, string> = {
     locatii: "Locații pentru evenimente în România",
@@ -121,12 +132,21 @@ export default async function ListingTypePage({
   };
   const h1 = h1Titles[listingType];
 
+  if (featuredNormalized.length === 0 && cityRows.length === 0) {
+    return (
+      <div className="text-muted-foreground">
+        Încă nu avem date pentru această secțiune. Revino curând.
+      </div>
+    );
+  }
+
   return (
     <>
       <ScrollToTop />
       <div className="min-h-screen">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-7xl mx-auto space-y-12">
+            <ListingBreadcrumbs type={listingType as ListingType} />
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="space-y-4 flex-1">
                 <h1 className="text-4xl md:text-5xl font-bold text-balance">
@@ -187,6 +207,23 @@ export default async function ListingTypePage({
           </div>
         </div>
       </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: featuredNormalized
+              .slice(0, 12)
+              .map((card, idx) => ({
+                "@type": "ListItem",
+                position: idx + 1,
+                url: `/${listingType}/${card.slug}`,
+                name: card.title,
+              })),
+          }),
+        }}
+      />
     </>
   );
 }

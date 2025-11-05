@@ -138,73 +138,6 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
 
               return (
                 <CarouselItem key={id} className="md:basis-1/2 lg:basis-1/3">
-                  {/* <Card className="glass-card overflow-hidden h-full flex flex-col">
-                    <CardHeader className="p-0 relative">
-                      <div className="relative h-48 w-full">
-                        <Image
-                          src={image?.url || "/placeholder.svg"}
-                          alt={listing.title}
-                          fill
-                          className="object-cover"
-                        />
-                        {verified && (
-                          <Badge className="absolute top-2 left-2 bg-green-500/90 backdrop-blur-sm">
-                            Verificat
-                          </Badge>
-                        )}
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
-                          onClick={handleFavorite}
-                        >
-                          <FaHeart className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardHeader>
-
-                    <CardContent className="flex-1 p-4 space-y-3">
-                      <h3 className="font-semibold text-lg line-clamp-2">
-                        {listing.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {listing.description}
-                      </p>
-
-                      <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <FaLocationDot className="h-4 w-4" />
-                          <span>{city?.name}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <FaUsers className="h-4 w-4" />
-                          <span>{capacity} persoane</span>
-                        </div>
-                        <Badge variant="outline">{locationType}</Badge>
-                      </div>
-
-                      {typeof rating === "number" &&
-                        typeof reviewCount === "number" && (
-                          <div className="flex items-center gap-1 text-sm">
-                            <FaStar className="h-4 w-4 text-yellow-500" />
-                            <span className="font-semibold">
-                              {rating.toFixed(1)}
-                            </span>
-                            <span className="text-muted-foreground">
-                              · {reviewCount} recenzii
-                            </span>
-                          </div>
-                        )}
-                    </CardContent>
-
-                    <CardFooter className="p-4 pt-0">
-                      <Button asChild className="w-full glow-on-hover">
-                        <Link href={`/${typeRecommendations}/${slug}`}>
-                          Vezi detalii
-                        </Link>
-                      </Button>
-                    </CardFooter>
-                  </Card> */}
                   <ListingCard
                     id={id}
                     name={listing.title}
@@ -235,8 +168,8 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
               );
             })}
           </CarouselContent>
-          <CarouselPrevious className="glass-card" />
-          <CarouselNext className="glass-card" />
+          <CarouselPrevious />
+          <CarouselNext />
         </Carousel>
       </div>
     </section>

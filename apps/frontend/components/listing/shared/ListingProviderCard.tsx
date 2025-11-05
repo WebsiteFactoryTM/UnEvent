@@ -33,6 +33,9 @@ export function ListingProviderCard({
   const rolesLabel = getRolesLabel(
     owner?.userType?.filter((role) => role !== "client") || ["client"],
   );
+
+  console.log(owner);
+
   return (
     <div className="glass-card p-4 md:p-6 space-y-6">
       <h2 className="text-2xl font-bold">{rolesLabel.join(", ")}</h2>
@@ -57,7 +60,7 @@ export function ListingProviderCard({
         <div className="flex-1 space-y-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-xl font-semibold">{owner.name}</h3>
+              <h3 className="text-xl font-semibold">{owner.displayName}</h3>
               {isVerified && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
                   Verificat
