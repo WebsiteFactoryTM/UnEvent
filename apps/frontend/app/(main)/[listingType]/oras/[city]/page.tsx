@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  listingTypes,
-  cities,
-  getCityLabel,
-  getListingTypeLabel,
-} from "@/config/archives";
+
 import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
 import { AddListingButton } from "@/components/archives/AddListingButton";
+import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
+import { getQueryClient } from "@/lib/react-query";
+import { FeedQuery, fetchFeed } from "@/lib/api/feed";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import CityArchive from "@/components/archives/Archive";
+import { feedKeys } from "@/lib/cacheKeys";
+import {
+  getCityLabel,
+  getListingTypeLabel,
+  listingTypes,
+} from "@/config/archives";
+import { ListingType } from "@/types/listings";
+import { getListingTypeSlug } from "@/lib/getListingType";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -18,10 +26,11 @@ export const revalidate = 3600; // ISR: revalidate every hour
 export async function generateMetadata({
   params,
 }: {
-  params: { listingType: string; city: string };
+  params: Promise<{ listingType: string; city: string }>;
 }): Promise<Metadata> {
-  const listingLabel = getListingTypeLabel(params.listingType);
-  const cityLabel = getCityLabel(params.city);
+  const { listingType, city } = await params;
+  const listingLabel = getListingTypeLabel(listingType);
+  const cityLabel = getCityLabel(city);
 
   return {
     title: `Top ${listingLabel} ${cityLabel} | UN:EVENT`,
@@ -29,43 +38,75 @@ export async function generateMetadata({
   };
 }
 
-export default function CityArchivePage({
+export default async function CityArchivePage({
   params,
+  searchParams,
 }: {
-  params: { listingType: string; city: string };
+  params: Promise<{ listingType: ListingType; city: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  if (!listingTypes.includes(params.listingType as any)) {
-    notFound();
-  }
+  const { listingType, city } = await params;
+  const searchFilters = await searchParams;
+  if (!listingTypes.includes(listingType as any)) notFound();
 
-  const listingLabel = getListingTypeLabel(params.listingType);
-  const cityLabel = getCityLabel(params.city);
+  const cityLabel = getCityLabel(city);
+  const listingLabel = getListingTypeLabel(listingType);
+
+  const page = (() => {
+    const pageValue = Number(searchFilters?.page || 1);
+    return isNaN(pageValue) ? 1 : pageValue;
+  })();
+
+  const limit = (() => {
+    const limitValue = Number(searchFilters?.limit || 24);
+    return isNaN(limitValue) ? 24 : limitValue;
+  })();
+
+  const filters: FeedQuery = {
+    entity: getListingTypeSlug(listingType),
+    city,
+    page,
+    limit,
+    type: searchFilters?.type as string | undefined,
+    suitableFor: searchFilters?.suitableFor as string | undefined,
+    ratingMin: searchFilters?.ratingMin
+      ? Number(searchFilters.ratingMin)
+      : undefined,
+    priceMin: searchFilters?.priceMin
+      ? Number(searchFilters.priceMin)
+      : undefined,
+    priceMax: searchFilters?.priceMax
+      ? Number(searchFilters.priceMax)
+      : undefined,
+    capacityMin: searchFilters?.capacityMin
+      ? Number(searchFilters.capacityMin)
+      : undefined,
+    facilitiesMode: (searchFilters?.facilitiesMode as "all" | "any") ?? "all",
+    facilities: searchFilters?.facilities as string | undefined,
+    lat: searchFilters?.lat ? Number(searchFilters.lat) : undefined,
+    lng: searchFilters?.lng ? Number(searchFilters.lng) : undefined,
+    radius: searchFilters?.radius ? Number(searchFilters.radius) : undefined,
+  };
+  // Initialize React Query client
+  const queryClient = getQueryClient();
+
+  // Pre-fetch first page for SSG/ISR
+  await queryClient.prefetchQuery({
+    queryKey: feedKeys.list(filters),
+    queryFn: () => fetchFeed(filters),
+  });
+  const dehydratedState = dehydrate(queryClient);
 
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Breadcrumbs */}
-          <nav className="text-sm text-muted-foreground">
-            <ol className="flex items-center gap-2">
-              <li>
-                <a href="/" className="hover:text-foreground">
-                  Acasă
-                </a>
-              </li>
-              <li>/</li>
-              <li>
-                <a
-                  href={`/${params.listingType}`}
-                  className="hover:text-foreground"
-                >
-                  {listingLabel}
-                </a>
-              </li>
-              <li>/</li>
-              <li className="text-foreground font-medium">{cityLabel}</li>
-            </ol>
-          </nav>
+          <ListingBreadcrumbs
+            type={listingType as ListingType}
+            cityName={cityLabel}
+            citySlug={city}
+          />
 
           {/* Header with add button */}
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -74,14 +115,25 @@ export default function CityArchivePage({
                 Top {listingLabel} {cityLabel}
               </h1>
               <p className="text-lg text-muted-foreground text-pretty">
-                Arhivă oraș (UI placeholder). Conectăm ulterior filtre și
-                listări.
+                Caută cele mai potrivite {listingLabel.toLowerCase()} în{" "}
+                {cityLabel}.
               </p>
             </div>
-            <AddListingButton listingType={params.listingType as any} />
+            <AddListingButton listingType={listingType as any} />
           </div>
 
-          <ArchiveFilter listingType={params.listingType as any} />
+          <ArchiveFilter listingType={listingType as any} />
+
+          {/* Client-side component */}
+          <HydrationBoundary state={dehydratedState}>
+            <CityArchive
+              entity={listingType as ListingType}
+              city={city}
+              initialPage={page}
+              initialLimit={limit}
+              initialFilters={filters}
+            />
+          </HydrationBoundary>
         </div>
       </div>
     </div>

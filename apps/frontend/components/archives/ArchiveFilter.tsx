@@ -1,47 +1,56 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { SearchableSelect } from "@/components/ui/searchable-select"
-import { Slider } from "@/components/ui/slider"
-import { Input } from "@/components/ui/input"
-import { FaMagnifyingGlass, FaChevronDown, FaChevronUp, FaFilter } from "react-icons/fa6"
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import {
+  FaMagnifyingGlass,
+  FaChevronDown,
+  FaChevronUp,
+  FaFilter,
+} from "react-icons/fa6";
+import { useFilters } from "@/hooks/useFilters";
 
-type ListingType = "locatii" | "servicii" | "evenimente"
+type ListingType = "locatii" | "servicii" | "evenimente";
 
 interface ArchiveFilterProps {
-  listingType: ListingType
+  listingType: ListingType;
+  defaultIsOpen?: boolean;
 }
 
-export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  const [capacityRange, setCapacityRange] = useState([0, 500])
-  const [priceRange, setPriceRange] = useState([0, 10000])
-
-  // Locații filters
-  const [eventType, setEventType] = useState("")
-  const [city, setCity] = useState("")
-  const [locationType, setLocationType] = useState("")
-
-  // Servicii filters
-  const [serviceType, setServiceType] = useState("")
-  const [serviceCity, setServiceCity] = useState("")
-  const [serviceEvent, setServiceEvent] = useState("")
-
-  // Evenimente filters
-  const [eventCategory, setEventCategory] = useState("")
-  const [eventCity, setEventCity] = useState("")
-  const [eventWhen, setEventWhen] = useState("")
+export function ArchiveFilter({
+  listingType,
+  defaultIsOpen = false,
+}: ArchiveFilterProps) {
+  const [isOpen, setIsOpen] = useState(defaultIsOpen);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const {
+    filters,
+    setFilter,
+    applyFilters,
+    resetFilters,
+    hasPendingChanges,
+    currentCity,
+    errors,
+    setErrors,
+  } = useFilters();
 
   const eventTypeOptions = [
     { value: "nunta", label: "Nuntă" },
     { value: "botez", label: "Botez" },
     { value: "corporate", label: "Corporate" },
     { value: "petrecere", label: "Petrecere privată" },
-  ]
+  ];
 
   const cityOptions = [
     { value: "bucuresti", label: "București" },
@@ -49,7 +58,7 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
     { value: "timisoara", label: "Timișoara" },
     { value: "brasov", label: "Brașov" },
     { value: "iasi", label: "Iași" },
-  ]
+  ];
 
   const locationTypeOptions = [
     { value: "sala", label: "Sală de evenimente" },
@@ -57,7 +66,7 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
     { value: "gradina", label: "Grădină" },
     { value: "castel", label: "Castel" },
     { value: "loft", label: "Loft" },
-  ]
+  ];
 
   const serviceTypeOptions = [
     { value: "dj", label: "DJ" },
@@ -65,7 +74,7 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
     { value: "catering", label: "Catering" },
     { value: "foto-video", label: "Foto-Video" },
     { value: "organizator", label: "Organizator evenimente" },
-  ]
+  ];
 
   const eventCategoryOptions = [
     { value: "concert", label: "Concert" },
@@ -73,7 +82,7 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
     { value: "workshop", label: "Workshop" },
     { value: "conferinta", label: "Conferință" },
     { value: "petrecere", label: "Petrecere" },
-  ]
+  ];
 
   const eventWhenOptions = [
     { value: "orice", label: "Orice dată" },
@@ -83,13 +92,13 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
     { value: "saptamana-viitoare", label: "Săptămâna viitoare" },
     { value: "luna", label: "Luna aceasta" },
     { value: "specific", label: "Dată specifică" },
-  ]
+  ];
 
   const filterButtonText = {
     locatii: "Filtrează locații",
     servicii: "Filtrează servicii",
     evenimente: "Filtrează evenimente",
-  }[listingType]
+  }[listingType];
 
   return (
     <div className="space-y-4">
@@ -101,7 +110,11 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
       >
         <FaFilter className="mr-2 h-4 w-4" />
         {filterButtonText}
-        {isOpen ? <FaChevronUp className="ml-2 h-4 w-4" /> : <FaChevronDown className="ml-2 h-4 w-4" />}
+        {isOpen ? (
+          <FaChevronUp className="ml-2 h-4 w-4" />
+        ) : (
+          <FaChevronDown className="ml-2 h-4 w-4" />
+        )}
       </Button>
 
       {/* Collapsible Filter Section */}
@@ -115,8 +128,8 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                   <SearchableSelect
                     id="event-type"
                     options={eventTypeOptions}
-                    value={eventType}
-                    onValueChange={setEventType}
+                    value={(filters.type as string) || ""}
+                    onValueChange={(v) => setFilter("type", v)}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     className="w-full"
@@ -128,11 +141,15 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                   <SearchableSelect
                     id="city"
                     options={cityOptions}
-                    value={city}
-                    onValueChange={setCity}
+                    value={String(filters.city || "")}
+                    onValueChange={(v) => {
+                      setFilter("city", v);
+                      setErrors({ city: "" });
+                    }}
                     placeholder="Selectează orașul"
                     searchPlaceholder="Caută oraș..."
                     className="w-full"
+                    error={errors.city}
                   />
                 </div>
 
@@ -141,8 +158,8 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                   <SearchableSelect
                     id="location-type"
                     options={locationTypeOptions}
-                    value={locationType}
-                    onValueChange={setLocationType}
+                    value={String(filters.type || "")}
+                    onValueChange={(v) => setFilter("type", v)}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip locație..."
                     className="w-full"
@@ -150,9 +167,17 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                 </div>
               </div>
 
-              <Button variant="ghost" onClick={() => setShowAdvanced(!showAdvanced)} className="w-full justify-between">
+              <Button
+                variant="ghost"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="w-full justify-between"
+              >
                 <span>Avansate</span>
-                {showAdvanced ? <FaChevronUp className="h-4 w-4" /> : <FaChevronDown className="h-4 w-4" />}
+                {showAdvanced ? (
+                  <FaChevronUp className="h-4 w-4" />
+                ) : (
+                  <FaChevronDown className="h-4 w-4" />
+                )}
               </Button>
 
               {showAdvanced && (
@@ -161,16 +186,32 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                     <Label>Capacitate (persoane)</Label>
                     <div className="space-y-2">
                       <Slider
-                        value={capacityRange}
-                        onValueChange={setCapacityRange}
+                        value={[
+                          (filters.capacityMin || 0) as number,
+                          (filters.capacityMax || 500) as number,
+                        ]}
+                        onValueChange={(v) => {
+                          setFilter("capacityMin", v[0]);
+                          setFilter("capacityMax", v[1]);
+                        }}
                         max={500}
                         step={10}
                         className="w-full"
                       />
                       <div className="flex gap-2">
-                        <Input type="number" value={capacityRange[0]} readOnly className="w-24" />
+                        <Input
+                          type="number"
+                          value={(filters.capacityMin || 0) as number}
+                          readOnly
+                          className="w-24"
+                        />
                         <span className="flex items-center">-</span>
-                        <Input type="number" value={capacityRange[1]} readOnly className="w-24" />
+                        <Input
+                          type="number"
+                          value={(filters.capacityMax || 500) as number}
+                          readOnly
+                          className="w-24"
+                        />
                       </div>
                     </div>
                   </div>
@@ -179,23 +220,44 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                     <Label>Preț locație (RON)</Label>
                     <div className="space-y-2">
                       <Slider
-                        value={priceRange}
-                        onValueChange={setPriceRange}
+                        value={[
+                          (filters.priceMin || 0) as number,
+                          (filters.priceMax || 10000) as number,
+                        ]}
+                        onValueChange={(v) => {
+                          setFilter("priceMin", v[0]);
+                          setFilter("priceMax", v[1]);
+                        }}
                         max={10000}
                         step={100}
                         className="w-full"
                       />
                       <div className="flex gap-2">
-                        <Input type="number" value={priceRange[0]} readOnly className="w-24" />
+                        <Input
+                          type="number"
+                          value={(filters.priceMin || 0) as number}
+                          readOnly
+                          className="w-24"
+                        />
                         <span className="flex items-center">-</span>
-                        <Input type="number" value={priceRange[1]} readOnly className="w-24" />
+                        <Input
+                          type="number"
+                          value={(filters.priceMax || 10000) as number}
+                          readOnly
+                          className="w-24"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              <Button className="w-full glow-on-hover">
+              <Button
+                className="w-full glow-on-hover"
+                onClick={() => {
+                  applyFilters();
+                }}
+              >
                 <FaMagnifyingGlass className="mr-2 h-4 w-4" />
                 Caută locații
               </Button>
@@ -210,8 +272,8 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                   <SearchableSelect
                     id="service-type"
                     options={serviceTypeOptions}
-                    value={serviceType}
-                    onValueChange={setServiceType}
+                    value={(filters.type as string) || ""}
+                    onValueChange={(v) => setFilter("type", v)}
                     placeholder="Selectează serviciul"
                     searchPlaceholder="Caută serviciu..."
                     className="w-full"
@@ -223,21 +285,27 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                   <SearchableSelect
                     id="service-city"
                     options={cityOptions}
-                    value={serviceCity}
-                    onValueChange={setServiceCity}
+                    value={(filters.city as string) || ""}
+                    onValueChange={(v) => {
+                      setFilter("city", v);
+                      setErrors({ city: "" });
+                    }}
                     placeholder="Selectează orașul"
                     searchPlaceholder="Caută oraș..."
                     className="w-full"
+                    error={errors.city}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="service-event">Pentru ce tip de eveniment?</Label>
+                  <Label htmlFor="service-event">
+                    Pentru ce tip de eveniment?
+                  </Label>
                   <SearchableSelect
                     id="service-event"
                     options={eventTypeOptions}
-                    value={serviceEvent}
-                    onValueChange={setServiceEvent}
+                    value={String(filters.serviceEvent || "")}
+                    onValueChange={(v) => setFilter("serviceEvent", v)}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     className="w-full"
@@ -245,7 +313,13 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                 </div>
               </div>
 
-              <Button className="w-full glow-on-hover">
+              <Button
+                className="w-full glow-on-hover"
+                onClick={() => {
+                  applyFilters();
+                  setIsOpen(false);
+                }}
+              >
                 <FaMagnifyingGlass className="mr-2 h-4 w-4" />
                 Caută servicii
               </Button>
@@ -260,8 +334,8 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                   <SearchableSelect
                     id="event-category"
                     options={eventCategoryOptions}
-                    value={eventCategory}
-                    onValueChange={setEventCategory}
+                    value={(filters.type as string) || ""}
+                    onValueChange={(v) => setFilter("type", v)}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     className="w-full"
@@ -273,17 +347,31 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                   <SearchableSelect
                     id="event-city"
                     options={cityOptions}
-                    value={eventCity}
-                    onValueChange={setEventCity}
+                    value={String(filters.city || "")}
+                    onValueChange={(v) => {
+                      setFilter("city", v);
+                      setErrors({ city: "" });
+                    }}
                     placeholder="Selectează orașul"
                     searchPlaceholder="Caută oraș..."
                     className="w-full"
+                    error={errors.city}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="event-when">Când?</Label>
-                  <Select value={eventWhen} onValueChange={setEventWhen}>
+                  <Select
+                    value={String(filters.eventWhen || "")}
+                    onValueChange={(v) => {
+                      console.log("Selected eventWhen:", v);
+                      setFilter("eventWhen", v);
+                      // Clear specific date when changing option
+                      if (v !== "specific") {
+                        setFilter("eventDate", undefined);
+                      }
+                    }}
+                  >
                     <SelectTrigger id="event-when" className="w-full">
                       <SelectValue placeholder="Selectează data" />
                     </SelectTrigger>
@@ -295,17 +383,37 @@ export function ArchiveFilter({ listingType }: ArchiveFilterProps) {
                       ))}
                     </SelectContent>
                   </Select>
+
+                  {String(filters.eventWhen) === "specific" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="event-date">Data specifică</Label>
+                      <input
+                        type="date"
+                        id="event-date"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={filters.eventDate || ""}
+                        onChange={(e) => setFilter("eventDate", e.target.value)}
+                        min={new Date().toISOString().split("T")[0]} // Today or later
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <Button className="w-full glow-on-hover">
+              <Button
+                className="w-full glow-on-hover"
+                onClick={() => {
+                  applyFilters();
+                  setIsOpen(false);
+                }}
+              >
                 <FaMagnifyingGlass className="mr-2 h-4 w-4" />
-                Caută evenimente
+                Caută {listingType}
               </Button>
             </div>
           )}
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -30,9 +30,12 @@ const FeedQuerySchema = z.object({
   priceMin: z.coerce.number().optional(),
   priceMax: z.coerce.number().optional(),
   capacityMin: z.coerce.number().optional(), // Only for locations (indoor capacity)
+  capacityMax: z.coerce.number().optional(),
   lat: z.coerce.number().optional(),
   lng: z.coerce.number().optional(),
   radius: z.coerce.number().max(100000).default(10000).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
 })
 
 type FeedQuery = z.infer<typeof FeedQuerySchema>
@@ -57,8 +60,11 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       priceMin: req.query.priceMin,
       priceMax: req.query.priceMax,
       capacityMin: req.query.capacityMin,
+      capacityMax: req.query.capacityMax,
       lat: req.query.lat,
       lng: req.query.lng,
+      startDate: req.query.startDate,
+      endDate: req.query.endDate,
     })
 
     // Create segment key for ranking (optional filters)
@@ -127,7 +133,17 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     if (query.entity === 'locations' && query.capacityMin !== undefined) {
       whereEntity.and?.push({ 'capacity.indoor': { greater_than_equal: query.capacityMin } })
     }
+    if (query.entity === 'locations' && query.capacityMax !== undefined) {
+      whereEntity.and?.push({ 'capacity.indoor': { less_than_equal: query.capacityMax } })
+    }
 
+    // Date filters (only for events)
+    if (query.entity === 'events' && query.startDate) {
+      whereEntity.and?.push({ startDate: { greater_than_equal: query.startDate } })
+    }
+    if (query.entity === 'events' && query.endDate) {
+      whereEntity.and?.push({ endDate: { less_than_equal: query.endDate } })
+    }
     // Step 2: Get candidate pool from the entity collection
     const candidatePool = await req.payload.find({
       collection: query.entity,
@@ -303,7 +319,21 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
 function toCardItem(
   listingType: 'locations' | 'services' | 'events',
   doc: Location | Service | Event,
-) {
+): {
+  listingId: number
+  slug: string
+  title: string
+  cityLabel: string
+  imageUrl: string | undefined
+  verified: boolean
+  ratingAvg: number | undefined
+  ratingCount: number | undefined
+  description: string
+  type: string
+  startDate: string | undefined
+  capacity: number
+  tier: 'new' | 'standard' | 'sponsored' | 'recommended' | null | undefined
+} {
   let capacity = 0
   if (listingType === 'locations') {
     capacity = (doc as Location)?.capacity?.indoor ?? 0

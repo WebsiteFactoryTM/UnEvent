@@ -85,3 +85,18 @@ export const usersKeys = {
   listings: (id: string) => ["users", id, "listings"] as const,
   reviews: (id: string) => ["users", id, "reviews"] as const,
 };
+
+/**
+ * 📰 Feed
+ */
+export const feedKeys = {
+  all: ["feed"] as const,
+
+  entity: (entity: string) => [...feedKeys.all, entity] as const,
+
+  city: (entity: string, city: string) =>
+    [...feedKeys.entity(entity), city] as const,
+
+  list: (filters: Record<string, unknown>) =>
+    [...feedKeys.all, "list", stableKey(filters)] as const,
+};

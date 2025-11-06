@@ -18,6 +18,7 @@ import PopularSearches from "@/components/hub/PopularSearches";
 import { type ListingCardData } from "@/lib/normalizers/hub";
 import { ListingType } from "@/types/listings";
 import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
+import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
 export const revalidate = 3600; // ISR: revalidate every hour
 
 const toCard = (
@@ -163,9 +164,13 @@ export default async function ListingTypePage({
             {/* City typeahead */}
             <section className="space-y-4">
               <h2 className="sr-only">Caută după oraș</h2>
-              <CityTypeahead
+              {/* <CityTypeahead
                 listingType={listingType as any}
                 cities={typeaheadCities}
+              /> */}
+              <ArchiveFilter
+                listingType={listingType as any}
+                defaultIsOpen={true}
               />
             </section>
 
