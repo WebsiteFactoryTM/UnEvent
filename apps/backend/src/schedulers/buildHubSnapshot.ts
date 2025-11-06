@@ -178,6 +178,7 @@ function toCardItem(
     type: doc.type?.map((t: number | ListingType) => (t as ListingType).title).join(', ') ?? '',
     startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
     capacity: capacity,
+    tier: doc.tier,
   }
 }
 

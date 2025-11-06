@@ -4,7 +4,16 @@ import type { PayloadRequest, Where } from 'payload'
 import { z } from 'zod'
 import { dailyJitter } from '../collections/Feed/scoring'
 import type { PayloadHandler } from 'payload'
-import type { Location, Event, Service, ListingRank } from '@/payload-types'
+import type {
+  Location,
+  Event,
+  Service,
+  ListingRank,
+  City,
+  Media,
+  ListingType,
+} from '@/payload-types'
+
 type Listing = Location | Event | Service
 
 // Query schema validation
@@ -21,6 +30,9 @@ const FeedQuerySchema = z.object({
   priceMin: z.coerce.number().optional(),
   priceMax: z.coerce.number().optional(),
   capacityMin: z.coerce.number().optional(), // Only for locations (indoor capacity)
+  lat: z.coerce.number().optional(),
+  lng: z.coerce.number().optional(),
+  radius: z.coerce.number().max(100000).default(10000).optional(),
 })
 
 type FeedQuery = z.infer<typeof FeedQuerySchema>
@@ -45,9 +57,9 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       priceMin: req.query.priceMin,
       priceMax: req.query.priceMax,
       capacityMin: req.query.capacityMin,
+      lat: req.query.lat,
+      lng: req.query.lng,
     })
-
-    console.log('Query:', query)
 
     // Create segment key for ranking (optional filters)
     const segmentKey = query.city && query.type ? `${query.city}|${query.type}` : null
@@ -61,9 +73,13 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       ],
     }
 
-    // Add optional city filter
-    if (query.city) {
-      whereEntity.and?.push({ city: { equals: query.city } })
+    // Add optional city or geo filter
+    if (query.lat && query.lng) {
+      whereEntity.and?.push({
+        geo: { near: [query.lat, query.lng, query.radius] },
+      })
+    } else if (query.city) {
+      whereEntity.and?.push({ 'city.slug': { equals: query.city } })
     }
 
     // Add optional type filter (can be hasMany relationship)
@@ -232,34 +248,6 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
           })
         : { docs: [] }
 
-    // Step 5: Shape response cards
-    function shapeCard(listing: Listing) {
-      return {
-        id: listing.id,
-        owner: listing.owner,
-        title: listing.title,
-        description: listing.description,
-        geo: listing.geo,
-        slug: listing.slug,
-        city: typeof listing.city === 'number' ? listing.city : listing.city?.name,
-        cover: listing.featuredImage,
-        tier: listing.tier,
-        rating: listing.rating,
-        type: listing.type,
-        reviewCount: listing.reviewCount,
-        suitableFor:
-          query.entity !== 'events' ? (listing as Location | Service).suitableFor : undefined,
-        // Add pricing hint based on collection
-        pricing: listing.pricing,
-        priceHint:
-          listing.pricing?.type === 'contact'
-            ? 'Contact for price'
-            : listing.pricing?.amount
-              ? `${listing.pricing.amount} ${listing.pricing.currency || 'RON'}`
-              : null,
-      }
-    }
-
     // Step 6: Return response with cache headers
     return new Response(
       JSON.stringify({
@@ -271,8 +259,8 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
           limit: query.limit,
           hasMore: start + query.limit < organicIds.length,
         },
-        pinnedSponsored: pinnedSponsored.map(shapeCard),
-        organic: organicDocs.docs.map(shapeCard),
+        pinnedSponsored: pinnedSponsored.map((listing) => toCardItem(query.entity, listing)),
+        organic: organicDocs.docs.map((listing) => toCardItem(query.entity, listing)),
       }),
       {
         status: 200,
@@ -310,4 +298,38 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       },
     )
   }
+}
+
+function toCardItem(
+  listingType: 'locations' | 'services' | 'events',
+  doc: Location | Service | Event,
+) {
+  let capacity = 0
+  if (listingType === 'locations') {
+    capacity = (doc as Location)?.capacity?.indoor ?? 0
+  } else if (listingType === 'events') {
+    capacity = (doc as Event)?.capacity?.total ?? 0
+  }
+  return {
+    listingId: doc.id,
+    slug: doc.slug as string,
+    title: doc.title as string,
+    cityLabel: (doc.city as City)?.name ?? '',
+    imageUrl: getImageURL(doc),
+    verified: doc.status === 'approved',
+    ratingAvg: doc.rating as number | undefined,
+    ratingCount: doc.reviewCount as number | undefined,
+    description: doc.description as string,
+    type: doc.type?.map((t: number | ListingType) => (t as ListingType).title).join(', ') ?? '',
+    startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
+    capacity: capacity,
+    tier: doc.tier,
+  }
+}
+function getImageURL(doc: Location | Service | Event): string | undefined {
+  // Prefer featuredImage.url; fallback to first gallery image; adjust to your schema
+  const file = doc.featuredImage ?? (doc.gallery?.[0] as number | Media | undefined)
+  if (!file) return undefined
+  // When depth:0, uploads are IDs; if you store full URL on create, use that.
+  return typeof file === 'number' ? undefined : ((file.url ?? undefined) as string | undefined)
 }
