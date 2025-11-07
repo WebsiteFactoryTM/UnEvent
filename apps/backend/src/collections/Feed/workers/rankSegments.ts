@@ -48,7 +48,7 @@ async function rankCollectionSegments(payload: Payload, kind: Kind): Promise<voi
   const listings = await payload.find({
     collection: kind,
     limit: 10000,
-    depth: 0,
+    depth: 1,
     pagination: false,
   })
 
@@ -85,10 +85,9 @@ async function rankCollectionSegments(payload: Payload, kind: Kind): Promise<voi
       console.warn(`[Feed] Skipping ${kind} ${listing.id} - no city assigned`)
       continue
     }
-
-    const cityId =
-      typeof listing.city === 'object' && listing.city !== null && 'id' in listing.city
-        ? String(listing.city.id)
+    const citySlug =
+      typeof listing.city === 'object' && listing.city !== null && 'slug' in listing.city
+        ? String(listing.city.slug)
         : String(listing.city)
 
     // Get type(s) - handle both single and hasMany
@@ -101,12 +100,12 @@ async function rankCollectionSegments(payload: Payload, kind: Kind): Promise<voi
         continue
       }
 
-      const typeId =
-        typeof typeRaw === 'object' && typeRaw !== null && 'id' in typeRaw
-          ? String(typeRaw.id)
+      const typeSlug =
+        typeof typeRaw === 'object' && typeRaw !== null && 'slug' in typeRaw
+          ? String(typeRaw.slug)
           : String(typeRaw)
 
-      const segmentKey = `${cityId}|${typeId}`
+      const segmentKey = `${citySlug}|${typeSlug}`
       const aggregate = aggregateMap.get(String(listing.id))
 
       if (!aggregate) {

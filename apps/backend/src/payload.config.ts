@@ -37,7 +37,7 @@ import { regenerateHubHandler } from './endpoints/regenerateHub'
 import { ListingType } from './payload-types'
 import { registerSyncListingTypeCountersScheduler } from './schedulers/syncListingTypeCounters'
 import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters'
-
+import { getTaxonomies } from './endpoints/taxonomies'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -56,7 +56,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  cors: ['http://localhost:3000'],
+  cors: ['http://localhost:3000', 'http://172.20.10.9:3000'],
   endpoints: [
     {
       path: '/seed',
@@ -87,6 +87,11 @@ export default buildConfig({
       path: '/regenerate-hub',
       method: 'get',
       handler: regenerateHubHandler,
+    },
+    {
+      path: '/taxonomies',
+      method: 'get',
+      handler: getTaxonomies,
     },
   ],
   collections: [
