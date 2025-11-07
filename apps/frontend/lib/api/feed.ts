@@ -72,7 +72,7 @@ export async function fetchFeed(filters: Partial<FeedQuery>) {
     }
 
     const data = await res.json();
-    console.log("data", data);
+
     // Ensure response shape is always an array
     return data;
   } catch (err) {

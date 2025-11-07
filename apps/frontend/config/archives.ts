@@ -44,7 +44,11 @@ export function labelFrom(
 
 // Helper to get label from slug
 export function getCityLabel(slug: string): string {
-  return cities.find((c) => c.slug === slug)?.label || slug;
+  const citySplit = slug.split("-");
+  const formatedCityFromSlug = citySplit
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  return cities.find((c) => c.slug === slug)?.label || formatedCityFromSlug;
 }
 
 export function getTypeLabel(listingType: string, typeSlug: string): string {
