@@ -69,6 +69,7 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
 
     // Create segment key for ranking (optional filters)
     const segmentKey = query.city && query.type ? `${query.city}|${query.type}` : null
+    console.log('segmentKey', segmentKey)
     const pinnedLimit = 3 // Reserve first 3 slots for sponsored
     const today = new Date().toISOString().slice(0, 10)
 
@@ -90,7 +91,11 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
 
     // Add optional type filter (can be hasMany relationship)
     if (query.type) {
-      whereEntity.and?.push({ type: { in: query.type.split(',').map((s) => s.trim()) } })
+      console.log('query.type', query.type)
+
+      // Split comma-separated types and use 'in' for multiple values
+      const typeSlugs = query.type.split(',').map((s) => s.trim())
+      whereEntity.and?.push({ 'type.slug': { in: typeSlugs } })
     }
     if (query.entity !== 'events' && query.suitableFor) {
       whereEntity.and?.push({
@@ -121,12 +126,39 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       }
     }
 
-    // Price filters (nested in pricing.amount)
-    if (query.priceMin !== undefined) {
-      whereEntity.and?.push({ 'pricing.amount': { greater_than_equal: query.priceMin } })
-    }
-    if (query.priceMax !== undefined) {
-      whereEntity.and?.push({ 'pricing.amount': { less_than_equal: query.priceMax } })
+    // Price filters (handle contact pricing for all entities)
+    // For price filters, we need to include:
+    // 1. Listings with pricing.type = 'contact' (no amount filter)
+    // 2. Listings with pricing.type in ['fixed', 'from'] AND amount within range
+
+    if (query.priceMin !== undefined || query.priceMax !== undefined) {
+      const priceConditions = []
+
+      // Always include contact pricing listings
+      priceConditions.push({ 'pricing.type': { equals: 'contact' } })
+
+      // Add price range conditions for fixed/from pricing types
+      const amountConditions = []
+      if (query.priceMin !== undefined) {
+        amountConditions.push({ 'pricing.amount': { greater_than_equal: query.priceMin } })
+      }
+      if (query.priceMax !== undefined) {
+        amountConditions.push({ 'pricing.amount': { less_than_equal: query.priceMax } })
+      }
+
+      if (amountConditions.length > 0) {
+        priceConditions.push({
+          and: [{ 'pricing.type': { in: ['fixed', 'from'] } }, ...amountConditions],
+        })
+      }
+
+      if (priceConditions.length > 1) {
+        // Use OR to combine contact pricing + price range conditions
+        whereEntity.and?.push({ or: priceConditions })
+      } else if (priceConditions.length === 1) {
+        // Only contact pricing condition
+        whereEntity.and?.push(priceConditions[0])
+      }
     }
 
     // Capacity filter (only for locations, using indoor capacity)
@@ -152,8 +184,9 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       depth: 0,
     })
 
+    console.log('candidatePool', candidatePool.docs.length)
     const candidateIds = new Set(candidatePool.docs.map((d: Listing) => String(d.id)))
-
+    console.log('candidateIds', candidateIds.size)
     if (candidateIds.size === 0) {
       // No results - return empty response with cache headers
       return new Response(
@@ -182,19 +215,27 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       const rankPool = await req.payload.find({
         collection: 'listing-rank',
         where: {
-          and: [
-            { segmentKey: { equals: segmentKey } },
-            { kind: { equals: query.entity } },
-            { target: { in: Array.from(candidateIds) } },
-          ],
+          and: [{ segmentKey: { equals: segmentKey } }, { kind: { equals: query.entity } }],
         },
         sort: '-score', // Sort by score descending
         limit: 2000,
         depth: 0,
       })
 
+      // Filter results to only include candidates we found
+      const filteredRankPool = {
+        ...rankPool,
+        docs: rankPool.docs.filter((r: ListingRank) => {
+          const targetId =
+            typeof r.target === 'object' && 'value' in r.target
+              ? String(r.target.value)
+              : String(r.target)
+          return candidateIds.has(targetId)
+        }),
+      }
+
       // Extract ranked IDs (already sorted by score)
-      rankedIds = rankPool.docs
+      rankedIds = filteredRankPool.docs
         .map((r: ListingRank) => {
           const targetId =
             typeof r.target === 'object' && 'value' in r.target
@@ -208,24 +249,9 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       rankedIds = Array.from(candidateIds)
     }
 
+    // If no rankings found, use candidates in default order
     if (rankedIds.length === 0) {
-      // No candidates found
-      return new Response(
-        JSON.stringify({
-          entity: query.entity,
-          segmentKey,
-          pinnedSponsored: [],
-          organic: [],
-          meta: { page: query.page, total: 0, limit: query.limit },
-        }),
-        {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 's-maxage=60, stale-while-revalidate=30',
-          },
-        },
-      )
+      rankedIds = Array.from(candidateIds)
     }
 
     // Step 4: Compose pinned sponsored + organic lists
