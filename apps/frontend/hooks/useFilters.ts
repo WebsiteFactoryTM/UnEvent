@@ -1,4 +1,5 @@
 "use client";
+import { ListingType } from "@/types/listings";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
@@ -15,7 +16,9 @@ function getFiltersFromSearchParams(searchParams: URLSearchParams) {
   return parsed;
 }
 
-export function useFilters(defaults?: Record<string, string | number>) {
+export function useFilters(
+  defaults?: { listingType: ListingType } & Record<string, string | number>,
+) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -23,8 +26,9 @@ export function useFilters(defaults?: Record<string, string | number>) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   // Extract current entity + city from path
   const pathParts = pathname.split("/").filter(Boolean);
-  const entity = pathParts[0]; // e.g. "servicii"
+  const entity = pathParts[0] || defaults?.listingType; // e.g. "servicii"
   const currentCity = pathParts[2]; // e.g. "timisoara"
+
   // Derive initial filters from query params
   const initialFilters = useMemo(() => {
     const params = getFiltersFromSearchParams(searchParams);
@@ -46,6 +50,7 @@ export function useFilters(defaults?: Record<string, string | number>) {
 
   const setFilter = useCallback((key: string, value?: string | number) => {
     // Update local state immediately
+
     setPendingFilters((prev) => ({
       ...prev,
       [key]:
@@ -76,8 +81,6 @@ export function useFilters(defaults?: Record<string, string | number>) {
     if (cityValue && typeof cityValue === "string") {
       newPath = `/${entity}/oras/${cityValue}`;
     }
-
-    console.log(cityValue, params.get("city"));
 
     if (!cityValue && !params.get("city")) {
       setErrors({ city: "Orașul este obligatoriu" });
