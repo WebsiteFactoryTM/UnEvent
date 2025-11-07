@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -20,7 +19,10 @@ import {
   FaFilter,
 } from "react-icons/fa6";
 import { useFilters } from "@/hooks/useFilters";
-
+import { fetchTaxonomies } from "@/lib/api/taxonomies";
+import { useQuery } from "@tanstack/react-query";
+import { cacheTTL } from "@/lib/constants";
+import { City, ListingType as ListingTypePayload } from "@/types/payload-types";
 type ListingType = "locatii" | "servicii" | "evenimente";
 
 interface ArchiveFilterProps {
@@ -34,55 +36,16 @@ export function ArchiveFilter({
 }: ArchiveFilterProps) {
   const [isOpen, setIsOpen] = useState(defaultIsOpen);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const {
-    filters,
-    setFilter,
-    applyFilters,
-    resetFilters,
-    hasPendingChanges,
-    currentCity,
-    errors,
-    setErrors,
-  } = useFilters();
+  const { filters, setFilter, applyFilters, errors, setErrors } = useFilters({
+    listingType,
+  });
+  const { data } = useQuery({
+    queryKey: ["taxonomies"],
+    queryFn: () => fetchTaxonomies(),
+    staleTime: cacheTTL.oneDay,
+  });
 
-  const eventTypeOptions = [
-    { value: "nunta", label: "Nuntă" },
-    { value: "botez", label: "Botez" },
-    { value: "corporate", label: "Corporate" },
-    { value: "petrecere", label: "Petrecere privată" },
-  ];
-
-  const cityOptions = [
-    { value: "bucuresti", label: "București" },
-    { value: "cluj", label: "Cluj-Napoca" },
-    { value: "timisoara", label: "Timișoara" },
-    { value: "brasov", label: "Brașov" },
-    { value: "iasi", label: "Iași" },
-  ];
-
-  const locationTypeOptions = [
-    { value: "sala", label: "Sală de evenimente" },
-    { value: "restaurant", label: "Restaurant" },
-    { value: "gradina", label: "Grădină" },
-    { value: "castel", label: "Castel" },
-    { value: "loft", label: "Loft" },
-  ];
-
-  const serviceTypeOptions = [
-    { value: "dj", label: "DJ" },
-    { value: "formatie", label: "Formație muzicală" },
-    { value: "catering", label: "Catering" },
-    { value: "foto-video", label: "Foto-Video" },
-    { value: "organizator", label: "Organizator evenimente" },
-  ];
-
-  const eventCategoryOptions = [
-    { value: "concert", label: "Concert" },
-    { value: "festival", label: "Festival" },
-    { value: "workshop", label: "Workshop" },
-    { value: "conferinta", label: "Conferință" },
-    { value: "petrecere", label: "Petrecere" },
-  ];
+  const { cities, eventTypes, locationTypes, serviceTypes } = data || {};
 
   const eventWhenOptions = [
     { value: "orice", label: "Orice dată" },
@@ -103,19 +66,21 @@ export function ArchiveFilter({
   return (
     <div className="space-y-4">
       {/* Toggle Button */}
-      <Button
-        onClick={() => setIsOpen(!isOpen)}
-        variant="outline"
-        className="w-full md:w-auto glass-card border-border/50 hover:bg-muted/50 transition-all"
-      >
-        <FaFilter className="mr-2 h-4 w-4" />
-        {filterButtonText}
-        {isOpen ? (
-          <FaChevronUp className="ml-2 h-4 w-4" />
-        ) : (
-          <FaChevronDown className="ml-2 h-4 w-4" />
-        )}
-      </Button>
+      {!defaultIsOpen && (
+        <Button
+          onClick={() => setIsOpen(!isOpen)}
+          variant="outline"
+          className="w-full md:w-auto glass-card border-border/50 hover:bg-muted/50 transition-all"
+        >
+          <FaFilter className="mr-2 h-4 w-4" />
+          {filterButtonText}
+          {isOpen ? (
+            <FaChevronUp className="ml-2 h-4 w-4" />
+          ) : (
+            <FaChevronDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      )}
 
       {/* Collapsible Filter Section */}
       {isOpen && (
@@ -127,9 +92,23 @@ export function ArchiveFilter({
                   <Label htmlFor="event-type">Ce eveniment organizezi?</Label>
                   <SearchableSelect
                     id="event-type"
-                    options={eventTypeOptions}
-                    value={(filters.type as string) || ""}
-                    onValueChange={(v) => setFilter("type", v)}
+                    options={
+                      eventTypes
+                        ?.map((type: ListingTypePayload) => ({
+                          value: type.slug || "",
+                          label: type.title || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
+                    value={(filters.suitableFor as string) || ""}
+                    onValueChange={(v) => {
+                      setFilter("suitableFor", v);
+                    }}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     className="w-full"
@@ -140,7 +119,19 @@ export function ArchiveFilter({
                   <Label htmlFor="city">Unde (Oraș)</Label>
                   <SearchableSelect
                     id="city"
-                    options={cityOptions}
+                    options={
+                      cities
+                        ?.map((city: City) => ({
+                          value: city.slug || "",
+                          label: city.name || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
                     value={String(filters.city || "")}
                     onValueChange={(v) => {
                       setFilter("city", v);
@@ -157,7 +148,19 @@ export function ArchiveFilter({
                   <Label htmlFor="location-type">Tip locație</Label>
                   <SearchableSelect
                     id="location-type"
-                    options={locationTypeOptions}
+                    options={
+                      locationTypes
+                        ?.map((type: ListingTypePayload) => ({
+                          value: type.slug || "",
+                          label: type.title || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
                     value={String(filters.type || "")}
                     onValueChange={(v) => setFilter("type", v)}
                     placeholder="Selectează tipul"
@@ -194,7 +197,7 @@ export function ArchiveFilter({
                           setFilter("capacityMin", v[0]);
                           setFilter("capacityMax", v[1]);
                         }}
-                        max={500}
+                        max={1000}
                         step={10}
                         className="w-full"
                       />
@@ -271,7 +274,19 @@ export function ArchiveFilter({
                   <Label htmlFor="service-type">Ce serviciu cauți?</Label>
                   <SearchableSelect
                     id="service-type"
-                    options={serviceTypeOptions}
+                    options={
+                      serviceTypes
+                        ?.map((type: ListingTypePayload) => ({
+                          value: type.slug || "",
+                          label: type.title || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
                     value={(filters.type as string) || ""}
                     onValueChange={(v) => setFilter("type", v)}
                     placeholder="Selectează serviciul"
@@ -284,7 +299,19 @@ export function ArchiveFilter({
                   <Label htmlFor="service-city">Unde?</Label>
                   <SearchableSelect
                     id="service-city"
-                    options={cityOptions}
+                    options={
+                      cities
+                        ?.map((city: City) => ({
+                          value: city.slug || "",
+                          label: city.name || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
                     value={(filters.city as string) || ""}
                     onValueChange={(v) => {
                       setFilter("city", v);
@@ -303,9 +330,21 @@ export function ArchiveFilter({
                   </Label>
                   <SearchableSelect
                     id="service-event"
-                    options={eventTypeOptions}
-                    value={String(filters.serviceEvent || "")}
-                    onValueChange={(v) => setFilter("serviceEvent", v)}
+                    options={
+                      eventTypes
+                        ?.map((type: ListingTypePayload) => ({
+                          value: type.slug || "",
+                          label: type.title || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
+                    value={String(filters.suitableFor || "")}
+                    onValueChange={(v) => setFilter("suitableFor", v)}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     className="w-full"
@@ -333,7 +372,19 @@ export function ArchiveFilter({
                   <Label htmlFor="event-category">Ce tip de eveniment?</Label>
                   <SearchableSelect
                     id="event-category"
-                    options={eventCategoryOptions}
+                    options={
+                      eventTypes
+                        ?.map((type: ListingTypePayload) => ({
+                          value: type.slug || "",
+                          label: type.title || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
                     value={(filters.type as string) || ""}
                     onValueChange={(v) => setFilter("type", v)}
                     placeholder="Selectează tipul"
@@ -346,7 +397,19 @@ export function ArchiveFilter({
                   <Label htmlFor="event-city">Unde?</Label>
                   <SearchableSelect
                     id="event-city"
-                    options={cityOptions}
+                    options={
+                      cities
+                        ?.map((city: City) => ({
+                          value: city.slug || "",
+                          label: city.name || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
                     value={String(filters.city || "")}
                     onValueChange={(v) => {
                       setFilter("city", v);

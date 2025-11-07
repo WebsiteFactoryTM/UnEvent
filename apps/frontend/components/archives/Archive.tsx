@@ -151,7 +151,7 @@ const CityArchive = ({
   const { data, isLoading } = useQuery({
     queryKey: feedKeys.list(filters),
     queryFn: () => fetchFeed(filters),
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   });
 
   const combinedListings = [
