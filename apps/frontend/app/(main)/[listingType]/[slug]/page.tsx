@@ -73,7 +73,7 @@ export default async function DetailPage({
   const { listingType, slug } = await params;
   if (!listingTypes.includes(listingType as any)) notFound();
 
-  const listingTypeUrl = getListingTypeSlug(listingType);
+  const listingTypeUrl = getListingTypeSlug(listingType as ListingType);
   const {
     data: listing,
     error,
@@ -251,7 +251,7 @@ export async function generateMetadata({
     return { title: "Pagină negăsită | UN:EVENT" };
 
   // Fetch mock data per type (UI-only)
-  const listingTypeUrl = getListingTypeSlug(listingType);
+  const listingTypeUrl = getListingTypeSlug(listingType as ListingType);
   const { data, error } = await fetchListing(
     listingTypeUrl as ListingType,
     slug,

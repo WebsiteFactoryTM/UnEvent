@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "locații de nuntă,săli evenimente,DJ evenimente,trupă nuntă,catering evenimente,formații muzică,foto-video evenimente,închiriere spații,organizare evenimente,locații petreceri,săli conferințe,evenimente România",
 };
 
-export const revalidate = 60; // ISR: revalidate every hour
+export const revalidate = process.env.NODE_ENV === "production" ? 3600 : 60; // ISR: revalidate every hour
 
 export default async function HomePage() {
   const queryClient = getQueryClient();

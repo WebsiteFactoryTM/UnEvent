@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  listingTypes,
-  getListingTypeLabel,
-  getTypesByListingType,
-} from "@/config/archives";
+import { listingTypes, getListingTypeLabel } from "@/config/archives";
 import { AddListingButton } from "@/components/archives/AddListingButton";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
 import { fetchHubSnapshot } from "@/lib/api/hub";
 import { HubSnapshot } from "@/types/payload-types";
-import { CityTypeahead } from "@/components/hub/CityTypeahead";
+
 import { OccasionChips } from "@/components/hub/OccasionChips";
 import { CityRow } from "@/components/hub/CityRow";
 import FeaturedGrid from "@/components/hub/FeaturedGrid";

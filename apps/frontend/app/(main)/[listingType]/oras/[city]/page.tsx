@@ -16,25 +16,52 @@ import {
 } from "@/config/archives";
 import { ListingType } from "@/types/listings";
 import { getListingTypeSlug } from "@/lib/getListingType";
+import { ArchiveSchema } from "@/components/archives/ArchiveSchema";
+import { PaginationSEO } from "@/components/archives/PaginationSEO";
 
-export const revalidate = 3600; // ISR: revalidate every hour
-
+export const revalidate = process.env.NODE_ENV === "production" ? 3600 : 60;
 // export async function generateStaticParams() {
 //   return listingTypes.flatMap((listingType) => cities.map((c) => ({ listingType, city: c.slug })))
 // }
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
-  params: Promise<{ listingType: string; city: string }>;
-}): Promise<Metadata> {
+  params: Promise<{ listingType: ListingType; city: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { listingType, city } = await params;
+  const page = Number((await searchParams)?.page ?? 1);
+
   const listingLabel = getListingTypeLabel(listingType);
   const cityLabel = getCityLabel(city);
 
+  const baseUrl = `https://unevent.ro/${listingType}/oras/${city}`;
+  const title = `Top ${listingLabel} ${cityLabel}${
+    page > 1 ? ` – Pagina ${page}` : ""
+  } | UN:EVENT`;
+  const description = `Descoperă cele mai bune ${listingLabel.toLowerCase()} din ${cityLabel}. Compară locații, servicii și evenimente verificate.`;
+
   return {
-    title: `Top ${listingLabel} ${cityLabel} | UN:EVENT`,
-    description: `Descoperă cele mai bune ${listingLabel.toLowerCase()} din ${cityLabel}.`,
+    title,
+    description,
+    alternates: {
+      canonical: baseUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: baseUrl,
+      siteName: "UN:EVENT",
+      type: "website",
+      locale: "ro_RO",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -47,6 +74,9 @@ export default async function CityArchivePage({
 }) {
   const { listingType, city } = await params;
   const searchFilters = await searchParams;
+
+  const baseUrl = `https://unevent.ro/${listingType}/oras/${city}`;
+
   if (!listingTypes.includes(listingType as any)) notFound();
 
   const cityLabel = getCityLabel(city);
@@ -89,53 +119,60 @@ export default async function CityArchivePage({
   };
   // Initialize React Query client
   const queryClient = getQueryClient();
+  const feedData = await fetchFeed(filters);
+  await queryClient.setQueryData(feedKeys.list(filters), feedData);
 
-  // Pre-fetch first page for SSG/ISR
-  await queryClient.prefetchQuery({
-    queryKey: feedKeys.list(filters),
-    queryFn: () => fetchFeed(filters),
-  });
   const dehydratedState = dehydrate(queryClient);
-
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-7xl mx-auto space-y-8">
-          {/* Breadcrumbs */}
-          <ListingBreadcrumbs
-            type={listingType as ListingType}
-            cityName={cityLabel}
-            citySlug={city}
-          />
-
-          {/* Header with add button */}
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-            <div className="space-y-4 flex-1">
-              <h1 className="text-4xl md:text-5xl font-bold text-balance">
-                Top {listingLabel} {cityLabel}
-              </h1>
-              <p className="text-lg text-muted-foreground text-pretty">
-                Caută cele mai potrivite {listingLabel.toLowerCase()} în{" "}
-                {cityLabel}.
-              </p>
-            </div>
-            <AddListingButton listingType={listingType as any} />
-          </div>
-
-          <ArchiveFilter listingType={listingType as any} />
-
-          {/* Client-side component */}
-          <HydrationBoundary state={dehydratedState}>
-            <CityArchive
-              entity={listingType as ListingType}
-              city={city}
-              initialPage={page}
-              initialLimit={limit}
-              initialFilters={filters}
+    <>
+      <PaginationSEO baseUrl={baseUrl} page={page} hasMore={feedData.hasMore} />
+      <div className="min-h-screen">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-7xl mx-auto space-y-8">
+            {/* Breadcrumbs */}
+            <ListingBreadcrumbs
+              type={listingType as ListingType}
+              cityName={cityLabel}
+              citySlug={city}
             />
-          </HydrationBoundary>
+
+            {/* Header with add button */}
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="space-y-4 flex-1">
+                <h1 className="text-4xl md:text-5xl font-bold text-balance">
+                  Top {listingLabel} {cityLabel}
+                </h1>
+                <p className="text-lg text-muted-foreground text-pretty">
+                  Caută cele mai potrivite {listingLabel.toLowerCase()} în{" "}
+                  {cityLabel}.
+                </p>
+              </div>
+              <AddListingButton listingType={listingType as any} />
+            </div>
+
+            <ArchiveFilter listingType={listingType as any} />
+
+            {/* Client-side component */}
+            <HydrationBoundary state={dehydratedState}>
+              <CityArchive
+                entity={listingType as ListingType}
+                city={city}
+                initialPage={page}
+                initialLimit={limit}
+                initialFilters={filters}
+              />
+            </HydrationBoundary>
+          </div>
         </div>
+        <ArchiveSchema
+          listings={[
+            ...(feedData?.pinnedSponsored || []),
+            ...(feedData?.organic || []),
+          ]}
+          cityLabel={cityLabel}
+          listingLabel={listingLabel}
+        />
       </div>
-    </div>
+    </>
   );
 }

@@ -15,7 +15,6 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "UN:EVENT",
   description: "Platforma ta pentru evenimente memorabile în România",
-  generator: "v0.app",
 };
 
 export default async function RootLayout({

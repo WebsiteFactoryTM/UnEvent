@@ -10,7 +10,12 @@ export const metadata: Metadata = {
     "Această listare nu există. Reveniți la pagina principală pentru a explora locații, servicii și evenimente.",
 };
 
-export default async function NotFound() {
+export default async function NotFound({
+  params,
+}: {
+  params: Promise<{ listingType: string }>;
+}) {
+  const { listingType } = await params;
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 py-20">
       {/* Animated Background */}
@@ -39,11 +44,11 @@ export default async function NotFound() {
 
           {/* Button to Homepage */}
           <Link
-            href="/"
+            href={`/${listingType}`}
             className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background rounded-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] focus:outline-none focus:ring-2 focus:ring-foreground/50 focus:ring-offset-2 focus:ring-offset-background"
           >
             <FaHouse className="w-5 h-5" />
-            Mergi la pagina principală
+            Mergi la pagina de căutări
           </Link>
         </div>
       </div>
