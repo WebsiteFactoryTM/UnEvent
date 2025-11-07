@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { beforeChange } from './hooks/beforeChange'
 import { importCitiesFromCsv } from './endpoints/importCsv'
 import { approvedOnlyPublic, isAdmin } from '../_access/roles'
+import { getRedis } from '@/utils/redis'
 
 const Cities: CollectionConfig = {
   slug: 'cities',
@@ -22,6 +23,15 @@ const Cities: CollectionConfig = {
     create: ({ req }) => isAdmin({ req }),
     update: ({ req }) => isAdmin({ req }),
     delete: ({ req }) => isAdmin({ req }),
+  },
+  hooks: {
+    afterChange: [
+      async () => {
+        const redis = getRedis()
+        await redis.del('taxonomies')
+      },
+    ],
+    beforeChange: [beforeChange],
   },
   fields: [
     {
@@ -121,9 +131,7 @@ const Cities: CollectionConfig = {
     },
   ],
   timestamps: true,
-  hooks: {
-    beforeChange: [beforeChange],
-  },
+
   endpoints: [
     {
       path: '/import-csv',

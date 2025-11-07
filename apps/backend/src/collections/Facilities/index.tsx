@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
-import slugify from 'slugify'
 import { createSlugField } from '../../utils/slugifySlug'
 import { Facility } from '@/payload-types'
+import { getRedis } from '@/utils/redis'
 
 export const Facilities: CollectionConfig = {
   slug: 'facilities',
@@ -12,6 +12,14 @@ export const Facilities: CollectionConfig = {
   timestamps: true,
   access: {
     read: () => true, // public read access for taxonomy
+  },
+  hooks: {
+    afterChange: [
+      async () => {
+        const redis = getRedis()
+        await redis.del('facilities')
+      },
+    ],
   },
   fields: [
     {
