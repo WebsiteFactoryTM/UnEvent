@@ -8,7 +8,7 @@ export const updateUserRoles: CollectionAfterChangeHook = async ({
 }) => {
   if (operation === 'update') {
     const different = !diffLists(data.userType, previousDoc.userType).equal
-    const userId = typeof data.user === 'number' ? data.user : data.user.id
+    const userId = typeof previousDoc.user === 'number' ? previousDoc.user : data.user.id
     if (different) {
       try {
         await req.payload.update({

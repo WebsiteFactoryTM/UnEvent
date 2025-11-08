@@ -9,13 +9,13 @@ export const updateUserAvatar: CollectionAfterChangeHook = async ({
   if (operation === 'update') {
     const { payload } = req
 
-    if (data.avatar !== previousDoc.avatar) {
+    if (data.avatar && data.avatar !== previousDoc.avatar) {
       const newAvatarUrl = await payload.findByID({
         collection: 'media',
         id: data.avatar,
       })
 
-      const userId = typeof data.user === 'number' ? data.user : data.user.id
+      const userId = typeof previousDoc.user === 'number' ? previousDoc.user : previousDoc.user.id
 
       try {
         await payload.update({

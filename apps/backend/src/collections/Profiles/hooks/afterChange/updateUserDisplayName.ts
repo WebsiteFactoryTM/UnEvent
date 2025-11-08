@@ -10,7 +10,7 @@ export const updateUserDisplayName: CollectionAfterChangeHook = async ({
     const { payload } = req
 
     if (data.displayName !== previousDoc.displayName) {
-      const userId = typeof data.user === 'number' ? data.user : data.user.id
+      const userId = typeof previousDoc.user === 'number' ? previousDoc.user : data.user.id
 
       try {
         await payload.update({
