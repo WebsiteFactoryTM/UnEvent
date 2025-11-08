@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listingsKeys } from "../cacheKeys";
 import { fetchJson } from "./utils";
 import { fetchSimilarListings } from "@/lib/api/listings";
-import { getProfile } from "@/lib/api/profile";
+import { getProfile, updateProfile } from "@/lib/api/profile";
 import type { ListingType } from "@/types/listings";
 import type {
   City,
@@ -13,6 +13,7 @@ import type { Listing } from "@/types/listings";
 import { frontendTypeToCollectionSlug } from "@/lib/api/reviews";
 import { useSession } from "next-auth/react";
 import { profileKeys } from "../cacheKeys";
+import type { ProfileFormData } from "@/components/profile/ProfilePersonalDetailsForm";
 
 export function useListings(
   ctx: string,
@@ -88,5 +89,23 @@ export function useProfile(profileId?: number | string) {
     queryFn: () => getProfile(profileId, accessToken),
     enabled: !!profileId && !!accessToken,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
+  const accessToken = session?.accessToken;
+
+  return useMutation({
+    mutationFn: ({ profileId, data }: { profileId: number; data: ProfileFormData }) =>
+      updateProfile(data, profileId, accessToken),
+    onSuccess: (updatedProfile) => {
+      // Update the cache with the new profile data
+      queryClient.setQueryData(
+        profileKeys.detail(updatedProfile.id),
+        updatedProfile
+      );
+    },
   });
 }

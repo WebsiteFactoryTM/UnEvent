@@ -6,11 +6,8 @@ import { Profile, User } from "@/types/payload-types";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { updateProfile } from "@/lib/api/profile";
-import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { profileKeys } from "@/lib/cacheKeys";
+import { useUpdateProfile } from "@/lib/react-query/listings.queries";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Numele este obligatoriu"),
@@ -27,8 +24,7 @@ export type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
   const { toast } = useToast();
-  const session = useSession();
-  const queryClient = useQueryClient();
+  const updateProfileMutation = useUpdateProfile();
 
   const {
     register,
@@ -46,23 +42,16 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      const response = await updateProfile(
+      await updateProfileMutation.mutateAsync({
+        profileId: profile.id,
         data,
-        profile.id,
-        session.data?.accessToken,
-      );
-      if (response) {
-        // Invalidate and refetch the profile data
-        await queryClient.invalidateQueries({
-          queryKey: profileKeys.detail(profile.id),
-        });
+      });
 
-        toast({
-          title: "Succes",
-          description: "Profilul a fost actualizat cu succes",
-          variant: "default",
-        });
-      }
+      toast({
+        title: "Succes",
+        description: "Profilul a fost actualizat cu succes",
+        variant: "default",
+      });
     } catch (error) {
       console.error(error);
       toast({
@@ -139,10 +128,10 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
       <div className="flex justify-end">
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || updateProfileMutation.isPending}
           className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          {isSubmitting ? "Se salvează..." : "Salvează Modificările"}
+          {isSubmitting || updateProfileMutation.isPending ? "Se salvează..." : "Salvează Modificările"}
         </Button>
       </div>
     </form>
