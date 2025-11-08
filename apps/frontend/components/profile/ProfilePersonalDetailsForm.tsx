@@ -32,7 +32,7 @@ const profileSchema = z.object({
 export type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
-  console.log('[ProfilePersonalDetailsForm] Received profile:', {
+  console.log("[ProfilePersonalDetailsForm] Received profile:", {
     id: profile.id,
     displayName: profile.displayName,
     name: profile.name,

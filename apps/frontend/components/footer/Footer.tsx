@@ -98,7 +98,7 @@ export function Footer() {
                   alt="ANPC - Soluționarea online a litigiilor"
                   width={120}
                   height={48}
-                  className="rounded"
+                  className="rounded h-auto"
                 />
               </Link>
               <Link
@@ -111,7 +111,7 @@ export function Footer() {
                   alt="ANPC - Soluționarea alternativă a litigiilor"
                   width={120}
                   height={48}
-                  className="rounded"
+                  className="rounded h-auto"
                 />
               </Link>
             </div>
