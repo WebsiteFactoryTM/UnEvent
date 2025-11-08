@@ -87,21 +87,9 @@ export function useProfile(profileId?: number | string) {
 
   const query = useQuery<Profile>({
     queryKey: profileKeys.detail(profileId || ""),
-    queryFn: () => {
-      console.log("[useProfile] Fetching profile data for ID:", profileId);
-      return getProfile(profileId, accessToken);
-    },
+    queryFn: () => getProfile(profileId, accessToken),
     enabled: !!profileId && !!accessToken,
     staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  console.log("[useProfile] Query state:", {
-    profileId,
-    hasData: !!query.data,
-    displayName: query.data?.displayName,
-    isLoading: query.isLoading,
-    isFetching: query.isFetching,
-    queryKey: profileKeys.detail(profileId || ""),
   });
 
   const updateMutation = useMutation({
@@ -110,20 +98,13 @@ export function useProfile(profileId?: number | string) {
       return updateProfile(data, Number(profileId), accessToken);
     },
     onSuccess: (updatedProfile) => {
-      console.log(
-        "[useProfile] Mutation success for profile:",
-        profileId,
-      );
       const key = profileKeys.detail(String(profileId));
-      console.log("[useProfile] Setting cache for key:", key);
       // Merge the updated data with existing data to ensure we have the full profile
       queryClient.setQueryData(key, (oldData: any) => ({
         ...oldData,
         ...updatedProfile,
         id: profileId, // Ensure ID is preserved
       }));
-      console.log("[useProfile] Invalidating queries for key:", key);
-      queryClient.invalidateQueries({ queryKey: key });
     },
   });
 
