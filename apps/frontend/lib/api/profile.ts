@@ -47,13 +47,7 @@ export async function updateProfile(
           Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: profile.name,
-          phone: profile.phone,
-          website: profile.website,
-          city: profile.city,
-          bio: profile.bio,
-        }),
+        body: JSON.stringify(profile),
       },
     );
     if (!response.ok) {

@@ -98,6 +98,10 @@ export function useProfile(profileId?: number | string) {
       return updateProfile(data, Number(profileId), accessToken);
     },
     onSuccess: (updatedProfile) => {
+      console.log(
+        "[useProfile] Mutation success, updating cache:",
+        updatedProfile,
+      );
       // Update the cache with the new profile data
       queryClient.setQueryData(
         profileKeys.detail(updatedProfile.id),

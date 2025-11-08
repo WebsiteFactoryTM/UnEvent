@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useProfile } from "@/lib/react-query/listings.queries";
+import { useRouter } from "next/navigation";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Numele este obligatoriu"),
@@ -18,32 +19,60 @@ const profileSchema = z.object({
   website: z.string().url("Website-ul este invalid"),
   city: z.string().min(1, "Orașul este obligatoriu"),
   bio: z.string().min(10, "Bio-ul trebuie să conțină cel puțin 10 caractere"),
+  displayName: z.string().min(1, "Numele de afișare este obligatoriu"),
+  facebook: z.string().url("Facebook-ul este invalid"),
+  instagram: z.string().url("Instagram-ul este invalid"),
+  linkedin: z.string().url("LinkedIn-ul este invalid"),
+  youtube: z.string().url("YouTube-ul este invalid"),
+  tiktok: z.string().url("TikTok-ul este invalid"),
+  twitch: z.string().url("Twitch-ul este invalid"),
+  x: z.string().url("X-ul este invalid"),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
 
-const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
+const ProfilePersonalDetailsForm = ({ profileId }: { profileId: number }) => {
   const { toast } = useToast();
-  const { updateProfile: updateProfileMutation, isUpdating } = useProfile(profile.id);
+  const { profile, updateProfile: updateProfileMutation, isUpdating } = useProfile(profileId);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { isSubmitting },
-  } = useForm<ProfileFormData>({
-    defaultValues: {
-      name: profile.name,
-      phone: profile.phone || "",
-      website: profile.website || "",
-      city: profile.city || "",
-      bio: profile.bio || "",
-    },
-  });
+  } = useForm<ProfileFormData>();
+
+  // Update form when profile data changes
+  React.useEffect(() => {
+    if (profile) {
+      reset({
+        name: profile.name,
+        phone: profile.phone || "",
+        website: profile.website || "",
+        city: profile.city || "",
+        bio: profile.bio || "",
+        displayName: profile.displayName || "",
+        facebook: profile.socialMedia?.facebook || "",
+        instagram: profile.socialMedia?.instagram || "",
+        linkedin: profile.socialMedia?.linkedin || "",
+        youtube: profile.socialMedia?.youtube || "",
+        tiktok: profile.socialMedia?.tiktok || "",
+        twitch: profile.socialMedia?.twitch || "",
+        x: profile.socialMedia?.x || "",
+      });
+    }
+  }, [profile, reset]);
+
+  if (!profile) {
+    return <div>Loading...</div>;
+  }
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
       await updateProfileMutation({ data });
 
+      router.refresh();
       toast({
         title: "Succes",
         description: "Profilul a fost actualizat cu succes",
@@ -69,6 +98,16 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
             defaultValue={profile.name}
             className="bg-muted/50 border-input text-foreground"
             {...register("name")}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground/80">
+            Numele de afișare
+          </label>
+          <Input
+            defaultValue={profile.displayName || ""}
+            className="bg-muted/50 border-input text-foreground"
+            {...register("displayName")}
           />
         </div>
         <div className="space-y-2">
@@ -104,6 +143,7 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
             {...register("website")}
           />
         </div>
+
         <div className="space-y-2 md:col-span-2">
           <label className="text-sm font-medium text-foreground/80">Oraș</label>
           <Input
@@ -128,7 +168,9 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
           disabled={isSubmitting || isUpdating}
           className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          {isSubmitting || isUpdating ? "Se salvează..." : "Salvează Modificările"}
+          {isSubmitting || isUpdating
+            ? "Se salvează..."
+            : "Salvează Modificările"}
         </Button>
       </div>
     </form>
