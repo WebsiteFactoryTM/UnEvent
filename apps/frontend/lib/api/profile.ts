@@ -54,8 +54,8 @@ export async function updateProfile(
       throw new Error("Failed to update profile");
     }
     const data = await response.json();
-    console.log("[updateProfile] Response data:", data);
-    return data;
+
+    return data.doc;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to update profile");

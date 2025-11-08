@@ -20,13 +20,15 @@ const profileSchema = z.object({
   city: z.string().min(1, "Orașul este obligatoriu"),
   bio: z.string().min(10, "Bio-ul trebuie să conțină cel puțin 10 caractere"),
   displayName: z.string().min(1, "Numele de afișare este obligatoriu"),
-  facebook: z.string().url("Facebook-ul este invalid"),
-  instagram: z.string().url("Instagram-ul este invalid"),
-  linkedin: z.string().url("LinkedIn-ul este invalid"),
-  youtube: z.string().url("YouTube-ul este invalid"),
-  tiktok: z.string().url("TikTok-ul este invalid"),
-  twitch: z.string().url("Twitch-ul este invalid"),
-  x: z.string().url("X-ul este invalid"),
+  socialMedia: z.object({
+    facebook: z.string().url("Facebook-ul este invalid"),
+    instagram: z.string().url("Instagram-ul este invalid"),
+    linkedin: z.string().url("LinkedIn-ul este invalid"),
+    youtube: z.string().url("YouTube-ul este invalid"),
+    tiktok: z.string().url("TikTok-ul este invalid"),
+    twitch: z.string().url("Twitch-ul este invalid"),
+    x: z.string().url("X-ul este invalid"),
+  }),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
@@ -49,13 +51,15 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
       city: profile.city || "",
       bio: profile.bio || "",
       displayName: profile.displayName || "",
-      facebook: profile.socialMedia?.facebook || "",
-      instagram: profile.socialMedia?.instagram || "",
-      linkedin: profile.socialMedia?.linkedin || "",
-      youtube: profile.socialMedia?.youtube || "",
-      tiktok: profile.socialMedia?.tiktok || "",
-      twitch: profile.socialMedia?.twitch || "",
-      x: profile.socialMedia?.x || "",
+      socialMedia: {
+        facebook: profile.socialMedia?.facebook || "",
+        instagram: profile.socialMedia?.instagram || "",
+        linkedin: profile.socialMedia?.linkedin || "",
+        youtube: profile.socialMedia?.youtube || "",
+        tiktok: profile.socialMedia?.tiktok || "",
+        twitch: profile.socialMedia?.twitch || "",
+        x: profile.socialMedia?.x || "",
+      },
     },
   });
 
@@ -66,7 +70,7 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
       toast({
         title: "Succes",
         description: "Profilul a fost actualizat cu succes",
-        variant: "default",
+        variant: "success",
       });
     } catch (error) {
       console.error(error);
@@ -149,6 +153,88 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
             rows={4}
             className="bg-muted/50 border-input text-foreground resize-none"
             {...register("bio")}
+          />
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <h3 className="text-lg font-semibold border-b pb-2">
+            Rețele Sociale
+          </h3>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground/80">
+            Facebook
+          </label>
+          <Input
+            defaultValue={profile.socialMedia?.facebook || ""}
+            type="url"
+            className="bg-muted/50 border-input text-foreground"
+            {...register("socialMedia.facebook")}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground/80">
+            Instagram
+          </label>
+          <Input
+            defaultValue={profile.socialMedia?.instagram || ""}
+            type="url"
+            className="bg-muted/50 border-input text-foreground"
+            {...register("socialMedia.instagram")}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground/80">
+            Instagram
+          </label>
+          <Input
+            defaultValue={profile.socialMedia?.instagram || ""}
+            type="url"
+            className="bg-muted/50 border-input text-foreground"
+            {...register("socialMedia.instagram")}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground/80">
+            TikTok
+          </label>
+          <Input
+            defaultValue={profile.socialMedia?.tiktok || ""}
+            type="url"
+            className="bg-muted/50 border-input text-foreground"
+            {...register("socialMedia.tiktok")}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground/80">
+            Twitch
+          </label>
+          <Input
+            defaultValue={profile.socialMedia?.twitch || ""}
+            type="url"
+            className="bg-muted/50 border-input text-foreground"
+            {...register("socialMedia.twitch")}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground/80">
+            X (Twitter)
+          </label>
+          <Input
+            defaultValue={profile.socialMedia?.x || ""}
+            type="url"
+            className="bg-muted/50 border-input text-foreground"
+            {...register("socialMedia.x")}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground/80">
+            LinkedIn
+          </label>
+          <Input
+            defaultValue={profile.socialMedia?.linkedin || ""}
+            type="url"
+            className="bg-muted/50 border-input text-foreground"
+            {...register("socialMedia.linkedin")}
           />
         </div>
       </div>

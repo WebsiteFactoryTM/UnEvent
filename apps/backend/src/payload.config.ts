@@ -234,7 +234,7 @@ export default buildConfig({
         let cityName = ''
 
         // Get city name from the relationship
-        if (originalDoc?.city) {
+        if (originalDoc?.city && payload.collection !== 'profiles') {
           try {
             const cityId =
               typeof originalDoc.city === 'object' ? originalDoc.city.id : originalDoc.city

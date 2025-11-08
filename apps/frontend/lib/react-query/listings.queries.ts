@@ -99,6 +99,9 @@ export function useProfile(profileId?: number | string) {
     },
     onSuccess: (updatedProfile) => {
       const key = profileKeys.detail(String(profileId));
+      console.log("key", key);
+      console.log("updatedProfile", updatedProfile);
+
       // Merge the updated data with existing data to ensure we have the full profile
       queryClient.setQueryData(key, (oldData: any) => ({
         ...oldData,
