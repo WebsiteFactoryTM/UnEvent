@@ -31,52 +31,44 @@ const profileSchema = z.object({
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
 
-const ProfilePersonalDetailsForm = ({ profileId }: { profileId: number }) => {
-  const { toast } = useToast();
-  const {
-    profile,
-    updateProfile: updateProfileMutation,
-    isUpdating,
-  } = useProfile(profileId);
-  const router = useRouter();
+const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
+  console.log('[ProfilePersonalDetailsForm] Received profile:', {
+    id: profile.id,
+    displayName: profile.displayName,
+    name: profile.name,
+  });
 
+  const { toast } = useToast();
+  const { updateProfile: updateProfileMutation, isUpdating } = useProfile(
+    profile.id,
+  );
+  const router = useRouter();
   const {
     register,
     handleSubmit,
-    reset,
     formState: { isSubmitting },
-  } = useForm<ProfileFormData>();
-
-  // Update form when profile data changes
-  React.useEffect(() => {
-    if (profile) {
-      reset({
-        name: profile.name,
-        phone: profile.phone || "",
-        website: profile.website || "",
-        city: profile.city || "",
-        bio: profile.bio || "",
-        displayName: profile.displayName || "",
-        facebook: profile.socialMedia?.facebook || "",
-        instagram: profile.socialMedia?.instagram || "",
-        linkedin: profile.socialMedia?.linkedin || "",
-        youtube: profile.socialMedia?.youtube || "",
-        tiktok: profile.socialMedia?.tiktok || "",
-        twitch: profile.socialMedia?.twitch || "",
-        x: profile.socialMedia?.x || "",
-      });
-    }
-  }, [profile, reset]);
-
-  if (!profile) {
-    return <div>Loading...</div>;
-  }
+  } = useForm<ProfileFormData>({
+    defaultValues: {
+      name: profile.name,
+      phone: profile.phone || "",
+      website: profile.website || "",
+      city: profile.city || "",
+      bio: profile.bio || "",
+      displayName: profile.displayName || "",
+      facebook: profile.socialMedia?.facebook || "",
+      instagram: profile.socialMedia?.instagram || "",
+      linkedin: profile.socialMedia?.linkedin || "",
+      youtube: profile.socialMedia?.youtube || "",
+      tiktok: profile.socialMedia?.tiktok || "",
+      twitch: profile.socialMedia?.twitch || "",
+      x: profile.socialMedia?.x || "",
+    },
+  });
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
       await updateProfileMutation({ data });
 
-      router.refresh();
       toast({
         title: "Succes",
         description: "Profilul a fost actualizat cu succes",

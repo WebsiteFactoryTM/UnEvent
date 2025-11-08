@@ -16,6 +16,14 @@ export default function ProfilPageClient() {
   const user = session?.user;
   const { profile, isLoading, error } = useProfile(user?.profile);
 
+  console.log('[ProfilPageClient] Profile data:', {
+    hasProfile: !!profile,
+    displayName: profile?.displayName,
+    name: profile?.name,
+    isLoading,
+    error: error?.message,
+  });
+
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto space-y-6">
@@ -69,7 +77,7 @@ export default function ProfilPageClient() {
           </div>
 
           {/* Form Fields */}
-          <ProfilePersonalDetailsForm profileId={Number(user?.profile)} />
+          <ProfilePersonalDetailsForm profile={profile} />
         </div>
       </SectionCard>
 
