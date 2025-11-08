@@ -83,29 +83,38 @@ export function useSimilarListings(
 export function useProfile(profileId?: number | string) {
   const { data: session } = useSession();
   const accessToken = session?.accessToken;
+  const queryClient = useQueryClient();
 
-  return useQuery<Profile>({
+  const query = useQuery<Profile>({
     queryKey: profileKeys.detail(profileId || ""),
     queryFn: () => getProfile(profileId, accessToken),
     enabled: !!profileId && !!accessToken,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
-}
 
-export function useUpdateProfile() {
-  const queryClient = useQueryClient();
-  const { data: session } = useSession();
-  const accessToken = session?.accessToken;
-
-  return useMutation({
-    mutationFn: ({ profileId, data }: { profileId: number; data: ProfileFormData }) =>
-      updateProfile(data, profileId, accessToken),
+  const updateMutation = useMutation({
+    mutationFn: ({ data }: { data: ProfileFormData }) => {
+      if (!profileId) throw new Error("Profile ID is required");
+      return updateProfile(data, Number(profileId), accessToken);
+    },
     onSuccess: (updatedProfile) => {
       // Update the cache with the new profile data
       queryClient.setQueryData(
         profileKeys.detail(updatedProfile.id),
-        updatedProfile
+        updatedProfile,
       );
     },
   });
+
+  return {
+    // Query data
+    profile: query.data,
+    isLoading: query.isLoading,
+    error: query.error,
+
+    // Mutation functions
+    updateProfile: updateMutation.mutateAsync,
+    isUpdating: updateMutation.isPending,
+    updateError: updateMutation.error,
+  };
 }

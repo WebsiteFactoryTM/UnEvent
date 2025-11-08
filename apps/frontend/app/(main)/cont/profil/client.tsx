@@ -14,7 +14,7 @@ import { useProfile } from "@/lib/react-query/listings.queries";
 export default function ProfilPageClient() {
   const { data: session } = useSession();
   const user = session?.user;
-  const { data: profile, isLoading, error } = useProfile(user?.profile);
+  const { profile, isLoading, error } = useProfile(user?.profile);
 
   if (isLoading) {
     return (

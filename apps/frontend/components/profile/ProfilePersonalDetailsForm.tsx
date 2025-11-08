@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { useUpdateProfile } from "@/lib/react-query/listings.queries";
+import { useProfile } from "@/lib/react-query/listings.queries";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Numele este obligatoriu"),
@@ -24,7 +24,7 @@ export type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
   const { toast } = useToast();
-  const updateProfileMutation = useUpdateProfile();
+  const { updateProfile: updateProfileMutation, isUpdating } = useProfile(profile.id);
 
   const {
     register,
@@ -42,10 +42,7 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      await updateProfileMutation.mutateAsync({
-        profileId: profile.id,
-        data,
-      });
+      await updateProfileMutation({ data });
 
       toast({
         title: "Succes",
@@ -128,10 +125,10 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
       <div className="flex justify-end">
         <Button
           type="submit"
-          disabled={isSubmitting || updateProfileMutation.isPending}
+          disabled={isSubmitting || isUpdating}
           className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          {isSubmitting || updateProfileMutation.isPending ? "Se salvează..." : "Salvează Modificările"}
+          {isSubmitting || isUpdating ? "Se salvează..." : "Salvează Modificările"}
         </Button>
       </div>
     </form>
