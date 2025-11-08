@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   FaAngleRight,
   FaUser,
@@ -13,26 +13,43 @@ import {
   FaCalendarDays,
   FaEnvelope,
   FaHeart,
-} from "react-icons/fa6"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import Image from "next/image"
+} from "react-icons/fa6";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import Image from "next/image";
 
 const menuItems = [
   { href: "/cont/profil", label: "Profil & Verificare", icon: FaUser },
   { href: "/cont/roluri", label: "Roluri & Permisiuni", icon: FaUserShield },
   { href: "/cont/securitate", label: "Securitate", icon: FaLock },
-  { href: "/cont/locatiile-mele", label: "Locațiile Mele", icon: FaLocationDot },
-  { href: "/cont/serviciile-mele", label: "Serviciile Mele", icon: FaBriefcase },
-  { href: "/cont/evenimentele-mele", label: "Evenimentele Mele", icon: FaCalendarDays },
+  {
+    href: "/cont/locatiile-mele",
+    label: "Locațiile Mele",
+    icon: FaLocationDot,
+  },
+  {
+    href: "/cont/serviciile-mele",
+    label: "Serviciile Mele",
+    icon: FaBriefcase,
+  },
+  {
+    href: "/cont/evenimentele-mele",
+    label: "Evenimentele Mele",
+    icon: FaCalendarDays,
+  },
   { href: "/cont/mesaje", label: "Mesaje", icon: FaEnvelope },
   { href: "/cont/favorite", label: "Favorite", icon: FaHeart },
-]
+];
 
 export function Topbar() {
-  const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
-  const currentPage = menuItems.find((item) => item.href === pathname)
+  const currentPage = menuItems.find((item) => item.href === pathname);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-xl lg:hidden">
@@ -45,7 +62,11 @@ export function Topbar() {
               <span className="text-sm font-medium">Meniu</span>
             </button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-80 p-0 bg-sidebar/95 backdrop-blur-xl border-sidebar-border">
+          <SheetContent
+            side="left"
+            className="w-80 p-0 bg-sidebar/95 backdrop-blur-xl border-sidebar-border"
+          >
+            <SheetTitle className="sr-only">Meniu</SheetTitle>
             <div className="flex flex-col h-full">
               {/* Logo */}
               <div className="flex items-center justify-center p-6 border-b border-sidebar-border">
@@ -61,8 +82,8 @@ export function Topbar() {
               {/* Menu Items */}
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {menuItems.map((item) => {
-                  const Icon = item.icon
-                  const isActive = pathname === item.href
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
 
                   return (
                     <Link
@@ -78,7 +99,7 @@ export function Topbar() {
                       <Icon className="w-5 h-5" />
                       <span className="font-medium">{item.label}</span>
                     </Link>
-                  )
+                  );
                 })}
               </nav>
             </div>
@@ -86,11 +107,13 @@ export function Topbar() {
         </Sheet>
 
         {/* Page Title */}
-        <h1 className="text-lg font-semibold text-foreground">{currentPage?.label || "Contul Meu"}</h1>
+        <h1 className="text-lg font-semibold text-foreground">
+          {currentPage?.label || "Contul Meu"}
+        </h1>
 
         {/* Spacer for layout balance */}
         <div className="w-8" />
       </div>
     </header>
-  )
+  );
 }

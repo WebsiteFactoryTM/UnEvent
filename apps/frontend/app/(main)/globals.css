@@ -21,6 +21,12 @@
   --accent-foreground: oklch(0.205 0 0); /* Dark gray */
   --destructive: oklch(0.577 0.245 27.325); /* Red */
   --destructive-foreground: oklch(0.577 0.245 27.325);
+  --success: oklch(0.205 0 0); /* Green */
+  --success-foreground: oklch(0.985 0 0); /* Almost white */
+  --warning: oklch(0.205 0 0); /* Yellow */
+  --warning-foreground: oklch(0.985 0 0); /* Almost white */
+  --info: oklch(0.205 0 0); /* Blue */
+  --info-foreground: oklch(0.985 0 0); /* Almost white */
   --border: oklch(0.922 0 0); /* Light border */
   --input: oklch(0.922 0 0); /* Light input border */
   --ring: oklch(0.708 0 0); /* Focus ring */

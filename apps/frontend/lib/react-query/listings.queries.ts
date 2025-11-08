@@ -2,14 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { listingsKeys } from "../cacheKeys";
 import { fetchJson } from "./utils";
 import { fetchSimilarListings } from "@/lib/api/listings";
+import { getProfile } from "@/lib/api/profile";
 import type { ListingType } from "@/types/listings";
 import type {
   City,
   ListingType as SuitableForType,
+  Profile,
 } from "@/types/payload-types";
 import type { Listing } from "@/types/listings";
 import { frontendTypeToCollectionSlug } from "@/lib/api/reviews";
 import { useSession } from "next-auth/react";
+import { profileKeys } from "../cacheKeys";
 
 export function useListings(
   ctx: string,
@@ -73,5 +76,17 @@ export function useSimilarListings(
       ),
     enabled: isEnabled,
     staleTime: 60 * 60 * 1000,
+  });
+}
+
+export function useProfile(profileId?: number | string) {
+  const { data: session } = useSession();
+  const accessToken = session?.accessToken;
+
+  return useQuery<Profile>({
+    queryKey: profileKeys.detail(profileId || ""),
+    queryFn: () => getProfile(profileId, accessToken),
+    enabled: !!profileId && !!accessToken,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }

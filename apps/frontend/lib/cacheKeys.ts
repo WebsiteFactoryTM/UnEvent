@@ -87,6 +87,14 @@ export const usersKeys = {
 };
 
 /**
+ * 👤 Profiles
+ */
+export const profileKeys = {
+  all: ["profiles"] as const,
+  detail: (id: string | number) => [...profileKeys.all, String(id)] as const,
+};
+
+/**
  * 📰 Feed
  */
 export const feedKeys = {

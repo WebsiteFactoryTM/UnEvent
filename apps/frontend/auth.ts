@@ -68,6 +68,8 @@ export const authOptions: NextAuthOptions = {
           : 24 * 60 * 60;
         token.iat = Math.floor(Date.now() / 1000);
         token.exp = token.iat + token.maxAge;
+        token.profileId =
+          typeof user.profile === "number" ? user.profile : user.profile?.id;
       }
 
       // Refresh if token about to expire (< 2 min left)
@@ -114,6 +116,7 @@ export const authOptions: NextAuthOptions = {
         email: token.email || undefined,
         roles: token.roles,
         avatar: token.avatar,
+        profile: token.profileId as number | string | undefined,
       };
       session.accessToken = token.accessToken;
 

@@ -5,6 +5,7 @@ declare module "next-auth" {
     accessToken?: string;
     user: {
       id: string;
+      profile?: number | string;
       name?: string;
       email?: string;
       roles?: string[];
@@ -15,6 +16,7 @@ declare module "next-auth" {
   interface User {
     id: string;
     email: string;
+    profile?: number | string;
     displayName?: string;
     avatarURL?: string;
     roles?: string[];
@@ -28,6 +30,7 @@ declare module "next-auth/jwt" {
     accessToken?: string;
     id?: string;
     roles?: string[];
+    profile?: number | string;
     avatar?: string;
     rememberMe?: boolean;
     maxAge?: number;
