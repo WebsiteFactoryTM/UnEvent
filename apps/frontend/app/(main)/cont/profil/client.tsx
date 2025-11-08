@@ -16,12 +16,6 @@ export default function ProfilPageClient() {
   const user = session?.user;
   const { profile, isLoading, error } = useProfile(user?.profile);
 
-  console.log(
-    "[ProfilPageClient] Render with profile:",
-    profile?.displayName,
-    profile?.name,
-  );
-
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto space-y-6">

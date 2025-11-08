@@ -33,7 +33,11 @@ export type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfilePersonalDetailsForm = ({ profileId }: { profileId: number }) => {
   const { toast } = useToast();
-  const { profile, updateProfile: updateProfileMutation, isUpdating } = useProfile(profileId);
+  const {
+    profile,
+    updateProfile: updateProfileMutation,
+    isUpdating,
+  } = useProfile(profileId);
   const router = useRouter();
 
   const {
