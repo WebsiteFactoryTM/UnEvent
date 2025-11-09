@@ -38,7 +38,7 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
   const { updateProfile: updateProfileMutation, isUpdating } = useProfile(
     profile.id,
   );
-  const router = useRouter();
+
   const {
     register,
     handleSubmit,

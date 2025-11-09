@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { FaLocationDot, FaClock, FaCircle } from "react-icons/fa6";
-import type { User, Profile } from "@/types/payload-types copy";
+import type { User, Profile } from "@/types/payload-types";
 
 interface ProfileMetricsProps {
   user: User & { profile: Profile };
