@@ -12,8 +12,9 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+
+import { signIn } from "next-auth/react";
 
 const loginSchema = z.object({
   email: z
@@ -30,9 +31,7 @@ export function LoginForm() {
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-
   const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -48,32 +47,43 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    setIsPending(true);
     try {
-      setIsPending(true);
-      await signIn("credentials", {
+      const res = await signIn("credentials", {
         email: data.email,
         password: data.password,
         rememberMe: data.rememberMe,
         redirect: false,
       });
 
-      toast({
-        title: "Succes",
-        description: "Autentificat cu succes.",
-      });
-      // Manual redirect after successful login
-      router.push("/");
+      if (!res?.ok && res?.error) {
+        setError(res?.error);
+        toast({
+          title: "Eroare",
+          description: res?.error,
+          variant: "destructive",
+        });
+      }
+      if (res?.ok) {
+        toast({
+          title: "Succes",
+          description: "Bine ai revenit.",
+          variant: "success",
+        });
+        router.push("/cont");
+      }
     } catch (error) {
-      console.error("Error signing in", error);
-      toast({
-        title: "Eroare",
-        description: "Autentificarea a eșuat.",
-        variant: "destructive",
-      });
-      setError("Autentificarea a eșuat.");
-    } finally {
-      setIsPending(false);
+      if (error instanceof Error) {
+        console.log("error", error);
+        toast({
+          title: "Eroare",
+          description: "Errore la autentificare.",
+          variant: "destructive",
+        });
+      }
     }
+
+    setIsPending(false);
   };
 
   return (

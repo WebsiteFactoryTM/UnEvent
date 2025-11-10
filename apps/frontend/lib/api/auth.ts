@@ -1,4 +1,4 @@
-import type { User } from "@/types/payload-types copy";
+import type { User } from "@/types/payload-types";
 
 // Sign up payload
 export interface SignUpPayload {

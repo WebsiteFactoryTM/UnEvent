@@ -26,7 +26,14 @@ export const authOptions: NextAuthOptions = {
             },
           );
 
-          if (!res.ok) throw new Error("Invalid credentials");
+          if (!res.ok) {
+            const error = await res.json();
+            const errMsgs = error.errors
+              .map((err: any) => err.message)
+              .join(", ");
+
+            throw new Error(errMsgs);
+          }
 
           const data = await res.json();
 
@@ -39,7 +46,9 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (err) {
           console.error("Authorize error:", err);
-          return null;
+          throw new Error(
+            err instanceof Error ? err.message : "An unknown error occurred",
+          );
         }
       },
     }),
@@ -52,6 +61,13 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
+    async signIn({ user }: { user?: any }) {
+      if (user.error) {
+        throw new Error(user.error);
+        // return user.error;
+      }
+      return true;
+    },
     async jwt({ token, user }: { token: JWT; user?: any }) {
       const TOKEN_LIFETIME_DAYS = 7;
       if (user) {

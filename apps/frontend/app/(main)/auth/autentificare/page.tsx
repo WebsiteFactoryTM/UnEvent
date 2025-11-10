@@ -1,14 +1,23 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { AuthCard } from "@/components/auth/auth-card"
-import { LoginForm } from "@/components/auth/login-form"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { AuthCard } from "@/components/auth/auth-card";
+import { LoginForm } from "@/components/auth/login-form";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Autentificare | UN:EVENT",
-  description: "Autentifică-te în contul tău UN:EVENT pentru a accesa toate funcționalitățile platformei.",
-}
+  description:
+    "Autentifică-te în contul tău UN:EVENT pentru a accesa toate funcționalitățile platformei.",
+};
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getServerSession(authOptions);
+  if (session?.user) {
+    redirect("/cont");
+  }
+
   return (
     <AuthCard
       title="Autentificare"
@@ -27,5 +36,5 @@ export default function LoginPage() {
     >
       <LoginForm />
     </AuthCard>
-  )
+  );
 }
