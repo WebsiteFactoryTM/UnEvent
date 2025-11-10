@@ -250,14 +250,30 @@ export default buildConfig({
 
         if (originalDoc?.type?.length) {
           try {
-            const result = await payload.find({
-              collection: 'listing-types',
-              where: { id: { in: originalDoc.type } },
-              depth: 0,
-              limit: 100,
-            })
-            const labels = result.docs.map((d: ListingType) => d?.title).filter(Boolean)
-            searchDoc.type = labels // keep as array in index
+            // Extract IDs from type array (handles both populated objects and plain IDs)
+            const typeIds = originalDoc.type
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .map((item: any) => {
+                if (typeof item === 'object' && item !== null && 'id' in item) {
+                  return item.id
+                }
+                return item
+              })
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .filter((id: any) => id != null)
+
+            if (typeIds.length > 0) {
+              const result = await payload.find({
+                collection: 'listing-types',
+                where: { id: { in: typeIds } },
+                depth: 0,
+                limit: 100,
+              })
+              const labels = result.docs.map((d: ListingType) => d?.title).filter(Boolean)
+              searchDoc.type = labels // keep as array in index
+            } else {
+              searchDoc.type = []
+            }
           } catch (e) {
             console.error('Error fetching listing-types:', e)
             searchDoc.type = []
