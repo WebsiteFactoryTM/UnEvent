@@ -24,7 +24,7 @@ import { SectionCard } from "@/components/cont/SectionCard";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { mockMyServices, type MyService } from "@/mocks/cont/my-services";
-import { AddServiceModal } from "@/components/cont/services/AddServiceModal";
+import Link from "next/link";
 import type { City } from "@/types/payload-types copy";
 
 // Helper to get city name from City object or ID
@@ -130,7 +130,6 @@ function getCategoryColor(category: string | null | undefined): string {
 export default function ServiciilemePage() {
   const { toast } = useToast();
   const [services] = useState<MyService[]>(mockMyServices);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleView = (service: MyService) => {
     toast({
@@ -154,9 +153,6 @@ export default function ServiciilemePage() {
     });
   };
 
-  const handleAddService = () => {
-    setIsAddModalOpen(true);
-  };
 
   return (
     <div className="space-y-6">
@@ -170,10 +166,12 @@ export default function ServiciilemePage() {
             Gestionează serviciile tale listate pe platformă
           </p>
         </div>
-        <Button onClick={handleAddService} className="gap-2 w-full sm:w-auto">
-          <FaPlus className="h-4 w-4" />
-          Adaugă serviciu
-        </Button>
+        <Link href="/cont/serviciile-mele/adauga">
+          <Button className="gap-2 w-full sm:w-auto">
+            <FaPlus className="h-4 w-4" />
+            Adaugă serviciu
+          </Button>
+        </Link>
       </div>
 
       {/* Services List */}
@@ -471,8 +469,6 @@ export default function ServiciilemePage() {
         </SectionCard>
       )}
 
-      {/* Add Service Modal */}
-      <AddServiceModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
     </div>
   );
 }

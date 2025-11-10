@@ -15,7 +15,7 @@ import { SectionCard } from "@/components/cont/SectionCard";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { mockMyEvents, type MyEvent } from "@/mocks/cont/my-events";
-import { AddEventModal } from "@/components/cont/events/AddEventModal";
+import Link from "next/link";
 import type { City } from "@/types/payload-types";
 
 // Helper to get city name from City object or ID
@@ -119,7 +119,6 @@ function getEventStatusLabel(
 export default function EvenimentelemePage() {
   const { toast } = useToast();
   const [events] = useState<MyEvent[]>(mockMyEvents);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleView = (event: MyEvent) => {
     toast({
@@ -143,9 +142,6 @@ export default function EvenimentelemePage() {
     });
   };
 
-  const handleAddEvent = () => {
-    setIsAddModalOpen(true);
-  };
 
   return (
     <div className="space-y-6">
@@ -159,10 +155,12 @@ export default function EvenimentelemePage() {
             Gestionează evenimentele tale listate pe platformă
           </p>
         </div>
-        <Button onClick={handleAddEvent} className="gap-2 w-full sm:w-auto">
-          <FaPlus className="h-4 w-4" />
-          Adaugă eveniment
-        </Button>
+        <Link href="/cont/evenimentele-mele/adauga">
+          <Button className="gap-2 w-full sm:w-auto">
+            <FaPlus className="h-4 w-4" />
+            Adaugă eveniment
+          </Button>
+        </Link>
       </div>
 
       {/* Events List */}
@@ -311,10 +309,12 @@ export default function EvenimentelemePage() {
                 <p className="text-muted-foreground">
                   Nu ai încă evenimente adăugate.
                 </p>
-                <Button onClick={handleAddEvent} className="mt-4 gap-2">
-                  <FaPlus className="h-4 w-4" />
-                  Adaugă primul eveniment
-                </Button>
+                <Link href="/cont/evenimentele-mele/adauga">
+                  <Button className="mt-4 gap-2">
+                    <FaPlus className="h-4 w-4" />
+                    Adaugă primul eveniment
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
@@ -443,10 +443,12 @@ export default function EvenimentelemePage() {
               <p className="text-muted-foreground">
                 Nu ai încă evenimente adăugate.
               </p>
-              <Button onClick={handleAddEvent} className="mt-4 gap-2 w-full">
-                <FaPlus className="h-4 w-4" />
-                Adaugă primul eveniment
-              </Button>
+              <Link href="/cont/evenimentele-mele/adauga">
+                <Button className="mt-4 gap-2 w-full">
+                  <FaPlus className="h-4 w-4" />
+                  Adaugă primul eveniment
+                </Button>
+              </Link>
             </div>
           )}
         </div>
@@ -495,8 +497,6 @@ export default function EvenimentelemePage() {
         </SectionCard>
       )}
 
-      {/* Add Event Modal */}
-      <AddEventModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
     </div>
   );
 }
