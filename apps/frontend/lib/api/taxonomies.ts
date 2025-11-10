@@ -2,18 +2,22 @@
 import { getRedis } from "../redis";
 import { cacheTTL } from "../constants"; // e.g. 6h
 import { City, ListingType, Facility } from "@/types/payload-types";
+import { redisKey } from "../react-query/utils";
+import { taxonomiesKeys } from "../cacheKeys";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export async function fetchTaxonomies() {
+export async function fetchTaxonomies({
+  fullList = false,
+}: { fullList?: boolean } = {}) {
   const redis = getRedis();
-  const cacheKey = "taxonomies";
+  const cacheKey = redisKey(taxonomiesKeys.list({ fullList }));
   const cached = await redis.get(cacheKey);
 
   if (cached) return JSON.parse(cached);
 
   try {
-    const res = await fetch(`${API_URL}/api/taxonomies`);
+    const res = await fetch(`${API_URL}/api/taxonomies?fullList=${fullList}`);
 
     if (!res.ok) throw new Error("Failed to fetch taxonomies");
 
