@@ -27,7 +27,7 @@ export const sharedListingFields: Field[] = [
     maxDepth: 2,
   },
   { name: 'description', type: 'textarea' },
-  { name: 'city', type: 'relationship', relationTo: 'cities', index: true },
+  { name: 'city', type: 'relationship', relationTo: 'cities', index: true, required: true },
 
   { name: 'address', type: 'text' },
   { name: 'geo', type: 'point', index: true },
