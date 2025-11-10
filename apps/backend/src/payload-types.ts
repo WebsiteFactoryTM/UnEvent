@@ -336,7 +336,7 @@ export interface Location {
    */
   owner: number | Profile;
   description?: string | null;
-  city?: (number | null) | City;
+  city: number | City;
   address?: string | null;
   /**
    * @minItems 2
@@ -598,7 +598,7 @@ export interface Event {
    */
   owner: number | Profile;
   description?: string | null;
-  city?: (number | null) | City;
+  city: number | City;
   address?: string | null;
   /**
    * @minItems 2
@@ -726,7 +726,7 @@ export interface Service {
    */
   owner: number | Profile;
   description?: string | null;
-  city?: (number | null) | City;
+  city: number | City;
   address?: string | null;
   /**
    * @minItems 2
