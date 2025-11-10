@@ -3,7 +3,15 @@ import type { PayloadHandler, PayloadRequest } from 'payload'
 export const getTaxonomies: PayloadHandler = async (req: PayloadRequest): Promise<Response> => {
   try {
     const payload = req.payload
+    const query = req.query
 
+    const where = {
+      usageCount: {
+        greater_than: 0,
+      },
+    }
+
+    console.log('query', query)
     const [cities, listingTypes, facilities] = await Promise.all([
       payload.find({
         collection: 'cities',
@@ -16,11 +24,7 @@ export const getTaxonomies: PayloadHandler = async (req: PayloadRequest): Promis
           geo: true,
           usageCount: true,
         },
-        where: {
-          usageCount: {
-            greater_than: 0,
-          },
-        },
+        where: query.fullList ? undefined : where,
         sort: ['name', 'asc'],
       }),
       payload.find({
@@ -36,11 +40,7 @@ export const getTaxonomies: PayloadHandler = async (req: PayloadRequest): Promis
           usageCount: true,
         },
         sort: ['title', 'asc'],
-        where: {
-          usageCount: {
-            greater_than: 0,
-          },
-        },
+        where: query.fullList ? undefined : where,
       }),
       payload.find({
         collection: 'facilities',
