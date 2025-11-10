@@ -1,18 +1,24 @@
-"use client"
+"use client";
 
-import type { ReactNode } from "react"
-import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import type { ReactNode } from "react";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface SectionCardProps {
-  title: string
-  description?: string
-  action?: ReactNode
-  children: ReactNode
-  className?: string
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  children: ReactNode;
+  className?: string;
 }
 
-export function SectionCard({ title, description, action, children, className }: SectionCardProps) {
+export function SectionCard({
+  title,
+  description,
+  action,
+  children,
+  className,
+}: SectionCardProps) {
   return (
     <Card
       className={cn(
@@ -26,12 +32,14 @@ export function SectionCard({ title, description, action, children, className }:
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <h2 className="text-2xl font-bold text-foreground">{title}</h2>
-            {description && <p className="text-sm text-muted-foreground">{description}</p>}
+            {description && (
+              <p className="text-sm text-muted-foreground">{description}</p>
+            )}
           </div>
-          {action && <div className="flex-shrink-0">{action}</div>}
+          {action && <div className="shrink-0">{action}</div>}
         </div>
         {children}
       </div>
     </Card>
-  )
+  );
 }
