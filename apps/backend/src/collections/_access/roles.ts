@@ -1,4 +1,5 @@
 import { Access, PayloadRequest } from 'payload'
+import type { Where } from 'payload'
 
 export const isAdmin: Access = ({ req }: { req: PayloadRequest }): boolean =>
   req.user?.roles?.includes('admin') ?? false
@@ -17,6 +18,7 @@ export const isOwnerOrAdmin: Access = ({ req }) => {
   const user = req.user
   if (!user) return false
   const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
+
   return user.roles.includes('admin') || { owner: { equals: profileId } }
 }
 
@@ -33,6 +35,25 @@ export const publicReadOwnerOrAdminWrite: Access = ({ req }) => {
 export const approvedOnlyPublic: Access = ({ req }) => {
   if (req.user?.roles?.includes('admin')) return true
   return { status: { equals: 'approved' } }
+}
+
+// Approved listings are public; draft listings only visible to their owner (or admins)
+export const approvedOrOwnDraft: Access = ({ req }) => {
+  const user = req.user
+  if (user?.roles?.includes('admin')) return true
+
+  const conditions: Where[] = [{ status: { equals: 'approved' } }]
+
+  if (user) {
+    const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
+    if (profileId) {
+      conditions.push({
+        and: [{ status: { in: ['draft', 'pending'] } }, { owner: { equals: profileId } }],
+      })
+    }
+  }
+
+  return { or: conditions }
 }
 
 // Ensure user has a specific role before creating
