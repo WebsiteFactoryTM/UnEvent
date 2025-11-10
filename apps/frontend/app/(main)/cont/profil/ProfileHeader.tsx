@@ -1,5 +1,5 @@
 "use client";
-import { useProfile } from "@/lib/react-query/listings.queries";
+import { useProfile } from "@/lib/react-query/accountProfile.queries";
 import Image from "next/image";
 import { FaUpload } from "react-icons/fa6";
 

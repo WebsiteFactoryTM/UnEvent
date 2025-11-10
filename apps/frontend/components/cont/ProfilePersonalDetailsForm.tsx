@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { useProfile } from "@/lib/react-query/listings.queries";
+import { useProfile } from "@/lib/react-query/accountProfile.queries";
 import { useRouter } from "next/navigation";
 
 const profileSchema = z.object({

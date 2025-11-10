@@ -7,12 +7,10 @@ import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { getProfile } from "@/lib/api/profile";
-import ProfilePersonalDetailsForm from "@/components/profile/ProfilePersonalDetailsForm";
-import { Media } from "@/types/payload-types";
+import ProfilePersonalDetailsForm from "@/components/cont/ProfilePersonalDetailsForm";
 import { getQueryClient } from "@/lib/react-query";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { profileKeys } from "@/lib/cacheKeys";
-import ProfilPageClient from "./client";
 import ProfileHeader from "./ProfileHeader";
 
 export default async function ProfilPage() {

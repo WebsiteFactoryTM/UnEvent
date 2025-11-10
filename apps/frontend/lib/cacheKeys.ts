@@ -47,8 +47,8 @@ export const listingsKeys = {
   nearby: (type: string, id: number | string) =>
     [...listingsKeys.type(type), "nearby", String(id)] as const,
 
-  userListings: (userId: string) =>
-    [...listingsKeys.all, "user", userId] as const,
+  userListings: (type: string, userId: string) =>
+    [...listingsKeys.all, type, userId] as const,
 
   search: (filters: Record<string, unknown>) =>
     [...listingsKeys.all, "search", stableKey(filters)] as const,
@@ -107,4 +107,10 @@ export const feedKeys = {
 
   list: (filters: Record<string, unknown>) =>
     [...feedKeys.all, "list", stableKey(filters)] as const,
+};
+
+export const taxonomiesKeys = {
+  all: ["taxonomies"] as const,
+  list: (filters: Record<string, unknown>) =>
+    [...taxonomiesKeys.all, "list", stableKey(filters)] as const,
 };

@@ -3,7 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { Profile } from "@/types/payload-types";
-import { ProfileFormData } from "@/components/profile/ProfilePersonalDetailsForm";
+import { ProfileFormData } from "@/components/cont/ProfilePersonalDetailsForm";
 
 export async function getProfile(
   profileId?: number | string,
