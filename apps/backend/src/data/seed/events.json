@@ -1,9 +1,9 @@
 [
   {
     "title": "Tech Conference Bucharest 2025",
-    "owner": 13,
+    "owner": 19,
     "type": [4945],
-    "city": 1,
+    "city": 16424,
     "eventStatus": "upcoming",
     "startDate": "2025-03-15T09:00:00.000Z",
     "endDate": "2025-03-15T18:00:00.000Z",
@@ -16,14 +16,14 @@
     },
     "venueAddressDetails": {
       "venueAddress": "Calea Victoriei 147, Bucharest, Romania",
-      "venueCity": 1,
+      "venueCity": 16424,
       "venueGeo": [26.0963, 44.4369]
     }
   },
   {
     "title": "Wedding Reception - Ana & Mihai",
-    "owner": 13,
-    "city": 6,
+    "owner": 19,
+    "city": 24915,
     "type": [4942, 4943],
     "eventStatus": "upcoming",
     "startDate": "2025-04-20T18:00:00.000Z",
@@ -35,14 +35,14 @@
     },
     "venueAddressDetails": {
       "venueAddress": "Strada Episcopiei 5, Bran, Romania",
-      "venueCity": 3,
+      "venueCity": 16270,
       "venueGeo": [25.3667, 45.5167]
     }
   },
   {
     "title": "Jazz Night at Old Town",
-    "owner": 13,
-    "city": 1,
+    "owner": 19,
+    "city": 16270,
     "type": [4944, 4945],
     "eventStatus": "upcoming",
     "startDate": "2025-02-28T20:00:00.000Z",
@@ -54,14 +54,14 @@
     },
     "venueAddressDetails": {
       "venueAddress": "Strada Stavropoleos 5, Bucharest, Romania",
-      "venueCity": 1,
+      "venueCity": 16270,
       "venueGeo": [26.0983, 44.4318]
     }
   },
   {
     "title": "Art Craft Fair",
-    "owner": 13,
-    "city": 1,
+    "owner": 20,
+    "city": 16424,
     "type": [4944],
     "eventStatus": "upcoming",
     "startDate": "2025-05-10T10:00:00.000Z",
@@ -71,14 +71,14 @@
     "pricing": { "type": "free" },
     "venueAddressDetails": {
       "venueAddress": "Piața Universității, Bucharest, Romania",
-      "venueCity": 1,
+      "venueCity": 16424,
       "venueGeo": [26.1039, 44.4353]
     }
   },
   {
     "title": "Business Gala Event",
-    "owner": 13,
-    "city": 2,
+    "owner": 20,
+    "city": 17474,
     "type": [4943],
     "eventStatus": "upcoming",
     "startDate": "2025-06-12T19:00:00.000Z",
@@ -88,14 +88,14 @@
     "pricing": { "type": "paid", "amount": 90, "currency": "EUR" },
     "venueAddressDetails": {
       "venueAddress": "Strada Republicii 10, Cluj-Napoca, Romania",
-      "venueCity": 2,
+      "venueCity": 17474,
       "venueGeo": [23.594, 46.7712]
     }
   },
   {
     "title": "Entrepreneurship Workshop",
-    "owner": 13,
-    "city": 1,
+    "owner": 20,
+    "city": 16424,
     "type": [4945],
     "eventStatus": "upcoming",
     "startDate": "2025-07-05T09:00:00.000Z",
@@ -105,14 +105,14 @@
     "pricing": { "type": "free" },
     "venueAddressDetails": {
       "venueAddress": "Calea Victoriei 118, Bucharest, Romania",
-      "venueCity": 1,
+      "venueCity": 16424,
       "venueGeo": [26.096, 44.439]
     }
   },
   {
     "title": "Jazz Festival Outdoor",
-    "owner": 13,
-    "city": 1,
+    "owner": 20,
+    "city": 16424,
     "type": [4944],
     "eventStatus": "upcoming",
     "startDate": "2025-08-22T17:00:00.000Z",
@@ -122,14 +122,14 @@
     "pricing": { "type": "contact" },
     "venueAddressDetails": {
       "venueAddress": "Parcul Herăstrău, Bucharest, Romania",
-      "venueCity": 1,
+      "venueCity": 16424,
       "venueGeo": [26.079, 44.472]
     }
   },
   {
     "title": "Wine Tasting Event",
-    "owner": 13,
-    "city": 5,
+    "owner": 20,
+    "city": 20711,
     "type": [4943],
     "eventStatus": "upcoming",
     "startDate": "2025-09-14T18:00:00.000Z",
@@ -139,14 +139,14 @@
     "pricing": { "type": "paid", "amount": 35, "currency": "EUR" },
     "venueAddressDetails": {
       "venueAddress": "Piața Sfatului 5, Brașov, Romania",
-      "venueCity": 5,
+      "venueCity": 20711,
       "venueGeo": [25.595, 45.642]
     }
   },
   {
     "title": "Rock Concert Outdoor Night",
-    "owner": 13,
-    "city": 2,
+    "owner": 20,
+    "city": 17474,
     "type": [4944],
     "eventStatus": "upcoming",
     "startDate": "2025-06-28T20:00:00.000Z",
@@ -156,14 +156,14 @@
     "pricing": { "type": "contact" },
     "venueAddressDetails": {
       "venueAddress": "Piața Unirii, Cluj-Napoca, Romania",
-      "venueCity": 2,
+      "venueCity": 17474,
       "venueGeo": [23.594, 46.7712]
     }
   },
   {
     "title": "Gatsby Party 1920s Theme",
-    "owner": 13,
-    "city": 1,
+    "owner": 20,
+    "city": 16270,
     "type": [4943],
     "eventStatus": "upcoming",
     "startDate": "2025-10-11T19:30:00.000Z",
@@ -173,14 +173,14 @@
     "pricing": { "type": "paid", "amount": 50, "currency": "EUR" },
     "venueAddressDetails": {
       "venueAddress": "Strada Lipscani 30, Bucharest, Romania",
-      "venueCity": 1,
+      "venueCity": 16270,
       "venueGeo": [26.103, 44.432]
     }
   },
   {
     "title": "Tech Conference Innovation",
-    "owner": 13,
-    "city": 1,
+    "owner": 20,
+    "city": 16270,
     "type": [4945],
     "eventStatus": "upcoming",
     "startDate": "2025-11-05T09:00:00.000Z",
@@ -190,14 +190,14 @@
     "pricing": { "type": "paid", "amount": 120, "currency": "EUR" },
     "venueAddressDetails": {
       "venueAddress": "Bulevardul Unirii 1, Bucharest, Romania",
-      "venueCity": 1,
+      "venueCity": 16270,
       "venueGeo": [26.103, 44.426]
     }
   },
   {
     "title": "Photography Workshop",
-    "owner": 13,
-    "city": 3,
+    "owner": 20,
+    "city": 16270,
     "type": [4945],
     "eventStatus": "upcoming",
     "startDate": "2025-09-27T10:00:00.000Z",
@@ -207,14 +207,14 @@
     "pricing": { "type": "free" },
     "venueAddressDetails": {
       "venueAddress": "Strada Republicii 50, Brașov, Romania",
-      "venueCity": 5,
+      "venueCity": 20711,
       "venueGeo": [25.596, 45.642]
     }
   },
   {
     "title": "Festival Crowd Enjoying Music",
-    "owner": 13,
-    "city": 2,
+    "owner": 20,
+    "city": 17474,
     "type": [4944],
     "eventStatus": "upcoming",
     "startDate": "2025-07-19T16:00:00.000Z",
@@ -224,8 +224,59 @@
     "pricing": { "type": "contact" },
     "venueAddressDetails": {
       "venueAddress": "Parcul Central, Cluj-Napoca, Romania",
-      "venueCity": 2,
+      "venueCity": 17474,
       "venueGeo": [23.588, 46.77]
+    }
+  },
+  {
+    "title": "Timisoara Tech Meetup",
+    "owner": 20,
+    "city": 24915,
+    "type": [4945],
+    "eventStatus": "upcoming",
+    "startDate": "2025-12-05T18:30:00.000Z",
+    "endDate": "2025-12-05T21:00:00.000Z",
+    "status": "approved",
+    "tier": "standard",
+    "pricing": { "type": "free" },
+    "venueAddressDetails": {
+      "venueAddress": "Piața Victoriei, Timișoara, Romania",
+      "venueCity": 24915,
+      "venueGeo": [21.229, 45.753]
+    }
+  },
+  {
+    "title": "Timisoara Jazz Evening",
+    "owner": 19,
+    "city": 24915,
+    "type": [4944],
+    "eventStatus": "upcoming",
+    "startDate": "2025-12-12T20:00:00.000Z",
+    "endDate": "2025-12-12T23:00:00.000Z",
+    "status": "approved",
+    "tier": "standard",
+    "pricing": { "type": "contact" },
+    "venueAddressDetails": {
+      "venueAddress": "Bastionul Theresia, Timișoara, Romania",
+      "venueCity": 24915,
+      "venueGeo": [21.229, 45.756]
+    }
+  },
+  {
+    "title": "Timisoara Wedding Fair",
+    "owner": 19,
+    "city": 24915,
+    "type": [4942],
+    "eventStatus": "upcoming",
+    "startDate": "2026-02-14T10:00:00.000Z",
+    "endDate": "2026-02-14T18:00:00.000Z",
+    "status": "approved",
+    "tier": "recommended",
+    "pricing": { "type": "paid", "amount": 10, "currency": "EUR" },
+    "venueAddressDetails": {
+      "venueAddress": "Centrul Regional de Afaceri, Timișoara, Romania",
+      "venueCity": 24915,
+      "venueGeo": [21.218, 45.748]
     }
   }
 ]

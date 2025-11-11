@@ -1,9 +1,9 @@
 [
   {
     "title": "Professional Wedding Planner Bucharest",
-    "owner": 13,
+    "owner": 19,
     "type": [5538, 5250],
-    "city": 1,
+    "city": 16424,
     "suitableFor": [4942, 4943],
     "status": "approved",
     "tier": "standard",
@@ -16,8 +16,8 @@
   },
   {
     "title": "Corporate Event Catering Service",
-    "owner": 13,
-    "city": 2,
+    "owner": 20,
+    "city": 17474,
     "type": [5247, 5250],
     "suitableFor": [4855],
     "status": "approved",
@@ -34,8 +34,8 @@
   },
   {
     "title": "Live Music Band for Events",
-    "owner": 13,
-    "city": 5,
+    "owner": 19,
+    "city": 20711,
     "type": [5245, 5246],
     "suitableFor": [4855],
     "status": "approved",
@@ -64,8 +64,8 @@
   },
   {
     "title": "Catering Service Food",
-    "owner": 13,
-    "city": 1,
+    "owner": 19,
+    "city": 16424,
     "type": [5247, 5250],
     "suitableFor": [4942, 4943],
     "status": "approved",
@@ -75,8 +75,8 @@
   },
   {
     "title": "DJ Alex Professional",
-    "owner": 13,
-    "city": 1,
+    "owner": 19,
+    "city": 16424,
     "type": [5245, 5246],
     "suitableFor": [4942, 4944],
     "status": "approved",
@@ -86,8 +86,8 @@
   },
   {
     "title": "DJ Performing At Wedding",
-    "owner": 13,
-    "city": 6,
+    "owner": 19,
+    "city": 24915,
     "type": [5245, 5246],
     "suitableFor": [4942],
     "status": "approved",
@@ -97,8 +97,8 @@
   },
   {
     "title": "Event Planner Professional",
-    "owner": 13,
-    "city": 2,
+    "owner": 19,
+    "city": 17474,
     "type": [5538, 5250],
     "suitableFor": [4855, 4943],
     "status": "approved",
@@ -108,8 +108,8 @@
   },
   {
     "title": "Gourmet Catering Service",
-    "owner": 13,
-    "city": 1,
+    "owner": 19,
+    "city": 16424,
     "type": [5247, 5250],
     "suitableFor": [4943, 4942],
     "status": "approved",
@@ -119,8 +119,8 @@
   },
   {
     "title": "Live Band Musicians",
-    "owner": 13,
-    "city": 5,
+    "owner": 19,
+    "city": 20711,
     "type": [5245, 5246],
     "suitableFor": [4944, 4942],
     "status": "approved",
@@ -133,8 +133,8 @@
   },
   {
     "title": "Photographer Videographer",
-    "owner": 13,
-    "city": 1,
+    "owner": 19,
+    "city": 16424,
     "type": [5538, 5250],
     "suitableFor": [4942, 4943],
     "status": "approved",
@@ -144,8 +144,8 @@
   },
   {
     "title": "Professional DJ",
-    "owner": 13,
-    "city": 2,
+    "owner": 19,
+    "city": 17474,
     "type": [5245, 5246],
     "suitableFor": [4944, 4942],
     "status": "approved",
@@ -155,8 +155,8 @@
   },
   {
     "title": "Professional Photographer",
-    "owner": 13,
-    "city": 1,
+    "owner": 19,
+    "city": 16424,
     "type": [5538, 5250],
     "suitableFor": [4942, 4943],
     "status": "approved",
@@ -166,13 +166,46 @@
   },
   {
     "title": "Event Planning",
-    "owner": 13,
-    "city": 3,
+    "owner": 19,
+    "city": 16270,
     "type": [5538, 5250],
     "suitableFor": [4855, 4943],
     "status": "approved",
     "tier": "standard",
     "pricing": { "type": "contact" },
     "availability": { "type": "appointment" }
+  },
+  {
+    "title": "Timisoara Wedding Planner",
+    "owner": 20,
+    "city": 24915,
+    "type": [5538, 5250],
+    "suitableFor": [4942, 4943],
+    "status": "approved",
+    "tier": "standard",
+    "pricing": { "type": "contact" },
+    "availability": { "type": "appointment" }
+  },
+  {
+    "title": "Timisoara DJ Service",
+    "owner": 19,
+    "city": 24915,
+    "type": [5245, 5246],
+    "suitableFor": [4944, 4942],
+    "status": "approved",
+    "tier": "recommended",
+    "pricing": { "type": "fixed", "amount": 700, "currency": "EUR", "period": "event" },
+    "availability": { "type": "always" }
+  },
+  {
+    "title": "Timisoara Catering",
+    "owner": 20,
+    "city": 24915,
+    "type": [5247, 5250],
+    "suitableFor": [4855, 4943],
+    "status": "approved",
+    "tier": "standard",
+    "pricing": { "type": "from", "amount": 25, "currency": "EUR", "period": "event" },
+    "availability": { "type": "always" }
   }
 ]
