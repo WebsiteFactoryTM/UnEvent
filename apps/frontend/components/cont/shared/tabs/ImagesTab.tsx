@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ImageIcon, Upload, X, Plus, Youtube } from "lucide-react";
 import type { UnifiedListingFormData } from "@/forms/listing/schema";
+import { useUploadManager } from "@/lib/hooks/useUploadManager";
+import { UploadInput } from "@/components/upload/UploadInput";
+import { UploadPreview } from "@/components/upload/UploadPreview";
 
 /**
  * Shared ImagesTab component for all listing types
@@ -30,39 +33,68 @@ export function ImagesTab() {
   const featuredImage = watch("featuredImage");
   const gallery = watch("gallery") || [];
 
+  // Upload managers
+  const featuredUM = useUploadManager({ accept: "image/*", maxSizeMB: 5 });
+  const galleryUM = useUploadManager({ accept: "image/*", maxSizeMB: 5 });
+
+  console.log(featuredImage);
+
   // Handle featured image upload (UI only)
-  const handleFeaturedImageUpload = (
+  const handleFeaturedImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // TODO: In real implementation, validate file type, size, dimensions
-      setValue("featuredImage", file, { shouldValidate: true });
-    }
+    if (!file) return;
+    featuredUM.handleSelect(e);
+    const doc = await featuredUM.uploadSingle(file, "listing");
+    setValue("featuredImage", doc.id, { shouldValidate: true });
   };
 
   // Handle gallery upload (UI only)
-  const handleGalleryUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGalleryUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = Array.from(e.target.files || []);
-    if (files.length > 0) {
-      const currentGallery = gallery || [];
-      const remaining = 10 - currentGallery.length;
-      const filesToAdd = files.slice(0, remaining);
-      setValue("gallery", [...currentGallery, ...filesToAdd], {
-        shouldValidate: true,
-      });
-    }
+    if (!files.length) return;
+    const currentGallery = Array.isArray(gallery) ? gallery : [];
+    const remaining = 10 - currentGallery.length;
+    const filesToAdd = files.slice(0, remaining);
+    // Select for previews
+    galleryUM.handleSelect({
+      ...e,
+      target: {
+        ...e.target,
+        files: ((): FileList => {
+          // build a FileList-like object is complex; previews rely on internal state from handleSelect. We'll bypass by setting files directly.
+          return e.target.files as FileList;
+        })(),
+      },
+    } as React.ChangeEvent<HTMLInputElement>);
+    // Upload all
+    const uploaded = await Promise.all(
+      filesToAdd.map((f) => galleryUM.uploadSingle(f, "listing")),
+    );
+    const ids = uploaded.map((d) => d.id);
+    setValue("gallery", [...currentGallery, ...ids], { shouldValidate: true });
   };
 
   // Remove featured image
   const handleRemoveFeaturedImage = () => {
     setValue("featuredImage", undefined, { shouldValidate: true });
+    featuredUM.clear();
   };
 
   // Remove gallery image
   const handleRemoveGalleryImage = (index: number) => {
-    const newGallery = gallery.filter((_, i) => i !== index);
+    const newGallery = (gallery || []).filter(
+      (_: any, i: number) => i !== index,
+    );
     setValue("gallery", newGallery, { shouldValidate: true });
+    // also trim previews list if present
+    if (galleryUM.previews?.length) {
+      const copy = galleryUM.previews.slice();
+      copy.splice(index, 1);
+    }
   };
 
   // Format file size for display
@@ -85,14 +117,15 @@ export function ImagesTab() {
           {featuredImage ? (
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 bg-background rounded-lg">
-                <ImageIcon className="h-8 w-8 text-muted-foreground flex-shrink-0" />
+                <ImageIcon className="h-8 w-8 text-muted-foreground shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
-                    {featuredImage.name || "featured-image.jpg"}
+                    {/* When uploaded, featuredImage is an id; show selected file name from manager if available */}
+                    {featuredUM.files?.[0]?.name || "featured-image.jpg"}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {featuredImage.size
-                      ? formatFileSize(featuredImage.size)
+                    {featuredUM.files?.[0]?.size
+                      ? formatFileSize(featuredUM.files[0].size)
                       : "N/A"}
                   </p>
                 </div>
@@ -101,14 +134,18 @@ export function ImagesTab() {
                   variant="ghost"
                   size="sm"
                   onClick={handleRemoveFeaturedImage}
-                  className="flex-shrink-0"
+                  className="shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>
           ) : (
-            <label className="flex flex-col items-center gap-3 cursor-pointer">
+            <UploadInput
+              multiple={false}
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFeaturedImageUpload}
+            >
               <Upload className="h-10 w-10 text-muted-foreground" />
               <div className="text-center space-y-1">
                 <p className="text-sm font-medium">
@@ -118,13 +155,7 @@ export function ImagesTab() {
                   Format: JPG, PNG • Max: 5MB • Recomandat: 1920x1080px
                 </p>
               </div>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleFeaturedImageUpload}
-                className="hidden"
-              />
-            </label>
+            </UploadInput>
           )}
         </div>
 
@@ -151,18 +182,23 @@ export function ImagesTab() {
 
         {gallery.length > 0 && (
           <div className="space-y-2">
-            {gallery.map((file: any, index: number) => (
+            {(galleryUM.files.length
+              ? galleryUM.files
+              : Array.from({ length: gallery.length })
+            ).map((_: any, index: number) => (
               <div
                 key={index}
                 className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
               >
-                <ImageIcon className="h-6 w-6 text-muted-foreground flex-shrink-0" />
+                <ImageIcon className="h-6 w-6 text-muted-foreground shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
-                    {file.name || `image-${index + 1}.jpg`}
+                    {galleryUM.files[index]?.name || `image-${index + 1}.jpg`}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {file.size ? formatFileSize(file.size) : "N/A"}
+                    {galleryUM.files[index]?.size
+                      ? formatFileSize(galleryUM.files[index].size)
+                      : "N/A"}
                   </p>
                 </div>
                 <Button
@@ -170,7 +206,7 @@ export function ImagesTab() {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleRemoveGalleryImage(index)}
-                  className="flex-shrink-0"
+                  className="shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -180,19 +216,18 @@ export function ImagesTab() {
         )}
 
         {gallery.length < 10 && (
-          <label className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
-            <Plus className="h-4 w-4" />
-            <span className="text-sm font-medium">
-              Adaugă imagini în galerie
-            </span>
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              onChange={handleGalleryUpload}
-              className="hidden"
-            />
-          </label>
+          <UploadInput
+            multiple
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleGalleryUpload}
+          >
+            <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+              <Plus className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                Adaugă imagini în galerie
+              </span>
+            </div>
+          </UploadInput>
         )}
 
         {errors.gallery && (
