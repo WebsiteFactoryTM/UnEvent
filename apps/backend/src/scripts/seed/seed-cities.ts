@@ -25,7 +25,8 @@ async function seedCities(payload: Payload) {
     // Clear existing data
     await payload.delete({
       collection: 'cities',
-      where: {},
+      where: { id: { exists: true } },
+      overrideAccess: true,
     })
 
     console.log('Cleared existing city data')

@@ -25,12 +25,12 @@ const Cities: CollectionConfig = {
     delete: ({ req }) => isAdmin({ req }),
   },
   hooks: {
-    afterChange: [
-      async () => {
-        const redis = getRedis()
-        await redis.del('taxonomies')
-      },
-    ],
+    // afterChange: [
+    //   async () => {
+    //     const redis = getRedis()
+    //     await redis.del('taxonomies')
+    //   },
+    // ],
     beforeChange: [beforeChange],
   },
   fields: [

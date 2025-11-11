@@ -12,21 +12,7 @@ export const getTaxonomies: PayloadHandler = async (req: PayloadRequest): Promis
     }
 
     console.log('query', query)
-    const [cities, listingTypes, facilities] = await Promise.all([
-      payload.find({
-        collection: 'cities',
-        depth: 0,
-        limit: 1000,
-        select: {
-          name: true,
-          slug: true,
-          county: true,
-          geo: true,
-          usageCount: true,
-        },
-        where: query.fullList ? undefined : where,
-        sort: ['name', 'asc'],
-      }),
+    const [listingTypes, facilities] = await Promise.all([
       payload.find({
         collection: 'listing-types',
         depth: 0,
@@ -58,7 +44,6 @@ export const getTaxonomies: PayloadHandler = async (req: PayloadRequest): Promis
 
     return new Response(
       JSON.stringify({
-        cities: cities.docs,
         facilities: facilities.docs,
         eventTypes: listingTypes.docs.filter((type) => type.type === 'events'),
         locationTypes: listingTypes.docs.filter((type) => type.type === 'locations'),

@@ -49,7 +49,7 @@ export async function seedMedia(
     const created = await payload.create({
       collection: 'media',
       filePath,
-      data: { alt },
+      data: { alt, context: 'listing' },
     })
 
     mediaMap[file] = created.id as number
