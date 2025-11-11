@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     profiles: Profile;
+    verifications: Verification;
     favorites: Favorite;
     'listing-types': ListingType;
     cities: City;
@@ -92,6 +93,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
+    verifications: VerificationsSelect<false> | VerificationsSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
     'listing-types': ListingTypesSelect<false> | ListingTypesSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
@@ -197,6 +199,11 @@ export interface Profile {
    */
   avatar?: (number | null) | Media;
   /**
+   * Verification status
+   */
+  verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
+  verification?: (number | null) | Verification;
+  /**
    * Display name
    */
   displayName?: string | null;
@@ -246,25 +253,6 @@ export interface Profile {
      */
     x?: string | null;
   };
-  verified?: {
-    status?: ('none' | 'pending' | 'approved' | 'rejected') | null;
-    documents?:
-      | {
-          type?: ('id' | 'company' | 'other') | null;
-          file: number | Media;
-          notes?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    verificationData?: {
-      fullName?: string | null;
-      address?: string | null;
-      isCompany?: boolean | null;
-      companyName?: string | null;
-      cui?: string | null;
-      companyAddress?: string | null;
-    };
-  };
   rating?: {
     average?: number | null;
     count?: number | null;
@@ -282,7 +270,10 @@ export interface Profile {
  */
 export interface Media {
   id: number;
-  alt: string;
+  alt?: string | null;
+  context: 'listing' | 'avatar' | 'event' | 'document' | 'verification';
+  uploadedBy?: (number | null) | Profile;
+  temp?: boolean | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -297,34 +288,54 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "favorites".
+ * via the `definition` "verifications".
  */
-export interface Favorite {
+export interface Verification {
   id: number;
-  user: number | Profile;
-  target:
+  entity:
     | {
-        relationTo: 'locations';
-        value: number | Location;
+        relationTo: 'profiles';
+        value: number | Profile;
       }
     | {
         relationTo: 'events';
         value: number | Event;
       }
     | {
+        relationTo: 'locations';
+        value: number | Location;
+      }
+    | {
         relationTo: 'services';
         value: number | Service;
       };
-  kind: 'locations' | 'events' | 'services';
-  targetKey: string;
+  status?: ('pending' | 'approved' | 'rejected') | null;
+  documents?:
+    | {
+        type?: ('id' | 'company' | 'other') | null;
+        file: number | Media;
+        notes?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  verificationData?: {
+    fullName?: string | null;
+    address?: string | null;
+    isCompany?: boolean | null;
+    companyName?: string | null;
+    cui?: string | null;
+    companyAddress?: string | null;
+  };
+  reviewedBy?: (number | null) | User;
+  reviewedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "locations".
+ * via the `definition` "events".
  */
-export interface Location {
+export interface Event {
   id: number;
   title: string;
   /**
@@ -355,6 +366,11 @@ export interface Location {
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
+  /**
+   * Verification status
+   */
+  verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
+  verification?: (number | null) | Verification;
   /**
    * Number of views
    */
@@ -395,56 +411,56 @@ export interface Location {
   isFavoritedByViewer?: boolean | null;
   hasReviewedByViewer?: boolean | null;
   /**
-   * Type of location
+   * Type of event
    */
   type: (number | ListingType)[];
+  eventStatus: 'upcoming' | 'in-progress' | 'finished';
+  startDate: string;
+  endDate?: string | null;
   /**
-   * Type of event suitable for this location
+   * Check if this is an all-day event
    */
-  suitableFor: (number | ListingType)[];
+  allDayEvent?: boolean | null;
   capacity?: {
     /**
-     * Indoor capacity
+     * Maximum number of attendees
      */
-    indoor?: number | null;
-    /**
-     * Outdoor capacity
-     */
-    outdoor?: number | null;
-    /**
-     * Seating capacity
-     */
-    seating?: number | null;
-    /**
-     * Parking spots
-     */
-    parking?: number | null;
+    total?: number | null;
+    remaining?: number | null;
   };
-  /**
-   * Surface area in square meters (m²)
-   */
-  surface?: number | null;
   pricing: {
-    type: 'fixed' | 'from' | 'contact';
+    type: 'free' | 'paid' | 'contact';
     amount?: number | null;
     currency?: ('RON' | 'EUR' | 'USD') | null;
-    period?: ('hour' | 'day' | 'event') | null;
-  };
-  availability: {
-    type: 'always' | 'custom' | 'appointment';
-    schedule?:
-      | {
-          day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-          startTime: string;
-          endTime: string;
-          id?: string | null;
-        }[]
-      | null;
   };
   /**
-   * Select facilities available at this location
+   * Last day to register for the event
    */
-  facilities?: (number | Facility)[] | null;
+  registrationDeadline?: string | null;
+  /**
+   * Current number of participants registered
+   */
+  participants?: number | null;
+  /**
+   * Location where the event will be held
+   */
+  venue?: (number | null) | Location;
+  venueAddressDetails: {
+    venueAddress: string;
+    venueCity: number | City;
+    /**
+     * @minItems 2
+     * @maxItems 2
+     */
+    venueGeo: [number, number];
+  };
+  requirements?:
+    | {
+        requirement: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -551,42 +567,9 @@ export interface ListingType {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "facilities".
+ * via the `definition` "locations".
  */
-export interface Facility {
-  id: number;
-  /**
-   * URL-friendly identifier (e.g., open-space, meeting-room)
-   */
-  slug?: string | null;
-  /**
-   * Display name (e.g., Open Space, Meeting Room)
-   */
-  title: string;
-  /**
-   * Category header (e.g., SPAȚIU & CONFIGURARE, MOBILIER & SETUP)
-   */
-  category: string;
-  /**
-   * Slugified category name
-   */
-  categorySlug?: string | null;
-  /**
-   * Order within category (maintains the defined hierarchy)
-   */
-  sortOrder: number;
-  /**
-   * Whether this taxonomy item is active/available
-   */
-  isActive?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events".
- */
-export interface Event {
+export interface Location {
   id: number;
   title: string;
   /**
@@ -617,6 +600,11 @@ export interface Event {
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
+  /**
+   * Verification status
+   */
+  verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
+  verification?: (number | null) | Verification;
   /**
    * Number of views
    */
@@ -657,56 +645,89 @@ export interface Event {
   isFavoritedByViewer?: boolean | null;
   hasReviewedByViewer?: boolean | null;
   /**
-   * Type of event
+   * Type of location
    */
   type: (number | ListingType)[];
-  eventStatus: 'upcoming' | 'in-progress' | 'finished';
-  startDate: string;
-  endDate?: string | null;
   /**
-   * Check if this is an all-day event
+   * Type of event suitable for this location
    */
-  allDayEvent?: boolean | null;
+  suitableFor: (number | ListingType)[];
   capacity?: {
     /**
-     * Maximum number of attendees
+     * Indoor capacity
      */
-    total?: number | null;
-    remaining?: number | null;
+    indoor?: number | null;
+    /**
+     * Outdoor capacity
+     */
+    outdoor?: number | null;
+    /**
+     * Seating capacity
+     */
+    seating?: number | null;
+    /**
+     * Parking spots
+     */
+    parking?: number | null;
   };
+  /**
+   * Surface area in square meters (m²)
+   */
+  surface?: number | null;
   pricing: {
-    type: 'free' | 'paid' | 'contact';
+    type: 'fixed' | 'from' | 'contact';
     amount?: number | null;
     currency?: ('RON' | 'EUR' | 'USD') | null;
+    period?: ('hour' | 'day' | 'event') | null;
+  };
+  availability: {
+    type: 'always' | 'custom' | 'appointment';
+    schedule?:
+      | {
+          day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+          startTime: string;
+          endTime: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
-   * Last day to register for the event
+   * Select facilities available at this location
    */
-  registrationDeadline?: string | null;
+  facilities?: (number | Facility)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "facilities".
+ */
+export interface Facility {
+  id: number;
   /**
-   * Current number of participants registered
+   * URL-friendly identifier (e.g., open-space, meeting-room)
    */
-  participants?: number | null;
+  slug?: string | null;
   /**
-   * Location where the event will be held
+   * Display name (e.g., Open Space, Meeting Room)
    */
-  venue?: (number | null) | Location;
-  venueAddressDetails: {
-    venueAddress: string;
-    venueCity: number | City;
-    /**
-     * @minItems 2
-     * @maxItems 2
-     */
-    venueGeo: [number, number];
-  };
-  requirements?:
-    | {
-        requirement: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
+  title: string;
+  /**
+   * Category header (e.g., SPAȚIU & CONFIGURARE, MOBILIER & SETUP)
+   */
+  category: string;
+  /**
+   * Slugified category name
+   */
+  categorySlug?: string | null;
+  /**
+   * Order within category (maintains the defined hierarchy)
+   */
+  sortOrder: number;
+  /**
+   * Whether this taxonomy item is active/available
+   */
+  isActive?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -745,6 +766,11 @@ export interface Service {
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
+  /**
+   * Verification status
+   */
+  verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
+  verification?: (number | null) | Verification;
   /**
    * Number of views
    */
@@ -816,6 +842,31 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "favorites".
+ */
+export interface Favorite {
+  id: number;
+  user: number | Profile;
+  target:
+    | {
+        relationTo: 'locations';
+        value: number | Location;
+      }
+    | {
+        relationTo: 'events';
+        value: number | Event;
+      }
+    | {
+        relationTo: 'services';
+        value: number | Service;
+      };
+  kind: 'locations' | 'events' | 'services';
+  targetKey: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -1163,6 +1214,10 @@ export interface PayloadLockedDocument {
         value: number | Profile;
       } | null)
     | ({
+        relationTo: 'verifications';
+        value: number | Verification;
+      } | null)
+    | ({
         relationTo: 'favorites';
         value: number | Favorite;
       } | null)
@@ -1291,6 +1346,9 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  context?: T;
+  uploadedBy?: T;
+  temp?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1313,6 +1371,8 @@ export interface ProfilesSelect<T extends boolean = true> {
   userType?: T;
   name?: T;
   avatar?: T;
+  verifiedStatus?: T;
+  verification?: T;
   displayName?: T;
   bio?: T;
   phone?: T;
@@ -1329,29 +1389,6 @@ export interface ProfilesSelect<T extends boolean = true> {
         twitch?: T;
         x?: T;
       };
-  verified?:
-    | T
-    | {
-        status?: T;
-        documents?:
-          | T
-          | {
-              type?: T;
-              file?: T;
-              notes?: T;
-              id?: T;
-            };
-        verificationData?:
-          | T
-          | {
-              fullName?: T;
-              address?: T;
-              isCompany?: T;
-              companyName?: T;
-              cui?: T;
-              companyAddress?: T;
-            };
-      };
   rating?:
     | T
     | {
@@ -1362,6 +1399,36 @@ export interface ProfilesSelect<T extends boolean = true> {
   memberSince?: T;
   lastOnline?: T;
   views?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "verifications_select".
+ */
+export interface VerificationsSelect<T extends boolean = true> {
+  entity?: T;
+  status?: T;
+  documents?:
+    | T
+    | {
+        type?: T;
+        file?: T;
+        notes?: T;
+        id?: T;
+      };
+  verificationData?:
+    | T
+    | {
+        fullName?: T;
+        address?: T;
+        isCompany?: T;
+        companyName?: T;
+        cui?: T;
+        companyAddress?: T;
+      };
+  reviewedBy?: T;
+  reviewedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1436,6 +1503,8 @@ export interface EventsSelect<T extends boolean = true> {
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
+  verifiedStatus?: T;
+  verification?: T;
   views?: T;
   favoritesCount?: T;
   bookingsCount?: T;
@@ -1529,6 +1598,8 @@ export interface LocationsSelect<T extends boolean = true> {
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
+  verifiedStatus?: T;
+  verification?: T;
   views?: T;
   favoritesCount?: T;
   bookingsCount?: T;
@@ -1620,6 +1691,8 @@ export interface ServicesSelect<T extends boolean = true> {
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
+  verifiedStatus?: T;
+  verification?: T;
   views?: T;
   favoritesCount?: T;
   bookingsCount?: T;

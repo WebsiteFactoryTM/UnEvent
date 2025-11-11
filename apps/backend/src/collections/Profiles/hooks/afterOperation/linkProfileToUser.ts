@@ -30,12 +30,14 @@ export const linkProfileToUserAfterChange: CollectionAfterOperationHook = async 
       { profileId: profile.id, userId },
     )
 
-    req.payload.update({
+    await req.payload.update({
+      overrideAccess: true,
       collection: 'users',
       id: userId,
       data: {
         profile: profile.id,
       },
+      req,
     })
 
     req.payload.logger.info(`[linkProfileToUserAfterCreate] successfully linked profile to user`, {

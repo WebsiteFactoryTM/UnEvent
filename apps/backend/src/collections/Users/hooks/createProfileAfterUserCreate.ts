@@ -27,6 +27,7 @@ export const createProfileAfterUserCreate: CollectionAfterChangeHook = async ({
         displayName: user?.displayName || (user.email || '').split('@')[0] || 'User',
         userType,
       },
+      req,
     })
   } catch (err: unknown) {
     console.error(
