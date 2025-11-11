@@ -1,16 +1,16 @@
-import type { CollectionAfterOperationHook } from 'payload'
+import type { CollectionAfterChangeHook } from 'payload'
 import type { User } from '@/payload-types'
 
-export const createProfileAfterUserCreate: CollectionAfterOperationHook = async ({
-  result,
+export const createProfileAfterUserCreate: CollectionAfterChangeHook = async ({
+  doc,
   req,
   operation,
 }) => {
   try {
     if (operation !== 'create') return
-    console.log('createProfileAfterUserCreate', result)
+    console.log('createProfileAfterUserCreate', doc)
 
-    const user = result as User
+    const user = doc as unknown as User
 
     // Log once so we can verify hook is running after commit
     req.payload.logger.info(`[createProfileAfterUserCreate] creating profile for user ${user.id}`)
@@ -18,8 +18,9 @@ export const createProfileAfterUserCreate: CollectionAfterOperationHook = async 
     const userType = Array.from(
       new Set(user.roles.map((role) => (role === 'admin' ? 'client' : role))),
     )
-    req.payload.create({
+    await req.payload.create({
       collection: 'profiles',
+      overrideAccess: true,
       data: {
         user: user.id,
         name: user?.displayName || (user.email || '').split('@')[0] || 'User',

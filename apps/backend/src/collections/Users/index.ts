@@ -82,7 +82,7 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
-    afterOperation: [createProfileAfterUserCreate],
+    afterChange: [createProfileAfterUserCreate],
     beforeValidate: [ensureBaseClientRole],
     beforeDelete: [deleteProfileUserDelete],
   },
