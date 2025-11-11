@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ImageIcon, Upload, X, Plus, Youtube } from "lucide-react";
 import type { UnifiedListingFormData } from "@/forms/listing/schema";
-import { useUploadManager } from "@/lib/hooks/useUploadManager";
+import { useUploadManager } from "@/hooks/useUploadManager";
 import { UploadInput } from "@/components/upload/UploadInput";
 import { UploadPreview } from "@/components/upload/UploadPreview";
 

@@ -25,9 +25,6 @@ export async function fetchTaxonomies({
     await redis.set(cacheKey, JSON.stringify(data), "EX", cacheTTL.oneDay);
 
     return {
-      cities: data.cities.sort((a: City, b: City) =>
-        a.name.localeCompare(b.name),
-      ),
       eventTypes: data.eventTypes.sort((a: ListingType, b: ListingType) =>
         a.title.localeCompare(b.title),
       ),
@@ -41,7 +38,6 @@ export async function fetchTaxonomies({
         a.title.localeCompare(b.title),
       ),
     } as {
-      cities: City[];
       eventTypes: ListingType[];
       locationTypes: ListingType[];
       serviceTypes: ListingType[];
@@ -50,7 +46,6 @@ export async function fetchTaxonomies({
   } catch (error) {
     console.error("Error fetching taxonomies:", error);
     return {
-      cities: [] as City[],
       eventTypes: [] as ListingType[],
       locationTypes: [] as ListingType[],
       serviceTypes: [] as ListingType[],
