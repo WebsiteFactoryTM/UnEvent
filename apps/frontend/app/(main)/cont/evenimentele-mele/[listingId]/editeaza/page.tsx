@@ -4,7 +4,7 @@ import { getUserListing } from "@/lib/api/accountListings";
 import { getServerSession } from "next-auth";
 import React from "react";
 
-const EditLocationPage = async ({
+const EditEventPage = async ({
   params,
 }: {
   params: Promise<{ listingId: string }>;
@@ -19,14 +19,14 @@ const EditLocationPage = async ({
   }
 
   const listing = await getUserListing(
-    "locations",
+    "events",
     parseInt(listingId),
     accessToken,
     profileId,
   );
 
   if (!listing) {
-    return <div>Locație nu a fost găsită</div>;
+    return <div>Evenimentul nu a fost găsit</div>;
   }
 
   return (
@@ -34,15 +34,15 @@ const EditLocationPage = async ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-            Editează locație
+            Editează eveniment
           </h1>
           <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            Editează locația tău
+            Editează evenimentul tău
           </p>
         </div>
       </div>
       <UnifiedListingForm
-        listingType="location"
+        listingType="event"
         editMode={true}
         existingListing={listing}
       />
@@ -50,4 +50,4 @@ const EditLocationPage = async ({
   );
 };
 
-export default EditLocationPage;
+export default EditEventPage;
