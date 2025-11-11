@@ -68,6 +68,15 @@ export const sharedListingFields: Field[] = [
   { name: 'featuredImage', type: 'upload', relationTo: 'media', required: false },
   { name: 'gallery', type: 'upload', relationTo: 'media', hasMany: true },
   {
+    name: 'verifiedStatus',
+    type: 'select',
+    options: ['none', 'pending', 'approved', 'rejected'],
+    defaultValue: 'none',
+    index: true,
+    admin: { position: 'sidebar', description: 'Verification status' },
+  },
+  { name: 'verification', type: 'relationship', relationTo: 'verifications' },
+  {
     name: 'views',
     type: 'number',
     defaultValue: 0,

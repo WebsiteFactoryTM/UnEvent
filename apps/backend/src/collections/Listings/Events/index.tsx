@@ -5,6 +5,7 @@ import { approvedOnlyPublic, isOwnerOrAdmin, requireRole } from '@/collections/_
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
+import { markListingMediaPermanent } from '../_hooks/afterChange/markMediaPermanent'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -25,7 +26,7 @@ export const Events: CollectionConfig = {
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
-    afterChange: [revalidateListing],
+    afterChange: [markListingMediaPermanent, revalidateListing],
   },
   fields: [
     ...sharedListingFields,

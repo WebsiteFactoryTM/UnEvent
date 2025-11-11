@@ -8,6 +8,7 @@ import { updateUserAvatar } from './hooks/afterChange/updateUserAvatar'
 import { createSlugField } from '../../utils/slugifySlug'
 import type { Profile } from '@/payload-types'
 import { updateUserDisplayName } from './hooks/afterChange/updateUserDisplayName'
+import { markAvatarPermanent } from './hooks/afterChange/markAvatarPermanent'
 
 export const Profiles: CollectionConfig = {
   slug: 'profiles',
@@ -31,7 +32,7 @@ export const Profiles: CollectionConfig = {
   },
   hooks: {
     beforeChange: [updateMemberSince],
-    afterChange: [updateUserRoles, updateUserAvatar, updateUserDisplayName],
+    afterChange: [updateUserRoles, updateUserAvatar, updateUserDisplayName, markAvatarPermanent],
     afterOperation: [linkProfileToUserAfterChange],
   },
   timestamps: true,
@@ -81,6 +82,15 @@ export const Profiles: CollectionConfig = {
         description: 'Profile avatar',
       },
     },
+    {
+      name: 'verifiedStatus',
+      type: 'select',
+      options: ['none', 'pending', 'approved', 'rejected'],
+      defaultValue: 'none',
+      index: true,
+      admin: { position: 'sidebar', description: 'Verification status' },
+    },
+    { name: 'verification', type: 'relationship', relationTo: 'verifications' },
     {
       name: 'displayName',
       type: 'text',
@@ -171,78 +181,7 @@ export const Profiles: CollectionConfig = {
         },
       ],
     },
-    {
-      name: 'verified',
-      type: 'group',
-      fields: [
-        {
-          name: 'status',
-          type: 'select',
-          defaultValue: 'none',
-          options: [
-            { label: 'Not Verified', value: 'none' },
-            { label: 'Pending', value: 'pending' },
-            { label: 'Approved', value: 'approved' },
-            { label: 'Rejected', value: 'rejected' },
-          ],
-        },
-        {
-          name: 'documents',
-          type: 'array',
-          fields: [
-            {
-              name: 'type',
-              type: 'select',
-              options: [
-                { label: 'ID Card', value: 'id' },
-                { label: 'Company Registration', value: 'company' },
-                { label: 'Other', value: 'other' },
-              ],
-            },
-            {
-              name: 'file',
-              type: 'upload',
-              relationTo: 'media',
-              required: true,
-            },
-            {
-              name: 'notes',
-              type: 'text',
-            },
-          ],
-        },
-        {
-          name: 'verificationData',
-          type: 'group',
-          fields: [
-            {
-              name: 'fullName',
-              type: 'text',
-            },
-            {
-              name: 'address',
-              type: 'text',
-            },
-            {
-              name: 'isCompany',
-              type: 'checkbox',
-            },
-            {
-              name: 'companyName',
-              type: 'text',
-            },
-            {
-              name: 'cui',
-              type: 'text',
-            },
-            {
-              name: 'companyAddress',
-              type: 'text',
-            },
-          ],
-        },
-      ],
-    },
+
     {
       name: 'rating',
       type: 'group',

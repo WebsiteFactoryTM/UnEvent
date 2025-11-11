@@ -5,6 +5,7 @@ import { isOwnerOrAdmin, requireRole, approvedOnlyPublic } from '@/collections/_
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
+import { markListingMediaPermanent } from '../_hooks/afterChange/markMediaPermanent'
 
 export const Services: CollectionConfig = {
   slug: 'services',
@@ -22,7 +23,7 @@ export const Services: CollectionConfig = {
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
-    afterChange: [revalidateListing],
+    afterChange: [markListingMediaPermanent, revalidateListing],
   },
   fields: [
     ...sharedListingFields,

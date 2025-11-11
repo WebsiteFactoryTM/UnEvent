@@ -25,6 +25,7 @@ import { ListingRank } from './collections/Feed/ListingRank'
 import { Aggregates } from './collections/Feed/Aggregates'
 import { MetricsDaily } from './collections/Feed/MetricsDaily'
 import { Reviews } from './collections/Reviews'
+import { Verifications } from './collections/Verifications'
 
 import { incrementView } from './endpoints/recordViews'
 import { initFeedSchedulers } from './schedulers/feed'
@@ -37,6 +38,7 @@ import { regenerateHubHandler } from './endpoints/regenerateHub'
 import { ListingType } from './payload-types'
 import { registerSyncListingTypeCountersScheduler } from './schedulers/syncListingTypeCounters'
 import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters'
+import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia'
 import { getTaxonomies } from './endpoints/taxonomies'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -98,6 +100,7 @@ export default buildConfig({
     Users,
     Media,
     Profiles,
+    Verifications,
     Favorites,
     ListingTypes,
     Cities,
@@ -299,5 +302,6 @@ export default buildConfig({
     registerBuildHubSnapshotScheduler(payload)
     registerSyncListingTypeCountersScheduler(payload)
     registerSyncCityCountersScheduler(payload)
+    registerCleanupTempMediaScheduler(payload)
   },
 })

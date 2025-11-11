@@ -5,6 +5,7 @@ import { approvedOrOwnDraft, isOwnerOrAdmin, requireRole } from '@/collections/_
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
+import { markListingMediaPermanent } from '../_hooks/afterChange/markMediaPermanent'
 
 export const Locations: CollectionConfig = {
   slug: 'locations',
@@ -22,7 +23,7 @@ export const Locations: CollectionConfig = {
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
-    afterChange: [revalidateListing],
+    afterChange: [markListingMediaPermanent, revalidateListing],
   },
   fields: [
     ...sharedListingFields,
