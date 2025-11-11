@@ -9,6 +9,12 @@ import { SectionCard } from "./SectionCard";
 import MobileListingView from "./MobileListingView";
 import { FaPlus } from "react-icons/fa6";
 import Link from "next/link";
+
+const listingTypeToPath = {
+  evenimente: "/cont/evenimentele-mele",
+  locatii: "/cont/locatiile-mele",
+  servicii: "/cont/serviciile-mele",
+};
 const ListingView = ({
   type,
   label,
@@ -22,36 +28,60 @@ const ListingView = ({
   buttonLabel?: string;
   noListingsMessage?: string;
 }) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <div>Se încarcă...</div>;
+  }
+
   const accessToken = session?.accessToken;
-  const profileId = session?.user?.profile as number;
-  const { listings, isLoading, error, refetch } = useListingsManager({
-    type: "locatii",
-    profileId: profileId,
-    accessToken: (accessToken as string) || "",
+  const profileId = session?.user?.profile as number | undefined;
+
+  if (!accessToken || !profileId) {
+    return (
+      <div>Trebuie să fii autentificat pentru a vedea această secțiune.</div>
+    );
+  }
+
+  const { listings, isLoading, error } = useListingsManager({
+    type,
+    profileId,
+    accessToken,
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Se încarcă...</div>;
   }
+
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Eroare: {error.message}</div>;
   }
+
+  const listingPath =
+    listingTypeToPath[type as keyof typeof listingTypeToPath] ?? "";
 
   return (
     <SectionCard
       title={label || `Lista ${type}`}
       description={description || `Toate ${type} tale`}
     >
-      <MobileListingView listings={listings} listingType={type} />
-      <DesktopListingView listings={listings} listingType={type} />
+      <MobileListingView
+        listings={listings}
+        listingType={type}
+        listingTypePath={listingPath}
+      />
+      <DesktopListingView
+        listings={listings}
+        listingType={type}
+        listingTypePath={listingPath}
+      />
 
       {listings.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">
             {noListingsMessage || `Nu ai încă ${type} adăugate.`}
           </p>
-          <Link href={`/adauga`}>
+          <Link href={`${listingPath}/adauga`}>
             <Button className="mt-4 gap-2 w-full">
               <FaPlus className="h-4 w-4" />
               {buttonLabel || `Adaugă prima ${type}`}

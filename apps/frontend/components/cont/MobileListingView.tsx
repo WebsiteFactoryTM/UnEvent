@@ -21,9 +21,11 @@ import Link from "next/link";
 const MobileListingView = ({
   listings,
   listingType,
+  listingTypePath,
 }: {
   listings: Listing[];
   listingType: ListingType;
+  listingTypePath: string;
 }) => {
   return (
     <div className="md:hidden space-y-4">
@@ -86,7 +88,7 @@ const MobileListingView = ({
                 Vezi
               </Button>
             </Link>
-            <Link href={`/cont/locatiile-mele/${listing.id}/editeaza`}>
+            <Link href={`${listingTypePath}/${listing.id}/editeaza`}>
               <Button
                 variant="outline"
                 size="sm"
@@ -97,7 +99,7 @@ const MobileListingView = ({
                 Editează
               </Button>
             </Link>
-            <Link href={`/cont/locatiile-mele/${listing.id}/sterge`}>
+            <Link href={`${listingTypePath}/${listing.id}/sterge`}>
               <Button
                 variant="outline"
                 size="sm"

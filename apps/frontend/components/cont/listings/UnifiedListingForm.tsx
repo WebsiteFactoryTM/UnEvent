@@ -8,7 +8,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, ChevronRight, FileText, Send } from "lucide-react";
 import {
   unifiedListingSchema,
@@ -363,7 +362,7 @@ export function UnifiedListingForm({
           className="flex-1 flex flex-col"
         >
           <div className="border-b bg-background">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-4">
               <TabsList
                 className="grid w-full h-auto"
                 style={{
