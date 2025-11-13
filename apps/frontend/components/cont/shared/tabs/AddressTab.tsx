@@ -1,8 +1,8 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -13,9 +13,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MapPin, Move } from "lucide-react";
-import { useTaxonomies } from "@/lib/react-query/taxonomies.queries";
+import { useCities } from "@/lib/react-query/cities.queries";
 import type { UnifiedListingFormData } from "@/forms/listing/schema";
-import { City } from "@/types/payload-types";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { useDebounce } from "@/hooks/useDebounce";
+import { GoogleMap } from "@/components/common/GoogleMaps";
+import { AddressInput } from "@/components/common/AddressInput";
 
 /**
  * Shared AddressTab component for all listing types
@@ -29,75 +32,125 @@ export function AddressTab() {
     formState: { errors },
   } = useFormContext<UnifiedListingFormData>();
 
-  const { data: taxonomies, isLoading } = useTaxonomies({ fullList: true });
+  const [search, setSearch] = useState("");
+  // simple flow: user selects city, then address
+
+  const debouncedSearch = useDebounce(search, 300);
+  const { data: citiesData, isLoading: isCitiesLoading } = useCities({
+    search: debouncedSearch,
+    limit: 20,
+    // popularFallback: true,
+  });
 
   const selectedCity = watch("city");
   const geoCoords = watch("geo");
-  const manualPin = watch("geo.manualPin");
+  const addressValue = watch("address");
+
+  const selectedCityData = useMemo(() => {
+    return (
+      citiesData
+        ?.filter((city) => city.id === selectedCity)
+        ?.map((city) => ({
+          id: city.id.toString(),
+          title: city.name || "",
+          detailPath: `/oras/${city.slug}`,
+          latitude: city.geo?.[1] || undefined,
+          longitude: city.geo?.[0] || undefined,
+        })) || []
+    );
+  }, [citiesData, selectedCity]);
 
   const handleManualPinToggle = (checked: boolean) => {
     setValue("geo.manualPin", checked, { shouldValidate: true });
   };
 
-  const simulatePinDrag = () => {
-    // Simulate pin dragging (UI only - will be replaced with actual map interaction)
-    const mockLat = 44.4268 + (Math.random() - 0.5) * 0.1;
-    const mockLon = 26.1025 + (Math.random() - 0.5) * 0.1;
-    setValue("geo.lat", mockLat, { shouldValidate: true });
-    setValue("geo.lon", mockLon, { shouldValidate: true });
+  const onSelectCity = (cityId: string) => {
+    setValue("city", parseInt(cityId), { shouldValidate: true });
+    const selectedCity = citiesData?.find(
+      (city) => city.id === parseInt(cityId),
+    );
+    if (selectedCity) {
+      setValue("geo.lat", selectedCity.geo?.[1] || 0, { shouldValidate: true });
+      setValue("geo.lon", selectedCity.geo?.[0] || 0, { shouldValidate: true });
+    }
+
+    console.log(selectedCity);
   };
+
+  const markerItems = useMemo(() => {
+    if (geoCoords?.lat && geoCoords?.lon) {
+      return [
+        {
+          id: "address",
+          title: "Locație selectată",
+          latitude: geoCoords.lat,
+          longitude: geoCoords.lon,
+          detailPath: "#",
+        },
+      ];
+    }
+    return selectedCityData;
+  }, [geoCoords?.lat, geoCoords?.lon, selectedCityData]);
 
   return (
     <div className="space-y-6">
-      {/* City Selection */}
       <div className="space-y-2">
-        <Label htmlFor="city" className="required">
-          Oraș
-        </Label>
-        <Select
-          value={selectedCity?.toString() || ""}
-          onValueChange={(value) =>
-            setValue("city", parseInt(value), { shouldValidate: true })
+        <Label htmlFor="city">Oraș</Label>
+        <SearchableSelect
+          id="city"
+          searchValue={search}
+          onSearchChange={setSearch}
+          filterByLabel
+          groupEnabled
+          options={
+            citiesData
+              ?.map((city) => ({
+                value: city.id.toString() || "",
+                label: city.name || "",
+                group: city.county || "",
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label)) || []
           }
-        >
-          <SelectTrigger id="city">
-            <SelectValue placeholder="Selectează orașul" />
-          </SelectTrigger>
-          <SelectContent>
-            {isLoading ? (
-              <SelectItem value="loading" disabled>
-                Se încarcă...
-              </SelectItem>
-            ) : (
-              taxonomies?.cities.map((city: City) => (
-                <SelectItem key={city.id} value={city.id.toString()}>
-                  {city.name}
-                  {city.county ? `, ${city.county}` : ""}
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
-        {errors.city && (
-          <p className="text-sm text-destructive">{errors.city.message}</p>
-        )}
+          value={String(selectedCity || "")}
+          onValueChange={(v) => onSelectCity(v)}
+          placeholder="Selectează orașul"
+          searchPlaceholder="Caută oraș..."
+          className="w-full"
+          error={errors.city?.message}
+        />
       </div>
 
       {/* Address */}
       <div className="space-y-2">
-        <Label htmlFor="address">Adresă completă</Label>
-        <Input
-          id="address"
-          {...register("address")}
+        <AddressInput
+          label="Adresă completă"
+          value={addressValue || ""}
+          onChange={(addr) =>
+            setValue("address", addr, { shouldValidate: true })
+          }
+          onCoordinatesChange={(lat, lng) => {
+            setValue("geo.lat", lat, { shouldValidate: true });
+            setValue("geo.lon", lng, { shouldValidate: true });
+          }}
+          onLocationInfoChange={(cityName) => {
+            // Optionally infer city by name when found in current list
+            const cityMatch = citiesData?.find(
+              (c) =>
+                (c.name || "").toLowerCase() === (cityName || "").toLowerCase(),
+            );
+            if (cityMatch) {
+              const idNum = parseInt(cityMatch.id as unknown as string, 10);
+              if (!Number.isNaN(idNum)) {
+                setValue("city", idNum, { shouldValidate: true });
+              }
+            }
+          }}
           placeholder="Str. Exemplu, Nr. 123"
+          error={Boolean(errors.address)}
         />
         {errors.address && (
           <p className="text-sm text-destructive">{errors.address.message}</p>
         )}
-        <p className="text-sm text-muted-foreground">
-          Include strada, numărul, blocul, scara, etajul, apartamentul (dacă e
-          cazul)
-        </p>
       </div>
 
       {/* Map Placeholder */}
@@ -105,71 +158,30 @@ export function AddressTab() {
         <Label>Hartă și locație</Label>
 
         <div className="relative border rounded-lg overflow-hidden bg-muted/30">
-          {/* Map container placeholder */}
-          <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-muted/50 to-muted/30">
-            <div className="text-center space-y-3 p-6">
-              <MapPin className="h-12 w-12 mx-auto text-muted-foreground" />
-              <div className="space-y-1">
-                <p className="font-medium text-foreground">
-                  Google Maps auto-detect
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  (Placeholder - va fi integrat cu Google Maps API)
-                </p>
-              </div>
-
-              {geoCoords && geoCoords.lat && geoCoords.lon && (
-                <div className="mt-4">
-                  <p className="text-xs font-mono text-muted-foreground">
-                    Lat: {geoCoords.lat.toFixed(6)}, Lon:{" "}
-                    {geoCoords.lon.toFixed(6)}
-                  </p>
-                </div>
-              )}
-
-              {/* Mock pin icon overlay */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-none">
-                <MapPin className="h-8 w-8 text-destructive fill-destructive drop-shadow-lg" />
-              </div>
-            </div>
-          </div>
-
-          {/* Controls overlay */}
-          <div className="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 bg-background/95 backdrop-blur px-3 py-2 rounded-md border shadow-sm">
-              <Checkbox
-                id="manualPin"
-                checked={manualPin}
-                onCheckedChange={handleManualPinToggle}
-              />
-              <Label
-                htmlFor="manualPin"
-                className="text-sm cursor-pointer select-none"
-              >
-                Plasare manuală pin
-              </Label>
-            </div>
-
-            {manualPin && (
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={simulatePinDrag}
-                className="bg-background/95 backdrop-blur border shadow-sm"
-              >
-                <Move className="h-4 w-4 mr-2" />
-                Simulează mutarea pin-ului
-              </Button>
-            )}
-          </div>
+          <GoogleMap
+            items={markerItems}
+            center={
+              geoCoords
+                ? { lat: geoCoords.lat || 0, lng: geoCoords.lon || 0 }
+                : { lat: 0, lng: 0 }
+            }
+            zoom={13}
+            autoFitBounds={true}
+            selectedCitySlug={
+              citiesData?.find((c) => c.id === selectedCity)?.slug || ""
+            }
+            cities={
+              citiesData?.map((city) => ({
+                id: city.id.toString(),
+                name: city.name || "",
+                slug: city.slug || "",
+                // Backend geo is [lon, lat]; Google expects { lat, lng }
+                lat: typeof city.geo?.[1] === "number" ? city.geo?.[1] : null,
+                lng: typeof city.geo?.[0] === "number" ? city.geo?.[0] : null,
+              })) || []
+            }
+          />
         </div>
-
-        <p className="text-sm text-muted-foreground">
-          {manualPin
-            ? "Poți trage pin-ul pe hartă pentru a selecta locația exactă"
-            : "Locația va fi detectată automat pe baza adresei"}
-        </p>
       </div>
     </div>
   );
