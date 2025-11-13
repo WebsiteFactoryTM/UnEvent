@@ -61,12 +61,17 @@ export function useUploadManager(options: UseUploadManagerOptions = {}) {
     ) => {
       setIsUploading(true);
       try {
-        const doc: Media = await uploadFile(file, token, folder, {
+        const res = await uploadFile(file, token, folder, {
           context: context ?? "document",
           temp: true,
         });
-        setUploaded((prev) => [...prev, doc]);
-        return doc;
+        const mediaDoc = (
+          res && typeof res === "object" && "doc" in res
+            ? (res as any).doc
+            : res
+        ) as Media; // eslint-disable-line @typescript-eslint/no-explicit-any
+        setUploaded((prev) => [...prev, mediaDoc]);
+        return mediaDoc;
       } finally {
         setIsUploading(false);
       }
@@ -79,7 +84,7 @@ export function useUploadManager(options: UseUploadManagerOptions = {}) {
       if (!files.length) return [];
       setIsUploading(true);
       try {
-        const results = await Promise.all(
+        const resultsRaw = await Promise.all(
           files.map((f) =>
             uploadFile(f, token, folder, {
               context: context ?? "document",
@@ -87,8 +92,11 @@ export function useUploadManager(options: UseUploadManagerOptions = {}) {
             }),
           ),
         );
-        setUploaded(results as Media[]);
-        return results as Media[];
+        const results = (resultsRaw as any[]).map((r) =>
+          r && typeof r === "object" && "doc" in r ? r.doc : r,
+        ) as Media[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+        setUploaded(results);
+        return results;
       } finally {
         setIsUploading(false);
       }

@@ -11,6 +11,7 @@ import type { UnifiedListingFormData } from "@/forms/listing/schema";
 import { useUploadManager } from "@/hooks/useUploadManager";
 import { UploadInput } from "@/components/upload/UploadInput";
 import { UploadPreview } from "@/components/upload/UploadPreview";
+import { useSession } from "next-auth/react";
 
 /**
  * Shared ImagesTab component for all listing types
@@ -25,6 +26,9 @@ export function ImagesTab() {
     formState: { errors },
   } = useFormContext<UnifiedListingFormData>();
 
+  const { data: session } = useSession();
+  const accessToken = session?.accessToken;
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "youtubeLinks",
@@ -34,10 +38,20 @@ export function ImagesTab() {
   const gallery = watch("gallery") || [];
 
   // Upload managers
-  const featuredUM = useUploadManager({ accept: "image/*", maxSizeMB: 5 });
-  const galleryUM = useUploadManager({ accept: "image/*", maxSizeMB: 5 });
+  const featuredUM = useUploadManager({
+    token: accessToken,
+    accept: "image/*",
+    maxSizeMB: 5,
+  });
+  const galleryUM = useUploadManager({
+    token: accessToken,
+    accept: "image/*",
+    maxSizeMB: 5,
+  });
 
-  console.log(featuredImage);
+  console.log("featuredUM", featuredUM);
+
+  console.log("featured Image", featuredImage);
 
   // Handle featured image upload (UI only)
   const handleFeaturedImageUpload = async (
@@ -46,8 +60,17 @@ export function ImagesTab() {
     const file = e.target.files?.[0];
     if (!file) return;
     featuredUM.handleSelect(e);
-    const doc = await featuredUM.uploadSingle(file, "listing");
-    setValue("featuredImage", doc.id, { shouldValidate: true });
+    try {
+      const doc = await featuredUM.uploadSingle(file, "listing");
+      setValue("featuredImage", doc.id, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    } catch (error) {
+      console.error("Error uploading featured image:", error);
+    } finally {
+      // featuredUM.clear();
+    }
   };
 
   // Handle gallery upload (UI only)
@@ -71,11 +94,18 @@ export function ImagesTab() {
       },
     } as React.ChangeEvent<HTMLInputElement>);
     // Upload all
-    const uploaded = await Promise.all(
-      filesToAdd.map((f) => galleryUM.uploadSingle(f, "listing")),
-    );
-    const ids = uploaded.map((d) => d.id);
-    setValue("gallery", [...currentGallery, ...ids], { shouldValidate: true });
+    try {
+      const results = await Promise.all(
+        filesToAdd.map((f) => galleryUM.uploadSingle(f, "listing")),
+      );
+      const uploaded = results.map((d) => d.id);
+      setValue("gallery", [...currentGallery, ...uploaded], {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    } catch (error) {
+      console.error("Error uploading gallery images:", error);
+    }
   };
 
   // Remove featured image
@@ -106,6 +136,8 @@ export function ImagesTab() {
 
   return (
     <div className="space-y-6">
+      {/* Register hidden fields to ensure RHF tracks values set via setValue */}
+      <input type="hidden" {...register("featuredImage")} />
       {/* Featured Image */}
       <div className="space-y-3">
         <Label className="required">Imagine principală</Label>
@@ -117,7 +149,10 @@ export function ImagesTab() {
           {featuredImage ? (
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 bg-background rounded-lg">
-                <ImageIcon className="h-8 w-8 text-muted-foreground shrink-0" />
+                {featuredUM.previews?.[0] && (
+                  <UploadPreview previews={featuredUM.previews as string[]} />
+                )}
+                {/* <ImageIcon className="h-8 w-8 text-muted-foreground shrink-0" /> */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
                     {/* When uploaded, featuredImage is an id; show selected file name from manager if available */}
@@ -128,6 +163,9 @@ export function ImagesTab() {
                       ? formatFileSize(featuredUM.files[0].size)
                       : "N/A"}
                   </p>
+                  {featuredUM.uploaded.length > 0 && (
+                    <p className="text-xs text-emerald-600">Încărcat</p>
+                  )}
                 </div>
                 <Button
                   type="button"
@@ -190,7 +228,15 @@ export function ImagesTab() {
                 key={index}
                 className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
               >
-                <ImageIcon className="h-6 w-6 text-muted-foreground shrink-0" />
+                {galleryUM.previews[index] ? (
+                  <img
+                    src={galleryUM.previews[index]}
+                    alt={`Previzualizare ${index + 1}`}
+                    className="h-10 w-10 rounded object-cover shrink-0"
+                  />
+                ) : (
+                  <ImageIcon className="h-6 w-6 text-muted-foreground shrink-0" />
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
                     {galleryUM.files[index]?.name || `image-${index + 1}.jpg`}
@@ -200,6 +246,9 @@ export function ImagesTab() {
                       ? formatFileSize(galleryUM.files[index].size)
                       : "N/A"}
                   </p>
+                  {galleryUM.uploaded.length > index && (
+                    <p className="text-xs text-emerald-600">Încărcat</p>
+                  )}
                 </div>
                 <Button
                   type="button"
