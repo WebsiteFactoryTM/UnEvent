@@ -222,6 +222,9 @@ importers:
       '@tanstack/react-query':
         specifier: latest
         version: 5.90.5(react@19.1.0)
+      '@types/google.maps':
+        specifier: ^3.58.1
+        version: 3.58.1
       '@vercel/analytics':
         specifier: latest
         version: 1.5.0(next@15.5.4(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.77.4))(react@19.1.0)
@@ -3137,6 +3140,9 @@ packages:
 
   '@types/express@5.0.5':
     resolution: {integrity: sha512-LuIQOcb6UmnF7C1PCFmEU1u2hmiHL43fgFQX67sN3H4Z+0Yk0Neo++mFsBjhOAuLzvlQeqAAkeDOZrJs9rzumQ==}
+
+  '@types/google.maps@3.58.1':
+    resolution: {integrity: sha512-X9QTSvGJ0nCfMzYOnaVs/k6/4L+7F5uCS+4iUmkLEls6J9S/Phv+m/i3mDeyc49ZBgwab3EFO1HEoBY7k98EGQ==}
 
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
@@ -9715,6 +9721,8 @@ snapshots:
       '@types/body-parser': 1.19.6
       '@types/express-serve-static-core': 5.1.0
       '@types/serve-static': 1.15.10
+
+  '@types/google.maps@3.58.1': {}
 
   '@types/hast@3.0.4':
     dependencies:

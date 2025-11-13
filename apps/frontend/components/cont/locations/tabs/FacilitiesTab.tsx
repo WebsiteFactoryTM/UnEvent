@@ -26,7 +26,7 @@ export function FacilitiesTab() {
     formState: { errors },
   } = useFormContext<UnifiedListingFormData>();
 
-  const { data: taxonomies, isLoading } = useTaxonomies();
+  const { data: taxonomies } = useTaxonomies({ fullList: true });
   const selectedFacilities = watch("facilities") || [];
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -94,7 +94,7 @@ export function FacilitiesTab() {
             variant="outline"
             role="combobox"
             aria-expanded={isOpen}
-            className="w-full justify-between h-auto min-h-[2.5rem] px-3 py-2"
+            className="w-full justify-between h-auto min-h-10 px-3 py-2"
           >
             <span className="text-left">
               {selectedFacilities.length === 0

@@ -30,11 +30,11 @@ const EditLocationPage = async ({
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-            Editează locație
+            Editează locația ta
           </h1>
           <p className="text-muted-foreground mt-1 text-sm sm:text-base">
             Editează locația tău
