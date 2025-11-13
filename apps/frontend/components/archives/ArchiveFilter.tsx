@@ -22,7 +22,9 @@ import { useFilters } from "@/hooks/useFilters";
 import { fetchTaxonomies } from "@/lib/api/taxonomies";
 import { useQuery } from "@tanstack/react-query";
 import { cacheTTL } from "@/lib/constants";
-import { City, ListingType as ListingTypePayload } from "@/types/payload-types";
+import { ListingType as ListingTypePayload } from "@/types/payload-types";
+import { useCities } from "@/lib/react-query/cities.queries";
+import { useDebounce } from "@/hooks/useDebounce";
 type ListingType = "locatii" | "servicii" | "evenimente";
 
 interface ArchiveFilterProps {
@@ -45,7 +47,14 @@ export function ArchiveFilter({
     staleTime: cacheTTL.oneDay,
   });
 
-  const { cities, eventTypes, locationTypes, serviceTypes } = data || {};
+  const { eventTypes, locationTypes, serviceTypes } = data || {};
+  const [citySearch, setCitySearch] = useState("");
+  const debouncedCitySearch = useDebounce(citySearch, 300);
+  const { data: citiesData, isLoading: isCitiesLoading } = useCities({
+    search: debouncedCitySearch,
+    limit: 20,
+    // popularFallback: true,
+  });
 
   const eventWhenOptions = [
     { value: "orice", label: "Orice dată" },
@@ -119,11 +128,16 @@ export function ArchiveFilter({
                   <Label htmlFor="city">Unde (Oraș)</Label>
                   <SearchableSelect
                     id="city"
+                    searchValue={citySearch}
+                    onSearchChange={setCitySearch}
+                    filterByLabel
+                    groupEnabled
                     options={
-                      cities
-                        ?.map((city: City) => ({
+                      citiesData
+                        ?.map((city) => ({
                           value: city.slug || "",
                           label: city.name || "",
+                          group: city.county || "",
                         }))
                         .sort(
                           (
@@ -299,11 +313,16 @@ export function ArchiveFilter({
                   <Label htmlFor="service-city">Unde?</Label>
                   <SearchableSelect
                     id="service-city"
+                    searchValue={citySearch}
+                    onSearchChange={setCitySearch}
+                    filterByLabel
+                    groupEnabled
                     options={
-                      cities
-                        ?.map((city: City) => ({
+                      citiesData
+                        ?.map((city) => ({
                           value: city.slug || "",
                           label: city.name || "",
+                          group: city.county || "",
                         }))
                         .sort(
                           (
@@ -397,11 +416,16 @@ export function ArchiveFilter({
                   <Label htmlFor="event-city">Unde?</Label>
                   <SearchableSelect
                     id="event-city"
+                    searchValue={citySearch}
+                    onSearchChange={setCitySearch}
+                    filterByLabel
+                    groupEnabled
                     options={
-                      cities
-                        ?.map((city: City) => ({
+                      citiesData
+                        ?.map((city) => ({
                           value: city.slug || "",
                           label: city.name || "",
+                          group: city.county || "",
                         }))
                         .sort(
                           (

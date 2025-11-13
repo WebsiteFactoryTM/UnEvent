@@ -114,3 +114,9 @@ export const taxonomiesKeys = {
   list: (filters: Record<string, unknown>) =>
     [...taxonomiesKeys.all, "list", stableKey(filters)] as const,
 };
+
+export const citiesKeys = {
+  all: ["cities"] as const,
+  list: (filters: Record<string, unknown>) =>
+    [...citiesKeys.all, "list", stableKey(filters)] as const,
+};
