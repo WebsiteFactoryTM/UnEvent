@@ -23,7 +23,7 @@ export const syncCityCounters = async (payload: Payload) => {
     // 1) Zero all city counters
     let page = 1
     for (;;) {
-      const cities = await payload.find({ collection: 'cities', page, limit: 100, depth: 0 })
+      const cities = await payload.find({ collection: 'cities', page, limit: 15000, depth: 0 })
       for (const c of cities.docs) {
         try {
           await payload.update({
@@ -72,6 +72,7 @@ export const syncCityCounters = async (payload: Payload) => {
  * Only runs when SCHEDULER_IS_PRIMARY=true to avoid duplicate runs across replicas.
  */
 export const registerSyncCityCountersScheduler = (payload: Payload) => {
+  syncCityCounters(payload)
   if (process.env.SCHEDULER_IS_PRIMARY !== 'true') {
     console.log('[syncCityCounters] scheduler disabled (SCHEDULER_IS_PRIMARY != true)')
     return

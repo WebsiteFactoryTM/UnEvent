@@ -181,13 +181,12 @@ export default buildConfig({
     openapi({ openapiVersion: '3.0', metadata: { title: 'Dev API', version: '0.0.1' } }),
     swaggerUI({ docsUrl: '/swagger', specEndpoint: '/openapi.json', enabled: true }),
     searchPlugin({
-      collections: ['locations', 'services', 'events', 'profiles', 'cities'],
+      collections: ['locations', 'services', 'events', 'profiles'],
       defaultPriorities: {
         locations: 10,
         services: 20,
         events: 30,
         profiles: 40,
-        cities: 50,
       },
       searchOverrides: {
         fields: ({ defaultFields }: { defaultFields: Field[] }) => [
@@ -201,13 +200,6 @@ export default buildConfig({
           },
           {
             name: 'address',
-            type: 'text',
-            admin: {
-              readOnly: true,
-            },
-          },
-          {
-            name: 'cityName',
             type: 'text',
             admin: {
               readOnly: true,

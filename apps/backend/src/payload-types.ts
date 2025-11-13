@@ -1182,14 +1182,9 @@ export interface Search {
     | {
         relationTo: 'profiles';
         value: number | Profile;
-      }
-    | {
-        relationTo: 'cities';
-        value: number | City;
       };
   description?: string | null;
   address?: string | null;
-  cityName?: string | null;
   type?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1925,7 +1920,6 @@ export interface SearchSelect<T extends boolean = true> {
   doc?: T;
   description?: T;
   address?: T;
-  cityName?: T;
   type?: T;
   updatedAt?: T;
   createdAt?: T;

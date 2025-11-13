@@ -3,7 +3,8 @@ import slugify from 'slugify'
 
 export const beforeChange: CollectionBeforeChangeHook = async ({ data, operation }) => {
   // Only generate slug for new documents or if name has changed
-  if (operation === 'create' || (operation === 'update' && data.name)) {
+  if (data.slug) return data
+  if ((operation === 'create' || operation === 'update') && data.name) {
     let slug = ''
     const baseSlug = slugify(data.name, {
       lower: true,
@@ -25,7 +26,7 @@ export const beforeChange: CollectionBeforeChangeHook = async ({ data, operation
     if (data.country && data.country.toLowerCase() !== 'romania') {
       slug = `${slug}-${countryCode}`
     }
-    console.log('slug for ', data.name, data.county, slug)
+    // console.log('slug for ', data.name, data.county, slug)
 
     data.slug = slug
   }
