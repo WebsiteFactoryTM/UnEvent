@@ -1,10 +1,24 @@
 import type { CollectionConfig } from 'payload'
+import { isAdmin } from './_access/roles'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   admin: { useAsTitle: 'filename' },
   access: {
     read: () => true,
+    create: () => true,
+    update: ({ req }) => {
+      if (isAdmin({ req })) return true
+      const profileId =
+        typeof req.user?.profile === 'number' ? req.user?.profile : req.user?.profile?.id
+      return !!req.user && !!profileId && { uploadedBy: { equals: profileId } }
+    },
+    delete: ({ req }) => {
+      if (isAdmin({ req })) return true
+      const profileId =
+        typeof req.user?.profile === 'number' ? req.user?.profile : req.user?.profile?.id
+      return !!req.user && !!profileId && { uploadedBy: { equals: profileId } }
+    },
   },
   upload: {
     staticDir: 'media',
@@ -34,8 +48,15 @@ export const Media: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [
-      ({ data }) => {
-        return { ...data, temp: data?.temp ?? true }
+      ({ data, req }) => {
+        const profileId =
+          typeof req.user?.profile === 'number' ? req.user?.profile : req.user?.profile?.id
+        return {
+          ...data,
+          temp: data?.temp ?? true,
+          context: data?.context ?? 'listing',
+          uploadedBy: profileId,
+        }
       },
     ],
   },

@@ -14,7 +14,7 @@ export const HomeConfig: GlobalConfig = {
       relationTo: 'locations',
       hasMany: true,
       filterOptions: {
-        status: { equals: 'approved' },
+        moderationStatus: { equals: 'approved' },
       },
     },
     {
@@ -23,7 +23,7 @@ export const HomeConfig: GlobalConfig = {
       relationTo: 'services',
       hasMany: true,
       filterOptions: {
-        status: { equals: 'approved' },
+        moderationStatus: { equals: 'approved' },
       },
     },
     {
@@ -32,7 +32,7 @@ export const HomeConfig: GlobalConfig = {
       relationTo: 'events',
       hasMany: true,
       filterOptions: {
-        status: { equals: 'approved' },
+        moderationStatus: { equals: 'approved' },
       },
     },
   ],

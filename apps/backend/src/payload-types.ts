@@ -362,7 +362,7 @@ export interface Event {
   /**
    * Status of the listing
    */
-  status?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
+  moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
@@ -463,6 +463,7 @@ export interface Event {
     | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -596,7 +597,7 @@ export interface Location {
   /**
    * Status of the listing
    */
-  status?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
+  moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
@@ -697,6 +698,7 @@ export interface Location {
   facilities?: (number | Facility)[] | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -762,7 +764,7 @@ export interface Service {
   /**
    * Status of the listing
    */
-  status?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
+  moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
@@ -844,6 +846,7 @@ export interface Service {
     | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1494,7 +1497,7 @@ export interface EventsSelect<T extends boolean = true> {
         phone?: T;
         website?: T;
       };
-  status?: T;
+  moderationStatus?: T;
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
@@ -1569,6 +1572,7 @@ export interface EventsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1589,7 +1593,7 @@ export interface LocationsSelect<T extends boolean = true> {
         phone?: T;
         website?: T;
       };
-  status?: T;
+  moderationStatus?: T;
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
@@ -1662,6 +1666,7 @@ export interface LocationsSelect<T extends boolean = true> {
   facilities?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1682,7 +1687,7 @@ export interface ServicesSelect<T extends boolean = true> {
         phone?: T;
         website?: T;
       };
-  status?: T;
+  moderationStatus?: T;
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
@@ -1752,6 +1757,7 @@ export interface ServicesSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

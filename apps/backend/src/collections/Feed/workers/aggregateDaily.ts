@@ -108,7 +108,7 @@ export async function aggregateDaily(payload: Payload): Promise<void> {
           where: {
             and: [
               { listing: { equals: polyRef(kind, listingId) } },
-              { status: { equals: 'approved' } }, // Only approved reviews
+              { moderationStatus: { equals: 'approved' } }, // Only approved reviews
             ],
           },
           limit: 1000,
