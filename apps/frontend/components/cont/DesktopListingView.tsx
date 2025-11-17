@@ -89,19 +89,27 @@ const DesktopListingView = ({
               </td>
               <td className="py-4 px-4">
                 <div className="flex items-center justify-end gap-2">
-                  <Link
-                    href={`/${listingType}/${listing.slug}/`}
-                    target="_blank"
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      // onClick={() => handleView(listing)}
-                      className="h-8 w-8 p-0"
+                  {listing.status === "draft" ? (
+                    <Link
+                      href={`/api/preview?url=${encodeURIComponent(
+                        `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${listingType}/${listing.slug}`,
+                      )}&secret=${process.env.NEXT_PUBLIC_DRAFT_SECRET}`}
+                      target="_blank"
                     >
-                      <FaEye className="h-4 w-4" />
-                    </Button>
-                  </Link>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <FaEye className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link
+                      href={`/${listingType}/${listing.slug}`}
+                      target="_blank"
+                    >
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <FaEye className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  )}
                   <Link href={`${listingTypePath}/${listing.id}/editeaza`}>
                     <Button
                       variant="ghost"

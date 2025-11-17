@@ -149,12 +149,13 @@ export function UnifiedListingForm({
     const formData = methods.getValues();
 
     // Set status to draft
-    methods.setValue("status", "draft");
+    methods.setValue("moderationStatus", "draft");
 
     try {
       const payload = formToPayload({
         ...formData,
-        status: "draft",
+        moderationStatus: "draft",
+        _status: "draft",
       } as UnifiedListingFormData);
 
       let result;
@@ -199,7 +200,11 @@ export function UnifiedListingForm({
     clearErrors();
 
     // Validate with status="pending" to check all submission requirements
-    const submissionData = { ...data, status: "pending" as const };
+    const submissionData = {
+      ...data,
+      _status: "published" as const,
+      moderationStatus: "pending" as const,
+    };
 
     try {
       // Validate the submission data

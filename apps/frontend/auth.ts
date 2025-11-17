@@ -1,7 +1,7 @@
 import NextAuth, { type NextAuthOptions, type Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-
+import { cookies } from "next/headers";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -149,6 +149,22 @@ export const authOptions: NextAuthOptions = {
 
   jwt: {
     // next-auth will refresh automatically when expired if you add refresh logic later
+  },
+  events: {
+    async signIn({ user }) {
+      // create the Payload token cookie
+      const cookieStore = await cookies();
+      cookieStore.set("payload-token", user.token ?? "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+    },
+    async signOut() {
+      const cookieStore = await cookies();
+      cookieStore.delete("payload-token");
+    },
   },
 };
 

@@ -9,7 +9,8 @@ import { SectionCard } from "./SectionCard";
 import MobileListingView from "./MobileListingView";
 import { FaPlus } from "react-icons/fa6";
 import Link from "next/link";
-
+import { Skeleton } from "@/components/ui/skeleton";
+import { notFound } from "next/navigation";
 const listingTypeToPath = {
   evenimente: "/cont/evenimentele-mele",
   locatii: "/cont/locatiile-mele",
@@ -29,7 +30,7 @@ const ListingView = ({
   noListingsMessage?: string;
 }) => {
   const { data: session, status } = useSession();
-  
+
   const accessToken = session?.accessToken;
   const profileId = session?.user?.profile as number | undefined;
 
@@ -41,7 +42,7 @@ const ListingView = ({
   });
 
   if (status === "loading") {
-    return <div>Se încarcă...</div>;
+    return <Skeleton className="h-10 w-full" />;
   }
 
   if (!accessToken || !profileId) {
@@ -51,7 +52,7 @@ const ListingView = ({
   }
 
   if (isLoading) {
-    return <div>Se încarcă...</div>;
+    return <Skeleton className="h-10 w-full" />;
   }
 
   if (error) {
