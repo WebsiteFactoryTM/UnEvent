@@ -3,6 +3,7 @@ import { LocationFormData } from "@/forms/location/schema";
 import { ServiceFormData } from "@/forms/service/schema";
 import { ListingType } from "@/types/listings";
 import { Event, Location, Service } from "@/types/payload-types";
+import { normalizeListing, normalizeListings } from "@/lib/transforms/normalizeListing";
 
 type ListingCollectionSlug = "locations" | "events" | "services";
 
@@ -37,7 +38,7 @@ export const getUserListing = async (
     }
     const data = await response.json();
 
-    return data;
+    return normalizeListing(data);
   } catch (error) {
     console.error(error);
     throw new Error("Failed to get user listing");
@@ -76,7 +77,7 @@ export const getUserListings = async (
       throw new Error(errorMessage);
     }
 
-    return data.docs || [];
+    return normalizeListings(data.docs || []);
   } catch (error) {
     console.error("Error getting user listings:", error);
     if (error instanceof Error) {
