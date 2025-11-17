@@ -6,13 +6,27 @@ import { City, ListingType as SuitableForType } from "@/types/payload-types";
 import { getRedis } from "../redis";
 import { redisKey } from "../react-query/utils";
 import { listingsKeys } from "../cacheKeys";
+import { cookies, draftMode } from "next/headers";
+import {
+  normalizeListing,
+  normalizeListings,
+} from "../transforms/normalizeListing";
+const payloadToken = "payload-token";
 
 export const fetchListing = async (
   listingType: ListingType,
   slug: string,
   accessToken?: string,
+  isDraftMode?: boolean,
 ): Promise<{ data: Listing | null; error: Error | null }> => {
   try {
+    let token: string | undefined;
+
+    if (isDraftMode) {
+      const cookiesObject = await cookies();
+      const cookie = cookiesObject.get(payloadToken);
+      token = cookie?.value;
+    }
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[slug][equals]=${slug}&includeReviewState=true&limit=1`,
       {
@@ -23,6 +37,7 @@ export const fetchListing = async (
           tags: [`${listingType}_${slug}`],
           // revalidate: 3600,
         },
+        cache: isDraftMode ? "no-store" : "force-cache",
       },
     );
     if (!response.ok) {
@@ -31,7 +46,8 @@ export const fetchListing = async (
       return { data: null, error: new Error(errorMessage) };
     }
     const data = await response.json();
-    return { data: data.docs[0], error: null };
+    const doc = data?.docs?.[0];
+    return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
@@ -77,7 +93,7 @@ export const fetchTopListings = async (
       throw new Error(errorMessage);
     }
     const data = await response.json();
-    return data.docs as Listing[];
+    return normalizeListings(data.docs) as Listing[];
   } catch (error) {
     throw new Error(
       `Failed to fetch top listings: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -148,7 +164,9 @@ export const fetchSimilarListings = async (
     }
     const data = await response.json();
     await redis.set(cacheKey, JSON.stringify(data.docs as Listing[]), "EX", 60);
-    return data.docs as Listing[];
+    const docs = normalizeListings(data.docs) as Listing[];
+    await redis.set(cacheKey, JSON.stringify(docs), "EX", 60);
+    return docs;
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
