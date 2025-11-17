@@ -32,6 +32,7 @@ import { ListingType as SuitableForType } from "@/types/payload-types";
 // import { RecommendedListings } from "@/components/home/carousels/RecommendedLocations";
 
 import { fetchHubSnapshot } from "@/lib/api/hub";
+import { draftMode } from "next/headers";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -71,18 +72,28 @@ export default async function DetailPage({
   params: Promise<{ listingType: string; slug: string }>;
 }) {
   const { listingType, slug } = await params;
+  const { isEnabled } = await draftMode();
   if (!listingTypes.includes(listingType as any)) notFound();
 
   const listingTypeUrl = getListingTypeSlug(listingType as ListingType);
+
   const {
     data: listing,
     error,
   }: { data: Listing | null; error: Error | null } = await fetchListing(
     listingTypeUrl as ListingType,
     slug,
+    undefined,
+    isEnabled,
   );
 
-  if (error || !listing) {
+  if (!listing) {
+    // listing not found even for admin -> real 404
+    notFound();
+  }
+
+  // listing exists → check if can be shown
+  if (listing._status !== "published" && !isEnabled) {
     notFound();
   }
 
