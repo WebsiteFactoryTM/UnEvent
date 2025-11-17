@@ -1,6 +1,8 @@
 export default function Loading() {
   return (
     <div className="min-h-screen bg-background">
+      {/* Topbar skeleton */}
+
       {/* Main content skeleton */}
       <main className="flex-1 p-4 lg:p-6 lg:ml-64">
         <div className="space-y-6">
