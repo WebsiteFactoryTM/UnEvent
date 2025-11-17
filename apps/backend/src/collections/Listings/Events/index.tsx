@@ -24,7 +24,7 @@ export const Events: CollectionConfig = {
   },
   timestamps: true,
   access: {
-    read: ({ req }) => approvedOrOwnDraft({ req }),
+    read: ({}) => true,
     create: ({ req }) => requireRole(['organizer'])({ req }),
     update: ({ req }) => isOwnerOrAdmin({ req }),
     delete: ({ req }) => isOwnerOrAdmin({ req }),

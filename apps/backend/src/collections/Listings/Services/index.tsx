@@ -23,7 +23,7 @@ export const Services: CollectionConfig = {
     drafts: true,
   },
   access: {
-    read: ({ req }) => approvedOrOwnDraft({ req }),
+    read: ({}) => true,
     create: ({ req }) => requireRole(['provider'])({ req }),
     update: ({ req }) => isOwnerOrAdmin({ req }),
     delete: ({ req }) => isOwnerOrAdmin({ req }),

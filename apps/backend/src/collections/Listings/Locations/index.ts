@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { sharedListingFields } from '../fields.shared'
 import { attachOwner, autoSlug, setDefaultStatus } from '../_hooks/beforeValidate'
-import { approvedOrOwnDraft, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
+import { isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
