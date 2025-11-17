@@ -20,7 +20,7 @@ export const Locations: CollectionConfig = {
     },
   },
   access: {
-    read: ({ req }) => approvedOrOwnDraft({ req }),
+    read: ({}) => true,
     create: ({ req }) => requireRole(['host'])({ req }),
     update: ({ req }) => isOwnerOrAdmin({ req }),
     delete: ({ req }) => isOwnerOrAdmin({ req }),

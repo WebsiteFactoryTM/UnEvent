@@ -33,29 +33,29 @@ END $$;
 -- 2. Listing collections: Ensure critical indexes exist for feed queries
 --    (city, type, status, tier, rating) - Payload creates some automatically
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "locations_city_idx" ON "locations" ("city_id");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "locations_status_idx" ON "locations" ("moderationStatus");
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "locations_status_idx" ON "locations" ("moderation_status");
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "locations_tier_idx" ON "locations" ("tier");
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "locations_rating_idx" ON "locations" ("rating");
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "events_city_idx" ON "events" ("city_id");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "events_status_idx" ON "events" ("moderationStatus");
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "events_status_idx" ON "events" ("moderation_status");
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "events_tier_idx" ON "events" ("tier");
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "events_rating_idx" ON "events" ("rating");
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "services_city_idx" ON "services" ("city_id");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "services_status_idx" ON "services" ("moderationStatus");
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "services_status_idx" ON "services" ("moderation_status");
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "services_tier_idx" ON "services" ("tier");
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "services_rating_idx" ON "services" ("rating");
 
 -- 3. Composite indexes for common feed query patterns (city + status + tier)
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "locations_feed_query_idx"
-  ON "locations" ("city_id", "moderationStatus", "tier");
+  ON "locations" ("city_id", "moderation_status", "tier");
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "events_feed_query_idx"
-  ON "events" ("city_id", "moderationStatus", "tier");
+  ON "events" ("city_id", "moderation_status", "tier");
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS "services_feed_query_idx"
-  ON "services" ("city_id", "moderationStatus", "tier");
+  ON "services" ("city_id", "moderation_status", "tier");
 
 -- Note: This migration is safe to run multiple times and before/after Payload table creation
 
