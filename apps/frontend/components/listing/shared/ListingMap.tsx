@@ -1,19 +1,73 @@
-import { FaLocationDot, FaMapLocationDot } from "react-icons/fa6";
+"use client";
+
+import { useMemo } from "react";
+import { FaLocationDot } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import type { LocationListing } from "@/types/listings";
 import Link from "next/link";
+import { GoogleMap } from "@/components/common/GoogleMaps";
+import type { City } from "@/types/payload-types";
 
 interface ListingMapProps {
   cityName: string;
   venue?: LocationListing;
   address: string;
+  geo?: { lat: number; lon: number };
+  city?: City;
 }
 
-export const ListingMap = ({ cityName, venue, address }: ListingMapProps) => {
-  // const cityName =
-  //   typeof data.city === "object" && data.city ? data.city.name : "";
-  // const venue =
-  //   typeof (data as Event).venue === "object" ? ((data as Event).venue as Location) : null;
+export const ListingMap = ({
+  cityName,
+  venue,
+  address,
+  geo,
+  city,
+}: ListingMapProps) => {
+  // Prepare map items based on whether we have geo coordinates
+  const mapItems = useMemo(() => {
+    const items = [];
+
+    // If we have geo coordinates for the listing, add it as a marker
+    if (geo?.lat && geo?.lon) {
+      items.push({
+        id: "listing",
+        title: venue?.title || address || "Locație",
+        latitude: geo.lat,
+        longitude: geo.lon,
+        detailPath: venue ? `/locatii/${venue.slug}` : "#",
+      });
+    }
+
+    return items;
+  }, [geo, venue, address]);
+
+  // Map center: use listing coords if available, otherwise city coords or default
+  const mapCenter = useMemo(() => {
+    if (geo?.lat && geo?.lon) {
+      return { lat: geo.lat, lng: geo.lon };
+    }
+    // Backend geo is [lon, lat]; Google expects { lat, lng }
+    if (city?.geo && Array.isArray(city.geo) && city.geo.length === 2) {
+      return { lat: city.geo[1], lng: city.geo[0] };
+    }
+    // Default to Romania center
+    return { lat: 45.9432, lng: 24.9668 };
+  }, [geo, city]);
+
+  // Prepare cities data for the map
+  const cities = useMemo(() => {
+    if (!city) return [];
+    return [
+      {
+        id: city.id.toString(),
+        name: city.name || "",
+        slug: city.slug || "",
+        // Backend geo is [lon, lat]; Google expects { lat, lng }
+        lat: typeof city.geo?.[1] === "number" ? city.geo[1] : null,
+        lng: typeof city.geo?.[0] === "number" ? city.geo[0] : null,
+      },
+    ];
+  }, [city]);
 
   return (
     <div className="glass-card p-6 space-y-4">
@@ -44,14 +98,16 @@ export const ListingMap = ({ cityName, venue, address }: ListingMapProps) => {
           </div>
         </div>
 
-        {/* Map placeholder */}
-        <div className="aspect-video rounded-lg bg-muted/30 border border-border flex items-center justify-center">
-          <div className="text-center space-y-2">
-            <FaMapLocationDot className="h-12 w-12 text-muted-foreground mx-auto" />
-            <p className="text-sm text-muted-foreground">
-              Hartă interactivă (în curând)
-            </p>
-          </div>
+        {/* Google Map */}
+        <div className="rounded-lg overflow-hidden border border-border">
+          <GoogleMap
+            items={mapItems}
+            center={mapCenter}
+            zoom={geo?.lat && geo?.lon ? 15 : 12}
+            autoFitBounds={false}
+            selectedCitySlug={city?.slug || ""}
+            cities={cities}
+          />
         </div>
       </div>
     </div>

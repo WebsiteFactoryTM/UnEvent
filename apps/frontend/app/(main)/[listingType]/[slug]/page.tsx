@@ -157,6 +157,14 @@ export default async function DetailPage({
                   : undefined
               }
               address={listing?.address ?? ""}
+              geo={
+                listing?.geo
+                  ? { lat: listing.geo[1], lon: listing.geo[0] }
+                  : undefined
+              }
+              city={
+                typeof listing?.city === "object" ? listing.city : undefined
+              }
             />
             {listingType === "locatii" && (
               <>
