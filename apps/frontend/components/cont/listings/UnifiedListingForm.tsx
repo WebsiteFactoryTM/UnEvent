@@ -124,7 +124,11 @@ export function UnifiedListingForm({
   const isFirstTab = currentTabIndex === 0;
   const isLastTab = currentTabIndex === tabs.length - 1;
 
-  const handleNext = () => {
+  const handleNext = (e?: React.MouseEvent | React.KeyboardEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!isLastTab) {
       setActiveTab(tabs[currentTabIndex + 1].value);
     }
@@ -357,9 +361,13 @@ export function UnifiedListingForm({
         onSubmit={handleSubmit(onSubmit as any, onFormError)}
         onKeyDown={(e) => {
           // Prevent form submission on Enter key unless on last tab
-          if (e.key === 'Enter' && !isLastTab && e.target instanceof HTMLElement && e.target.tagName !== 'TEXTAREA') {
-            e.preventDefault();
-            handleNext();
+          if (
+            e.key === "Enter" &&
+            !isLastTab &&
+            e.target instanceof HTMLElement &&
+            e.target.tagName !== "TEXTAREA"
+          ) {
+            handleNext(e);
           }
         }}
         className="flex flex-col"
@@ -470,7 +478,7 @@ export function UnifiedListingForm({
                 ) : (
                   <Button
                     type="button"
-                    onClick={handleNext}
+                    onClick={(e) => handleNext(e)}
                     disabled={isSubmitting}
                     className="gap-1 sm:gap-2 text-sm h-9"
                   >
