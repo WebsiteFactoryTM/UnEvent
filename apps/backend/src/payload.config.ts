@@ -126,6 +126,8 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
+    push: false, // Disable auto-push, use migrations instead
+    migrationDir: path.resolve(dirname, 'migrations'),
     afterSchemaInit: [
       ({ schema, extendTable }) => {
         const tables = schema.tables as Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
