@@ -89,7 +89,8 @@ export function formToPayload(
             youtubeLink: link.url,
           }))
         : undefined,
-    status: formData.status,
+    moderationStatus: formData.moderationStatus,
+    _status: formData._status,
     // Images will be handled separately if needed
     featuredImage: formData.featuredImage,
     gallery:
@@ -264,9 +265,7 @@ export function payloadToForm(
       })) || [],
     featuredImage: listing.featuredImage,
     gallery: listing.gallery || undefined,
-    status: (listing.status === "draft" ? "draft" : "pending") as
-      | "draft"
-      | "pending",
+    moderationStatus: listing.moderationStatus || "pending",
   };
 
   // Location-specific transformation

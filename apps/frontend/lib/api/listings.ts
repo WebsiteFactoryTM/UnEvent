@@ -47,6 +47,7 @@ export const fetchListing = async (
     }
     const data = await response.json();
     const doc = data?.docs?.[0];
+
     return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
   } catch (error) {
     const errorMessage =

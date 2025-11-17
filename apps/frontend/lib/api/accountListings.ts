@@ -3,7 +3,10 @@ import { LocationFormData } from "@/forms/location/schema";
 import { ServiceFormData } from "@/forms/service/schema";
 import { ListingType } from "@/types/listings";
 import { Event, Location, Service } from "@/types/payload-types";
-import { normalizeListing, normalizeListings } from "@/lib/transforms/normalizeListing";
+import {
+  normalizeListing,
+  normalizeListings,
+} from "@/lib/transforms/normalizeListing";
 
 type ListingCollectionSlug = "locations" | "events" | "services";
 
