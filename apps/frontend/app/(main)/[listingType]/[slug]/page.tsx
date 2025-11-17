@@ -12,7 +12,12 @@ import { ListingMap } from "@/components/listing/shared/ListingMap";
 import { ListingProviderCard } from "@/components/listing/shared/ListingProviderCard";
 import { ListingReviews } from "@/components/listing/shared/ListingReviews";
 import { buildJsonLd } from "@/components/listing/shared/jsonld";
-import type { ListingType } from "@/types/listings";
+import type {
+  EventListing,
+  ListingType,
+  LocationListing,
+  ServiceListing,
+} from "@/types/listings";
 import { Listing } from "@/types/listings";
 import {
   Event,
@@ -140,15 +145,15 @@ export default async function DetailPage({
               )}
 
             {/* Services Offered */}
-            {(listing as Service)?.features ? (
-              <ServiceOfferTags service={listing as Service} />
+            {(listing as ServiceListing)?.features ? (
+              <ServiceOfferTags service={listing as ServiceListing} />
             ) : null}
 
             <ListingMap
               cityName={cityName}
               venue={
-                (listing as Event)?.venue
-                  ? ((listing as Event).venue as Location)
+                (listing as EventListing)?.venue
+                  ? ((listing as EventListing).venue as LocationListing)
                   : undefined
               }
               address={listing?.address ?? ""}
