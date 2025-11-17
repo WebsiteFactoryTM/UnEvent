@@ -39,8 +39,6 @@ export const approvedOrOwnDraft: Access = ({ req }) => {
 
   const conditions: Where[] = [{ moderationStatus: { equals: 'approved' } }]
 
-  console.log('user in access', user)
-
   if (user) {
     const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
     if (profileId) {
