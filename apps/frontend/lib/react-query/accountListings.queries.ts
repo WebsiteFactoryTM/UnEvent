@@ -13,8 +13,8 @@ import { getListingTypeSlug } from "../getListingType";
 interface UseListingsManagerOptions {
   type: ListingType;
   filters?: Record<string, any>;
-  profileId: number;
-  accessToken: string;
+  profileId?: number;
+  accessToken?: string;
 }
 
 export function useListingsManager({

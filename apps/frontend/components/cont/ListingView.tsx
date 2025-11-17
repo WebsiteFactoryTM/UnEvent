@@ -29,25 +29,26 @@ const ListingView = ({
   noListingsMessage?: string;
 }) => {
   const { data: session, status } = useSession();
+  
+  const accessToken = session?.accessToken;
+  const profileId = session?.user?.profile as number | undefined;
+
+  // Call hooks unconditionally, but only fetch when we have credentials
+  const { listings, isLoading, error } = useListingsManager({
+    type,
+    profileId,
+    accessToken,
+  });
 
   if (status === "loading") {
     return <div>Se încarcă...</div>;
   }
-
-  const accessToken = session?.accessToken;
-  const profileId = session?.user?.profile as number | undefined;
 
   if (!accessToken || !profileId) {
     return (
       <div>Trebuie să fii autentificat pentru a vedea această secțiune.</div>
     );
   }
-
-  const { listings, isLoading, error } = useListingsManager({
-    type,
-    profileId,
-    accessToken,
-  });
 
   if (isLoading) {
     return <div>Se încarcă...</div>;
