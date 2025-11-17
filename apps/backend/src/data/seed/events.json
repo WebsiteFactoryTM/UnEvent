@@ -7,7 +7,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-03-15T09:00:00.000Z",
     "endDate": "2025-03-15T18:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": {
       "type": "paid",
@@ -28,7 +28,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-04-20T18:00:00.000Z",
     "endDate": "2025-04-21T02:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": {
       "type": "contact"
@@ -47,7 +47,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-02-28T20:00:00.000Z",
     "endDate": "2025-02-28T23:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "sponsored",
     "pricing": {
       "type": "free"
@@ -66,7 +66,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-05-10T10:00:00.000Z",
     "endDate": "2025-05-10T18:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": { "type": "free" },
     "venueAddressDetails": {
@@ -83,7 +83,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-06-12T19:00:00.000Z",
     "endDate": "2025-06-13T00:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": { "type": "paid", "amount": 90, "currency": "EUR" },
     "venueAddressDetails": {
@@ -100,7 +100,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-07-05T09:00:00.000Z",
     "endDate": "2025-07-05T13:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": { "type": "free" },
     "venueAddressDetails": {
@@ -117,7 +117,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-08-22T17:00:00.000Z",
     "endDate": "2025-08-22T23:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "sponsored",
     "pricing": { "type": "contact" },
     "venueAddressDetails": {
@@ -134,7 +134,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-09-14T18:00:00.000Z",
     "endDate": "2025-09-14T21:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "sponsored",
     "pricing": { "type": "paid", "amount": 35, "currency": "EUR" },
     "venueAddressDetails": {
@@ -151,7 +151,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-06-28T20:00:00.000Z",
     "endDate": "2025-06-29T00:30:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "sponsored",
     "pricing": { "type": "contact" },
     "venueAddressDetails": {
@@ -168,7 +168,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-10-11T19:30:00.000Z",
     "endDate": "2025-10-12T01:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "paid", "amount": 50, "currency": "EUR" },
     "venueAddressDetails": {
@@ -185,7 +185,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-11-05T09:00:00.000Z",
     "endDate": "2025-11-05T17:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "paid", "amount": 120, "currency": "EUR" },
     "venueAddressDetails": {
@@ -202,7 +202,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-09-27T10:00:00.000Z",
     "endDate": "2025-09-27T16:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "free" },
     "venueAddressDetails": {
@@ -219,7 +219,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-07-19T16:00:00.000Z",
     "endDate": "2025-07-19T23:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "contact" },
     "venueAddressDetails": {
@@ -236,7 +236,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-12-05T18:30:00.000Z",
     "endDate": "2025-12-05T21:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "free" },
     "venueAddressDetails": {
@@ -253,7 +253,7 @@
     "eventStatus": "upcoming",
     "startDate": "2025-12-12T20:00:00.000Z",
     "endDate": "2025-12-12T23:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "contact" },
     "venueAddressDetails": {
@@ -270,7 +270,7 @@
     "eventStatus": "upcoming",
     "startDate": "2026-02-14T10:00:00.000Z",
     "endDate": "2026-02-14T18:00:00.000Z",
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": { "type": "paid", "amount": 10, "currency": "EUR" },
     "venueAddressDetails": {

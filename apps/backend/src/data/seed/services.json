@@ -5,7 +5,7 @@
     "type": [5538, 5250],
     "city": 16424,
     "suitableFor": [4942, 4943],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": {
       "type": "contact"
@@ -20,7 +20,7 @@
     "city": 17474,
     "type": [5247, 5250],
     "suitableFor": [4855],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": {
       "type": "from",
@@ -38,7 +38,7 @@
     "city": 20711,
     "type": [5245, 5246],
     "suitableFor": [4855],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "sponsored",
     "pricing": {
       "type": "fixed",
@@ -68,7 +68,7 @@
     "city": 16424,
     "type": [5247, 5250],
     "suitableFor": [4942, 4943],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": { "type": "from", "amount": 20, "currency": "EUR", "period": "event" },
     "availability": { "type": "always" }
@@ -79,7 +79,7 @@
     "city": 16424,
     "type": [5245, 5246],
     "suitableFor": [4942, 4944],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": { "type": "contact" },
     "availability": { "type": "appointment" }
@@ -90,7 +90,7 @@
     "city": 24915,
     "type": [5245, 5246],
     "suitableFor": [4942],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": { "type": "fixed", "amount": 700, "currency": "EUR", "period": "event" },
     "availability": { "type": "always" }
@@ -101,7 +101,7 @@
     "city": 17474,
     "type": [5538, 5250],
     "suitableFor": [4855, 4943],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "sponsored",
     "pricing": { "type": "contact" },
     "availability": { "type": "appointment" }
@@ -112,7 +112,7 @@
     "city": 16424,
     "type": [5247, 5250],
     "suitableFor": [4943, 4942],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "sponsored",
     "pricing": { "type": "from", "amount": 30, "currency": "EUR", "period": "event" },
     "availability": { "type": "always" }
@@ -123,7 +123,7 @@
     "city": 20711,
     "type": [5245, 5246],
     "suitableFor": [4944, 4942],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "sponsored",
     "pricing": { "type": "fixed", "amount": 1000, "currency": "EUR", "period": "event" },
     "availability": {
@@ -137,7 +137,7 @@
     "city": 16424,
     "type": [5538, 5250],
     "suitableFor": [4942, 4943],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "from", "amount": 500, "currency": "EUR", "period": "event" },
     "availability": { "type": "appointment" }
@@ -148,7 +148,7 @@
     "city": 17474,
     "type": [5245, 5246],
     "suitableFor": [4944, 4942],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "contact" },
     "availability": { "type": "always" }
@@ -159,7 +159,7 @@
     "city": 16424,
     "type": [5538, 5250],
     "suitableFor": [4942, 4943],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "from", "amount": 400, "currency": "EUR", "period": "event" },
     "availability": { "type": "appointment" }
@@ -170,7 +170,7 @@
     "city": 16270,
     "type": [5538, 5250],
     "suitableFor": [4855, 4943],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "contact" },
     "availability": { "type": "appointment" }
@@ -181,7 +181,7 @@
     "city": 24915,
     "type": [5538, 5250],
     "suitableFor": [4942, 4943],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "contact" },
     "availability": { "type": "appointment" }
@@ -192,7 +192,7 @@
     "city": 24915,
     "type": [5245, 5246],
     "suitableFor": [4944, 4942],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "recommended",
     "pricing": { "type": "fixed", "amount": 700, "currency": "EUR", "period": "event" },
     "availability": { "type": "always" }
@@ -203,7 +203,7 @@
     "city": 24915,
     "type": [5247, 5250],
     "suitableFor": [4855, 4943],
-    "status": "approved",
+    "moderationStatus": "approved",
     "tier": "standard",
     "pricing": { "type": "from", "amount": 25, "currency": "EUR", "period": "event" },
     "availability": { "type": "always" }
