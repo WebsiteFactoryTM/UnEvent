@@ -355,6 +355,13 @@ export function UnifiedListingForm({
     <FormProvider {...methods}>
       <form
         onSubmit={handleSubmit(onSubmit as any, onFormError)}
+        onKeyDown={(e) => {
+          // Prevent form submission on Enter key unless on last tab
+          if (e.key === 'Enter' && !isLastTab && e.target instanceof HTMLElement && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            handleNext();
+          }
+        }}
         className="flex flex-col"
       >
         <Tabs
