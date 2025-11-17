@@ -11,8 +11,16 @@ export const Services: CollectionConfig = {
   slug: 'services',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'city', 'status', 'owner'],
+    defaultColumns: ['title', 'city', 'moderationStatus', '_status', 'owner'],
     group: 'Listings',
+    preview: (doc) => {
+      return `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/api/preview?url=${encodeURIComponent(
+        `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/services/${doc.slug}`,
+      )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
+    },
+  },
+  versions: {
+    drafts: true,
   },
   access: {
     read: ({ req }) => approvedOnlyPublic({ req }),

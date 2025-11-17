@@ -8,7 +8,7 @@ export const revalidateListing: CollectionAfterChangeHook<Location | Service | E
 }) => {
   const { payload } = req
 
-  if (doc.status === 'approved') {
+  if (doc.moderationStatus === 'approved') {
     revalidate({ payload, collection: collection.slug as string, slug: doc.slug as string })
   }
 

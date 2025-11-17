@@ -11,8 +11,16 @@ export const Events: CollectionConfig = {
   slug: 'events',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'city', 'status', 'startDate', 'owner'],
+    defaultColumns: ['title', 'city', 'moderationStatus', '_status', 'startDate', 'owner'],
     group: 'Listings',
+    preview: (doc) => {
+      return `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/api/preview?url=${encodeURIComponent(
+        `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/events/${doc.slug}`,
+      )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
+    },
+  },
+  versions: {
+    drafts: true,
   },
   timestamps: true,
   access: {

@@ -25,8 +25,8 @@ export const attachOwner = ({ data, req }: { data: any; req: any }) => {
 // Automatically set default status on create
 
 export const setDefaultStatus = ({ data, operation }: { data: any; operation: string }) => {
-  if (operation === 'create' && !data.status) {
-    data.status = 'pending'
+  if (operation === 'create' && !data.moderationStatus) {
+    data.moderationStatus = 'pending'
   }
   return data
 }

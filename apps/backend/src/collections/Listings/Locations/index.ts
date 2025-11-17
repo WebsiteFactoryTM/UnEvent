@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { sharedListingFields } from '../fields.shared'
 import { attachOwner, autoSlug, setDefaultStatus } from '../_hooks/beforeValidate'
-import { approvedOrOwnDraft, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
+import { approvedOnlyPublic, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
@@ -11,14 +11,22 @@ export const Locations: CollectionConfig = {
   slug: 'locations',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'city', 'status', 'owner'],
+    defaultColumns: ['title', 'city', 'moderationStatus', '_status', 'owner'],
     group: 'Listings',
+    preview: (doc) => {
+      return `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/api/preview?url=${encodeURIComponent(
+        `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/locations/${doc.slug}`,
+      )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
+    },
   },
   access: {
-    read: ({ req }) => approvedOrOwnDraft({ req }),
+    read: ({ req }) => approvedOnlyPublic({ req }),
     create: ({ req }) => requireRole(['host'])({ req }),
     update: ({ req }) => isOwnerOrAdmin({ req }),
     delete: ({ req }) => isOwnerOrAdmin({ req }),
+  },
+  versions: {
+    drafts: true,
   },
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],

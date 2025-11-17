@@ -50,7 +50,7 @@ export const sharedListingFields: Field[] = [
     ],
   },
   {
-    name: 'status',
+    name: 'moderationStatus',
     type: 'select',
     options: ['pending', 'approved', 'rejected', 'draft'],
     defaultValue: 'pending',
@@ -63,7 +63,7 @@ export const sharedListingFields: Field[] = [
   {
     name: 'rejectionReason',
     type: 'textarea',
-    admin: { condition: (data) => data?.status === 'rejected' },
+    admin: { condition: (data) => data?.moderationStatus === 'rejected' },
   },
   { name: 'featuredImage', type: 'upload', relationTo: 'media', required: false },
   { name: 'gallery', type: 'upload', relationTo: 'media', hasMany: true },
