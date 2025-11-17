@@ -1,5 +1,6 @@
 import { authOptions } from "@/auth";
 import { UnifiedListingForm } from "@/components/cont/listings/UnifiedListingForm";
+import BackButton from "@/components/cont/shared/BackButton";
 import { getUserListing } from "@/lib/api/accountListings";
 import { getServerSession } from "next-auth";
 import React from "react";
@@ -40,6 +41,7 @@ const EditLocationPage = async ({
             Editează locația tău
           </p>
         </div>
+        <BackButton href="/cont/locatiile-mele" />
       </div>
       <UnifiedListingForm
         listingType="location"

@@ -1,5 +1,6 @@
 import React from "react";
 import { UnifiedListingForm } from "@/components/cont/listings/UnifiedListingForm";
+import BackButton from "@/components/cont/shared/BackButton";
 
 const CreateEventPage = () => {
   return (
@@ -13,6 +14,7 @@ const CreateEventPage = () => {
             Adaugă un eveniment nou pe platformă
           </p>
         </div>
+        <BackButton href="/cont/evenimentele-mele" />
       </div>
       <UnifiedListingForm listingType="event" />
     </div>

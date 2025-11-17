@@ -1,8 +1,8 @@
 import { FaCheck } from "react-icons/fa6";
-import type { Service } from "@/types/payload-types";
+import type { ServiceListing } from "@/types/listings";
 
 interface ServiceOfferTagsProps {
-  service: Service;
+  service: ServiceListing;
 }
 
 export function ServiceOfferTags({ service }: ServiceOfferTagsProps) {

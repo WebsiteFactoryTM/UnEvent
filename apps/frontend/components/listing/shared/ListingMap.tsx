@@ -1,11 +1,11 @@
 import { FaLocationDot, FaMapLocationDot } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
-import type { Location } from "@/types/payload-types";
+import type { LocationListing } from "@/types/listings";
 import Link from "next/link";
 
 interface ListingMapProps {
   cityName: string;
-  venue?: Location;
+  venue?: LocationListing;
   address: string;
 }
 

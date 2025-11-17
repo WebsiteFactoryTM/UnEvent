@@ -1,10 +1,6 @@
-import { FaPencil, FaPlus } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa6";
 import { SectionCard } from "@/components/cont/SectionCard";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import type { Location } from "@/types/payload-types";
-import MobileListingView from "@/components/cont/MobileListingView";
-import DesktopListingView from "@/components/cont/DesktopListingView";
 import { getQueryClient } from "@/lib/react-query/config";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";

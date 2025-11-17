@@ -1,9 +1,10 @@
 import { FaStar, FaLocationDot } from "react-icons/fa6";
-import type { Service, Profile } from "@/types/payload-types";
+import type { ServiceListing } from "@/types/listings";
+import type { Profile } from "@/types/payload-types";
 import { ListingActions } from "../shared/ListingActions";
 
 interface ServiceHeroProps {
-  service: Service;
+  service: ServiceListing;
 }
 
 export default function ServiceHero({ service }: ServiceHeroProps) {
@@ -11,7 +12,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
     typeof service.owner === "object" ? (service.owner as Profile) : null;
   const cityName =
     typeof service.city === "object" && service.city ? service.city.name : "";
-  const isVerified = provider?.verified?.status === "approved";
+  const isVerified = provider?.verifiedStatus === "approved";
 
   const serviceCategories =
     service.type && service.type.length > 0

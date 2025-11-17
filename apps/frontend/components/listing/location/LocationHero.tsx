@@ -8,11 +8,11 @@ import {
   FaFacebook,
   FaInstagram,
 } from "react-icons/fa6";
-import type { Location } from "@/types/payload-types";
+import type { LocationListing } from "@/types/listings";
 import { ListingActions } from "../shared/ListingActions";
 
 interface LocationHeroProps {
-  location: Location;
+  location: LocationListing;
 }
 
 export function LocationHero({ location }: LocationHeroProps) {

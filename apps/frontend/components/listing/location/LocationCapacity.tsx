@@ -1,9 +1,9 @@
 import { FaUsers, FaSquareParking, FaChair } from "react-icons/fa6";
-import type { Location } from "@/types/payload-types";
+import { LocationListing } from "@/types/listings";
 
 interface LocationCapacityProps {
-  capacity: Location["capacity"];
-  surface: Location["surface"];
+  capacity: LocationListing["capacity"];
+  surface: LocationListing["surface"];
 }
 
 export function LocationCapacity({ capacity, surface }: LocationCapacityProps) {

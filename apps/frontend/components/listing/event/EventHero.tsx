@@ -1,10 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { FaStar, FaCalendar, FaTicket, FaUsers } from "react-icons/fa6";
-import type { Event } from "@/types/payload-types";
+import type { EventListing } from "@/types/listings";
 import { ListingActions } from "../shared/ListingActions";
 
 interface EventHeroProps {
-  event: Event;
+  event: EventListing;
 }
 
 export default function EventHero({ event }: EventHeroProps) {
@@ -43,7 +43,7 @@ export default function EventHero({ event }: EventHeroProps) {
             {event?.title}
           </h1>
           <div className="flex gap-2 shrink-0">
-            {event?.status === "approved" && (
+            {event?.moderationStatus === "approved" && (
               <Badge className="bg-green-500/90 backdrop-blur-sm">
                 Verificat
               </Badge>

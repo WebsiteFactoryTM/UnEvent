@@ -2,7 +2,9 @@ import { authOptions } from "@/auth";
 import { UnifiedListingForm } from "@/components/cont/listings/UnifiedListingForm";
 import { getUserListing } from "@/lib/api/accountListings";
 import { getServerSession } from "next-auth";
+import Link from "next/link";
 import React from "react";
+import BackButton from "@/components/cont/shared/BackButton";
 
 const EditEventPage = async ({
   params,
@@ -30,7 +32,7 @@ const EditEventPage = async ({
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -40,6 +42,7 @@ const EditEventPage = async ({
             Editează evenimentul tău
           </p>
         </div>
+        <BackButton href="/cont/evenimentele-mele" />
       </div>
       <UnifiedListingForm
         listingType="event"

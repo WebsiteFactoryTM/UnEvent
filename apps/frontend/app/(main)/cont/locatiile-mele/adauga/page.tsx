@@ -1,5 +1,6 @@
 import React from "react";
 import { UnifiedListingForm } from "@/components/cont/listings/UnifiedListingForm";
+import BackButton from "@/components/cont/shared/BackButton";
 
 const CreateLocationPage = () => {
   return (
@@ -13,6 +14,7 @@ const CreateLocationPage = () => {
             Adaugă o nouă locație pe platformă
           </p>
         </div>
+        <BackButton href="/cont/locatiile-mele" />
       </div>
       <UnifiedListingForm listingType="location" />
     </div>

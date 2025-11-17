@@ -9,10 +9,10 @@ import {
   FaFacebook,
   FaInstagram,
 } from "react-icons/fa6";
-import type { Location } from "@/types/payload-types";
+import type { LocationListing } from "@/types/listings";
 
 interface LocationHostCardProps {
-  location: Location;
+  location: LocationListing;
 }
 
 export function LocationHostCard({ location }: LocationHostCardProps) {
@@ -43,7 +43,7 @@ export function LocationHostCard({ location }: LocationHostCardProps) {
               <h3 className="font-semibold">
                 {owner.displayName || owner.name}
               </h3>
-              {owner.verified?.status === "approved" && (
+              {owner.verifiedStatus === "approved" && (
                 <Badge variant="secondary" className="text-xs">
                   Verificat
                 </Badge>
