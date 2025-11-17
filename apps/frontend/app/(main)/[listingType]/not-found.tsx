@@ -10,12 +10,7 @@ export const metadata: Metadata = {
     "Această listare nu există. Reveniți la pagina principală pentru a explora locații, servicii și evenimente.",
 };
 
-export default async function NotFound({
-  params,
-}: {
-  params: Promise<{ listingType: string }>;
-}) {
-  const { listingType } = await params;
+export default async function NotFound() {
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 py-20">
       {/* Animated Background */}
@@ -34,7 +29,7 @@ export default async function NotFound({
 
           {/* Message */}
           <h2 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
-            Pagina {listingType} nu a fost găsită
+            Pagina nu a fost găsită
           </h2>
 
           <p className="text-foreground/70 mb-8 text-base md:text-lg">

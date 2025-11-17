@@ -20,7 +20,6 @@ import { ImagesTab } from "@/components/cont/shared/tabs/ImagesTab";
 import { FacilitiesTab } from "@/components/cont/locations/tabs/FacilitiesTab";
 import { InfoTab as LocationInfoTab } from "@/components/cont/locations/tabs/InfoTab";
 import { InfoTab as ServiceInfoTab } from "@/components/cont/services/tabs/InfoTab";
-import { ServicesTab } from "@/components/cont/services/tabs/ServicesTab";
 import { InfoTab as EventInfoTab } from "@/components/cont/events/tabs/InfoTab";
 import { ScheduleTab } from "@/components/cont/events/tabs/ScheduleTab";
 import {
@@ -89,9 +88,6 @@ export function UnifiedListingForm({
   // Define tabs based on listing type
   const tabs = [
     { value: "info", label: "Informații" },
-    ...(listingType === "service"
-      ? [{ value: "services", label: "Servicii" }]
-      : []),
     { value: "address", label: "Adresă" },
     ...(listingType === "location"
       ? [{ value: "facilities", label: "Facilități" }]
@@ -388,12 +384,6 @@ export function UnifiedListingForm({
               {listingType === "service" && <ServiceInfoTab />}
               {listingType === "event" && <EventInfoTab />}
             </TabsContent>
-
-            {listingType === "service" && (
-              <TabsContent value="services" className="mt-0 space-y-6">
-                <ServicesTab />
-              </TabsContent>
-            )}
 
             <TabsContent value="address" className="mt-0 space-y-6">
               <AddressTab />
