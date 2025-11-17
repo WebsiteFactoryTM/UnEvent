@@ -77,7 +77,10 @@ const baseListingSchema = z.object({
   }),
 
   // Status for draft functionality
-  status: z.enum(["draft", "pending"]).default("pending"),
+  moderationStatus: z
+    .enum(["draft", "pending", "approved", "rejected"])
+    .default("pending"),
+  _status: z.enum(["draft", "published"]).default("draft"),
 });
 
 // Location-specific schema
@@ -202,7 +205,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
   .refine(
     (data) => {
       // Strict validation only for pending (submission) status
-      if (data.status === "draft") return true;
+      if (data.moderationStatus === "draft") return true;
 
       // For submission, require title to be at least 5 characters
       if (data.title.length < 5) return false;
@@ -217,7 +220,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
   .refine(
     (data) => {
       // For submission, require description (min 50 chars)
-      if (data.status === "draft") return true;
+      if (data.moderationStatus === "draft") return true;
 
       return data.description && data.description.length >= 50;
     },
@@ -230,7 +233,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
   .refine(
     (data) => {
       // For submission, require city
-      if (data.status === "draft") return true;
+      if (data.moderationStatus === "draft") return true;
 
       return data.city && data.city > 0;
     },
@@ -242,7 +245,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
   .refine(
     (data) => {
       // For submission, require address
-      if (data.status === "draft") return true;
+      if (data.moderationStatus === "draft") return true;
 
       return data.address && data.address.length >= 5;
     },
@@ -254,7 +257,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
   .refine(
     (data) => {
       // For submission, require contact email OR phone
-      if (data.status === "draft") return true;
+      if (data.moderationStatus === "draft") return true;
 
       const hasEmail = data.contact.email && data.contact.email.length > 0;
       const hasPhone =
@@ -305,7 +308,7 @@ export function defaultListingFormValues(
       youtube: "",
       tiktok: "",
     },
-    status: "draft" as const, // Default to draft
+    moderationStatus: "draft" as const, // Default to draft
   };
 
   if (listingType === "location") {

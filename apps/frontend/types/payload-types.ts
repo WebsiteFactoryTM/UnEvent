@@ -368,7 +368,7 @@ export interface Event {
   /**
    * Status of the listing
    */
-  status?: ("pending" | "approved" | "rejected" | "draft") | null;
+  moderationStatus?: ("pending" | "approved" | "rejected" | "draft") | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
@@ -603,7 +603,7 @@ export interface Location {
   /**
    * Status of the listing
    */
-  status?: ("pending" | "approved" | "rejected" | "draft") | null;
+  moderationStatus?: ("pending" | "approved" | "rejected" | "draft") | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
@@ -777,7 +777,7 @@ export interface Service {
   /**
    * Status of the listing
    */
-  status?: ("pending" | "approved" | "rejected" | "draft") | null;
+  moderationStatus?: ("pending" | "approved" | "rejected" | "draft") | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
@@ -1517,7 +1517,7 @@ export interface EventsSelect<T extends boolean = true> {
         phone?: T;
         website?: T;
       };
-  status?: T;
+  moderationStatus?: T;
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
@@ -1613,7 +1613,7 @@ export interface LocationsSelect<T extends boolean = true> {
         phone?: T;
         website?: T;
       };
-  status?: T;
+  moderationStatus?: T;
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
@@ -1707,7 +1707,7 @@ export interface ServicesSelect<T extends boolean = true> {
         phone?: T;
         website?: T;
       };
-  status?: T;
+  moderationStatus?: T;
   rejectionReason?: T;
   featuredImage?: T;
   gallery?: T;
