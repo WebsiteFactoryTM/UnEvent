@@ -27,21 +27,21 @@ export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
     })
     const newLocations = await payload.find({
       collection: 'locations',
-      where: { status: { equals: 'approved' } },
+      where: { moderationStatus: { equals: 'approved' } },
       limit: 6,
       sort: '-createdAt',
       depth: 2,
     })
     const newServices = await payload.find({
       collection: 'services',
-      where: { status: { equals: 'approved' } },
+      where: { moderationStatus: { equals: 'approved' } },
       limit: 6,
       sort: '-createdAt',
       depth: 2,
     })
     const newEvents = await payload.find({
       collection: 'events',
-      where: { status: { equals: 'approved' } },
+      where: { moderationStatus: { equals: 'approved' } },
       limit: 6,
       sort: 'startDate',
       depth: 2,
@@ -77,21 +77,21 @@ const getHomeListings = async (
     const [featuredLocations, topServices, upcomingEvents] = await Promise.all([
       payload.find({
         collection: 'locations',
-        where: { featured: { equals: true }, status: { equals: 'approved' } },
+        where: { featured: { equals: true }, moderationStatus: { equals: 'approved' } },
         limit: 6,
         sort: '-rating',
         depth: 1,
       }),
       payload.find({
         collection: 'services',
-        where: { status: { equals: 'approved' } },
+        where: { moderationStatus: { equals: 'approved' } },
         limit: 6,
         sort: '-rating',
         depth: 1,
       }),
       payload.find({
         collection: 'events',
-        where: { status: { equals: 'approved' } },
+        where: { moderationStatus: { equals: 'approved' } },
         limit: 6,
         sort: 'startDate',
         depth: 1,
@@ -138,7 +138,7 @@ function shapeListing(
     reviewCount: typeof doc?.reviewCount === 'number' ? doc.reviewCount : undefined,
     tier: doc?.tier,
     featuredImage: typeof doc?.featuredImage === 'object' ? doc.featuredImage : null,
-    city: typeof doc?.city === 'object' ? doc.city : null,
+    city: typeof doc?.city === 'object' ? doc.city : undefined,
     description: doc?.description,
     capacity: (doc as Location)?.capacity,
     startDate: (doc as Event)?.startDate,

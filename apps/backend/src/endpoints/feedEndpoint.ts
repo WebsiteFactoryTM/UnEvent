@@ -76,7 +76,7 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     // Step 1: Build entity filters (facets)
     const whereEntity: Where = {
       and: [
-        { status: { equals: 'approved' } }, // Only approved listings
+        { moderationStatus: { equals: 'approved' } }, // Only approved listings
       ],
     }
 
@@ -372,7 +372,7 @@ function toCardItem(
     title: doc.title as string,
     cityLabel: (doc.city as City)?.name ?? '',
     imageUrl: getImageURL(doc),
-    verified: doc.status === 'approved',
+    verified: doc.verifiedStatus === 'approved',
     ratingAvg: doc.rating as number | undefined,
     ratingCount: doc.reviewCount as number | undefined,
     description: doc.description as string,

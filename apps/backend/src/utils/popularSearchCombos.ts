@@ -46,7 +46,7 @@ export async function buildPopularSearchCombos(
         // If your schema differs, switch to filtering by IDs: 'city' in [id], 'type' in [id].
         const where = {
           AND: [
-            { status: { equals: 'approved' } },
+            { moderationStatus: { equals: 'approved' } },
             { 'city.slug': { equals: city.slug } },
             { 'type.slug': { equals: t.slug } },
           ],

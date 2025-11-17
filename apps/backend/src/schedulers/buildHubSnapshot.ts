@@ -60,7 +60,7 @@ export async function buildHubSnapshot(
   // 1) Featured nationwide (adjust filters to your schema)
   const featured = await payload.find({
     collection,
-    where: { status: { equals: 'approved' }, tier: { in: ['recommended', 'sponsored'] } }, // adapt
+    where: { moderationStatus: { equals: 'approved' }, tier: { in: ['recommended', 'sponsored'] } }, // adapt
     sort: '-verified,-rating,-reviewsCount,-updatedAt',
     limit: 12,
     depth: 1, // keep snapshots light & fast
@@ -80,7 +80,7 @@ export async function buildHubSnapshot(
       collection,
       where: {
         'city.slug': { equals: citySlug }, // adapt to your city field path
-        status: { equals: 'approved' },
+        moderationStatus: { equals: 'approved' },
         tier: { in: ['recommended', 'sponsored'] },
       },
       sort: '-verified,-rating,-reviewsCount,-updatedAt',
@@ -171,7 +171,7 @@ function toCardItem(
     title: doc.title as string,
     cityLabel: (doc.city as City)?.name ?? '',
     imageUrl: getImageURL(doc),
-    verified: doc.status === 'approved',
+    verified: doc.verifiedStatus === 'approved',
     ratingAvg: doc.rating as number | undefined,
     ratingCount: doc.reviewCount as number | undefined,
     description: doc.description as string,
