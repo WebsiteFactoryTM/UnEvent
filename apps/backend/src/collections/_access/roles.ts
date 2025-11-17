@@ -31,17 +31,24 @@ export const publicReadOwnerOrAdminWrite: Access = ({ req }) => {
   return { owner: { equals: profileId } }
 }
 
-// Only approved listings visible publicly
-export const approvedOnlyPublic: Access = ({ req, data: doc }) => {
-  if (req.user?.roles.includes('admin')) return true
-  if (doc.moderationStatus === 'approved') return true
+// Approved listings are public; draft listings only visible to their owner (or admins)
+export const approvedOrOwnDraft: Access = ({ req }) => {
+  const user = req.user
 
-  // Allow draft only if logged in AND owner
-  const profileId =
-    typeof req.user?.profile === 'number' ? req.user?.profile : req.user?.profile?.id
-  if (profileId && profileId === doc.owner) return true
+  if (user?.roles?.includes('admin')) return true
 
-  return false
+  const conditions: Where[] = [{ moderationStatus: { equals: 'approved' } }]
+
+  if (user) {
+    const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
+    if (profileId) {
+      conditions.push({
+        and: [{ moderationStatus: { in: ['draft', 'pending'] } }, { owner: { equals: profileId } }],
+      })
+    }
+  }
+
+  return { or: conditions }
 }
 
 // Ensure user has a specific role before creating

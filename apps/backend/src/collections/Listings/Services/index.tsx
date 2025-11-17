@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { sharedListingFields } from '../fields.shared'
 import { autoSlug, attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
-import { isOwnerOrAdmin, requireRole, approvedOnlyPublic } from '@/collections/_access/roles'
+import { isOwnerOrAdmin, requireRole, approvedOrOwnDraft } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
@@ -23,7 +23,7 @@ export const Services: CollectionConfig = {
     drafts: true,
   },
   access: {
-    read: ({ req }) => approvedOnlyPublic({ req }),
+    read: ({ req }) => approvedOrOwnDraft({ req }),
     create: ({ req }) => requireRole(['provider'])({ req }),
     update: ({ req }) => isOwnerOrAdmin({ req }),
     delete: ({ req }) => isOwnerOrAdmin({ req }),
