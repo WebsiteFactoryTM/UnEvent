@@ -9,26 +9,85 @@ import seedServices from '@/scripts/seed/seed-services'
 import seedListings from '@/scripts/seed/seed-listings'
 import { getRedis } from '@/utils/redis'
 
+// Map of option values to their corresponding seed functions
+const seedFunctions = {
+  cities: seedCities,
+  facilities: seedFacilities,
+  listingTypes: seedListingTypes,
+  locations: seedLocations,
+  events: seedEvents,
+  services: seedServices,
+  listings: seedListings,
+} as const
+
+type SeedOption = keyof typeof seedFunctions
+
 // Script must define a "script" function export that accepts the sanitized config
 export const seed: PayloadHandler = async (req) => {
-  if (!req.user && isAdmin({ req })) {
+  if (!req.user || !isAdmin({ req })) {
     return new Response('Unauthorized', { status: 401 })
   }
+
+  // Extract option from query parameters
+  const option = (req.query?.option as SeedOption | undefined) || null
+
+  if (!option) {
+    return new Response(
+      JSON.stringify({
+        error: 'Missing required query parameter: option',
+        availableOptions: Object.keys(seedFunctions),
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
+  }
+
+  if (!seedFunctions[option]) {
+    return new Response(
+      JSON.stringify({
+        error: `Invalid option: ${option}`,
+        availableOptions: Object.keys(seedFunctions),
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
+  }
+
   const redis = getRedis()
-  const lockKey = 'locks:seed-cities'
+  const lockKey = `locks:seed-${option}`
   // try to acquire lock for 15 minutes
   const locked = await redis.set(lockKey, String(Date.now()), 'EX', 15 * 60, 'NX')
   if (!locked) {
-    return new Response('Seed already running', { status: 409 })
+    return new Response(JSON.stringify({ error: `Seed for "${option}" already running` }), {
+      status: 409,
+      headers: { 'Content-Type': 'application/json' },
+    })
   }
 
-  // Listings-only seeding (media -> locations -> events -> services)
-  // await seedListings(req.payload)
   try {
-    console.log('seeding...')
-    await seedListings(req.payload)
-    // await seedCities(req.payload)
-    return new Response('Successfully seeded!', { status: 200 })
+    console.log(`Seeding ${option}...`)
+    const seedFunction = seedFunctions[option]
+    await seedFunction(req.payload)
+    return new Response(JSON.stringify({ message: `Successfully seeded ${option}!` }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (error) {
+    console.error(`Error seeding ${option}:`, error)
+    return new Response(
+      JSON.stringify({
+        error: `Failed to seed ${option}`,
+        details: error instanceof Error ? error.message : String(error),
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
   } finally {
     await redis.del(lockKey)
   }
