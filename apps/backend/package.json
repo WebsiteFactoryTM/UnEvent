@@ -5,8 +5,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "prebuild": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
-    "postbuild": "cross-env NODE_OPTIONS=--no-deprecation pnpm migrate:custom || echo 'Custom SQL migrations skipped - will run after PayloadCMS migrations create tables'",
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation PORT=4000 next dev",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation PORT=4000 next dev",
