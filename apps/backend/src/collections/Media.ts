@@ -5,7 +5,25 @@ export const Media: CollectionConfig = {
   slug: 'media',
   admin: { useAsTitle: 'filename' },
   access: {
-    read: () => true,
+    read: ({ req, data }) => {
+      const doc = data
+      // Public contexts: listing, avatar, event - accessible to everyone
+      if (doc?.context === 'listing' || doc?.context === 'avatar' || doc?.context === 'event') {
+        return true
+      }
+      // Private contexts: verification, document - require authentication
+      if (doc?.context === 'verification' || doc?.context === 'document') {
+        if (!req.user) return false
+        // Admins can access all private documents
+        if (isAdmin({ req })) return true
+        // Users can only access their own documents
+        const profileId =
+          typeof req.user?.profile === 'number' ? req.user?.profile : req.user?.profile?.id
+        return !!profileId && doc?.uploadedBy === profileId
+      }
+      // Default: allow read (fallback for any other contexts)
+      return true
+    },
     create: () => true,
     update: ({ req }) => {
       if (isAdmin({ req })) return true

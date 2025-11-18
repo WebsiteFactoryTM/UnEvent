@@ -1,25 +1,92 @@
-import Redis from 'ioredis'
+import { Redis as UpstashRedis } from '@upstash/redis'
 
-let redisClient: Redis | null = null
+let upstashClient: UpstashRedis | null = null
 
-export function getRedis(): Redis {
+// Compatibility wrapper to make Upstash Redis work like ioredis
+function createRedisWrapper(client: UpstashRedis) {
+  return {
+    // Basic operations - work the same
+    async get(key: string): Promise<string | null> {
+      return await client.get(key)
+    },
+
+    async set(key: string, value: string, ...args: unknown[]): Promise<string | null> {
+      // Handle ioredis-style: set(key, value, 'EX', seconds, 'NX')
+      // or: set(key, value, 'EX', seconds)
+      if (args.length > 0 && args[0] === 'EX') {
+        const seconds = args[1] as number
+        const hasNX = args.length > 2 && args[2] === 'NX'
+
+        if (hasNX) {
+          // SET key value EX seconds NX
+          return await client.set(key, value, { ex: seconds, nx: true })
+        } else {
+          // SET key value EX seconds
+          return await client.set(key, value, { ex: seconds })
+        }
+      }
+      // Simple set without expiration
+      return await client.set(key, value)
+    },
+
+    async incr(key: string): Promise<number> {
+      return await client.incr(key)
+    },
+
+    async del(...keys: string[]): Promise<number> {
+      return await client.del(...keys)
+    },
+
+    async expire(key: string, seconds: number): Promise<number> {
+      return await client.expire(key, seconds)
+    },
+
+    async scan(cursor: string | number, ...args: unknown[]): Promise<[string, string[]]> {
+      // Handle ioredis-style: scan(cursor, 'MATCH', pattern, 'COUNT', count)
+      if (args.length >= 2 && args[0] === 'MATCH') {
+        const pattern = args[1] as string
+        const count = args.length >= 4 && args[2] === 'COUNT' ? (args[3] as number) : 100
+
+        // Upstash scan returns tuple [cursor, keys] directly
+        const [newCursor, keys] = await client.scan(Number(cursor), {
+          match: pattern,
+          count: count,
+        })
+        // Convert to [cursor, keys] format (already in correct format)
+        return [String(newCursor), keys]
+      }
+      // Simple scan without pattern
+      const [newCursor, keys] = await client.scan(Number(cursor))
+      return [String(newCursor), keys]
+    },
+  }
+}
+
+let redisClient: ReturnType<typeof createRedisWrapper> | null = null
+
+export function getRedis() {
   if (!redisClient) {
-    redisClient = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-      password: process.env.REDIS_PASSWORD,
-      db: parseInt(process.env.REDIS_DB || '0', 10),
-      retryStrategy: (times) => {
-        const delay = Math.min(times * 50, 2000)
-        return delay
-      },
+    const upstashUrl = process.env.PAYLOAD_PRIVATE_UPSTASH_REDIS_REST_URL
+    const upstashToken = process.env.PAYLOAD_PRIVATE_UPSTASH_REDIS_REST_TOKEN
+
+    if (!upstashUrl || !upstashToken) {
+      throw new Error(
+        'Upstash Redis credentials not found. Please set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN environment variables.',
+      )
+    }
+
+    upstashClient = new UpstashRedis({
+      url: upstashUrl,
+      token: upstashToken,
     })
+
+    redisClient = createRedisWrapper(upstashClient)
   }
   return redisClient
 }
+
 export async function closeRedis(): Promise<void> {
-  if (redisClient) {
-    await redisClient.quit()
-    redisClient = null
-  }
+  // Upstash REST API client doesn't need explicit cleanup
+  redisClient = null
+  upstashClient = null
 }

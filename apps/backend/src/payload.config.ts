@@ -6,6 +6,9 @@ import path from 'path'
 import { buildConfig, Field } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
+import { r2Adapter } from './utils/r2Adapter'
+import { shouldUseCloudStorage } from './utils/storage'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -182,6 +185,28 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
+    // Cloud Storage Plugin (R2) - only enabled when R2 credentials are configured
+    // Phase 1: Uses public bucket for all files. Private bucket routing will be added in Phase 2.
+    ...(shouldUseCloudStorage()
+      ? [
+          cloudStoragePlugin({
+            collections: {
+              media: {
+                adapter: r2Adapter,
+                // Generate file URL for public bucket
+                generateFileURL: ({ prefix, filename }) => {
+                  const filePrefix = prefix || 'listing/temp'
+                  const publicUrl =
+                    process.env.R2_PUBLIC_URL || process.env.R2_PUBLIC_ENDPOINT?.replace('/api', '')
+                  return `${publicUrl}/${filePrefix}/${filename}`
+                },
+                // Prefix files by context for organization
+                prefix: 'media',
+              },
+            },
+          }),
+        ]
+      : []),
     openapi({ openapiVersion: '3.0', metadata: { title: 'Dev API', version: '0.0.1' } }),
     swaggerUI({ docsUrl: '/swagger', specEndpoint: '/openapi.json', enabled: true }),
     searchPlugin({

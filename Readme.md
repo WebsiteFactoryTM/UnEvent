@@ -6,24 +6,75 @@ UnEvent is a modern event management platform designed to provide seamless event
 
 ## Tech Stack
 
-- **Next.js** – React framework for the frontend.
-- **PayloadCMS v3** – Headless CMS for backend content management.
-- **PostgreSQL** – Relational database for data storage.
-- **Redis** – In-memory data store used for caching and session management.
-- **pnpm Workspaces** – Efficient monorepo package management.
-- **Docker** – Containerization for consistent development and deployment environments.
+### Frontend
+- **Next.js 15** (App Router) – React framework with server-side rendering and static generation
+- **React 19** – UI library
+- **TypeScript** – Type-safe development
+- **Tailwind CSS 4** – Utility-first CSS framework with black-and-white minimalist design
+- **React Query (TanStack Query)** – Server state management and data fetching
+- **React Hook Form + Zod** – Form handling and validation
+- **ioredis** – Redis client for caching
+- **NextAuth.js** – Authentication
+- **shadcn/ui** – UI component library
+
+### Backend
+- **PayloadCMS v3** – Headless CMS and API framework
+- **Node.js** – Runtime environment
+- **PostgreSQL** – Relational database (via `@payloadcms/db-postgres`)
+- **Redis** (ioredis) – In-memory data store for caching and performance
+- **Next.js 15** – PayloadCMS runs on Next.js
+
+### Infrastructure & Tools
+- **PostgreSQL** – Primary database (Neon.tech for cloud, Docker for local)
+- **Redis** – Caching layer (Upstash for cloud, Docker for local)
+- **Cloudflare R2 / AWS S3** – File storage for media uploads
+- **Docker & Docker Compose** – Containerization for local development
+- **pnpm Workspaces** – Monorepo package management
+- **TypeScript** – Type safety across the stack
+
+### Monitoring & Deployment (Optional)
+- **Sentry** – Error tracking and performance monitoring
+- **Vercel** – Frontend hosting
+- **Render** – Backend hosting
+- **Neon.tech** – Managed PostgreSQL
+- **Upstash** – Serverless Redis
+
+### Development Tools
+- **ESLint** – Code linting
+- **Prettier** – Code formatting
+- **Vitest** – Unit testing
+- **Playwright** – E2E testing
+
+## Architecture
+
+UnEvent follows a **monorepo architecture** with clear separation between frontend and backend:
+
+- **Backend** (`apps/backend`): PayloadCMS v3 with PostgreSQL, providing REST and GraphQL APIs
+- **Frontend** (`apps/frontend`): Next.js 15 App Router with React Server Components and Client Components
+- **Shared** (`packages/shared`): Shared utilities and types (if any)
+
+### Key Features
+
+- **Event Listings**: Locations, Services, and Events management
+- **User Profiles**: Multi-role system (host, provider, organizer, client)
+- **Reviews & Ratings**: User-generated content with moderation
+- **Favorites System**: User bookmarking functionality
+- **Search & Filtering**: Advanced filtering with Redis caching
+- **Media Management**: Cloud storage integration (R2/S3)
+- **Geographic Data**: 14,000+ Romanian cities with geo coordinates
 
 ## Repository Structure
 
-- `apps/backend` – Contains the PayloadCMS backend application.
-- `apps/frontend` – Contains the Next.js frontend application.
-- `packages/shared` – Shared utilities and components used across backend and frontend.
+- `apps/backend` – PayloadCMS backend application with collections, hooks, and endpoints
+- `apps/frontend` – Next.js frontend application with App Router
+- `packages/shared` – Shared utilities and components (if any)
+- `docs/` – Documentation including deployment plans and storage estimates
 
 ## Requirements
 
 Before getting started, ensure you have the following installed on your local machine:
 
-- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [Node.js](https://nodejs.org/) (v20.11.1+ required, see `package.json` engines)
 - [pnpm](https://pnpm.io/) (version 9.1.0 is used in this project)
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 - Git
@@ -112,6 +163,11 @@ Before getting started, ensure you have the following installed on your local ma
   pnpm test
   ```
 
+## Documentation
+
+- **[Deployment Plan](docs/DEPLOYMENT_PLAN.md)** – Comprehensive guide for deploying to test and production environments
+- **[Storage Capacity Estimate](docs/STORAGE_CAPACITY_ESTIMATE.md)** – Database storage capacity breakdown for Neon free tier
+
 ## Collaboration Guidelines
 
 Welcome aboard! To get started quickly:
@@ -120,7 +176,8 @@ Welcome aboard! To get started quickly:
 - Make sure to keep your branch up to date with the main branch.
 - Use pnpm workspaces to manage dependencies efficiently.
 - For any environment-specific configurations, update your `.env` files accordingly.
+- Check the [Deployment Plan](docs/DEPLOYMENT_PLAN.md) for deployment procedures.
 - Reach out to the team or check the documentation if you encounter any issues.
 - When contributing, please write clear commit messages and follow the project's coding standards.
 
-By following these guidelines, developers like Ernest can onboard smoothly and contribute effectively to the UnEvent project.
+By following these guidelines, developers can onboard smoothly and contribute effectively to the UnEvent project.

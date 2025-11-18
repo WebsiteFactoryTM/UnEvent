@@ -25,12 +25,15 @@ services:
 
       # Don't require a "master" password after logging in
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
-  redis:
-    image: redis:7
-    container_name: unevent_redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    command: ["redis-server", "--appendonly", "yes"]
-    volumes:
-      - ./docker-data/redis:/data
+  # Redis is now provided by Upstash (REST API)
+  # Local Redis service removed - use Upstash REST API instead
+  # Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN environment variables
+  # redis:
+  #   image: redis:7
+  #   container_name: unevent_redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   command: ["redis-server", "--appendonly", "yes"]
+  #   volumes:
+  #     - ./docker-data/redis:/data
