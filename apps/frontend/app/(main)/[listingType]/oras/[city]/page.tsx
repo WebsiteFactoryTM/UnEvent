@@ -19,7 +19,7 @@ import { getListingTypeSlug } from "@/lib/getListingType";
 import { ArchiveSchema } from "@/components/archives/ArchiveSchema";
 import { PaginationSEO } from "@/components/archives/PaginationSEO";
 
-export const revalidate = process.env.NODE_ENV === "production" ? 3600 : 60;
+export const revalidate = 3600;
 // export async function generateStaticParams() {
 //   return listingTypes.flatMap((listingType) => cities.map((c) => ({ listingType, city: c.slug })))
 // }

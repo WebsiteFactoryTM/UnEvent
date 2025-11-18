@@ -5,8 +5,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { FaStar } from "react-icons/fa6";
-import type { ReviewMock } from "@/mocks/profile";
-import type { Profile } from "@/types/payload-types copy";
+// TODO: Restore mock type import when mock files are created
+// import type { ReviewMock } from "@/mocks/profile";
+import type { Profile } from "@/types/payload-types";
+
+// Temporary interface until mock files are restored
+interface ReviewMock {
+  id: string;
+  authorName: string;
+  authorAvatar?: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
 
 interface ProfileReviewsProps {
   reviews: ReviewMock[];

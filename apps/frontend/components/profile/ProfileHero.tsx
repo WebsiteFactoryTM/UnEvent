@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { FaStar, FaCircleCheck } from "react-icons/fa6";
-import type { User, Profile } from "@/types/payload-types copy";
+import type { User, Profile } from "@/types/payload-types";
 
 interface ProfileHeroProps {
   user: User & { profile: Profile };
@@ -11,7 +11,7 @@ interface ProfileHeroProps {
 
 export function ProfileHero({ user }: ProfileHeroProps) {
   const profile = user.profile;
-  const isVerified = profile.verified?.status === "approved";
+  const isVerified = profile.verifiedStatus === "approved";
   const memberSince = profile.memberSince
     ? new Date(profile.memberSince).toLocaleDateString("ro-RO", {
         day: "numeric",
