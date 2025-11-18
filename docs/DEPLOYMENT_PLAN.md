@@ -566,14 +566,14 @@ SENTRY_AUTH_TOKEN=your-auth-token
     - [ ] Set `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` environment variables
   - [x] Test connection
 - [ ] **Storage**: Configure file storage (Cloudflare R2 for production)
-  - [ ] Create R2 public bucket: `unevent-media-public`
-  - [ ] Configure public bucket: Enable public read, set up CORS for your domain
-  - [ ] Create R2 private bucket: `unevent-media-private`
-  - [ ] Configure private bucket: No public access (access controlled via PayloadCMS)
-  - [ ] Generate R2 API token with read/write permissions
-  - [ ] Copy access key ID and secret access key
-  - [ ] Get R2 endpoint URLs from bucket settings
-  - [ ] Set environment variables: `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_PUBLIC_BUCKET`, `R2_PUBLIC_ENDPOINT`, `R2_PUBLIC_URL`, `R2_PRIVATE_BUCKET`, `R2_PRIVATE_ENDPOINT`
+  - [x] Create R2 public bucket: `unevent-media-public`
+  - [x] Configure public bucket: Enable public read, set up CORS for your domain
+  - [x] Create R2 private bucket: `unevent-media-private`
+  - [x] Configure private bucket: No public access (access controlled via PayloadCMS)
+  - [x] Generate R2 API token with read/write permissions
+  - [x] Copy access key ID and secret access key
+  - [x] Get R2 endpoint URLs from bucket settings
+  - [x] Set environment variables: `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_PUBLIC_BUCKET`, `R2_PUBLIC_ENDPOINT`, `R2_PUBLIC_URL`, `R2_PRIVATE_BUCKET`, `R2_PRIVATE_ENDPOINT`
   - [ ] Note: Leave R2 vars unset for local development (uses local file storage)
 - [ ] **Backend Hosting**: Set up backend service (Render/VPS)
   - [ ] Connect GitHub repository
