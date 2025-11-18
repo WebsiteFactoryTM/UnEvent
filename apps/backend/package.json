@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "prebuild": "cross-env NODE_OPTIONS=--no-deprecation payload migrate && payload generate:types && payload generate:importmap",
+    "prebuild": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation PORT=4000 next dev",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation PORT=4000 next dev",
