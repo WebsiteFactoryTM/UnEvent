@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -38,9 +38,10 @@ export function ArchiveFilter({
 }: ArchiveFilterProps) {
   const [isOpen, setIsOpen] = useState(defaultIsOpen);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const { filters, setFilter, applyFilters, errors, setErrors } = useFilters({
-    listingType,
-  });
+  const { filters, setFilter, setFilters, applyFilters, errors, setErrors } =
+    useFilters({
+      listingType,
+    });
   const { data } = useQuery({
     queryKey: ["taxonomies"],
     queryFn: () => fetchTaxonomies(),
@@ -55,6 +56,48 @@ export function ArchiveFilter({
     limit: 20,
     // popularFallback: true,
   });
+
+  // Helper function to handle city changes with geo filter updates
+  const handleCityChange = useCallback(
+    (citySlug: string) => {
+      // Find the selected city in citiesData to get its geo coordinates
+      const selectedCity = citiesData?.find((city) => city.slug === citySlug);
+
+      // If city has geo coordinates, update geo filters to center on city
+      if (
+        selectedCity?.geo &&
+        Array.isArray(selectedCity.geo) &&
+        selectedCity.geo.length === 2
+      ) {
+        // City geo is [lat, lon] format
+        const [lon, lat] = selectedCity.geo;
+        // Update city and geo filters together
+        setFilters({
+          city: citySlug,
+          // Clear old geo filters and set new ones based on city center
+          lat: lat,
+          lng: lon,
+          mapCenterLat: lat,
+          mapCenterLng: lon,
+          mapZoom: 12, // Default zoom for city view
+          radius: undefined, // Clear radius - let backend use default or calculate
+        });
+      } else {
+        // City doesn't have geo - just update city and clear geo filters
+        setFilters({
+          city: citySlug,
+          lat: undefined,
+          lng: undefined,
+          mapCenterLat: undefined,
+          mapCenterLng: undefined,
+          mapZoom: undefined,
+          radius: undefined,
+        });
+      }
+      setErrors({ city: "" });
+    },
+    [citiesData, setFilters, setErrors],
+  );
 
   const eventWhenOptions = [
     { value: "orice", label: "Orice dată" },
@@ -147,10 +190,7 @@ export function ArchiveFilter({
                         ) || []
                     }
                     value={String(filters.city || "")}
-                    onValueChange={(v) => {
-                      setFilter("city", v);
-                      setErrors({ city: "" });
-                    }}
+                    onValueChange={handleCityChange}
                     placeholder="Selectează orașul"
                     searchPlaceholder="Caută oraș..."
                     className="w-full"
@@ -435,10 +475,7 @@ export function ArchiveFilter({
                         ) || []
                     }
                     value={String(filters.city || "")}
-                    onValueChange={(v) => {
-                      setFilter("city", v);
-                      setErrors({ city: "" });
-                    }}
+                    onValueChange={handleCityChange}
                     placeholder="Selectează orașul"
                     searchPlaceholder="Caută oraș..."
                     className="w-full"
@@ -451,7 +488,6 @@ export function ArchiveFilter({
                   <Select
                     value={String(filters.eventWhen || "")}
                     onValueChange={(v) => {
-                      console.log("Selected eventWhen:", v);
                       setFilter("eventWhen", v);
                       // Clear specific date when changing option
                       if (v !== "specific") {

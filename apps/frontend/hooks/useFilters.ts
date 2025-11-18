@@ -1,7 +1,14 @@
 "use client";
 import { ListingType } from "@/types/listings";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+  startTransition,
+} from "react";
 
 function getFiltersFromSearchParams(searchParams: URLSearchParams) {
   const entries = Object.fromEntries(searchParams.entries());
@@ -35,6 +42,9 @@ export function useFilters(
     return { ...defaults, ...params };
   }, [searchParams, defaults]);
 
+  // Track previous city to detect changes
+  const prevCityRef = useRef<string | undefined>(currentCity);
+
   // Local state for pending filter changes
   const [pendingFilters, setPendingFilters] = useState<
     Record<string, string | number | undefined>
@@ -42,6 +52,29 @@ export function useFilters(
     ...initialFilters,
     city: currentCity,
   });
+
+  // Use ref to always get the latest pendingFilters value (avoids closure stale state)
+  const pendingFiltersRef = useRef(pendingFilters);
+  useEffect(() => {
+    pendingFiltersRef.current = pendingFilters;
+  }, [pendingFilters]);
+
+  // Detect city changes via URL (path) and clear geo filters
+  useEffect(() => {
+    if (prevCityRef.current && prevCityRef.current !== currentCity) {
+      // City changed via URL - clear geo filters as they're no longer accurate
+      setPendingFilters((prev) => ({
+        ...prev,
+        lat: undefined,
+        lng: undefined,
+        mapCenterLat: undefined,
+        mapCenterLng: undefined,
+        mapZoom: undefined,
+        radius: undefined,
+      }));
+    }
+    prevCityRef.current = currentCity;
+  }, [currentCity]);
 
   // Current filters (combination of URL params and pending changes)
   const filters = useMemo(() => {
@@ -60,46 +93,78 @@ export function useFilters(
     }));
   }, []);
 
-  const applyFilters = useCallback(() => {
-    const params = new URLSearchParams(searchParams);
+  const setFilters = useCallback(
+    (filters: Record<string, string | number | undefined>) => {
+      // Update multiple filters at once
+      setPendingFilters((prev) => {
+        const updated = { ...prev };
+        Object.entries(filters).forEach(([key, value]) => {
+          updated[key] =
+            value === undefined || value === "" || value === null
+              ? undefined
+              : value;
+        });
+        return updated;
+      });
+    },
+    [],
+  );
 
-    // Handle city filter (path-based)
-    const cityValue = pendingFilters.city;
+  const applyFilters = useCallback(
+    (overrideFilters?: Record<string, string | number | undefined>) => {
+      const params = new URLSearchParams(searchParams);
 
-    // Apply other filters to query params
-    Object.entries(pendingFilters).forEach(([key, value]) => {
-      if (key === "city") return; // Already handled above
+      // Use override filters if provided, otherwise use latest pendingFilters from ref
+      // This ensures we always get the most recent state, even if called immediately after setFilter
+      const filtersToApply = overrideFilters || pendingFiltersRef.current;
 
-      if (value === undefined || value === "" || value === null) {
-        params.delete(key);
-      } else {
-        params.set(key, String(value));
+      // Handle city filter (path-based)
+      const cityValue = filtersToApply.city;
+
+      // Apply other filters to query params
+      Object.entries(filtersToApply).forEach(([key, value]) => {
+        if (key === "city") return; // Already handled above
+
+        if (value === undefined || value === "" || value === null) {
+          params.delete(key);
+        } else {
+          params.set(key, String(value));
+        }
+      });
+
+      let newPath = `/${entity}/oras/${currentCity}`;
+      if (cityValue && typeof cityValue === "string") {
+        newPath = `/${entity}/oras/${cityValue}`;
       }
-    });
 
-    let newPath = `/${entity}/oras/`;
-    if (cityValue && typeof cityValue === "string") {
-      newPath = `/${entity}/oras/${cityValue}`;
-    }
+      if (!cityValue && !params.get("city") && !overrideFilters) {
+        setErrors({ city: "Orașul este obligatoriu" });
+        return;
+      }
 
-    if (!cityValue && !params.get("city")) {
-      setErrors({ city: "Orașul este obligatoriu" });
-      return;
-    }
+      const query = params.toString();
 
-    const query = params.toString();
+      const newUrl = `${newPath}${query ? `?${query}` : ""}`;
 
-    router.push(`${newPath}${query ? `?${query}` : ""}`, {
-      scroll: false,
-    });
+      // Use replace instead of push to avoid showing loading state on filter changes
+      // Use startTransition to mark navigation as non-urgent
+      startTransition(() => {
+        router.replace(newUrl, {
+          scroll: false,
+        });
+      });
 
-    // Clear pending filters after applying
-    // setPendingFilters({});
-  }, [router, pathname, searchParams, entity, pendingFilters]);
+      // Clear pending filters after applying
+      // setPendingFilters({});
+    },
+    [router, pathname, searchParams, entity, currentCity],
+  );
 
   const resetFilters = useCallback(() => {
     setPendingFilters({});
-    router.push(pathname, { scroll: false });
+    startTransition(() => {
+      router.push(pathname, { scroll: false });
+    });
   }, [router, pathname]);
 
   const hasPendingChanges = useMemo(() => {
@@ -109,6 +174,7 @@ export function useFilters(
   return {
     filters,
     setFilter,
+    setFilters,
     applyFilters,
     resetFilters,
     hasPendingChanges,
