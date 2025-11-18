@@ -1,8 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { beforeChange } from './hooks/beforeChange'
 import { importCitiesFromCsv } from './endpoints/importCsv'
-import { approvedOnlyPublic, isAdmin } from '../_access/roles'
-import { getRedis } from '@/utils/redis'
+import { isAdmin } from '../_access/roles'
 
 const Cities: CollectionConfig = {
   slug: 'cities',
