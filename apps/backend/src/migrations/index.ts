@@ -1,7 +1,9 @@
-// Migration file 20251117_105007.json exists but cannot be imported as a module
-// If needed, convert to TypeScript or handle JSON import differently
-// For now, only including the TypeScript migration
+import * as migration_20251118_162727_initial_schema from './20251118_162727_initial_schema'
 
 export const migrations = [
-  // Migration 20251117_105007.json skipped - JSON migrations need special handling
+  {
+    up: migration_20251118_162727_initial_schema.up,
+    down: migration_20251118_162727_initial_schema.down,
+    name: '20251118_162727_initial_schema',
+  },
 ]

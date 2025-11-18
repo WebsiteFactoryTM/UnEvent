@@ -79,8 +79,9 @@ To deploy UnEvent for free using managed services:
    - Free tier: 10K commands/day, perfect for testing
 3. **Deploy Payload to Render**  
    - Connect your GitHub repo.
-   - Set build command: `pnpm install && pnpm build`
+   - Set build command: `pnpm install && pnpm prebuild && pnpm build`
    - Set start command: `pnpm start`
+   - **Note**: The `pnpm migrate` script will automatically skip if tables don't exist yet (they'll be created during build if `MIGRATE_PUSH=true`)
    - Set environment variables:
      - `DATABASE_URI` (from Neon)
      - `PAYLOAD_SECRET` (random string)
@@ -556,9 +557,17 @@ SENTRY_AUTH_TOKEN=your-auth-token
 #### Backend Setup
 - [ ] **Database**: Create PostgreSQL database (Neon/Supabase)
   - [ ] Copy `DATABASE_URI` connection string
-  - [ ] **For first deployment**: Set `MIGRATE_PUSH=true` to auto-create tables from schema
-  - [ ] **After first deployment**: Set `MIGRATE_PUSH=false` (or unset) to use migrations
-  - [ ] Note: The prebuild script runs `payload migrate` - if no migrations exist, tables will be created via push mode if enabled
+  - [ ] **Migration Flow**: 
+    - **Before First Deployment (Local)**:
+      - Generate initial migration: `pnpm migrate:create initial_schema` (creates migration from current schema)
+      - Commit the migration file to git
+    - **During Deployment**:
+      - `prebuild` runs `payload migrate` (applies PayloadCMS migrations - creates/updates tables)
+      - `postbuild` runs `pnpm migrate:custom` (Custom SQL migrations - adds indexes, only runs if tables exist)
+    - **For Schema Changes**:
+      - Make schema changes in collections
+      - Run `pnpm migrate:create <name>` to generate migration
+      - Commit and deploy - migrations run automatically
 - [ ] **Redis**: Set up Redis instance (Upstash/Redis Cloud)
   - [ ] Create Redis database
   - [ ] **For Upstash** (Free tier - REST API only):
@@ -577,10 +586,14 @@ SENTRY_AUTH_TOKEN=your-auth-token
   - [x] Get R2 endpoint URLs from bucket settings
   - [x] Set environment variables: `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_PUBLIC_BUCKET`, `R2_PUBLIC_ENDPOINT`, `R2_PUBLIC_URL`, `R2_PRIVATE_BUCKET`, `R2_PRIVATE_ENDPOINT`
   - [ ] Note: Leave R2 vars unset for local development (uses local file storage)
-- [ ] **Backend Hosting**: Set up backend service (Render/VPS)
+  - [ ] **Backend Hosting**: Set up backend service (Render/VPS)
   - [ ] Connect GitHub repository
-  - [ ] Configure build command: `pnpm install && pnpm build`
+  - [ ] Configure build command: `pnpm install && pnpm prebuild && pnpm build`
   - [ ] Configure start command: `pnpm start`
+  - [ ] **Migration Notes**: 
+    - PayloadCMS migrations run during `prebuild` (via `payload migrate`)
+    - Custom SQL migrations run during `postbuild` (only if tables exist)
+    - If no migrations exist, set `MIGRATE_PUSH=true` as fallback (creates tables from schema)
   - [ ] Set all environment variables (see section 5)
   - [ ] Enable auto-deploy from main branch
   - [ ] Test backend health endpoint
@@ -668,9 +681,10 @@ DATABASE_URI=postgresql://user:password@host:5432/database
 PAYLOAD_SECRET=your-secret-key-min-32-characters
 
 # Database Migration Mode
-# Set MIGRATE_PUSH=true for first deployment to auto-create tables from schema
-# Set MIGRATE_PUSH=false (or unset) after first deployment to use migrations
-MIGRATE_PUSH=true  # Change to false after initial setup
+# PayloadCMS uses migrations - generate with: pnpm migrate:create <name>
+# For first deployment: Generate initial migration locally, then deploy
+# Custom SQL migrations (postgress_migrations/) run after PayloadCMS migrations via postbuild script
+# Fallback: Set MIGRATE_PUSH=true only if no migrations exist (creates tables from schema)
 
 # Redis - Upstash REST API (Recommended)
 UPSTASH_REDIS_REST_URL=https://your-db.upstash.io

@@ -129,8 +129,9 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
-    // Enable push mode for initial setup if MIGRATE_PUSH=true, otherwise use migrations
-    // Set MIGRATE_PUSH=true in production for first deployment, then switch to false
+    // Use migrations for schema changes (generate with: pnpm migrate:create <name>)
+    // Push mode is fallback only if no migrations exist (for first deployment without migrations)
+    // Set MIGRATE_PUSH=true only as fallback - prefer generating migrations instead
     push: process.env.MIGRATE_PUSH === 'true',
     migrationDir: path.resolve(dirname, 'migrations'),
     afterSchemaInit: [

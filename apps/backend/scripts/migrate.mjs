@@ -53,11 +53,44 @@ console.log(`Found ${migrationFiles.length} migration file(s):`)
 migrationFiles.forEach((file) => console.log(`  - ${file.split('/').pop()}`))
 console.log('Database:', DATABASE_URI.replace(/:([^:@]+)@/, ':****@')) // Hide password
 
+// Check if tables exist before running migrations
+async function checkTablesExist() {
+  return new Promise((resolve) => {
+    const checkQuery = spawn('psql', [
+      DATABASE_URI,
+      '-t',
+      '-c',
+      "SELECT EXISTS(SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users');",
+    ])
+
+    let output = ''
+    checkQuery.stdout.on('data', (data) => {
+      output += data.toString()
+    })
+
+    checkQuery.on('close', (code) => {
+      const exists = output.trim() === 't' || output.trim() === 'true'
+      resolve(exists)
+    })
+  })
+}
+
 // Function to run migrations sequentially
-function runNextMigration(index = 0) {
+async function runNextMigration(index = 0) {
   if (index >= migrationFiles.length) {
     console.log('🎉 All migrations completed successfully!')
     return
+  }
+
+  // Check if tables exist before running SQL migrations
+  if (index === 0) {
+    const tablesExist = await checkTablesExist()
+    if (!tablesExist) {
+      console.log('⚠️  Tables do not exist yet. Skipping SQL migrations.')
+      console.log('   Tables will be created by PayloadCMS during build (if MIGRATE_PUSH=true).')
+      console.log('   SQL migrations should be run after tables are created (post-deployment).')
+      process.exit(0)
+    }
   }
 
   const migrationFile = migrationFiles[index]
@@ -81,4 +114,7 @@ function runNextMigration(index = 0) {
 }
 
 // Start running migrations
-runNextMigration()
+runNextMigration().catch((error) => {
+  console.error('Error running migrations:', error)
+  process.exit(1)
+})

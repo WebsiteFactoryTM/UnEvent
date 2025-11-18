@@ -5,7 +5,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "prebuild": "cross-env NODE_OPTIONS=--no-deprecation payload migrate || echo 'Migration failed or no migrations to run - tables will be created via push mode if enabled'",
+    "prebuild": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
+    "postbuild": "cross-env NODE_OPTIONS=--no-deprecation pnpm migrate:custom || echo 'Custom SQL migrations skipped - will run after PayloadCMS migrations create tables'",
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation PORT=4000 next dev",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation PORT=4000 next dev",
@@ -16,8 +17,11 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "start:payload": "cross-env NODE_OPTIONS=--no-deprecation payload serve",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run seed",
-    "migrate": "node scripts/migrate.mjs",
-    "generate:cities": "node scripts/generate-cities.mjs"
+    "migrate:custom": "node scripts/migrate.mjs",
+    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
+    "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
+    "generate:cities": "node scripts/generate-cities.mjs",
+    "migrate:run": "cross-env NODE_OPTIONS=--no-deprecation payload migrate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.933.0",
