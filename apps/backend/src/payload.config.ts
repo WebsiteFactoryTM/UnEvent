@@ -64,7 +64,11 @@ export default buildConfig({
     },
   },
   cors: {
-    origins: ['http://localhost:3000', 'http://172.20.10.9:3000'],
+    origins: [
+      'http://localhost:3000',
+      'http://172.20.10.9:3000',
+      'https://un-event-frontend-olive.vercel.app',
+    ],
   },
   endpoints: [
     {

@@ -274,6 +274,7 @@ export interface Media {
   context: 'listing' | 'avatar' | 'event' | 'document' | 'verification';
   uploadedBy?: (number | null) | Profile;
   temp?: boolean | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1347,6 +1348,7 @@ export interface MediaSelect<T extends boolean = true> {
   context?: T;
   uploadedBy?: T;
   temp?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

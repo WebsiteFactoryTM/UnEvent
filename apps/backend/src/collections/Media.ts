@@ -63,6 +63,16 @@ export const Media: CollectionConfig = {
       defaultValue: true,
       label: 'Temporary file',
     },
+    {
+      name: 'prefix',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        hidden: true,
+      },
+      // This field is used by the cloud storage plugin
+      // It's automatically populated by the plugin when files are uploaded
+    },
   ],
   hooks: {
     beforeChange: [
