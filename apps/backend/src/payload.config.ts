@@ -42,6 +42,8 @@ import { ListingType } from './payload-types'
 import { registerSyncListingTypeCountersScheduler } from './schedulers/syncListingTypeCounters'
 import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters'
 import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia'
+import { migrations } from './migrations'
+
 import { getTaxonomies } from './endpoints/taxonomies'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -134,6 +136,8 @@ export default buildConfig({
     // Set MIGRATE_PUSH=true only as fallback - prefer generating migrations instead
     push: process.env.MIGRATE_PUSH === 'true',
     migrationDir: path.resolve(dirname, 'migrations'),
+    prodMigrations: migrations, // ⭐ THIS RUNS SCHEMA CREATION
+
     afterSchemaInit: [
       ({ schema, extendTable }) => {
         const tables = schema.tables as Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
