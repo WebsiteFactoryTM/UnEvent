@@ -321,11 +321,13 @@ export default buildConfig({
     }),
   ],
   onInit: async (payload) => {
-    initFeedSchedulers(payload)
-    // hourly, staggered minutes
-    registerBuildHubSnapshotScheduler(payload)
-    registerSyncListingTypeCountersScheduler(payload)
-    registerSyncCityCountersScheduler(payload)
-    registerCleanupTempMediaScheduler(payload)
+    if (process.env.NODE_ENV === 'production' && process.env.ENABLE_JOBS === 'true') {
+      initFeedSchedulers(payload)
+      // hourly, staggered minutes
+      registerBuildHubSnapshotScheduler(payload)
+      registerSyncListingTypeCountersScheduler(payload)
+      registerSyncCityCountersScheduler(payload)
+      registerCleanupTempMediaScheduler(payload)
+    }
   },
 })
