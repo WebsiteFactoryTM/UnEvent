@@ -129,7 +129,9 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
-    push: false, // Disable auto-push, use migrations instead
+    // Enable push mode for initial setup if MIGRATE_PUSH=true, otherwise use migrations
+    // Set MIGRATE_PUSH=true in production for first deployment, then switch to false
+    push: process.env.MIGRATE_PUSH === 'true',
     migrationDir: path.resolve(dirname, 'migrations'),
     afterSchemaInit: [
       ({ schema, extendTable }) => {

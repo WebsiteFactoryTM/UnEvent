@@ -72,7 +72,6 @@ export const syncCityCounters = async (payload: Payload) => {
  * Only runs when SCHEDULER_IS_PRIMARY=true to avoid duplicate runs across replicas.
  */
 export const registerSyncCityCountersScheduler = (payload: Payload) => {
-  syncCityCounters(payload)
   if (process.env.SCHEDULER_IS_PRIMARY !== 'true') {
     console.log('[syncCityCounters] scheduler disabled (SCHEDULER_IS_PRIMARY != true)')
     return

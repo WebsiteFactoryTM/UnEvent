@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "prebuild": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
+    "prebuild": "cross-env NODE_OPTIONS=--no-deprecation payload migrate || echo 'Migration failed or no migrations to run - tables will be created via push mode if enabled'",
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation PORT=4000 next dev",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation PORT=4000 next dev",

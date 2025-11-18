@@ -556,7 +556,9 @@ SENTRY_AUTH_TOKEN=your-auth-token
 #### Backend Setup
 - [ ] **Database**: Create PostgreSQL database (Neon/Supabase)
   - [ ] Copy `DATABASE_URI` connection string
-  - [ ] Run migrations if needed
+  - [ ] **For first deployment**: Set `MIGRATE_PUSH=true` to auto-create tables from schema
+  - [ ] **After first deployment**: Set `MIGRATE_PUSH=false` (or unset) to use migrations
+  - [ ] Note: The prebuild script runs `payload migrate` - if no migrations exist, tables will be created via push mode if enabled
 - [ ] **Redis**: Set up Redis instance (Upstash/Redis Cloud)
   - [ ] Create Redis database
   - [ ] **For Upstash** (Free tier - REST API only):
@@ -664,6 +666,11 @@ DATABASE_URI=postgresql://user:password@host:5432/database
 
 # Payload CMS
 PAYLOAD_SECRET=your-secret-key-min-32-characters
+
+# Database Migration Mode
+# Set MIGRATE_PUSH=true for first deployment to auto-create tables from schema
+# Set MIGRATE_PUSH=false (or unset) after first deployment to use migrations
+MIGRATE_PUSH=true  # Change to false after initial setup
 
 # Redis - Upstash REST API (Recommended)
 UPSTASH_REDIS_REST_URL=https://your-db.upstash.io
