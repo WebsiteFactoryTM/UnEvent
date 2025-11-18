@@ -7,10 +7,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter } from "next/navigation";
 import { fetchFeed } from "@/lib/api/feed";
 import { feedKeys } from "@/lib/cacheKeys";
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import { ListingCard } from "./ListingCard";
 import { ListingCardData } from "@/lib/normalizers/hub";
+import { ArchiveMapView } from "./ArchiveMapView";
+import { Button } from "@/components/ui/button";
+import { LayoutGrid, Map } from "lucide-react";
 
 // Utility function to convert eventWhen filter to date ranges
 function convertEventWhenToDates(
@@ -104,6 +107,7 @@ type CardItem = {
   startDate: string | undefined;
   capacity: number;
   tier: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
+  geo?: [number, number] | null;
 };
 
 const CityArchive = ({
@@ -122,6 +126,28 @@ const CityArchive = ({
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // Read viewMode from URL params, default to "grid"
+  const urlViewMode = searchParams.get("view") as "grid" | "map" | null;
+  const [viewMode, setViewMode] = useState<"grid" | "map">(
+    urlViewMode === "grid" || urlViewMode === "map" ? urlViewMode : "grid",
+  );
+
+  // Sync viewMode when URL params change (e.g., browser back/forward)
+  useEffect(() => {
+    const newViewMode = searchParams.get("view") as "grid" | "map" | null;
+    if (newViewMode === "grid" || newViewMode === "map") {
+      setViewMode(newViewMode);
+    }
+  }, [searchParams]);
+
+  // Update URL when viewMode changes
+  const handleViewModeChange = (mode: "grid" | "map") => {
+    setViewMode(mode);
+    const params = new URLSearchParams(searchParams);
+    params.set("view", mode);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
   const filters = useMemo(() => {
     const params = Object.fromEntries(searchParams.entries());
 
@@ -131,12 +157,20 @@ const CityArchive = ({
         ? convertEventWhenToDates(params.eventWhen, params.eventDate)
         : {};
 
+    // Parse numeric filters
+    const lat = params.lat ? Number(params.lat) : undefined;
+    const lng = params.lng ? Number(params.lng) : undefined;
+    const radius = params.radius ? Number(params.radius) : undefined;
+
     return {
       ...initialFilters,
       ...params,
       ...eventDateFilters, // Add converted date filters
       entity: getListingTypeSlug(entity),
       city,
+      lat: isNaN(lat as number) ? undefined : lat,
+      lng: isNaN(lng as number) ? undefined : lng,
+      radius: isNaN(radius as number) ? undefined : radius,
       page: (() => {
         const pageValue = Number(params.page || initialPage);
         return isNaN(pageValue) ? initialPage : pageValue;
@@ -148,9 +182,10 @@ const CityArchive = ({
     };
   }, [searchParams, entity, city, initialPage, initialLimit, initialFilters]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: feedKeys.list(filters),
     queryFn: () => fetchFeed(filters),
+    placeholderData: (previousData) => previousData, // Keep previous data while fetching
     // staleTime: 1000 * 60 * 5,
   });
 
@@ -158,6 +193,19 @@ const CityArchive = ({
     ...(data?.pinnedSponsored || []),
     ...(data?.organic || []),
   ];
+
+  // Transform listings for map view
+  const mapListings = useMemo(() => {
+    const transformed = combinedListings.map((item: CardItem) => ({
+      id: item.listingId,
+      slug: item.slug,
+      title: item.title,
+      geo: item.geo ?? undefined,
+      imageUrl: item.imageUrl,
+    }));
+
+    return transformed;
+  }, [combinedListings, filters]);
 
   const handlePageChange = (direction: "next" | "prev") => {
     const currentPage = filters.page || 1;
@@ -168,7 +216,9 @@ const CityArchive = ({
     router.push(`?${newParams.toString()}`);
   };
 
-  if (isLoading) {
+  // Only show loading skeleton on initial load (when there's no data at all)
+  // Use isFetching for subtle loading indicators while keeping existing data visible
+  if (isLoading && !data) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Array.from({ length: 9 }).map((_, i) => (
@@ -180,56 +230,110 @@ const CityArchive = ({
 
   if (!combinedListings.length) {
     return (
-      <p className="text-center text-muted-foreground py-12">
-        Nicio listare găsită.
-      </p>
+      <div className="space-y-4">
+        <div className="flex justify-end gap-2">
+          <Button
+            variant={viewMode === "grid" ? "default" : "outline"}
+            size="sm"
+            onClick={() => handleViewModeChange("grid")}
+          >
+            <LayoutGrid className="h-4 w-4 mr-2" />
+            Grid
+          </Button>
+          <Button
+            variant={viewMode === "map" ? "default" : "outline"}
+            size="sm"
+            onClick={() => handleViewModeChange("map")}
+          >
+            <Map className="h-4 w-4 mr-2" />
+            Hartă
+          </Button>
+        </div>
+        <p className="text-center text-muted-foreground py-12">
+          Nicio listare găsită.
+        </p>
+      </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {combinedListings.map((item: CardItem) => (
-          <ListingCard
-            key={item.slug}
-            id={item.listingId}
-            name={item.title}
-            slug={item.slug}
-            description={item.description}
-            image={{
-              url: item.imageUrl || "/placeholder.svg",
-              alt: item.title,
-            }}
-            city={item.cityLabel}
-            type={item.type}
-            verified={item.verified}
-            rating={
-              item.ratingAvg
-                ? { average: item.ratingAvg, count: item.ratingCount || 0 }
-                : undefined
-            }
-            views={0}
-            listingType={entity}
-          />
-        ))}
+      {/* View Toggle */}
+      <div className="flex justify-end gap-2">
+        <Button
+          variant={viewMode === "grid" ? "default" : "outline"}
+          size="sm"
+          onClick={() => handleViewModeChange("grid")}
+        >
+          <LayoutGrid className="h-4 w-4 mr-2" />
+          Grid
+        </Button>
+        <Button
+          variant={viewMode === "map" ? "default" : "outline"}
+          size="sm"
+          onClick={() => handleViewModeChange("map")}
+        >
+          <Map className="h-4 w-4 mr-2" />
+          Hartă
+        </Button>
       </div>
 
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={() => handlePageChange("prev")}
-          disabled={filters.page <= 1}
-          className="px-4 py-2 border rounded disabled:opacity-50"
-        >
-          ← Înapoi
-        </button>
-        <button
-          onClick={() => handlePageChange("next")}
-          disabled={!data?.meta?.hasMore}
-          className="px-4 py-2 border rounded disabled:opacity-50"
-        >
-          Înainte →
-        </button>
-      </div>
+      {/* Grid View */}
+      {viewMode === "grid" && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {combinedListings.map((item: CardItem) => (
+              <ListingCard
+                key={item.slug}
+                id={item.listingId}
+                name={item.title}
+                slug={item.slug}
+                description={item.description}
+                image={{
+                  url: item.imageUrl || "/placeholder.svg",
+                  alt: item.title,
+                }}
+                city={item.cityLabel}
+                type={item.type}
+                verified={item.verified}
+                rating={
+                  item.ratingAvg
+                    ? { average: item.ratingAvg, count: item.ratingCount || 0 }
+                    : undefined
+                }
+                views={0}
+                listingType={entity}
+              />
+            ))}
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => handlePageChange("prev")}
+              disabled={filters.page <= 1}
+              className="px-4 py-2 border rounded disabled:opacity-50"
+            >
+              ← Înapoi
+            </button>
+            <button
+              onClick={() => handlePageChange("next")}
+              disabled={!data?.meta?.hasMore}
+              className="px-4 py-2 border rounded disabled:opacity-50"
+            >
+              Înainte →
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Map View */}
+      {viewMode === "map" && (
+        <ArchiveMapView
+          listingType={entity}
+          listings={mapListings}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   );
 };

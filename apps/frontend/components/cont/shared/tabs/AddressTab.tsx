@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,8 @@ import { useCities } from "@/lib/react-query/cities.queries";
 import type { UnifiedListingFormData } from "@/forms/listing/schema";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useDebounce } from "@/hooks/useDebounce";
-import { GoogleMap } from "@/components/common/GoogleMaps";
+import { UniversalMap } from "@/components/common/UniversalMap";
+import { useMapSelectLocation } from "@/hooks/useMapSelectLocation";
 import { AddressInput } from "@/components/common/AddressInput";
 
 /**
@@ -46,18 +47,32 @@ export function AddressTab() {
   const geoCoords = watch("geo");
   const addressValue = watch("address");
 
+  // Use map selection hook
+  const { markers, handleMapClick, setMarker } = useMapSelectLocation({
+    initialLat: geoCoords?.lat,
+    initialLng: geoCoords?.lon,
+    onLocationSelect: (lat, lng) => {
+      setValue("geo.lat", lat, { shouldValidate: true });
+      setValue("geo.lon", lng, { shouldValidate: true });
+    },
+  });
+
+  // Update marker when geoCoords change from AddressInput
+  useEffect(() => {
+    if (geoCoords?.lat && geoCoords?.lon) {
+      setMarker(geoCoords.lat, geoCoords.lon);
+    }
+  }, [geoCoords?.lat, geoCoords?.lon, setMarker]);
+
   const selectedCityData = useMemo(() => {
-    return (
-      citiesData
-        ?.filter((city) => city.id === selectedCity)
-        ?.map((city) => ({
-          id: city.id.toString(),
-          title: city.name || "",
-          detailPath: `/oras/${city.slug}`,
-          latitude: city.geo?.[1] || undefined,
-          longitude: city.geo?.[0] || undefined,
-        })) || []
-    );
+    const city = citiesData?.find((c) => c.id === selectedCity);
+    if (city && city.geo && Array.isArray(city.geo) && city.geo.length === 2) {
+      return {
+        lat: city.geo[1],
+        lng: city.geo[0],
+      };
+    }
+    return null;
   }, [citiesData, selectedCity]);
 
   const handleManualPinToggle = (checked: boolean) => {
@@ -69,28 +84,25 @@ export function AddressTab() {
     const selectedCity = citiesData?.find(
       (city) => city.id === parseInt(cityId),
     );
-    if (selectedCity) {
-      setValue("geo.lat", selectedCity.geo?.[1] || 0, { shouldValidate: true });
-      setValue("geo.lon", selectedCity.geo?.[0] || 0, { shouldValidate: true });
+    if (selectedCity && selectedCity.geo) {
+      const lat = selectedCity.geo[1] || 0;
+      const lng = selectedCity.geo[0] || 0;
+      setValue("geo.lat", lat, { shouldValidate: true });
+      setValue("geo.lon", lng, { shouldValidate: true });
+      setMarker(lat, lng);
     }
-
-    console.log(selectedCity);
   };
 
-  const markerItems = useMemo(() => {
+  // Map center: use selected location or city center
+  const mapCenter = useMemo(() => {
     if (geoCoords?.lat && geoCoords?.lon) {
-      return [
-        {
-          id: "address",
-          title: "Locație selectată",
-          latitude: geoCoords.lat,
-          longitude: geoCoords.lon,
-          detailPath: "#",
-        },
-      ];
+      return { lat: geoCoords.lat, lng: geoCoords.lon };
     }
-    return selectedCityData;
-  }, [geoCoords?.lat, geoCoords?.lon, selectedCityData]);
+    if (selectedCityData) {
+      return { lat: selectedCityData.lat, lng: selectedCityData.lng };
+    }
+    return { lat: 45.7494, lng: 21.2272 }; // Default to Timisoara
+  }, [geoCoords, selectedCityData]);
 
   return (
     <div className="space-y-6">
@@ -153,33 +165,18 @@ export function AddressTab() {
         )}
       </div>
 
-      {/* Map Placeholder */}
+      {/* Map */}
       <div className="space-y-3">
         <Label>Hartă și locație</Label>
 
         <div className="relative border rounded-lg overflow-hidden bg-muted/30">
-          <GoogleMap
-            items={markerItems}
-            center={
-              geoCoords
-                ? { lat: geoCoords.lat || 0, lng: geoCoords.lon || 0 }
-                : { lat: 0, lng: 0 }
-            }
+          <UniversalMap
+            onClick={handleMapClick}
+            markers={markers}
+            center={mapCenter}
             zoom={13}
-            autoFitBounds={true}
-            selectedCitySlug={
-              citiesData?.find((c) => c.id === selectedCity)?.slug || ""
-            }
-            cities={
-              citiesData?.map((city) => ({
-                id: city.id.toString(),
-                name: city.name || "",
-                slug: city.slug || "",
-                // Backend geo is [lon, lat]; Google expects { lat, lng }
-                lat: typeof city.geo?.[1] === "number" ? city.geo?.[1] : null,
-                lng: typeof city.geo?.[0] === "number" ? city.geo?.[0] : null,
-              })) || []
-            }
+            initialCenter={mapCenter}
+            initialZoom={13}
           />
         </div>
       </div>

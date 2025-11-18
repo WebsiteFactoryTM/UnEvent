@@ -5,7 +5,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import type { LocationListing } from "@/types/listings";
 import Link from "next/link";
-import { GoogleMap } from "@/components/common/GoogleMaps";
+import { UniversalMap } from "@/components/common/UniversalMap";
 import type { City } from "@/types/payload-types";
 
 interface ListingMapProps {
@@ -23,22 +23,20 @@ export const ListingMap = ({
   geo,
   city,
 }: ListingMapProps) => {
-  // Prepare map items based on whether we have geo coordinates
-  const mapItems = useMemo(() => {
-    const items = [];
-
-    // If we have geo coordinates for the listing, add it as a marker
+  // Prepare markers based on whether we have geo coordinates
+  const markers = useMemo(() => {
     if (geo?.lat && geo?.lon) {
-      items.push({
-        id: "listing",
-        title: venue?.title || address || "Locație",
-        latitude: geo.lat,
-        longitude: geo.lon,
-        detailPath: venue ? `/locatii/${venue.slug}` : "#",
-      });
+      return [
+        {
+          id: "listing",
+          title: venue?.title || address || "Locație",
+          latitude: geo.lat,
+          longitude: geo.lon,
+          detailPath: venue ? `/locatii/${venue.slug}` : "#",
+        },
+      ];
     }
-
-    return items;
+    return [];
   }, [geo, venue, address]);
 
   // Map center: use listing coords if available, otherwise city coords or default
@@ -53,21 +51,6 @@ export const ListingMap = ({
     // Default to Romania center
     return { lat: 45.9432, lng: 24.9668 };
   }, [geo, city]);
-
-  // Prepare cities data for the map
-  const cities = useMemo(() => {
-    if (!city) return [];
-    return [
-      {
-        id: city.id.toString(),
-        name: city.name || "",
-        slug: city.slug || "",
-        // Backend geo is [lon, lat]; Google expects { lat, lng }
-        lat: typeof city.geo?.[1] === "number" ? city.geo[1] : null,
-        lng: typeof city.geo?.[0] === "number" ? city.geo[0] : null,
-      },
-    ];
-  }, [city]);
 
   return (
     <div className="glass-card p-6 space-y-4">
@@ -98,15 +81,14 @@ export const ListingMap = ({
           </div>
         </div>
 
-        {/* Google Map */}
+        {/* Map */}
         <div className="rounded-lg overflow-hidden border border-border">
-          <GoogleMap
-            items={mapItems}
+          <UniversalMap
+            markers={markers}
             center={mapCenter}
             zoom={geo?.lat && geo?.lon ? 15 : 12}
-            autoFitBounds={false}
-            selectedCitySlug={city?.slug || ""}
-            cities={cities}
+            initialCenter={mapCenter}
+            initialZoom={geo?.lat && geo?.lon ? 15 : 12}
           />
         </div>
       </div>

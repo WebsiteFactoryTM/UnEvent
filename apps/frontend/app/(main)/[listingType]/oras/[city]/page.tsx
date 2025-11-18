@@ -123,6 +123,7 @@ export default async function CityArchivePage({
   await queryClient.setQueryData(feedKeys.list(filters), feedData);
 
   const dehydratedState = dehydrate(queryClient);
+
   return (
     <>
       <PaginationSEO baseUrl={baseUrl} page={page} hasMore={feedData.hasMore} />
