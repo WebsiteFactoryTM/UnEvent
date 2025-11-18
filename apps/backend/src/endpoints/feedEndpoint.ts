@@ -63,13 +63,13 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       capacityMax: req.query.capacityMax,
       lat: req.query.lat,
       lng: req.query.lng,
+      radius: req.query.radius,
       startDate: req.query.startDate,
       endDate: req.query.endDate,
     })
 
     // Create segment key for ranking (optional filters)
     const segmentKey = query.city && query.type ? `${query.city}|${query.type}` : null
-    console.log('segmentKey', segmentKey)
     const pinnedLimit = 3 // Reserve first 3 slots for sponsored
     const today = new Date().toISOString().slice(0, 10)
 
@@ -81,18 +81,31 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     }
 
     // Add optional city or geo filter
-    if (query.lat && query.lng) {
+    // When geo params are present, use geo filter (allows panning outside city boundaries)
+    // Otherwise, use city filter
+    // Note: 'near' adds ORDER BY distance which conflicts with DISTINCT when relationship joins exist
+    // So we only use 'near' when there are no relationship filters (type, suitableFor, etc.)
+    const hasRelationshipFilters = !!(query.type || query.suitableFor)
+
+    if (query.lat && query.lng && !hasRelationshipFilters) {
+      // Use 'near' only when no relationship filters (avoids DISTINCT conflict)
+      const radius = query.radius || 10000 // Default 10km if not provided
       whereEntity.and?.push({
-        geo: { near: [query.lat, query.lng, query.radius] },
+        geo: { near: [query.lng, query.lat, radius] },
       })
+    } else if (query.lat && query.lng && hasRelationshipFilters) {
+      // When relationship filters exist, fall back to city filter to avoid DISTINCT conflict
+      // TODO: Implement custom PostGIS query that doesn't add ORDER BY
+
+      if (query.city) {
+        whereEntity.and?.push({ 'city.slug': { equals: query.city } })
+      }
     } else if (query.city) {
       whereEntity.and?.push({ 'city.slug': { equals: query.city } })
     }
 
     // Add optional type filter (can be hasMany relationship)
     if (query.type) {
-      console.log('query.type', query.type)
-
       // Split comma-separated types and use 'in' for multiple values
       const typeSlugs = query.type.split(',').map((s) => s.trim())
       whereEntity.and?.push({ 'type.slug': { in: typeSlugs } })
@@ -184,9 +197,7 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       depth: 0,
     })
 
-    console.log('candidatePool', candidatePool.docs.length)
     const candidateIds = new Set(candidatePool.docs.map((d: Listing) => String(d.id)))
-    console.log('candidateIds', candidateIds.size)
     if (candidateIds.size === 0) {
       // No results - return empty response with cache headers
       return new Response(
@@ -359,6 +370,7 @@ function toCardItem(
   startDate: string | undefined
   capacity: number
   tier: 'new' | 'standard' | 'sponsored' | 'recommended' | null | undefined
+  geo: [number, number] | null | undefined
 } {
   let capacity = 0
   if (listingType === 'locations') {
@@ -380,6 +392,7 @@ function toCardItem(
     startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
     capacity: capacity,
     tier: doc.tier,
+    geo: doc.geo ?? null,
   }
 }
 function getImageURL(doc: Location | Service | Event): string | undefined {
