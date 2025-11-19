@@ -2,7 +2,10 @@ import NextAuth, { type NextAuthOptions, type Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { cookies } from "next/headers";
+
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -86,6 +89,29 @@ export const authOptions: NextAuthOptions = {
         token.exp = token.iat + token.maxAge;
         token.profileId =
           typeof user.profile === "number" ? user.profile : user.profile?.id;
+
+        // Set Payload token cookie when user signs in
+        // This is safer than using events in serverless environments
+        if (user.token) {
+          try {
+            const cookieStore = await cookies();
+            const isProduction =
+              process.env.NODE_ENV === "production" ||
+              process.env.VERCEL === "1";
+            cookieStore.set("payload-token", user.token, {
+              httpOnly: true,
+              secure: isProduction,
+              sameSite: "lax",
+              path: "/",
+              maxAge: user.rememberMe
+                ? TOKEN_LIFETIME_DAYS * 24 * 60 * 60
+                : 24 * 60 * 60,
+            });
+          } catch (err) {
+            // Cookie setting might fail in some edge cases, log but don't fail auth
+            console.error("Failed to set payload-token cookie:", err);
+          }
+        }
       }
 
       // Refresh if token about to expire (< 2 min left)
@@ -143,6 +169,20 @@ export const authOptions: NextAuthOptions = {
     },
   },
 
+  // Use cookies configuration for better Vercel compatibility
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure:
+          process.env.NODE_ENV === "production" || process.env.VERCEL === "1",
+      },
+    },
+  },
+
   pages: {
     signIn: "/auth/autentificare",
   },
@@ -151,19 +191,15 @@ export const authOptions: NextAuthOptions = {
     // next-auth will refresh automatically when expired if you add refresh logic later
   },
   events: {
-    async signIn({ user }) {
-      // create the Payload token cookie
-      const cookieStore = await cookies();
-      cookieStore.set("payload-token", user.token ?? "", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-      });
-    },
     async signOut() {
-      const cookieStore = await cookies();
-      cookieStore.delete("payload-token");
+      // Delete Payload token cookie on sign out
+      try {
+        const cookieStore = await cookies();
+        cookieStore.delete("payload-token");
+      } catch (err) {
+        // Cookie deletion might fail in some edge cases, log but don't fail
+        console.error("Failed to delete payload-token cookie:", err);
+      }
     },
   },
 };

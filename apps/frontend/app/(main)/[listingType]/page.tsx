@@ -131,7 +131,7 @@ export default async function ListingTypePage({
 
   if (featuredNormalized.length === 0 && cityRows.length === 0) {
     return (
-      <div className="text-muted-foreground">
+      <div className="h-screen flex items-center justify-center text-muted-foreground">
         Încă nu avem date pentru această secțiune. Revino curând.
       </div>
     );
