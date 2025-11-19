@@ -30,6 +30,8 @@ export const fetchHomeListings = async () => {
       },
     );
     if (!response.ok) {
+      console.error("Failed to fetch home listings:", response.statusText);
+      console.error("Response:", await response.text());
       throw new Error("Failed to fetch home listings");
     }
 
