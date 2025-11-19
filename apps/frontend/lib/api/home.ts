@@ -17,7 +17,11 @@ export const fetchHomeListings = async () => {
     const cachedData = await redis.get(cacheKey);
     if (cachedData) {
       console.log("Cached data found for home listings");
-      return JSON.parse(cachedData);
+      // Upstash Redis may return objects directly, so check type before parsing
+      if (typeof cachedData === "string") {
+        return JSON.parse(cachedData);
+      }
+      return cachedData;
     }
     console.log("🌐 Fetching home listings from API...");
 
@@ -26,7 +30,6 @@ export const fetchHomeListings = async () => {
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
         },
       },
     );
@@ -44,7 +47,13 @@ export const fetchHomeListings = async () => {
     console.error("Error fetching home listings:", error);
     // optional: fallback to last cached data if available
     const fallback = await redis.get(cacheKey);
-    if (fallback) return JSON.parse(fallback);
+    if (fallback) {
+      // Upstash Redis may return objects directly, so check type before parsing
+      if (typeof fallback === "string") {
+        return JSON.parse(fallback);
+      }
+      return fallback;
+    }
     throw new Error("No cached home listings available");
   }
 };

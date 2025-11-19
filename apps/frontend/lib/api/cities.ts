@@ -73,7 +73,11 @@ export async function getCities({
     const cacheKey = redisKey(citiesKeys.list({ url: fullUrl }));
     const cached = await redis.get(cacheKey);
     if (cached) {
-      return JSON.parse(cached);
+      // Upstash Redis may return objects directly, so check type before parsing
+      if (typeof cached === "string") {
+        return JSON.parse(cached);
+      }
+      return cached;
     }
 
     const res = await fetch(fullUrl, {

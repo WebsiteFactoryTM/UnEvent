@@ -126,7 +126,11 @@ export const fetchSimilarListings = async (
 
     if (cachedData) {
       console.log("Cached data found for similar listings");
-      return JSON.parse(cachedData);
+      // Upstash Redis may return objects directly, so check type before parsing
+      if (typeof cachedData === "string") {
+        return JSON.parse(cachedData);
+      }
+      return cachedData;
     }
 
     console.log("🌐 Fetching similar listings from API...");

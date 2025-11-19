@@ -14,7 +14,13 @@ export async function fetchTaxonomies({
   const cacheKey = redisKey(taxonomiesKeys.list({ fullList }));
   const cached = await redis.get(cacheKey);
 
-  if (cached) return JSON.parse(cached);
+  if (cached) {
+    // Upstash Redis may return objects directly, so check type before parsing
+    if (typeof cached === "string") {
+      return JSON.parse(cached);
+    }
+    return cached;
+  }
 
   try {
     const res = await fetch(`${API_URL}/api/taxonomies?fullList=${fullList}`);
