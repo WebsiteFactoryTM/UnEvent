@@ -132,7 +132,7 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
                   }}
                   city={(listing.city as City | null)?.name || "România"}
                   type={listing.type.map((type: any) => type.title).join(", ")}
-                  verified={listing.status === "approved"}
+                  verified={listing.verifiedStatus === "approved"}
                   views={listing.views || 0}
                   listingType={listingType}
                   capacity={(listing as Location).capacity ?? undefined}

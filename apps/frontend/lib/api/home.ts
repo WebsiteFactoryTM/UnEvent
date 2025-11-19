@@ -26,6 +26,7 @@ export const fetchHomeListings = async () => {
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
       },
     );
