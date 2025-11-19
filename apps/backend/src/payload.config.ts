@@ -204,14 +204,7 @@ export default buildConfig({
             collections: {
               media: {
                 adapter: r2Adapter,
-                // Generate file URL for public bucket
-                generateFileURL: ({ prefix, filename }) => {
-                  const filePrefix = prefix || 'listing/temp'
-                  const publicUrl =
-                    process.env.R2_PUBLIC_URL || process.env.R2_PUBLIC_ENDPOINT?.replace('/api', '')
-                  return `${publicUrl}/${filePrefix}/${filename}`
-                },
-                // Prefix files by context for organization
+
                 prefix: 'media',
               },
             },
