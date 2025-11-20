@@ -4,7 +4,7 @@ import { isAdmin } from '../_access/roles'
 
 export const HubSnapshots: CollectionConfig = {
   slug: 'hub-snapshots',
-  admin: { useAsTitle: 'listingType' },
+  admin: { useAsTitle: 'listingType', group: 'Listings' },
 
   access: {
     read: ({ req }) => !!req.user, // keep private; expose via custom endpoint

@@ -3,7 +3,7 @@ import { GlobalConfig } from 'payload'
 export const HomeConfig: GlobalConfig = {
   slug: 'homeListings',
   admin: {
-    group: 'Home',
+    group: 'Listings',
     description: 'Listings displayed on the home page',
   },
 
