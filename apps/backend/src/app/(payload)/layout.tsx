@@ -8,11 +8,18 @@ import React from 'react'
 
 import { importMap } from './admin/importMap.js'
 import './custom.scss'
+import { Metadata } from 'next'
 
 type Args = {
   children: React.ReactNode
 }
-
+export const metadata: Metadata = {
+  icons: {
+    icon: '/logo-unevent-favicon-white-on-black.png',
+    shortcut: '/logo-unevent-favicon-white-on-black.png',
+    apple: '/logo-unevent-favicon-white-on-black.png',
+  },
+}
 const serverFunction: ServerFunctionClient = async function (args) {
   'use server'
   return handleServerFunctions({

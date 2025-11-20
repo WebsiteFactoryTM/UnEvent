@@ -45,6 +45,7 @@ import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia
 import { migrations } from './migrations'
 
 import { getTaxonomies } from './endpoints/taxonomies'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -61,6 +62,32 @@ export default buildConfig({
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+    components: {
+      graphics: {
+        Logo: {
+          path: './components/Logo.tsx',
+          exportName: 'Logo',
+        },
+        Icon: {
+          path: './components/Icon.tsx',
+          exportName: 'Icon',
+        },
+      },
+    },
+    meta: {
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          url: '/logo-unevent-favicon-white-on-black.png',
+        },
+        {
+          rel: 'apple-touch-icon',
+          type: 'image/png',
+          url: '/logo-unevent-favicon-white-on-black.png',
+        },
+      ],
     },
   },
   cors: {

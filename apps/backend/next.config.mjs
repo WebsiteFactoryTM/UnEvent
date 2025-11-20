@@ -12,6 +12,15 @@ const nextConfig = {
 
     return webpackConfig
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/admin',
+        permanent: false, // Use 307 (temporary) instead of 308 (permanent)
+      },
+    ]
+  },
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })
