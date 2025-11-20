@@ -41,6 +41,7 @@
     "@types/google.maps": "^3.58.1",
     "@upstash/redis": "^1.35.6",
     "@vercel/analytics": "latest",
+    "@vercel/speed-insights": "^1.2.0",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

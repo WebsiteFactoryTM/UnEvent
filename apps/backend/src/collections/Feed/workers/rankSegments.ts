@@ -232,11 +232,11 @@ export async function rankSingle(
   targetId: number | string,
 ): Promise<void> {
   try {
-    // Load the target listing
+    // Load the target listing with depth 1 to get city and type slugs
     const listing = (await payload.findByID({
       collection: kind,
       id: String(targetId),
-      depth: 0,
+      depth: 1,
     })) as Listing | null
 
     if (!listing) {
@@ -249,24 +249,43 @@ export async function rankSingle(
       return
     }
 
-    // Resolve city id
+    // Resolve city slug (matching rankCollectionSegments)
+    const citySlug =
+      typeof listing.city === 'object' && listing.city !== null && 'slug' in listing.city
+        ? String(listing.city.slug)
+        : String(listing.city)
+
+    // Resolve city id for querying
     const cityId =
       typeof listing.city === 'object' && listing.city !== null && 'id' in listing.city
         ? String((listing.city as City).id)
         : String(listing.city)
 
-    // Resolve type ids (supports hasMany)
+    // Resolve type slugs and ids (supports hasMany)
     const rawTypes = Array.isArray((listing as Listing).type)
       ? (listing as Listing).type
       : [(listing as Listing).type]
-    const typeIds = rawTypes
-      .filter(Boolean)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((t: any) =>
-        typeof t === 'object' && t !== null && 'id' in t ? String(t.id) : String(t),
-      )
 
-    if (!typeIds.length) {
+    const typeSlugs: string[] = []
+    const typeIds: string[] = []
+
+    for (const typeRaw of rawTypes) {
+      if (!typeRaw) continue
+
+      const typeSlug =
+        typeof typeRaw === 'object' && typeRaw !== null && 'slug' in typeRaw
+          ? String(typeRaw.slug)
+          : String(typeRaw)
+      typeSlugs.push(typeSlug)
+
+      const typeId =
+        typeof typeRaw === 'object' && typeRaw !== null && 'id' in typeRaw
+          ? String((typeRaw as { id: string | number }).id)
+          : String(typeRaw)
+      typeIds.push(typeId)
+    }
+
+    if (!typeSlugs.length) {
       console.warn(`[Feed] rankSingle: ${kind} ${listing.id} has no type; skipping`)
       return
     }
@@ -291,17 +310,19 @@ export async function rankSingle(
     }
 
     // For each type, build the segment and re-rank that whole segment
-    for (const typeId of typeIds) {
-      const segmentKey = `${cityId}|${typeId}`
+    for (let i = 0; i < typeSlugs.length; i++) {
+      const typeSlug = typeSlugs[i]
+      const typeId = typeIds[i]
+      const segmentKey = `${citySlug}|${typeSlug}`
 
-      // Fetch all listings in this segment
+      // Fetch all listings in this segment (query by IDs, but segment key uses slugs)
       const segmentListingsRes = await payload.find({
         collection: kind,
         where: {
           and: [{ city: { equals: cityId } }, { type: { equals: typeId } }],
         },
         limit: 10000,
-        depth: 0,
+        depth: 1, // Need depth 1 to get city and type slugs for segment key consistency
         pagination: false,
       })
 

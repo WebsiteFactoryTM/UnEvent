@@ -1,11 +1,12 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -28,9 +29,11 @@ export default async function RootLayout({
         <Providers>
           <Header />
           <main className="pt-16">{children}</main>
+
           <Footer />
         </Providers>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
