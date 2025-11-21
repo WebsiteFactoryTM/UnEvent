@@ -22,7 +22,7 @@ interface UseMapExploreOptions {
     id: number;
     slug: string;
     title: string;
-    geo?: [number, number]; // [lon, lat]
+    geo?: [number, number]; // [lat, lng]
     imageUrl?: string;
   }>;
   isLoading?: boolean;
@@ -221,13 +221,13 @@ export function useMapExplore({
     );
 
     return validListings.map((listing) => {
-      // PayloadCMS stores geo as [lat, lon] based on listingFormTransform.ts
+      // PayloadCMS stores geo as [lat, lng]
       const geo = listing.geo!;
       return {
         id: `listing-${listing.id}`,
         title: listing.title,
-        latitude: geo[1], // First element is lat
-        longitude: geo[0], // Second element is lon
+        latitude: geo[0], // First element is lat
+        longitude: geo[1], // Second element is lng
         thumbnail: listing.imageUrl,
         detailPath: `/${listingType}/${listing.slug}`,
       };

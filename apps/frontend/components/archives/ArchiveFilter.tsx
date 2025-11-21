@@ -69,16 +69,16 @@ export function ArchiveFilter({
         Array.isArray(selectedCity.geo) &&
         selectedCity.geo.length === 2
       ) {
-        // City geo is [lat, lon] format
-        const [lon, lat] = selectedCity.geo;
+        // PayloadCMS stores geo as [lat, lng]
+        const [lat, lng] = selectedCity.geo;
         // Update city and geo filters together
         setFilters({
           city: citySlug,
           // Clear old geo filters and set new ones based on city center
           lat: lat,
-          lng: lon,
+          lng: lng,
           mapCenterLat: lat,
-          mapCenterLng: lon,
+          mapCenterLng: lng,
           mapZoom: 12, // Default zoom for city view
           radius: undefined, // Clear radius - let backend use default or calculate
         });

@@ -67,9 +67,10 @@ export function AddressTab() {
   const selectedCityData = useMemo(() => {
     const city = citiesData?.find((c) => c.id === selectedCity);
     if (city && city.geo && Array.isArray(city.geo) && city.geo.length === 2) {
+      // PayloadCMS stores geo as [lat, lng]
       return {
-        lat: city.geo[1],
-        lng: city.geo[0],
+        lat: city.geo[0],
+        lng: city.geo[1],
       };
     }
     return null;
@@ -85,8 +86,9 @@ export function AddressTab() {
       (city) => city.id === parseInt(cityId),
     );
     if (selectedCity && selectedCity.geo) {
-      const lat = selectedCity.geo[1] || 0;
-      const lng = selectedCity.geo[0] || 0;
+      // PayloadCMS stores geo as [lat, lng]
+      const lat = selectedCity.geo[0] || 0;
+      const lng = selectedCity.geo[1] || 0;
       setValue("geo.lat", lat, { shouldValidate: true });
       setValue("geo.lon", lng, { shouldValidate: true });
       setMarker(lat, lng);
