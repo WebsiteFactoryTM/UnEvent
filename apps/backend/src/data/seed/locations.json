@@ -2,7 +2,7 @@
   {
     "title": "Grand Ballroom Hotel Lux",
     "description": "Elegant ballroom in the heart of Bucharest with stunning crystal chandeliers and marble floors. Perfect for weddings, corporate events, and galas. Features state-of-the-art sound system and professional lighting.",
-    "city": 16424,
+    "city": 29681,
     "address": "Calea Victoriei 147, Bucharest, Romania",
     "geo": [26.0963, 44.4369],
     "contact": {
@@ -50,7 +50,7 @@
   {
     "title": "Rooftop Garden Terrace",
     "description": "Stunning rooftop terrace with panoramic city views, perfect for intimate celebrations and cocktail parties. Features lush greenery, ambient lighting, and a retractable glass roof.",
-    "city": 16424,
+    "city": 29681,
     "address": "Piata Romana 2, Bucharest, Romania",
     "geo": [26.0936, 44.443],
     "contact": {
@@ -113,7 +113,7 @@
   {
     "title": "Historic Castle Courtyard",
     "description": "Medieval castle courtyard transformed into a magical event space. Surrounded by ancient stone walls and towers, offering an authentic historical atmosphere for special occasions.",
-    "city": 16269,
+    "city": 29526,
     "address": "Strada Cetății 1, Bran, Romania",
     "geo": [25.3667, 45.5167],
     "contact": {
@@ -160,7 +160,7 @@
   {
     "title": "Beach Club Venue",
     "description": "Modern beachside venue with lounge areas and a private shoreline, ideal for summer parties and receptions.",
-    "city": 24915,
+    "city": 38172,
     "address": "Strada Plajei 1, Timisoara, Romania",
     "geo": [28.634, 44.174],
     "contact": { "email": "contact@beachclub.ro", "phone": "+40 721 000 111" },
@@ -178,7 +178,7 @@
   {
     "title": "Botanical Garden Wedding Venue",
     "description": "Romantic garden setting surrounded by rare plants and floral arches, perfect for outdoor ceremonies.",
-    "city": 17474,
+    "city": 30731,
     "address": "Aleea Grădinii 12, Cluj-Napoca, Romania",
     "geo": [23.583, 46.768],
     "contact": { "email": "garden@venues.ro", "phone": "+40 745 111 222" },
@@ -196,7 +196,7 @@
   {
     "title": "Crystal Chandelier Ballroom",
     "description": "Opulent ballroom with crystal chandeliers and marble accents for grand receptions.",
-    "city": 16424,
+    "city": 29681,
     "address": "Calea Dorobanți 25, Bucharest, Romania",
     "geo": [26.098, 44.452],
     "contact": { "email": "rezervari@ballroom.ro", "phone": "+40 721 333 444" },
@@ -214,7 +214,7 @@
   {
     "title": "Elegant Wedding Venue",
     "description": "Chic indoor venue tailored for weddings and private celebrations.",
-    "city": 16424,
+    "city": 29681,
     "address": "Str. Paris 8, Bucharest, Romania",
     "geo": [26.086, 44.448],
     "contact": { "email": "office@elegantvenue.ro" },
@@ -235,7 +235,7 @@
   {
     "title": "Industrial Loft Venue",
     "description": "Versatile industrial loft with exposed brick and high ceilings.",
-    "city": 17474,
+    "city": 30731,
     "address": "Str. Fabricii 15, Cluj-Napoca, Romania",
     "geo": [23.608, 46.777],
     "contact": { "email": "hello@loftvenue.ro" },
@@ -253,7 +253,7 @@
   {
     "title": "Medieval Castle Venue",
     "description": "Historic castle interior spaces for regal events and ceremonies.",
-    "city": 16269,
+    "city": 29526,
     "address": "Str. Cetății 2, Bran, Romania",
     "geo": [25.367, 45.517],
     "contact": { "email": "castle@venues.ro" },
@@ -271,7 +271,7 @@
   {
     "title": "Modern Conference Center",
     "description": "State-of-the-art conference center with modular halls and advanced AV.",
-    "city": 16424,
+    "city": 29681,
     "address": "Bd. Tineretului 40, Bucharest, Romania",
     "geo": [26.105, 44.412],
     "contact": { "email": "sales@confcenter.ro" },
@@ -289,7 +289,7 @@
   {
     "title": "Rooftop Venue City View",
     "description": "Panoramic city views and sleek design for modern events.",
-    "city": 16424,
+    "city": 29681,
     "address": "Str. Victoriei 200, Bucharest, Romania",
     "geo": [26.097, 44.442],
     "contact": { "email": "hi@skyrooftop.ro" },
@@ -310,7 +310,7 @@
   {
     "title": "Rustic Garden Wedding Venue",
     "description": "Charming rustic garden perfect for intimate outdoor weddings.",
-    "city": 24915,
+    "city": 38172,
     "address": "Str. Florilor 7, Timisoara, Romania",
     "geo": [25.365, 45.515],
     "contact": { "email": "rustic@gardens.ro" },
@@ -328,7 +328,7 @@
   {
     "title": "Sky Lounge Terrace",
     "description": "Premium sky lounge terrace suitable for cocktail receptions and launches.",
-    "city": 16424,
+    "city": 29681,
     "address": "Calea Călărași 55, Bucharest, Romania",
     "geo": [26.12, 44.43],
     "contact": { "email": "events@skylounge.ro" },
@@ -346,7 +346,7 @@
   {
     "title": "Timisoara Riverfront Hall",
     "description": "Modern riverfront hall ideal for weddings and corporate galas.",
-    "city": 24915,
+    "city": 38172,
     "address": "Splaiul Tudor Vladimirescu 10, Timișoara, Romania",
     "geo": [21.226, 45.753],
     "contact": { "email": "contact@riverfronthall.ro", "phone": "+40 725 000 111" },
@@ -364,7 +364,7 @@
   {
     "title": "Timisoara Industrial Loft",
     "description": "Versatile industrial loft with exposed brick and flexible layout.",
-    "city": 24915,
+    "city": 38172,
     "address": "Str. Progresului 5, Timișoara, Romania",
     "geo": [21.232, 45.747],
     "contact": { "email": "hello@timloft.ro" },
@@ -382,7 +382,7 @@
   {
     "title": "Timisoara Botanical Garden Venue",
     "description": "Outdoor garden venue surrounded by greenery, perfect for ceremonies.",
-    "city": 24915,
+    "city": 38172,
     "address": "Bd. Antenei 1, Timișoara, Romania",
     "geo": [21.215, 45.757],
     "contact": { "email": "garden@timvenue.ro" },

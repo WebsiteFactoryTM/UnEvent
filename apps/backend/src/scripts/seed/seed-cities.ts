@@ -37,7 +37,10 @@ async function seedCities(payload: Payload) {
       try {
         await payload.create({
           collection: 'cities',
-          data: item,
+          data: {
+            ...item,
+            geo: [item.geo[1], item.geo[0]],
+          },
         })
         created++
         console.log(`Created city: ${item.name}`)
