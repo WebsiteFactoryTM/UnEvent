@@ -13,7 +13,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload ",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start -p $PORT",
-    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run seed",
+    "seed": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=4096\" payload run seed",
     "migrate:custom": "node scripts/migrate.mjs",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
     "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
