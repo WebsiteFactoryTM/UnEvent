@@ -89,9 +89,10 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
 
     if (query.lat && query.lng && !hasRelationshipFilters) {
       // Use 'near' only when no relationship filters (avoids DISTINCT conflict)
+      // PayloadCMS geo near expects [lat, lng, radius] format
       const radius = query.radius || 10000 // Default 10km if not provided
       whereEntity.and?.push({
-        geo: { near: [query.lng, query.lat, radius] },
+        geo: { near: [query.lat, query.lng, radius] },
       })
     } else if (query.lat && query.lng && hasRelationshipFilters) {
       // When relationship filters exist, fall back to city filter to avoid DISTINCT conflict
