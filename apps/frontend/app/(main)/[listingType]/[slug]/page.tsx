@@ -86,7 +86,7 @@ export default async function DetailPage({
     data: listing,
     error,
   }: { data: Listing | null; error: Error | null } = await fetchListing(
-    listingTypeUrl as ListingType,
+    listingTypeUrl as "locations" | "events" | "services",
     slug,
     undefined,
     isEnabled,
@@ -277,7 +277,7 @@ export async function generateMetadata({
   // Fetch mock data per type (UI-only)
   const listingTypeUrl = getListingTypeSlug(listingType as ListingType);
   const { data, error } = await fetchListing(
-    listingTypeUrl as ListingType,
+    listingTypeUrl as "locations" | "events" | "services",
     slug,
     undefined,
   );

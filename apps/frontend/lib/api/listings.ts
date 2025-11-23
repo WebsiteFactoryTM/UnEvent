@@ -14,7 +14,7 @@ import {
 const payloadToken = "payload-token";
 
 export const fetchListing = async (
-  listingType: ListingType,
+  listingType: "locations" | "events" | "services",
   slug: string,
   accessToken?: string,
   isDraftMode?: boolean,

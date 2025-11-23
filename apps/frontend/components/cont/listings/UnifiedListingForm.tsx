@@ -113,9 +113,7 @@ export function UnifiedListingForm({
 
   const {
     handleSubmit,
-    getValues,
-    trigger,
-    formState: { errors, isValid, isDirty },
+    formState: { errors },
     setError,
     clearErrors,
   } = methods;

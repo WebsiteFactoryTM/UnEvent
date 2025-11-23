@@ -31,6 +31,7 @@ export function InfoTab() {
   } = useFormContext<UnifiedListingFormData>();
 
   const { data: taxonomies, isLoading } = useTaxonomies({ fullList: true });
+
   const eventTypes = taxonomies?.eventTypes || [];
 
   const selectedTypes = watch("type") || [];
