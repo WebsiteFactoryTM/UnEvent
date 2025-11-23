@@ -183,6 +183,7 @@ export const Events: CollectionConfig = {
       admin: {
         description: 'Location where the event will be held',
       },
+      required: false,
     },
     {
       name: 'venueAddressDetails',
@@ -191,18 +192,18 @@ export const Events: CollectionConfig = {
         {
           name: 'venueAddress',
           type: 'text',
-          required: true,
+          required: false,
         },
         {
           name: 'venueCity',
           type: 'relationship',
           relationTo: 'cities',
-          required: true,
+          required: false,
         },
         {
           name: 'venueGeo',
           type: 'point',
-          required: true,
+          required: false,
         },
       ],
     },
@@ -213,7 +214,7 @@ export const Events: CollectionConfig = {
         {
           name: 'requirement',
           type: 'text',
-          required: true,
+          required: false,
         },
         {
           name: 'description',

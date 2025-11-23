@@ -446,18 +446,18 @@ export interface Event {
    * Location where the event will be held
    */
   venue?: (number | null) | Location;
-  venueAddressDetails: {
-    venueAddress: string;
-    venueCity: number | City;
+  venueAddressDetails?: {
+    venueAddress?: string | null;
+    venueCity?: (number | null) | City;
     /**
      * @minItems 2
      * @maxItems 2
      */
-    venueGeo: [number, number];
+    venueGeo?: [number, number] | null;
   };
   requirements?:
     | {
-        requirement: string;
+        requirement?: string | null;
         description?: string | null;
         id?: string | null;
       }[]
