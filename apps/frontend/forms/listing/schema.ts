@@ -28,8 +28,21 @@ const baseListingSchema = z.object({
     .optional(),
 
   // Images
-  featuredImage: z.any().optional(),
-  gallery: z.array(z.any()).max(10, "Maximum 10 imagini în galerie").optional(),
+  featuredImage: z
+    .object({
+      id: z.number(),
+      url: z.string(),
+    })
+    .optional(),
+  gallery: z
+    .array(
+      z.object({
+        id: z.number(),
+        url: z.string(),
+      }),
+    )
+    .max(10, "Maximum 10 imagini în galerie")
+    .optional(),
   youtubeLinks: z
     .array(
       z.object({

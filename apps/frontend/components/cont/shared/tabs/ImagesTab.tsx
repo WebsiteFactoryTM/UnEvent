@@ -49,10 +49,6 @@ export function ImagesTab() {
     maxSizeMB: 5,
   });
 
-  console.log("featuredUM", featuredUM);
-
-  console.log("featured Image", featuredImage);
-
   // Handle featured image upload (UI only)
   const handleFeaturedImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -62,10 +58,17 @@ export function ImagesTab() {
     featuredUM.handleSelect(e);
     try {
       const doc = await featuredUM.uploadSingle(file, "listing");
-      setValue("featuredImage", doc.id, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
+      // Store as {id, url} object
+      if (doc.id && doc.url) {
+        setValue(
+          "featuredImage",
+          { id: doc.id, url: doc.url },
+          {
+            shouldValidate: true,
+            shouldDirty: true,
+          },
+        );
+      }
     } catch (error) {
       console.error("Error uploading featured image:", error);
     } finally {
@@ -98,7 +101,10 @@ export function ImagesTab() {
       const results = await Promise.all(
         filesToAdd.map((f) => galleryUM.uploadSingle(f, "listing")),
       );
-      const uploaded = results.map((d) => d.id);
+      // Store as {id, url} objects
+      const uploaded = results
+        .filter((d) => d.id && d.url)
+        .map((d) => ({ id: d.id, url: d.url! }));
       setValue("gallery", [...currentGallery, ...uploaded], {
         shouldValidate: true,
         shouldDirty: true,
@@ -149,13 +155,16 @@ export function ImagesTab() {
           {featuredImage ? (
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 bg-background rounded-lg">
-                {featuredUM.previews?.[0] && (
-                  <UploadPreview previews={featuredUM.previews as string[]} />
+                {/* Use URL from form state if available, fallback to upload manager preview */}
+                {(featuredImage.url || featuredUM.previews?.[0]) && (
+                  <img
+                    src={featuredImage.url || featuredUM.previews?.[0]}
+                    alt="Featured image preview"
+                    className="h-10 w-10 rounded object-cover shrink-0"
+                  />
                 )}
-                {/* <ImageIcon className="h-8 w-8 text-muted-foreground shrink-0" /> */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
-                    {/* When uploaded, featuredImage is an id; show selected file name from manager if available */}
                     {featuredUM.files?.[0]?.name || "featured-image.jpg"}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -163,7 +172,7 @@ export function ImagesTab() {
                       ? formatFileSize(featuredUM.files[0].size)
                       : "N/A"}
                   </p>
-                  {featuredUM.uploaded.length > 0 && (
+                  {featuredImage.id && (
                     <p className="text-xs text-emerald-600">Încărcat</p>
                   )}
                 </div>
@@ -220,17 +229,15 @@ export function ImagesTab() {
 
         {gallery.length > 0 && (
           <div className="space-y-2">
-            {(galleryUM.files.length
-              ? galleryUM.files
-              : Array.from({ length: gallery.length })
-            ).map((_: any, index: number) => (
+            {gallery.map((item: { id: number; url: string }, index: number) => (
               <div
-                key={index}
+                key={item.id || index}
                 className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
               >
-                {galleryUM.previews[index] ? (
+                {/* Use URL from form state if available, fallback to upload manager preview */}
+                {item.url || galleryUM.previews[index] ? (
                   <img
-                    src={galleryUM.previews[index]}
+                    src={item.url || galleryUM.previews[index]}
                     alt={`Previzualizare ${index + 1}`}
                     className="h-10 w-10 rounded object-cover shrink-0"
                   />
@@ -246,7 +253,7 @@ export function ImagesTab() {
                       ? formatFileSize(galleryUM.files[index].size)
                       : "N/A"}
                   </p>
-                  {galleryUM.uploaded.length > index && (
+                  {item.id && (
                     <p className="text-xs text-emerald-600">Încărcat</p>
                   )}
                 </div>

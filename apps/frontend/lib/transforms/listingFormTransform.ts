@@ -4,14 +4,7 @@ import {
   ServiceFormData,
   EventFormData,
 } from "@/forms/listing/schema";
-import {
-  Location,
-  Event,
-  Service,
-  City,
-  ListingType,
-  Facility,
-} from "@/types/payload-types";
+import { Location, Event, Service } from "@/types/payload-types";
 
 /**
  * Clean payload to remove null values from array fields
@@ -91,11 +84,18 @@ export function formToPayload(
         : undefined,
     moderationStatus: formData.moderationStatus,
     _status: formData._status,
-    // Images will be handled separately if needed
-    featuredImage: formData.featuredImage,
+    // Images - extract IDs only for submission
+    featuredImage: formData.featuredImage
+      ? typeof formData.featuredImage === "object" &&
+        "id" in formData.featuredImage
+        ? formData.featuredImage.id
+        : formData.featuredImage
+      : undefined,
     gallery:
       formData.gallery && formData.gallery.length > 0
-        ? formData.gallery
+        ? formData.gallery.map((item) =>
+            typeof item === "object" && "id" in item ? item.id : item,
+          )
         : undefined,
   };
 
@@ -198,6 +198,12 @@ export function formToPayload(
           }
         : undefined,
       eventStatus: "upcoming" as const,
+      venue: undefined,
+      venueAddressDetails: {
+        venueAddress: "",
+        venueCity: eventData.city,
+        venueGeo: [eventData.geo?.lat || 0, eventData.geo?.lon || 0],
+      },
     } as Partial<Event>;
 
     return cleanPayload(eventPayload) as Partial<Event>;
@@ -225,6 +231,39 @@ export function payloadToForm(
   const extractIds = (field: any[]): number[] => {
     if (!field || !Array.isArray(field)) return [];
     return field.map(extractId).filter((id) => id > 0);
+  };
+
+  // Helper to extract media object with id and url
+  const extractMedia = (
+    field: any,
+  ): { id: number; url: string } | undefined => {
+    if (!field) return undefined;
+    if (typeof field === "number") {
+      // If it's just an ID, we don't have the URL - this shouldn't happen if we populate
+      // But handle it gracefully by returning undefined (will need to fetch URL separately)
+      return undefined;
+    }
+    if (field && typeof field === "object" && "id" in field) {
+      const id =
+        typeof field.id === "number"
+          ? field.id
+          : parseInt(String(field.id), 10);
+      const url = field.url || "";
+      if (id && url) {
+        return { id, url };
+      }
+    }
+    return undefined;
+  };
+
+  // Helper to extract array of media objects
+  const extractMediaArray = (
+    field: any[],
+  ): Array<{ id: number; url: string }> => {
+    if (!field || !Array.isArray(field)) return [];
+    return field
+      .map(extractMedia)
+      .filter((m): m is { id: number; url: string } => !!m);
   };
 
   // Base form data common to all types
@@ -263,8 +302,8 @@ export function payloadToForm(
       listing.youtubeLinks?.map((link) => ({
         url: link.youtubeLink || "",
       })) || [],
-    featuredImage: listing.featuredImage,
-    gallery: listing.gallery || undefined,
+    featuredImage: extractMedia(listing.featuredImage),
+    gallery: extractMediaArray(listing.gallery || []),
     moderationStatus: listing.moderationStatus || "pending",
   };
 
