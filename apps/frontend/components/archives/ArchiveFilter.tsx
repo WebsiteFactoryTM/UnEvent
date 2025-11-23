@@ -44,7 +44,7 @@ export function ArchiveFilter({
     });
   const { data } = useQuery({
     queryKey: ["taxonomies"],
-    queryFn: () => fetchTaxonomies(),
+    queryFn: () => fetchTaxonomies({ fullList: true }),
     staleTime: cacheTTL.oneDay,
   });
 
