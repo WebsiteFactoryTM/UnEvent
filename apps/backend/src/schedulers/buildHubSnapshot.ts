@@ -204,6 +204,7 @@ function toCityLabel(slug: string) {
 }
 
 export const registerBuildHubSnapshotScheduler = (payload: Payload) => {
+  console.log('[registerBuildHubSnapshotScheduler] registering cron jobs')
   // locations at :05
   cron.schedule('5 6,12,18,0 * * *', () => buildHubSnapshot(payload, 'locations'))
   // services at :07

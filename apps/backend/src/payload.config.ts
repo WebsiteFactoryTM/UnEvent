@@ -349,7 +349,7 @@ export default buildConfig({
     }),
   ],
   onInit: async (payload) => {
-    if (process.env.NODE_ENV === 'production' && process.env.ENABLE_JOBS === 'true') {
+    if (process.env.ENABLE_JOBS === 'true') {
       initFeedSchedulers(payload)
       // hourly, staggered minutes
       registerBuildHubSnapshotScheduler(payload)
