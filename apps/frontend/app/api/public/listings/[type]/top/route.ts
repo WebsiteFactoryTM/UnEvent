@@ -1,4 +1,5 @@
 import { tag } from "@unevent/shared";
+import { NextRequest } from "next/server";
 
 export const dynamic = "force-static";
 export const revalidate = 600;
@@ -9,11 +10,12 @@ const ALLOWED_TYPES = ["events", "locations", "services"] as const;
 type ListingType = (typeof ALLOWED_TYPES)[number];
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ type: ListingType }> },
 ) {
   const { type } = await params;
-  const url = new URL(req.url);
+  const url = req.nextUrl;
+
   const limit = Number(url.searchParams.get("limit") || "10");
 
   if (!ALLOWED_TYPES.includes(type)) {

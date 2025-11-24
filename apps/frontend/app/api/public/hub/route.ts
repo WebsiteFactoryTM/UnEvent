@@ -1,4 +1,5 @@
 import { tag } from "@unevent/shared";
+import { NextRequest } from "next/server";
 
 export const dynamic = "force-static";
 export const revalidate = 900;
@@ -12,8 +13,8 @@ const FRONT_TO_BACK: Record<string, (typeof BACKEND_TYPES)[number]> = {
   evenimente: "events",
 };
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
+export async function GET(req: NextRequest) {
+  const url = req.nextUrl;
   const rawType = url.searchParams.get("listingType");
   const listingType =
     (rawType &&

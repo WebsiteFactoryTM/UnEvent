@@ -1,11 +1,12 @@
 import { tag } from "@unevent/shared";
+import { NextRequest } from "next/server";
 
 export const dynamic = "force-static";
 export const revalidate = 900;
 export const fetchCache = "force-cache";
 export const preferredRegion = "auto";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const payloadUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
   if (!payloadUrl) {
     return new Response("PAYLOAD_INTERNAL_URL not configured", { status: 500 });

@@ -57,13 +57,41 @@ export async function fetchFeed(filters: Partial<FeedQuery>) {
     // Build query string (e.g. ?entity=locations&city=timisoara&type=nunta)
     const query = stringify(parsed, { encodeValuesOnly: true });
 
-    // Build full URL
-    const url = `${API_URL}/api/feed?${query}`;
+    const isBuildTime =
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      (typeof window === "undefined" &&
+        !process.env.VERCEL_URL &&
+        !process.env.NEXT_PUBLIC_FRONTEND_URL);
 
-    // Perform fetch (Next.js caching-aware)
-    const res = await fetch(url, {
+    if (!isBuildTime && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_FRONTEND_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
+      const bffUrl = `${baseUrl}/api/public/feed?${query}`;
+
+      const res = await fetch(bffUrl, {
+        method: "GET",
+        next: { revalidate: 60 },
+      });
+
+      if (res.ok) {
+        return res.json();
+      }
+
+      console.warn(
+        "Feed BFF fetch failed:",
+        res.status,
+        await res.text(),
+        "falling back to Payload",
+      );
+    }
+
+    const fallbackUrl = `${API_URL}/api/feed?${query}`;
+    const res = await fetch(fallbackUrl, {
       method: "GET",
-      next: { revalidate: 3600 }, // 1h cache for SSR/ISR
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
@@ -71,10 +99,7 @@ export async function fetchFeed(filters: Partial<FeedQuery>) {
       return [];
     }
 
-    const data = await res.json();
-
-    // Ensure response shape is always an array
-    return data;
+    return res.json();
   } catch (err) {
     console.error("Error fetching feed:", err);
     return [];

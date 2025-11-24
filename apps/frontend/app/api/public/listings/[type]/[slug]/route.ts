@@ -1,5 +1,6 @@
 import { tag } from "@unevent/shared";
 import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
@@ -10,9 +11,10 @@ type Params = {
   params: Promise<{ type: "events" | "locations" | "services"; slug: string }>;
 };
 
-export async function GET(req: Request, { params }: Params) {
+export async function GET(req: NextRequest, { params }: Params) {
   const { type, slug } = await params;
-  const url = new URL(req.url);
+  const url = req.nextUrl;
+
   const isDraft = url.searchParams.get("draft") === "1";
 
   const payloadUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
