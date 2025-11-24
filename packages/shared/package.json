@@ -2,5 +2,13 @@
   "name": "@unevent/shared",
   "private": true,
   "version": "0.1.0",
-  "types": "./index.d.ts"
+  "type": "module",
+  "main": "./keys.ts",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./keys.ts"
+    }
+  }
 }
