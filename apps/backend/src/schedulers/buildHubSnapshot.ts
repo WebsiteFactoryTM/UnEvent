@@ -4,6 +4,7 @@ import type { Payload } from 'payload'
 import cron from 'node-cron'
 import { revalidate } from '@/utils/revalidate'
 import { buildPopularSearchCombos } from '@/utils/popularSearchCombos'
+import { tag } from '@unevent/shared'
 
 // Fallback cities if DB query returns nothing
 const TOP_CITIES_FALLBACK = [
@@ -151,7 +152,7 @@ export async function buildHubSnapshot(
     console.error(`[HubSnapshot] Error upserting snapshot for ${collection}:`, error)
     throw error
   }
-  revalidate({ payload, collection: 'hub', slug: collection })
+  revalidate({ tags: [tag.hubSnapshot(collection)], payload })
 }
 
 /** Helpers — adapt to your real field names / media */
