@@ -1,34 +1,41 @@
 "use server";
-import { getRedis } from "../redis";
-import { cacheTTL } from "../constants"; // e.g. 6h
 import { City, ListingType, Facility } from "@/types/payload-types";
-import { redisKey } from "../react-query/utils";
-import { taxonomiesKeys } from "../cacheKeys";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { headers } from "next/headers";
 
 export async function fetchTaxonomies({
   fullList = false,
 }: { fullList?: boolean } = {}) {
-  const redis = getRedis();
-  const cacheKey = redisKey(taxonomiesKeys.list({ fullList }));
-  const cached = await redis.get(cacheKey);
-
-  if (cached) {
-    // Upstash Redis may return objects directly, so check type before parsing
-    if (typeof cached === "string") {
-      return JSON.parse(cached);
-    }
-    return cached;
-  }
-
   try {
-    const res = await fetch(`${API_URL}/api/taxonomies?fullList=${fullList}`);
+    // Construct URL for internal API call
+    // Try to get the host from headers first, fallback to env vars
+    let baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
+
+    if (!baseUrl) {
+      try {
+        const headersList = await headers();
+        const host = headersList.get("host");
+        const protocol =
+          process.env.NODE_ENV === "production" ? "https" : "http";
+        baseUrl = host ? `${protocol}://${host}` : "http://localhost:3000";
+      } catch {
+        // If headers() fails (e.g., in some contexts), use fallback
+        baseUrl = process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000";
+      }
+    }
+
+    const res = await fetch(
+      `${baseUrl}/api/public/taxonomies?fullList=${fullList ? "1" : "0"}`,
+      {
+        // Server-side fetch should use cache
+        next: { revalidate: 86400 },
+      },
+    );
 
     if (!res.ok) throw new Error("Failed to fetch taxonomies");
 
     const data = await res.json();
-    await redis.set(cacheKey, JSON.stringify(data), "EX", cacheTTL.oneDay);
 
     return {
       eventTypes: data.eventTypes.sort((a: ListingType, b: ListingType) =>
