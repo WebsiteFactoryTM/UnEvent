@@ -10,66 +10,104 @@ type ShapedHomeListings = {
   newEvents: Event[]
 }
 
-type RawHomeListings = {
-  featuredLocations?: (number | Location)[] | null | undefined
-  topServices?: (number | Service)[] | null | undefined
-  upcomingEvents?: (number | Event)[] | null | undefined
-}
+const LIMIT_DEFAULT = 6
 
 export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
   const { payload } = req
   try {
-    let homeListings: RawHomeListings | null = null
-
-    homeListings = await req.payload.findGlobal({
+    // Get home listings from global config (populated with depth: 2)
+    const homeListings = await req.payload.findGlobal({
       slug: 'homeListings',
       depth: 2,
     })
 
-    const featuredLocationIds = homeListings?.featuredLocations?.map((location) =>
-      typeof location === 'object' ? location.id : location,
+    // Extract populated listings and their IDs
+    const featuredLocationsPopulated = (homeListings?.featuredLocations || []).filter(
+      (loc): loc is Location => typeof loc === 'object' && 'id' in loc,
     )
-    const topServiceIds = homeListings?.topServices?.map((service) =>
-      typeof service === 'object' ? service.id : service,
+    const topServicesPopulated = (homeListings?.topServices || []).filter(
+      (serv): serv is Service => typeof serv === 'object' && 'id' in serv,
     )
-    const upcomingEventIds = homeListings?.upcomingEvents?.map((event) =>
-      typeof event === 'object' ? event.id : event,
+    const upcomingEventsPopulated = (homeListings?.upcomingEvents || []).filter(
+      (evt): evt is Event => typeof evt === 'object' && 'id' in evt,
     )
-    const newLocations = await payload.find({
-      collection: 'locations',
-      where: {
-        moderationStatus: { equals: 'approved' },
-        id: { not_in: featuredLocationIds },
-      },
-      limit: 6,
-      sort: '-createdAt',
-      depth: 2,
-    })
-    const newServices = await payload.find({
-      collection: 'services',
-      where: { moderationStatus: { equals: 'approved' }, id: { not_in: topServiceIds } },
-      limit: 6,
-      sort: '-createdAt',
-      depth: 2,
-    })
-    const newEvents = await payload.find({
-      collection: 'events',
-      where: { moderationStatus: { equals: 'approved' }, id: { not_in: upcomingEventIds } },
-      limit: 6,
-      sort: 'startDate',
-      depth: 2,
-    })
 
-    if (
-      !homeListings?.featuredLocations?.length ||
-      !homeListings?.topServices?.length ||
-      !homeListings?.upcomingEvents?.length
-    ) {
-      homeListings = await getHomeListings(req.payload)
-    }
+    const featuredLocationIds = featuredLocationsPopulated.map((loc) => loc.id)
+    const topServiceIds = topServicesPopulated.map((serv) => serv.id)
+    const upcomingEventIds = upcomingEventsPopulated.map((evt) => evt.id)
 
+    // Calculate how many more we need to reach the limit
+    const locationsNeeded = Math.max(0, LIMIT_DEFAULT - featuredLocationsPopulated.length)
+    const servicesNeeded = Math.max(0, LIMIT_DEFAULT - topServicesPopulated.length)
+    const eventsNeeded = Math.max(0, LIMIT_DEFAULT - upcomingEventsPopulated.length)
+
+    // Fetch additional listings if needed, excluding ones already in home collection
+    const [additionalLocations, additionalServices, additionalEvents] = await Promise.all([
+      // Fill featured locations if needed
+      locationsNeeded > 0
+        ? getExtraListings(
+            'featured',
+            payload,
+            'locations',
+            locationsNeeded,
+            '-rating',
+            featuredLocationIds,
+          )
+        : Promise.resolve({ docs: [] }),
+      // Fill top services if needed
+      servicesNeeded > 0
+        ? getExtraListings('top', payload, 'services', servicesNeeded, '-rating', topServiceIds)
+        : Promise.resolve({ docs: [] }),
+      // Fill upcoming events if needed
+      eventsNeeded > 0
+        ? getExtraListings(
+            'upcoming',
+            payload,
+            'events',
+            eventsNeeded,
+            'startDate',
+            upcomingEventIds,
+          )
+        : Promise.resolve({ docs: [] }),
+      // New listings (exclude featured/top/upcoming)
+    ])
+    const additionalLocationIds = additionalLocations.docs.map((loc) => loc.id)
+    const additionalServiceIds = additionalServices.docs.map((serv) => serv.id)
+    const additionalEventIds = additionalEvents.docs.map((evt) => evt.id)
+
+    const [newLocations, newServices, newEvents] = await Promise.all([
+      getExtraListings('new', payload, 'locations', LIMIT_DEFAULT, '-createdAt', [
+        ...featuredLocationIds,
+        ...additionalLocationIds,
+      ]),
+      getExtraListings('new', payload, 'services', LIMIT_DEFAULT, '-createdAt', [
+        ...topServiceIds,
+        ...additionalServiceIds,
+      ]),
+      getExtraListings(
+        'new',
+        payload,
+        'events',
+        LIMIT_DEFAULT,
+        ['-createdAt', 'startDate'],
+        [...upcomingEventIds, ...additionalEventIds],
+      ),
+    ])
+
+    // Combine populated listings with additional ones (up to limit)
     const finalListings = {
-      ...homeListings,
+      featuredLocations: [
+        ...featuredLocationsPopulated,
+        ...additionalLocations.docs.slice(0, locationsNeeded),
+      ].slice(0, LIMIT_DEFAULT),
+      topServices: [
+        ...topServicesPopulated,
+        ...additionalServices.docs.slice(0, servicesNeeded),
+      ].slice(0, LIMIT_DEFAULT),
+      upcomingEvents: [
+        ...upcomingEventsPopulated,
+        ...additionalEvents.docs.slice(0, eventsNeeded),
+      ].slice(0, LIMIT_DEFAULT),
       newLocations: newLocations.docs,
       newServices: newServices.docs,
       newEvents: newEvents.docs,
@@ -83,56 +121,33 @@ export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
   }
 }
 
-const getHomeListings = async (
+function getExtraListings(
+  type: 'featured' | 'top' | 'upcoming' | 'new',
   payload: Payload,
-): Promise<{
-  featuredLocations: (number | Location)[] | null | undefined
-  topServices: (number | Service)[] | null | undefined
-  upcomingEvents: (number | Event)[] | null | undefined
-}> => {
-  try {
-    const [featuredLocations, topServices, upcomingEvents] = await Promise.all([
-      payload.find({
-        collection: 'locations',
-        where: {
-          tier: { in: ['recommended', 'sponsored'] },
-          moderationStatus: { equals: 'approved' },
-        },
-        limit: 6,
-        sort: '-rating',
-        depth: 1,
-      }),
-      payload.find({
-        collection: 'services',
-        where: {
-          tier: { in: ['recommended', 'sponsored'] },
-          moderationStatus: { equals: 'approved' },
-        },
-        limit: 6,
-        sort: '-rating',
-        depth: 1,
-      }),
-      payload.find({
-        collection: 'events',
-        where: {
-          tier: { in: ['recommended', 'sponsored'] },
-          moderationStatus: { equals: 'approved' },
-        },
-        limit: 6,
-        sort: 'startDate',
-        depth: 1,
-      }),
-    ])
-
-    return {
-      featuredLocations: featuredLocations.docs,
-      topServices: topServices.docs,
-      upcomingEvents: upcomingEvents.docs,
-    }
-  } catch (err) {
-    console.error('Home endpoint error:', err)
-    throw new Error('Failed to fetch home data')
+  collection: 'locations' | 'services' | 'events',
+  limit: number,
+  sort: string | string[],
+  exclude: Array<number>,
+) {
+  const where: {
+    tier?: { in: Array<string> }
+    moderationStatus: { equals: 'approved' }
+    id: { not_in: Array<number> }
+  } = {
+    moderationStatus: { equals: 'approved' },
+    id: { not_in: exclude },
   }
+  if (type !== 'new') {
+    where.tier = { in: ['recommended', 'sponsored'] }
+  }
+
+  return payload.find({
+    collection: collection,
+    where,
+    limit: limit,
+    sort: sort,
+    depth: 2,
+  })
 }
 
 function shapeHomeResponse(home: {
