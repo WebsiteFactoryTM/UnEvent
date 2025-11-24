@@ -1,0 +1,89 @@
+import { tag } from "@unevent/shared";
+import { cookies } from "next/headers";
+
+export const dynamic = "force-static";
+export const revalidate = 300;
+export const fetchCache = "force-cache";
+export const preferredRegion = "auto";
+
+type Params = {
+  params: { type: "events" | "locations" | "services"; slug: string };
+};
+
+export async function GET(req: Request, { params }: Params) {
+  const { type, slug } = params;
+  const url = new URL(req.url);
+  const isDraft = url.searchParams.get("draft") === "1";
+
+  const payloadUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+  if (!payloadUrl) {
+    return new Response("PAYLOAD_INTERNAL_URL not configured", { status: 500 });
+  }
+
+  // For draft mode, get token from cookies; otherwise use service token
+  let authHeader: string;
+  if (isDraft) {
+    const cookieStore = await cookies();
+    const payloadToken = cookieStore.get("payload-token")?.value;
+    if (!payloadToken) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+    authHeader = `JWT ${payloadToken}`;
+  } else {
+    if (!process.env.SVC_TOKEN) {
+      return new Response("SVC_TOKEN not configured", { status: 500 });
+    }
+    authHeader = `users API-Key ${process.env.SVC_TOKEN}`;
+  }
+
+  // Use query parameter approach (Payload v3 supports this)
+  const apiUrl = `${payloadUrl}/api/${type}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`;
+
+  try {
+    const res = await fetch(apiUrl, {
+      headers: {
+        "x-tenant": "unevent",
+        Authorization: authHeader,
+      },
+      cache: isDraft ? "no-store" : "force-cache",
+      next: isDraft
+        ? undefined
+        : { tags: [tag.listingSlug(slug), tag.collection(type)] },
+    });
+
+    if (!res.ok) {
+      return new Response("Not found", { status: res.status });
+    }
+
+    const data = await res.json();
+    const doc = data?.docs?.[0];
+
+    if (!doc) {
+      return new Response("Not found", { status: 404 });
+    }
+
+    // Extract city slug for cache tagging
+    const city = doc?.city;
+    const citySlug =
+      city && typeof city === "object" && "slug" in city && city.slug
+        ? ` ${tag.city(city.slug)}`
+        : "";
+
+    return new Response(JSON.stringify(doc), {
+      headers: {
+        "Content-Type": "application/json",
+        // Draft mode: no cache; otherwise: cache with tags
+        ...(isDraft
+          ? { "Cache-Control": "no-store" }
+          : {
+              "Cache-Control":
+                "public, s-maxage=300, stale-while-revalidate=600",
+              "Surrogate-Key": `${tag.listingSlug(slug)} ${tag.collection(type)} ${tag.tenant("unevent")}${citySlug}`,
+            }),
+      },
+    });
+  } catch (error) {
+    console.error(`Error fetching listing ${type}/${slug}:`, error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
+}
