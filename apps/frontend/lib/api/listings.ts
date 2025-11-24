@@ -1,4 +1,3 @@
-"use server";
 import { Listing } from "@/types/listings";
 import { ListingType } from "@/types/listings";
 import { frontendTypeToCollectionSlug } from "./reviews";
@@ -6,12 +5,10 @@ import { City, ListingType as SuitableForType } from "@/types/payload-types";
 import { getRedis } from "../redis";
 import { redisKey } from "../react-query/utils";
 import { listingsKeys } from "../cacheKeys";
-import { cookies, draftMode } from "next/headers";
 import {
   normalizeListing,
   normalizeListings,
 } from "../transforms/normalizeListing";
-const payloadToken = "payload-token";
 
 export const fetchListing = async (
   listingType: "locations" | "events" | "services",
@@ -20,33 +17,63 @@ export const fetchListing = async (
   isDraftMode?: boolean,
 ): Promise<{ data: Listing | null; error: Error | null }> => {
   try {
-    let token: string | undefined;
+    // During build time, use direct Payload call (BFF route not available)
+    // At runtime, use BFF route for edge caching
+    const isBuildTime =
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      !process.env.NEXT_PUBLIC_FRONTEND_URL;
 
-    if (isDraftMode) {
-      const cookiesObject = await cookies();
-      const cookie = cookiesObject.get(payloadToken);
-      token = cookie?.value;
+    if (isBuildTime) {
+      // Direct Payload call during build
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          next: {
+            tags: [`${listingType}_${slug}`],
+          },
+          cache: isDraftMode ? "no-store" : "force-cache",
+        },
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        console.error(errorMessage);
+        return { data: null, error: new Error(errorMessage) };
+      }
+
+      const data = await response.json();
+      const doc = data?.docs?.[0];
+
+      return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
     }
+
+    // Runtime: Use BFF route for edge caching
+    // Use NEXT_PUBLIC_FRONTEND_URL if set, otherwise fallback to localhost
+    const baseUrl =
+      process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000";
+
+    // Use BFF route, add draft parameter if in draft mode
+    const draftParam = isDraftMode ? "?draft=1" : "";
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[slug][equals]=${slug}&includeReviewState=true&limit=1`,
+      `${baseUrl}/api/public/listings/${listingType}/${encodeURIComponent(slug)}${draftParam}`,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        next: {
-          tags: [`${listingType}_${slug}`],
-          // revalidate: 3600,
-        },
-        cache: isDraftMode ? "no-store" : "force-cache",
+        // Server-side fetch should use cache (unless draft mode)
+        next: isDraftMode ? { revalidate: 0 } : { revalidate: 300 },
       },
     );
+
     if (!response.ok) {
       const errorMessage = await response.text();
       console.error(errorMessage);
       return { data: null, error: new Error(errorMessage) };
     }
-    const data = await response.json();
-    const doc = data?.docs?.[0];
+
+    const doc = await response.json();
 
     return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
   } catch (error) {
