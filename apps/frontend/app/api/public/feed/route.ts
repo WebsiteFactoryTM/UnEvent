@@ -10,14 +10,16 @@ const LOCALIZED_MAP: Record<string, Entity> = {
   servicii: "services",
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 export const fetchCache = "force-cache";
 export const preferredRegion = "auto";
 
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
+
   const rawEntity = url.searchParams.get("entity");
+
   const entityParam =
     (rawEntity &&
       (VALID_ENTITIES.includes(rawEntity as Entity)

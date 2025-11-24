@@ -415,7 +415,6 @@ export function ArchiveFilter({
                 className="w-full glow-on-hover"
                 onClick={() => {
                   applyFilters();
-                  setIsOpen(false);
                 }}
               >
                 <FaMagnifyingGlass className="mr-2 h-4 w-4" />
@@ -527,7 +526,6 @@ export function ArchiveFilter({
                 className="w-full glow-on-hover"
                 onClick={() => {
                   applyFilters();
-                  setIsOpen(false);
                 }}
               >
                 <FaMagnifyingGlass className="mr-2 h-4 w-4" />
