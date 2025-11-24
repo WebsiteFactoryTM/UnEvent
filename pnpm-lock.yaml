@@ -53,6 +53,9 @@ importers:
       '@types/react-dom':
         specifier: 19.1.6
         version: 19.1.6(@types/react@19.1.8)
+      '@unevent/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@upstash/redis':
         specifier: ^1.35.6
         version: 1.35.6
@@ -237,6 +240,9 @@ importers:
       '@types/google.maps':
         specifier: ^3.58.1
         version: 3.58.1
+      '@unevent/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@upstash/redis':
         specifier: ^1.35.6
         version: 1.35.6
