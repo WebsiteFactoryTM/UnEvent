@@ -1,32 +1,10 @@
 import { tag } from '@unevent/shared'
 import { revalidate } from '@/utils/revalidate'
+import { purgeCDN } from '@/utils/purgeCDN'
 import type { CollectionAfterChangeHook, Payload } from 'payload'
 
 async function notifyNext(tags: string[], payload: Payload) {
   await revalidate({ tags, payload })
-}
-
-// Optional: purge CDN (Cloudflare) by tag
-async function purgeCDN(tags: string[]) {
-  if (!process.env.CF_API_TOKEN || !process.env.CF_ZONE_ID) {
-    return // CDN purge not configured
-  }
-
-  try {
-    await fetch(
-      `https://api.cloudflare.com/client/v4/zones/${process.env.CF_ZONE_ID}/purge_cache`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.CF_API_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ tags }),
-      },
-    )
-  } catch (err) {
-    console.error('CDN purge failed:', err)
-  }
 }
 
 export const afterChange: CollectionAfterChangeHook = async ({
