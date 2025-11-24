@@ -142,7 +142,7 @@ export async function fetchHubSnapshot(
           ? `https://${process.env.VERCEL_URL}`
           : "http://localhost:3000");
 
-      const bffUrl = `${baseUrl}/api/public/hub?listingType=${collection}`;
+      const bffUrl = `${baseUrl}/api/public/hub/${collection}`;
 
       try {
         const res = await fetch(bffUrl, {

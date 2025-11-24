@@ -27,7 +27,7 @@ export async function buildHubSnapshot(
     collection: 'cities',
     sort: '-usageCount,-updatedAt',
     depth: 0,
-    where: { usageCount: { greater_than: 0 } },
+    limit: 100,
   })
   const typeaheadCities =
     citiesRes.docs.length > 0

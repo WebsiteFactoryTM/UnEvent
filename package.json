@@ -18,6 +18,7 @@
     "dev:backend": "pnpm --filter @unevent/backend dev",
     "dev:frontend": "pnpm --filter @unevent/frontend dev",
     "build:backend": "pnpm --filter @unevent/backend build",
+    "build:frontend": "pnpm --filter @unevent/frontend build",
     "start:backend": "pnpm --filter @unevent/backend start",
     "generate:types": "pnpm --filter @unevent/backend generate:types",
     "seed": "pnpm --filter @unevent/backend seed",

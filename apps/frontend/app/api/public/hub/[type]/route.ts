@@ -1,32 +1,29 @@
 import { tag } from "@unevent/shared";
 import { generateETag } from "@/lib/server/etag";
 import { fetchWithRetry } from "@/lib/server/fetcher";
-import { NextRequest } from "next/server";
 
 export const dynamic = "force-static";
+export const dynamicParams = false;
 export const revalidate = 900;
 export const fetchCache = "force-cache";
 export const preferredRegion = "auto";
 
-const BACKEND_TYPES = ["locations", "services", "events"] as const;
-const FRONT_TO_BACK: Record<string, (typeof BACKEND_TYPES)[number]> = {
-  locatii: "locations",
-  servicii: "services",
-  evenimente: "events",
+const ALLOWED_TYPES = ["events", "locations", "services"] as const;
+type ListingType = (typeof ALLOWED_TYPES)[number];
+
+export function generateStaticParams() {
+  return ALLOWED_TYPES.map((type) => ({ type }));
+}
+
+type RouteParams = {
+  params: Promise<{ type: ListingType }>;
 };
 
-export async function GET(req: NextRequest) {
-  const url = req.nextUrl;
-  const rawType = url.searchParams.get("listingType");
-  const listingType =
-    (rawType &&
-      (BACKEND_TYPES.includes(rawType as any)
-        ? (rawType as (typeof BACKEND_TYPES)[number])
-        : FRONT_TO_BACK[rawType])) ||
-    null;
+export async function GET(req: Request, { params }: RouteParams) {
+  const { type } = await params;
 
-  if (!listingType) {
-    return new Response("Invalid listingType parameter", { status: 400 });
+  if (!ALLOWED_TYPES.includes(type)) {
+    return new Response("Invalid listing type", { status: 400 });
   }
 
   const payloadUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
@@ -38,7 +35,7 @@ export async function GET(req: NextRequest) {
     return new Response("SVC_TOKEN not configured", { status: 500 });
   }
 
-  const upstream = `${payloadUrl}/api/hub?listingType=${listingType}`;
+  const upstream = `${payloadUrl}/api/hub?listingType=${type}`;
 
   try {
     const res = await fetchWithRetry(
@@ -49,7 +46,7 @@ export async function GET(req: NextRequest) {
           Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
         },
         cache: "force-cache",
-        next: { tags: [tag.hubSnapshot(listingType), tag.hubAny()] },
+        next: { tags: [tag.hubSnapshot(type), tag.hubAny()] },
       },
       { timeoutMs: 2000, retries: 1 },
     );
@@ -65,7 +62,7 @@ export async function GET(req: NextRequest) {
     const headers = new Headers({
       "Content-Type": "application/json",
       "Cache-Control": "public, s-maxage=900, stale-while-revalidate=900",
-      "Surrogate-Key": `${tag.hubSnapshot(listingType)} ${tag.hubAny()} ${tag.tenant("unevent")}`,
+      "Surrogate-Key": `${tag.hubSnapshot(type)} ${tag.hubAny()} ${tag.tenant("unevent")}`,
       ETag: etag,
     });
 
@@ -73,10 +70,7 @@ export async function GET(req: NextRequest) {
       return new Response(null, { status: 304, headers });
     }
 
-    return new Response(body, {
-      status: 200,
-      headers,
-    });
+    return new Response(body, { status: 200, headers });
   } catch (error) {
     console.error("Error fetching hub snapshot:", error);
     return new Response("Internal Server Error", { status: 500 });
