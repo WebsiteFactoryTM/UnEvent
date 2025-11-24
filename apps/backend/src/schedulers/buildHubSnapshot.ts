@@ -211,4 +211,54 @@ export const registerBuildHubSnapshotScheduler = (payload: Payload) => {
   cron.schedule('7 6,12,18,0 * * *', () => buildHubSnapshot(payload, 'services'))
   // events at :09
   cron.schedule('9 6,12,18,0 * * *', () => buildHubSnapshot(payload, 'events'))
+
+  // Build snapshots at init if they don't exist (non-blocking, fire-and-forget)
+  // This ensures snapshots are available immediately on fresh deployments
+  // without blocking server startup
+  Promise.all([
+    payload
+      .find({
+        collection: 'hub-snapshots',
+        where: { listingType: { equals: 'locations' } },
+        limit: 1,
+      })
+      .then((res) => {
+        if (res.docs.length === 0) {
+          console.log('[HubSnapshot] No locations snapshot found, building at init...')
+          return buildHubSnapshot(payload, 'locations').catch((err) => {
+            console.error('[HubSnapshot] Error building locations snapshot at init:', err)
+          })
+        }
+      }),
+    payload
+      .find({
+        collection: 'hub-snapshots',
+        where: { listingType: { equals: 'services' } },
+        limit: 1,
+      })
+      .then((res) => {
+        if (res.docs.length === 0) {
+          console.log('[HubSnapshot] No services snapshot found, building at init...')
+          return buildHubSnapshot(payload, 'services').catch((err) => {
+            console.error('[HubSnapshot] Error building services snapshot at init:', err)
+          })
+        }
+      }),
+    payload
+      .find({
+        collection: 'hub-snapshots',
+        where: { listingType: { equals: 'events' } },
+        limit: 1,
+      })
+      .then((res) => {
+        if (res.docs.length === 0) {
+          console.log('[HubSnapshot] No events snapshot found, building at init...')
+          return buildHubSnapshot(payload, 'events').catch((err) => {
+            console.error('[HubSnapshot] Error building events snapshot at init:', err)
+          })
+        }
+      }),
+  ]).catch((err) => {
+    console.error('[HubSnapshot] Error checking snapshots at init:', err)
+  })
 }
