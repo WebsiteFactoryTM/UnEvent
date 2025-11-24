@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { createSlugField } from '../../utils/slugifySlug'
 import { Facility } from '@/payload-types'
 import { getRedis } from '@/utils/redis'
+import { afterChange } from '@/hooks/afterChange'
 
 export const Facilities: CollectionConfig = {
   slug: 'facilities',
@@ -19,6 +20,7 @@ export const Facilities: CollectionConfig = {
         const redis = getRedis()
         await redis.del('facilities')
       },
+      afterChange,
     ],
   },
   fields: [

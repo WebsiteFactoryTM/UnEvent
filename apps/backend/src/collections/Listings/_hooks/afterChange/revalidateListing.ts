@@ -1,16 +1,14 @@
-import { revalidate } from '@/utils/revalidate'
+// This hook is now replaced by the centralized afterChange hook
+// which handles moderationStatus changes properly
+// Keeping this file for backward compatibility but it delegates to the centralized hook
 import { CollectionAfterChangeHook } from 'payload'
 import { Location, Service, Event } from '@/payload-types'
-export const revalidateListing: CollectionAfterChangeHook<Location | Service | Event> = async ({
-  doc,
-  req,
-  collection,
-}) => {
-  const { payload } = req
+import { afterChange } from '@/hooks/afterChange'
 
-  if (doc.moderationStatus === 'approved') {
-    revalidate({ payload, collection: collection.slug as string, slug: doc.slug as string })
-  }
-
-  return doc
+export const revalidateListing: CollectionAfterChangeHook<Location | Service | Event> = async (
+  args,
+) => {
+  // Delegate to centralized hook which handles moderationStatus logic
+  await afterChange(args)
+  return args.doc
 }

@@ -3,6 +3,7 @@ import { createSlugField } from '../../utils/slugifySlug'
 import type { ListingType } from '@/payload-types'
 import { isAdmin } from '@/collections/_access/roles'
 import { getRedis } from '@/utils/redis'
+import { afterChange } from '@/hooks/afterChange'
 
 export const ListingTypes: CollectionConfig = {
   slug: 'listing-types',
@@ -23,6 +24,7 @@ export const ListingTypes: CollectionConfig = {
         const redis = getRedis()
         await redis.del('taxonomies')
       },
+      afterChange,
     ],
   },
   fields: [

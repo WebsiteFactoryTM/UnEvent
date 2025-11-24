@@ -1,29 +1,35 @@
 import type { Payload } from 'payload'
 
-export const revalidate = async (args: {
-  collection: string
-  slug: string
-  payload: Payload
-}): Promise<void> => {
-  const { collection, slug, payload } = args
+export const revalidate = async (args: { tags: string[]; payload: Payload }): Promise<void> => {
+  const { tags, payload } = args
+
+  if (!process.env.NEXT_PRIV_REVALIDATE_URL) {
+    payload.logger.error('NEXT_PRIV_REVALIDATE_URL is not set')
+    return
+  }
+
+  if (!process.env.SVC_TOKEN) {
+    payload.logger.error('SVC_TOKEN is not set')
+    return
+  }
 
   try {
-    const res = await fetch(
-      `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/api/revalidate?secret=${process.env.PAYLOAD_REVALIDATE_SECRET}&collection=${collection}&slug=${slug}`,
-    )
+    const res = await fetch(process.env.NEXT_PRIV_REVALIDATE_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.SVC_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tags }),
+    })
 
     if (res.ok) {
-      payload.logger.info(`Revalidated page '${slug}' in collection '${collection}'`)
+      payload.logger.info(`Revalidated ${tags.length} tag(s): ${tags.join(', ')}`)
     } else {
-      payload.logger.error(
-        `Error revalidating page '${slug}' in collection '${collection}': ${res}`,
-      )
+      const text = await res.text().catch(() => 'Unknown error')
+      payload.logger.error(`Error revalidating tags: ${res.status} ${text}`)
     }
   } catch (err: unknown) {
-    console.log(err)
-
-    payload.logger.error(
-      `Error hitting revalidate route for page '${slug}' in collection '${collection}': ${err}`,
-    )
+    payload.logger.error(`Error hitting revalidate route: ${err}`)
   }
 }
