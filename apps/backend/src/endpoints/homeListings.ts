@@ -25,29 +25,46 @@ export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
       slug: 'homeListings',
       depth: 2,
     })
+
+    const featuredLocationIds = homeListings?.featuredLocations?.map((location) =>
+      typeof location === 'object' ? location.id : location,
+    )
+    const topServiceIds = homeListings?.topServices?.map((service) =>
+      typeof service === 'object' ? service.id : service,
+    )
+    const upcomingEventIds = homeListings?.upcomingEvents?.map((event) =>
+      typeof event === 'object' ? event.id : event,
+    )
     const newLocations = await payload.find({
       collection: 'locations',
-      where: { moderationStatus: { equals: 'approved' } },
+      where: {
+        moderationStatus: { equals: 'approved' },
+        id: { not_in: featuredLocationIds },
+      },
       limit: 6,
       sort: '-createdAt',
       depth: 2,
     })
     const newServices = await payload.find({
       collection: 'services',
-      where: { moderationStatus: { equals: 'approved' } },
+      where: { moderationStatus: { equals: 'approved' }, id: { not_in: topServiceIds } },
       limit: 6,
       sort: '-createdAt',
       depth: 2,
     })
     const newEvents = await payload.find({
       collection: 'events',
-      where: { moderationStatus: { equals: 'approved' } },
+      where: { moderationStatus: { equals: 'approved' }, id: { not_in: upcomingEventIds } },
       limit: 6,
       sort: 'startDate',
       depth: 2,
     })
 
-    if (!homeListings) {
+    if (
+      !homeListings?.featuredLocations?.length ||
+      !homeListings?.topServices?.length ||
+      !homeListings?.upcomingEvents?.length
+    ) {
       homeListings = await getHomeListings(req.payload)
     }
 
@@ -77,21 +94,30 @@ const getHomeListings = async (
     const [featuredLocations, topServices, upcomingEvents] = await Promise.all([
       payload.find({
         collection: 'locations',
-        where: { featured: { equals: true }, moderationStatus: { equals: 'approved' } },
+        where: {
+          tier: { in: ['recommended', 'sponsored'] },
+          moderationStatus: { equals: 'approved' },
+        },
         limit: 6,
         sort: '-rating',
         depth: 1,
       }),
       payload.find({
         collection: 'services',
-        where: { moderationStatus: { equals: 'approved' } },
+        where: {
+          tier: { in: ['recommended', 'sponsored'] },
+          moderationStatus: { equals: 'approved' },
+        },
         limit: 6,
         sort: '-rating',
         depth: 1,
       }),
       payload.find({
         collection: 'events',
-        where: { moderationStatus: { equals: 'approved' } },
+        where: {
+          tier: { in: ['recommended', 'sponsored'] },
+          moderationStatus: { equals: 'approved' },
+        },
         limit: 6,
         sort: 'startDate',
         depth: 1,
@@ -104,7 +130,7 @@ const getHomeListings = async (
       upcomingEvents: upcomingEvents.docs,
     }
   } catch (err) {
-    payload.logger.error('Home endpoint error:', err)
+    console.error('Home endpoint error:', err)
     throw new Error('Failed to fetch home data')
   }
 }
