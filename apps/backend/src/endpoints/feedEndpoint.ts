@@ -89,10 +89,10 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
 
     if (query.lat && query.lng && !hasRelationshipFilters) {
       // Use 'near' only when no relationship filters (avoids DISTINCT conflict)
-      // PayloadCMS geo near expects [lat, lng, radius] format
+      // PayloadCMS geo near expects [lng, lat, radius] format (GeoJSON standard)
       const radius = query.radius || 10000 // Default 10km if not provided
       whereEntity.and?.push({
-        geo: { near: [query.lat, query.lng, radius] },
+        geo: { near: [query.lng, query.lat, radius] },
       })
     } else if (query.lat && query.lng && hasRelationshipFilters) {
       // When relationship filters exist, fall back to city filter to avoid DISTINCT conflict
@@ -393,7 +393,8 @@ function toCardItem(
     startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
     capacity: capacity,
     tier: doc.tier,
-    geo: doc.geo ?? null,
+    // Reverse coordinates from [lng, lat] (GeoJSON) to [lat, lng] for frontend
+    geo: doc.geo ? [doc.geo[1], doc.geo[0]] : null,
   }
 }
 function getImageURL(doc: Location | Service | Event): string | undefined {

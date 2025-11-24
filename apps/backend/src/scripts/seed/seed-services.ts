@@ -52,6 +52,7 @@ async function seedServices(payload: Payload) {
           ...item,
           ...(featuredImageId ? { featuredImage: featuredImageId } : {}),
           ...(galleryIds.length > 0 ? { gallery: galleryIds } : {}),
+          _status: 'published' as const,
         }
 
         const existing = await payload.find({

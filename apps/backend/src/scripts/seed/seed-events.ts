@@ -56,6 +56,7 @@ async function seedEvents(payload: Payload) {
           ...item,
           ...(featuredImageId ? { featuredImage: featuredImageId } : {}),
           ...(galleryIds.length > 0 ? { gallery: galleryIds } : {}),
+          _status: 'published' as const,
         }
 
         // Upsert by slug
