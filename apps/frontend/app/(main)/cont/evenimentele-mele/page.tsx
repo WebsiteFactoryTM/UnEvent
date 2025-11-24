@@ -55,7 +55,7 @@ export default async function EvenimentelemePage() {
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ListingView
           type="evenimente"
-          label="Locațiile mele"
+          // label="Evenimentele mele"
           description="Toate evenimentele tale"
           buttonLabel="Adaugă eveniment"
           noListingsMessage="Nu ai încă evenimente adăugate."

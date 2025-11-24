@@ -55,7 +55,7 @@ export default async function LocatiilemePage() {
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ListingView
           type="locatii"
-          label="Locațiile mele"
+          // label="Locațiile mele"
           description="Toate locațiile tale"
           buttonLabel="Adaugă locație"
           noListingsMessage="Nu ai încă locații adăugate."

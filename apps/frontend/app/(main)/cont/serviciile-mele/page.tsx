@@ -55,7 +55,7 @@ export default async function ServiciilemePage() {
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ListingView
           type="servicii"
-          label="Serviciile mele"
+          // label="Serviciile mele"
           description="Toate serviciile tale"
           buttonLabel="Adaugă serviciu"
           noListingsMessage="Nu ai încă servicii adăugate."
