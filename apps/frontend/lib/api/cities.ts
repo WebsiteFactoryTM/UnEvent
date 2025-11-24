@@ -1,9 +1,5 @@
 "use server";
 import type { City } from "@/types/payload-types";
-import { citiesKeys } from "../cacheKeys";
-import { redisKey } from "../react-query/utils";
-import { getRedis } from "../redis";
-import { cacheTTL } from "../constants";
 import { buildCitySearchParams } from "../react-query/cities.queries";
 
 export interface UseCitiesProps {
@@ -13,6 +9,7 @@ export interface UseCitiesProps {
   popularFallback?: boolean; // when search is empty, fetch top popular cities
   enabled?: boolean;
 }
+
 export async function getPopularCities(limit: number = 10): Promise<City[]> {
   try {
     if (!process.env.NEXT_PUBLIC_API_URL) {
@@ -49,51 +46,116 @@ export async function getPopularCities(limit: number = 10): Promise<City[]> {
   }
 }
 
+function buildBffQuery({
+  search,
+  limit,
+  verifiedOnly,
+  popularFallback,
+}: {
+  search?: string;
+  limit: number;
+  verifiedOnly?: boolean;
+  popularFallback: boolean;
+}) {
+  const params = new URLSearchParams();
+  if (search) params.set("search", search.trim());
+  params.set("limit", String(limit));
+  if (verifiedOnly) params.set("verifiedOnly", "1");
+  params.set("popularFallback", popularFallback ? "1" : "0");
+  return params.toString();
+}
+
+function resolveFrontendBaseUrl() {
+  if (process.env.NEXT_PUBLIC_FRONTEND_URL) {
+    return process.env.NEXT_PUBLIC_FRONTEND_URL;
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  return "http://localhost:3000";
+}
+
+function isBuildTime() {
+  return (
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    (typeof window === "undefined" &&
+      !process.env.VERCEL_URL &&
+      !process.env.NEXT_PUBLIC_FRONTEND_URL)
+  );
+}
+
 export async function getCities({
   search,
   limit = 20,
   verifiedOnly,
-  popularFallback,
+  popularFallback = true,
 }: UseCitiesProps): Promise<City[]> {
-  try {
-    const redis = getRedis();
-    const url = new URL("/api/cities", process.env.NEXT_PUBLIC_API_URL);
+  const trimmedSearch = search?.trim();
+  const bffQuery = buildBffQuery({
+    search: trimmedSearch,
+    limit,
+    verifiedOnly,
+    popularFallback,
+  });
 
-    const params = buildCitySearchParams({
-      search,
+  if (!isBuildTime()) {
+    const baseUrl = resolveFrontendBaseUrl();
+    const bffUrl = `${baseUrl}/api/public/cities?${bffQuery}`;
+    try {
+      const response = await fetch(bffUrl, {
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
+
+      if (response.ok) {
+        return (await response.json()) as City[];
+      }
+
+      const errorText = await response.text().catch(() => response.statusText);
+      console.error(
+        `BFF /api/public/cities failed (${response.status}):`,
+        errorText,
+      );
+    } catch (error) {
+      console.error("BFF /api/public/cities error:", error);
+    }
+  }
+
+  // Fallback to direct Payload call (build time or BFF unavailable)
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    console.warn(
+      "NEXT_PUBLIC_API_URL is not configured; cannot fetch cities fallback",
+    );
+    return [];
+  }
+
+  try {
+    const payloadParams = buildCitySearchParams({
+      search: trimmedSearch,
       limit,
       verifiedOnly,
       popularFallback,
     });
+    const payloadUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/cities?${payloadParams.toString()}`;
 
-    const fullUrl = `${url.toString()}?${params.toString()}`;
-    // Helpful logs (server console)
-
-    // Include query parameters in cache key to avoid stale/incorrect reuse
-    const cacheKey = redisKey(citiesKeys.list({ url: fullUrl }));
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      // Upstash Redis may return objects directly, so check type before parsing
-      if (typeof cached === "string") {
-        return JSON.parse(cached);
-      }
-      return cached;
-    }
-
-    const res = await fetch(fullUrl, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await fetch(payloadUrl, {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
     });
 
-    if (!res.ok) throw new Error(`Failed to fetch cities: ${res.status}`);
-    const data = await res.json();
-    // console.log("[cities] docs:", Array.isArray(data?.docs) ? data.docs.length : 0);
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => response.statusText);
+      throw new Error(
+        `Payload /api/cities failed (${response.status}): ${errorText}`,
+      );
+    }
 
-    await redis.set(cacheKey, JSON.stringify(data.docs), "EX", cacheTTL.oneDay);
-    return (data?.docs ?? []) as City[];
+    const payload = (await response.json()) as { docs?: City[] };
+    return Array.isArray(payload?.docs) ? payload.docs : [];
   } catch (error) {
-    console.error("Error in getCities:", error);
+    console.error("Fallback Payload /api/cities error:", error);
     return [];
   }
 }

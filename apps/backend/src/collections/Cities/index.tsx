@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { beforeChange } from './hooks/beforeChange'
+import { afterChange } from '@/hooks/afterChange'
 import { importCitiesFromCsv } from './endpoints/importCsv'
 import { isAdmin } from '../_access/roles'
 
@@ -25,13 +26,8 @@ const Cities: CollectionConfig = {
     delete: ({ req }) => isAdmin({ req }),
   },
   hooks: {
-    // afterChange: [
-    //   async () => {
-    //     const redis = getRedis()
-    //     await redis.del('taxonomies')
-    //   },
-    // ],
     beforeChange: [beforeChange],
+    afterChange: [afterChange],
   },
   fields: [
     {

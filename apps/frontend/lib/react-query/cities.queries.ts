@@ -49,15 +49,12 @@ export function useCities({
   popularFallback = true,
   enabled = true,
 }: UseCitiesProps) {
-  const params = buildCitySearchParams({
-    search,
-    limit,
-    verifiedOnly,
-    popularFallback,
-  });
   return useQuery({
     queryKey: citiesKeys.list({
-      url: `${new URL("/api/cities", process.env.NEXT_PUBLIC_API_URL).toString()}?${params.toString()}`,
+      search,
+      limit,
+      verifiedOnly,
+      popularFallback,
     }),
     queryFn: async () => {
       return getCities({ search, limit, verifiedOnly, popularFallback });
