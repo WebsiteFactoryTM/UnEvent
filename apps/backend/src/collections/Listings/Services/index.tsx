@@ -6,6 +6,7 @@ import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByVi
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
 import { markListingMediaPermanent } from '../_hooks/afterChange/markMediaPermanent'
+import { queueHubSnapshotAfterDelete } from '../_hooks/afterDelete/queueHubSnapshot'
 
 export const Services: CollectionConfig = {
   slug: 'services',
@@ -32,6 +33,7 @@ export const Services: CollectionConfig = {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
     afterChange: [markListingMediaPermanent, revalidateListing],
+    afterDelete: [queueHubSnapshotAfterDelete],
   },
   fields: [
     ...sharedListingFields,

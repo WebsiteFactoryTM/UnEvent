@@ -1,4 +1,5 @@
 import { tag } from '@unevent/shared'
+import { queueHubSnapshotBuild, isHubSnapshotCandidate } from '@/utils/hubSnapshotScheduler'
 import { revalidate } from '@/utils/revalidate'
 import { purgeCDN } from '@/utils/purgeCDN'
 import type { CollectionAfterChangeHook, Payload } from 'payload'
@@ -56,6 +57,12 @@ export const afterChange: CollectionAfterChangeHook = async ({
       tags.add(tag.top(collectionType))
       tags.add(tag.featured(collectionType))
       tags.add(tag.home())
+
+      const currentlyHubEligible = isHubSnapshotCandidate(doc)
+      const previouslyHubEligible = isHubSnapshotCandidate(previousDoc)
+      if (currentlyHubEligible || previouslyHubEligible) {
+        queueHubSnapshotBuild(req.payload, collectionType, 'listing-change')
+      }
     }
   }
 
