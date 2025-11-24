@@ -67,14 +67,7 @@ export function useSimilarListings(
       },
     ),
     queryFn: () =>
-      fetchSimilarListings(
-        listingType,
-        listingId,
-        city,
-        suitableFor,
-        limit,
-        accessToken,
-      ),
+      fetchSimilarListings(listingType, listingId, city, suitableFor, limit),
     enabled: isEnabled,
     staleTime: 60 * 60 * 1000,
   });

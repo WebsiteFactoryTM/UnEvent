@@ -36,20 +36,20 @@ export const fetchListing = async (
       const headers: Record<string, string> = {};
       if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;
-    }
+      }
 
-    const response = await fetch(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`,
-      {
+        {
           headers: Object.keys(headers).length > 0 ? headers : undefined,
-        next: {
-          tags: [`${listingType}_${slug}`],
+          next: {
+            tags: [`${listingType}_${slug}`],
+          },
+          cache: isDraftMode ? "no-store" : "force-cache",
         },
-        cache: isDraftMode ? "no-store" : "force-cache",
-      },
-    );
+      );
 
-    if (!response.ok) {
+      if (!response.ok) {
         const errorMessage = await response
           .text()
           .catch(() => `HTTP ${response.status}`);
@@ -60,10 +60,10 @@ export const fetchListing = async (
             `Failed to fetch listing from Payload: ${errorMessage}`,
           ),
         };
-    }
+      }
 
-    const data = await response.json();
-    const doc = data?.docs?.[0];
+      const data = await response.json();
+      const doc = data?.docs?.[0];
 
       if (!doc) {
         return { data: null, error: new Error("Listing not found") };
@@ -131,7 +131,7 @@ export const fetchListing = async (
 
       const doc = await response.json();
 
-    return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
+      return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
     } catch (fetchError) {
       // If BFF fetch fails (e.g., network error), fallback to Payload
       console.error("BFF fetch error, falling back to Payload:", fetchError);
@@ -274,7 +274,7 @@ export const fetchSimilarListings = async (
       if (response.ok) {
         const data = await response.json();
         return normalizeListings(data.docs) as Listing[];
-    }
+      }
 
       console.warn(
         "Similar listings BFF route failed, falling back to Payload:",
@@ -296,8 +296,9 @@ export const fetchSimilarListings = async (
     fallbackUrl.searchParams.set("where[moderationStatus][equals]", "approved");
 
     if (listingId) {
+      // Payload uses not_in for excluding IDs, even for a single value
       fallbackUrl.searchParams.set(
-        "where[id][not_equals]",
+        "where[id][not_in][0]",
         listingId.toString(),
       );
     }

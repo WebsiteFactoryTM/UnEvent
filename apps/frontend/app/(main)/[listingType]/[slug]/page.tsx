@@ -222,7 +222,6 @@ export default async function DetailPage({
                   | SuitableForType
                 )[]
               }
-              listingId={listing?.id}
               label="Locații recomandate"
               subLabel="Pentru evenimentul tău"
             />
@@ -238,7 +237,6 @@ export default async function DetailPage({
                   | SuitableForType
                 )[]
               }
-              listingId={listing?.id}
               label="Servicii recomandate"
               subLabel="Pentru evenimentul tău"
             />

@@ -2,9 +2,8 @@ import { tag } from "@unevent/shared";
 import { fetchWithRetry } from "@/lib/server/fetcher";
 import { NextRequest } from "next/server";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 export const revalidate = 120;
-export const fetchCache = "force-cache";
 export const preferredRegion = "auto";
 
 const ALLOWED_TYPES = ["events", "locations", "services"] as const;
@@ -43,7 +42,8 @@ export async function GET(
   search.set("where[moderationStatus][equals]", "approved");
 
   if (listingId) {
-    search.set("where[id][not_equals]", listingId);
+    // Payload uses not_in for excluding IDs, even for a single value
+    search.set("where[id][not_in][0]", listingId);
   }
   if (cityId) {
     search.set("where[city][equals]", cityId);
@@ -62,9 +62,10 @@ export async function GET(
           "x-tenant": "unevent",
           Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
         },
-        cache: "force-cache",
+        cache: "no-store", // Dynamic route, don't cache upstream fetch
         next: {
           tags: [tag.similar(type)],
+          revalidate: 120,
         },
       },
       { timeoutMs: 2000, retries: 1 },
