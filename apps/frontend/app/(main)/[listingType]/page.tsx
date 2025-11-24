@@ -129,13 +129,13 @@ export default async function ListingTypePage({
   };
   const h1 = h1Titles[listingType];
 
-  if (featuredNormalized.length === 0 && cityRows.length === 0) {
-    return (
-      <div className="p-6 h-screen flex items-center justify-center text-muted-foreground">
-        Încă nu avem date pentru această secțiune. Revino curând.
-      </div>
-    );
-  }
+  // if (featuredNormalized.length === 0 && cityRows.length === 0) {
+  //   return (
+  //     <div className="p-6 h-screen flex items-center justify-center text-muted-foreground">
+  //       Încă nu avem date pentru această secțiune. Revino curând.
+  //     </div>
+  //   );
+  // }
 
   return (
     <>

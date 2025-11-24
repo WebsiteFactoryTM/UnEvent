@@ -159,7 +159,7 @@ export default async function DetailPage({
               address={listing?.address ?? ""}
               geo={
                 listing?.geo
-                  ? { lat: listing.geo[0], lon: listing.geo[1] }
+                  ? { lat: listing.geo[1], lon: listing.geo[0] }
                   : undefined
               }
               city={
