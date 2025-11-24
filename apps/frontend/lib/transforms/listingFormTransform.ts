@@ -61,7 +61,7 @@ export function formToPayload(
     address: formData.address || null,
     geo:
       formData.geo?.lat && formData.geo?.lon
-        ? ([formData.geo.lat, formData.geo.lon] as [number, number])
+        ? ([formData.geo.lon, formData.geo.lat] as [number, number])
         : null,
     contact: {
       email: formData.contact.email,
