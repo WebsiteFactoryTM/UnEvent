@@ -2,9 +2,6 @@ import { Listing } from "@/types/listings";
 import { ListingType } from "@/types/listings";
 import { frontendTypeToCollectionSlug } from "./reviews";
 import { City, ListingType as SuitableForType } from "@/types/payload-types";
-import { getRedis } from "../redis";
-import { redisKey } from "../react-query/utils";
-import { listingsKeys } from "../cacheKeys";
 import {
   normalizeListing,
   normalizeListings,
@@ -179,40 +176,58 @@ export const fetchListing = async (
 export const fetchTopListings = async (
   listingType: ListingType,
   limit: number = 10,
-  accessToken?: string,
 ): Promise<Listing[]> => {
   try {
     const collectionSlug = frontendTypeToCollectionSlug(listingType);
-    const url = new URL(
+    const params = new URLSearchParams({ limit: String(limit) });
+    const isBuildTime =
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      (typeof window === "undefined" &&
+        !process.env.VERCEL_URL &&
+        !process.env.NEXT_PUBLIC_FRONTEND_URL);
+
+    if (!isBuildTime && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_FRONTEND_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
+      const response = await fetch(
+        `${baseUrl}/api/public/listings/${collectionSlug}/top?${params.toString()}`,
+        { next: { revalidate: 600 } },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return normalizeListings(data.docs) as Listing[];
+      }
+      console.warn(
+        "Top listings BFF route failed, falling back to Payload:",
+        await response.text(),
+      );
+    }
+
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      throw new Error("NEXT_PUBLIC_API_URL not configured");
+    }
+
+    const fallbackUrl = new URL(
       `/api/${collectionSlug}`,
       process.env.NEXT_PUBLIC_API_URL,
     );
-    url.searchParams.set("where[tier][equals]", "sponsored");
-    url.searchParams.set("limit", String(limit));
-    url.searchParams.set("sort", "rating:asc");
-    // url.searchParams.set(
-    //   "select",
-    //   "id,title,slug,featuredImage,city,rating,reviewCount",
-    // );
-    // url.searchParams.set("populate[featuredImage][url]", "true");
-    // url.searchParams.set("populate[featuredImage][alt]", "true");
-    // url.searchParams.set("populate[city][name]", "true");
+    fallbackUrl.searchParams.set("where[tier][equals]", "sponsored");
+    fallbackUrl.searchParams.set("where[moderationStatus][equals]", "approved");
+    fallbackUrl.searchParams.set("limit", String(limit));
+    fallbackUrl.searchParams.set("sort", "-rating");
+    fallbackUrl.searchParams.set("depth", "2");
 
-    const response = await fetch(url.toString(), {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      next: {
-        tags: [`${collectionSlug}_top_listings_${limit}`],
-        revalidate: 3600,
-      },
+    const payloadResponse = await fetch(fallbackUrl.toString(), {
+      next: { revalidate: 600 },
     });
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      console.error(errorMessage);
+    if (!payloadResponse.ok) {
+      const errorMessage = await payloadResponse.text();
       throw new Error(errorMessage);
     }
-    const data = await response.json();
+    const data = await payloadResponse.json();
     return normalizeListings(data.docs) as Listing[];
   } catch (error) {
     throw new Error(
@@ -227,77 +242,91 @@ export const fetchSimilarListings = async (
   city?: City,
   suitableFor?: (number | SuitableForType)[],
   limit: number = 10,
-  accessToken?: string,
 ): Promise<Listing[]> => {
-  const redis = getRedis();
-  const cacheKey = redisKey(
-    listingsKeys.list("similar", frontendTypeToCollectionSlug(listingType), {
-      listingId: listingId ?? undefined,
-      cityId: city?.id ?? undefined,
-      suitableForIds: suitableFor?.map((item) =>
-        typeof item === "number" ? item : item.id,
-      ),
-      limit,
-    }),
-  );
   try {
-    const cachedData = await redis.get(cacheKey);
+    const collectionSlug = frontendTypeToCollectionSlug(listingType);
+    const params = new URLSearchParams({ limit: String(limit) });
+    if (listingId) params.set("listingId", String(listingId));
+    if (city?.id) params.set("cityId", String(city.id));
+    suitableFor?.forEach((item) => {
+      const id = typeof item === "number" ? item : item.id;
+      params.append("suitableFor", String(id));
+    });
 
-    if (cachedData) {
-      console.log("Cached data found for similar listings");
-      // Upstash Redis may return objects directly, so check type before parsing
-      if (typeof cachedData === "string") {
-        return JSON.parse(cachedData);
+    const isBuildTime =
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      (typeof window === "undefined" &&
+        !process.env.VERCEL_URL &&
+        !process.env.NEXT_PUBLIC_FRONTEND_URL);
+
+    if (!isBuildTime && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_FRONTEND_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
+
+      const response = await fetch(
+        `${baseUrl}/api/public/listings/${collectionSlug}/similar?${params.toString()}`,
+        { next: { revalidate: 120 } },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return normalizeListings(data.docs) as Listing[];
       }
-      return cachedData;
+
+      console.warn(
+        "Similar listings BFF route failed, falling back to Payload:",
+        await response.text(),
+      );
     }
 
-    console.log("🌐 Fetching similar listings from API...");
-    const collectionSlug = frontendTypeToCollectionSlug(listingType);
-    const url = new URL(
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      throw new Error("NEXT_PUBLIC_API_URL not configured");
+    }
+
+    const fallbackUrl = new URL(
       `/api/${collectionSlug}`,
       process.env.NEXT_PUBLIC_API_URL,
     );
-
-    url.searchParams.set("limit", String(limit));
-    url.searchParams.set("sort", "rating:asc");
-
-    if (suitableFor) {
-      suitableFor?.forEach((item, i) => {
-        const id = typeof item === "number" ? item : item.id;
-        url.searchParams.set(`where[suitableFor][in][${i}]`, String(id));
-      });
-    }
-    if (city) {
-      url.searchParams.set("where[city][equals]", city.id.toString());
-    }
+    fallbackUrl.searchParams.set("limit", String(limit));
+    fallbackUrl.searchParams.set("depth", "2");
+    fallbackUrl.searchParams.set("sort", "-rating");
+    fallbackUrl.searchParams.set("where[moderationStatus][equals]", "approved");
 
     if (listingId) {
-      url.searchParams.set("where[id][not_equals]", listingId.toString());
+      fallbackUrl.searchParams.set(
+        "where[id][not_equals]",
+        listingId.toString(),
+      );
     }
-
-    const response = await fetch(url.toString(), {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+    if (city?.id) {
+      fallbackUrl.searchParams.set("where[city][equals]", city.id.toString());
+    }
+    suitableFor?.forEach((item, index) => {
+      const id = typeof item === "number" ? item : item.id;
+      fallbackUrl.searchParams.set(
+        `where[suitableFor][in][${index}]`,
+        String(id),
+      );
     });
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      console.error(errorMessage);
+
+    const payloadResponse = await fetch(fallbackUrl.toString(), {
+      next: { revalidate: 120 },
+    });
+    if (!payloadResponse.ok) {
+      const errorMessage = await payloadResponse.text();
       throw new Error(errorMessage);
     }
-    const data = await response.json();
-    await redis.set(cacheKey, JSON.stringify(data.docs as Listing[]), "EX", 60);
-    const docs = normalizeListings(data.docs) as Listing[];
-    await redis.set(cacheKey, JSON.stringify(docs), "EX", 60);
-    return docs;
+
+    const data = await payloadResponse.json();
+    return normalizeListings(data.docs) as Listing[];
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    console.error(errorMessage);
-    // optional: fallback to last cached data if available
-    const fallback = await redis.get(cacheKey);
-    if (fallback) return JSON.parse(fallback);
-    throw new Error("No cached similar listings available");
+    throw new Error(
+      `Failed to fetch similar listings: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
   }
 };

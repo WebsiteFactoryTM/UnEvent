@@ -7,11 +7,11 @@ export const fetchCache = "force-cache";
 export const preferredRegion = "auto";
 
 type Params = {
-  params: { type: "events" | "locations" | "services"; slug: string };
+  params: Promise<{ type: "events" | "locations" | "services"; slug: string }>;
 };
 
 export async function GET(req: Request, { params }: Params) {
-  const { type, slug } = params;
+  const { type, slug } = await params;
   const url = new URL(req.url);
   const isDraft = url.searchParams.get("draft") === "1";
 

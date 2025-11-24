@@ -1,59 +1,67 @@
-"use server";
-
-import { authOptions } from "@/auth";
-import { getServerSession } from "next-auth";
-import { getRedis } from "../redis";
-import { homeKeys } from "../cacheKeys";
-import { redisKey } from "../react-query/utils";
-
 export const fetchHomeListings = async () => {
-  const redis = getRedis();
-  const cacheKey = redisKey(homeKeys.listings());
-
-  const session = await getServerSession(authOptions);
-  const accessToken = session?.accessToken;
-
   try {
-    const cachedData = await redis.get(cacheKey);
-    if (cachedData) {
-      console.log("Cached data found for home listings");
-      // Upstash Redis may return objects directly, so check type before parsing
-      if (typeof cachedData === "string") {
-        return JSON.parse(cachedData);
+    // Use BFF route for edge caching
+    // During build time, fallback to direct Payload call if BFF unavailable
+    const isBuildTime =
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      (typeof window === "undefined" &&
+        !process.env.VERCEL_URL &&
+        !process.env.NEXT_PUBLIC_FRONTEND_URL);
+
+    // Use BFF route at runtime, direct Payload call during build
+    if (!isBuildTime && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_FRONTEND_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
+
+      const bffUrl = `${baseUrl}/api/public/home`;
+
+      try {
+        const res = await fetch(bffUrl, {
+          headers: { Accept: "application/json" },
+          next: { revalidate: 900 },
+        });
+
+        if (res.ok) {
+          return await res.json();
+        }
+        // Fall through to fallback if BFF fails
+      } catch (bffError) {
+        console.error(
+          "BFF home route failed, falling back to Payload:",
+          bffError,
+        );
+        // Fall through to fallback
       }
-      return cachedData;
     }
-    console.log("🌐 Fetching home listings from API...");
+
+    // Fallback to direct Payload call (build time or BFF failure)
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      throw new Error("NEXT_PUBLIC_API_URL not configured");
+    }
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/home`,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Accept: "application/json" },
+        next: { revalidate: 900 },
       },
     );
+
     if (!response.ok) {
-      console.error("Failed to fetch home listings:", response.statusText);
-      console.error("Response:", await response.text());
-      throw new Error("Failed to fetch home listings");
+      const errorText = await response
+        .text()
+        .catch(() => `HTTP ${response.status}`);
+      throw new Error(`Failed to fetch home listings: ${errorText}`);
     }
 
-    let data = await response.json();
-    await redis.set(cacheKey, JSON.stringify(data), "EX", 60);
-
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Error fetching home listings:", error);
-    // optional: fallback to last cached data if available
-    const fallback = await redis.get(cacheKey);
-    if (fallback) {
-      // Upstash Redis may return objects directly, so check type before parsing
-      if (typeof fallback === "string") {
-        return JSON.parse(fallback);
-      }
-      return fallback;
-    }
-    throw new Error("No cached home listings available");
+    throw error instanceof Error
+      ? error
+      : new Error("Failed to fetch home listings");
   }
 };

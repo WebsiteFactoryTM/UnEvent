@@ -5,27 +5,7 @@ export const revalidate = 900;
 export const fetchCache = "force-cache";
 export const preferredRegion = "auto";
 
-const BACKEND_TYPES = ["locations", "services", "events"] as const;
-const FRONT_TO_BACK: Record<string, (typeof BACKEND_TYPES)[number]> = {
-  locatii: "locations",
-  servicii: "services",
-  evenimente: "events",
-};
-
 export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const rawType = url.searchParams.get("listingType");
-  const listingType =
-    (rawType &&
-      (BACKEND_TYPES.includes(rawType as any)
-        ? (rawType as (typeof BACKEND_TYPES)[number])
-        : FRONT_TO_BACK[rawType])) ||
-    null;
-
-  if (!listingType) {
-    return new Response("Invalid listingType parameter", { status: 400 });
-  }
-
   const payloadUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
   if (!payloadUrl) {
     return new Response("PAYLOAD_INTERNAL_URL not configured", { status: 500 });
@@ -35,21 +15,19 @@ export async function GET(req: Request) {
     return new Response("SVC_TOKEN not configured", { status: 500 });
   }
 
-  const upstream = `${payloadUrl}/api/hub?listingType=${listingType}`;
-
   try {
-    const res = await fetch(upstream, {
+    const res = await fetch(`${payloadUrl}/api/home`, {
       headers: {
         "x-tenant": "unevent",
         Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
       },
       cache: "force-cache",
-      next: { tags: [tag.hubSnapshot(listingType), tag.hubAny()] },
+      next: { tags: [tag.homeSnapshot(), tag.home()] },
     });
 
     if (!res.ok) {
       const errorText = await res.text().catch(() => `HTTP ${res.status}`);
-      console.error(`Hub endpoint error (${res.status}):`, errorText);
+      console.error(`Home endpoint error (${res.status}):`, errorText);
       return new Response("Upstream error", { status: res.status });
     }
 
@@ -58,11 +36,11 @@ export async function GET(req: Request) {
     return Response.json(data, {
       headers: {
         "Cache-Control": "public, s-maxage=900, stale-while-revalidate=900",
-        "Surrogate-Key": `${tag.hubSnapshot(listingType)} ${tag.hubAny()} ${tag.tenant("unevent")}`,
+        "Surrogate-Key": `${tag.homeSnapshot()} ${tag.home()} ${tag.tenant("unevent")}`,
       },
     });
   } catch (error) {
-    console.error("Error fetching hub snapshot:", error);
+    console.error("Error fetching home data:", error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }
