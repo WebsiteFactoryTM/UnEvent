@@ -17,20 +17,34 @@ export const fetchListing = async (
   isDraftMode?: boolean,
 ): Promise<{ data: Listing | null; error: Error | null }> => {
   try {
-    // During build time, use direct Payload call (BFF route not available)
+    // During build time or when BFF is not available, use direct Payload call
     // At runtime, use BFF route for edge caching
+    // Check if we're in build context - during static generation, BFF routes don't exist
     const isBuildTime =
       process.env.NEXT_PHASE === "phase-production-build" ||
-      !process.env.NEXT_PUBLIC_FRONTEND_URL;
+      (typeof window === "undefined" &&
+        !process.env.VERCEL_URL &&
+        !process.env.NEXT_PUBLIC_FRONTEND_URL);
 
-    if (isBuildTime) {
-      // Direct Payload call during build
+    // Always use direct Payload call during build or if BFF URL is not configured
+    if (isBuildTime || !process.env.NEXT_PUBLIC_FRONTEND_URL) {
+      if (!process.env.NEXT_PUBLIC_API_URL) {
+        return {
+          data: null,
+          error: new Error("NEXT_PUBLIC_API_URL not configured"),
+        };
+      }
+
+      // Direct Payload call during build or when BFF unavailable
+      const headers: Record<string, string> = {};
+      if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`,
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: Object.keys(headers).length > 0 ? headers : undefined,
           next: {
             tags: [`${listingType}_${slug}`],
           },
@@ -39,47 +53,125 @@ export const fetchListing = async (
       );
 
       if (!response.ok) {
-        const errorMessage = await response.text();
-        console.error(errorMessage);
-        return { data: null, error: new Error(errorMessage) };
+        const errorMessage = await response
+          .text()
+          .catch(() => `HTTP ${response.status}`);
+        console.error(`Payload API error (${response.status}):`, errorMessage);
+        return {
+          data: null,
+          error: new Error(
+            `Failed to fetch listing from Payload: ${errorMessage}`,
+          ),
+        };
       }
 
       const data = await response.json();
       const doc = data?.docs?.[0];
 
+      if (!doc) {
+        return { data: null, error: new Error("Listing not found") };
+      }
+
       return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
     }
 
     // Runtime: Use BFF route for edge caching
-    // Use NEXT_PUBLIC_FRONTEND_URL if set, otherwise fallback to localhost
     const baseUrl =
-      process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.VERCEL_URL
+      process.env.NEXT_PUBLIC_FRONTEND_URL ||
+      (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000";
+        : "http://localhost:3000");
 
     // Use BFF route, add draft parameter if in draft mode
     const draftParam = isDraftMode ? "?draft=1" : "";
-    const response = await fetch(
-      `${baseUrl}/api/public/listings/${listingType}/${encodeURIComponent(slug)}${draftParam}`,
-      {
+    const bffUrl = `${baseUrl}/api/public/listings/${listingType}/${encodeURIComponent(slug)}${draftParam}`;
+
+    try {
+      const response = await fetch(bffUrl, {
         // Server-side fetch should use cache (unless draft mode)
         next: isDraftMode ? { revalidate: 0 } : { revalidate: 300 },
-      },
-    );
+      });
 
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      console.error(errorMessage);
-      return { data: null, error: new Error(errorMessage) };
+      if (!response.ok) {
+        const errorMessage = await response
+          .text()
+          .catch(() => `HTTP ${response.status}`);
+        console.error(`BFF route failed (${response.status}):`, errorMessage);
+
+        // Fallback to direct Payload call if BFF fails
+        if (process.env.NEXT_PUBLIC_API_URL) {
+          const fallbackHeaders: Record<string, string> = {};
+          if (accessToken) {
+            fallbackHeaders.Authorization = `Bearer ${accessToken}`;
+          }
+
+          const fallbackUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`;
+          const fallbackResponse = await fetch(fallbackUrl, {
+            headers:
+              Object.keys(fallbackHeaders).length > 0
+                ? fallbackHeaders
+                : undefined,
+            cache: isDraftMode ? "no-store" : "force-cache",
+          });
+
+          if (fallbackResponse.ok) {
+            const fallbackData = await fallbackResponse.json();
+            const fallbackDoc = fallbackData?.docs?.[0];
+            if (fallbackDoc) {
+              return {
+                data: (normalizeListing(fallbackDoc) as Listing) ?? null,
+                error: null,
+              };
+            }
+          }
+        }
+
+        return {
+          data: null,
+          error: new Error(`BFF route failed: ${errorMessage}`),
+        };
+      }
+
+      const doc = await response.json();
+
+      return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
+    } catch (fetchError) {
+      // If BFF fetch fails (e.g., network error), fallback to Payload
+      console.error("BFF fetch error, falling back to Payload:", fetchError);
+
+      if (process.env.NEXT_PUBLIC_API_URL) {
+        const fallbackHeaders: Record<string, string> = {};
+        if (accessToken) {
+          fallbackHeaders.Authorization = `Bearer ${accessToken}`;
+        }
+
+        const fallbackUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`;
+        const fallbackResponse = await fetch(fallbackUrl, {
+          headers:
+            Object.keys(fallbackHeaders).length > 0
+              ? fallbackHeaders
+              : undefined,
+          cache: isDraftMode ? "no-store" : "force-cache",
+        });
+
+        if (fallbackResponse.ok) {
+          const fallbackData = await fallbackResponse.json();
+          const fallbackDoc = fallbackData?.docs?.[0];
+          if (fallbackDoc) {
+            return {
+              data: (normalizeListing(fallbackDoc) as Listing) ?? null,
+              error: null,
+            };
+          }
+        }
+      }
+
+      throw fetchError; // Re-throw to be caught by outer catch
     }
-
-    const doc = await response.json();
-
-    return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
-    console.error(errorMessage);
+    console.error("fetchListing error:", errorMessage);
     return { data: null, error: new Error(errorMessage) };
   }
 };

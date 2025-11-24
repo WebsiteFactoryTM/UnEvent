@@ -124,14 +124,53 @@ export async function fetchHubSnapshot(
   listingType: ListingType,
 ): Promise<HubSnapshot | null> {
   try {
-    if (!API_URL) return null;
+    // Use BFF route for edge caching
+    // During build time, fallback to direct Payload call if BFF unavailable
+    const isBuildTime =
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      (typeof window === "undefined" &&
+        !process.env.VERCEL_URL &&
+        !process.env.NEXT_PUBLIC_FRONTEND_URL);
+
     const collection = getListingTypeSlug(listingType);
+
+    // Use BFF route at runtime, direct Payload call during build
+    if (!isBuildTime && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_FRONTEND_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
+
+      const bffUrl = `${baseUrl}/api/public/hub?listingType=${collection}`;
+
+      try {
+        const res = await fetch(bffUrl, {
+          headers: { Accept: "application/json" },
+          next: { revalidate: 900 },
+        });
+
+        if (res.ok) {
+          return (await res.json()) as HubSnapshot;
+        }
+        // Fall through to fallback if BFF fails
+      } catch (bffError) {
+        console.error(
+          "BFF hub route failed, falling back to Payload:",
+          bffError,
+        );
+        // Fall through to fallback
+      }
+    }
+
+    // Fallback to direct Payload call (build time or BFF failure)
+    if (!API_URL) return null;
     const url = new URL(`/api/hub`, API_URL);
     url.searchParams.set("listingType", collection);
 
     const res = await fetch(url.toString(), {
       headers: { Accept: "application/json" },
-      next: { revalidate: 3600, tags: [`hub-${listingType}`] },
+      next: { revalidate: 900 },
     });
 
     if (!res.ok) return null;
