@@ -1,4 +1,5 @@
 import { tag } from "@unevent/shared";
+import { fetchWithRetry } from "@/lib/server/fetcher";
 
 export const dynamic = "force-static";
 export const revalidate = 86400;
@@ -18,7 +19,7 @@ export async function GET(req: Request) {
     return new Response("SVC_TOKEN not configured", { status: 500 });
   }
 
-  const res = await fetch(
+  const res = await fetchWithRetry(
     `${payloadUrl}/api/taxonomies?fullList=${fullList ? "1" : "0"}`,
     {
       headers: {
@@ -28,6 +29,7 @@ export async function GET(req: Request) {
       cache: "force-cache",
       next: { tags: [tag.taxonomies()] },
     },
+    { timeoutMs: 2000, retries: 1 },
   );
 
   if (!res.ok) {

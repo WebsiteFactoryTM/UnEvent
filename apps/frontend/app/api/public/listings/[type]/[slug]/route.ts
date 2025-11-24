@@ -1,4 +1,5 @@
 import { tag } from "@unevent/shared";
+import { fetchWithRetry } from "@/lib/server/fetcher";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
@@ -42,16 +43,20 @@ export async function GET(req: NextRequest, { params }: Params) {
   const apiUrl = `${payloadUrl}/api/${type}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`;
 
   try {
-    const res = await fetch(apiUrl, {
-      headers: {
-        "x-tenant": "unevent",
-        Authorization: authHeader,
+    const res = await fetchWithRetry(
+      apiUrl,
+      {
+        headers: {
+          "x-tenant": "unevent",
+          Authorization: authHeader,
+        },
+        cache: isDraft ? "no-store" : "force-cache",
+        next: isDraft
+          ? undefined
+          : { tags: [tag.listingSlug(slug), tag.collection(type)] },
       },
-      cache: isDraft ? "no-store" : "force-cache",
-      next: isDraft
-        ? undefined
-        : { tags: [tag.listingSlug(slug), tag.collection(type)] },
-    });
+      { timeoutMs: 2000, retries: isDraft ? 0 : 1 },
+    );
 
     if (!res.ok) {
       return new Response("Not found", { status: res.status });

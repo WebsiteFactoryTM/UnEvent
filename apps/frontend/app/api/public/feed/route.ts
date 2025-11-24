@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { tag } from "@unevent/shared";
+import { fetchWithRetry } from "@/lib/server/fetcher";
 
 const VALID_ENTITIES = ["locations", "events", "services"] as const;
 type Entity = (typeof VALID_ENTITIES)[number];
@@ -45,20 +46,24 @@ export async function GET(req: NextRequest) {
   const upstream = `${payloadUrl}/api/feed?${searchParams.toString()}`;
 
   try {
-    const res = await fetch(upstream, {
-      headers: {
-        "x-tenant": "unevent",
-        Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+    const res = await fetchWithRetry(
+      upstream,
+      {
+        headers: {
+          "x-tenant": "unevent",
+          Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+        },
+        cache: "force-cache",
+        next: {
+          tags: [
+            tag.tenant("unevent"),
+            tag.collection(entityParam),
+            ...(city ? [tag.city(city)] : []),
+          ],
+        },
       },
-      cache: "force-cache",
-      next: {
-        tags: [
-          tag.tenant("unevent"),
-          tag.collection(entityParam),
-          ...(city ? [tag.city(city)] : []),
-        ],
-      },
-    });
+      { timeoutMs: 2000, retries: 1 },
+    );
 
     if (!res.ok) {
       const errorText = await res.text().catch(() => `HTTP ${res.status}`);

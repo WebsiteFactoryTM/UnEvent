@@ -1,4 +1,5 @@
 import { tag } from "@unevent/shared";
+import { fetchWithRetry } from "@/lib/server/fetcher";
 import { NextRequest } from "next/server";
 
 export const dynamic = "force-static";
@@ -54,7 +55,7 @@ export async function GET(
   });
 
   try {
-    const res = await fetch(
+    const res = await fetchWithRetry(
       `${payloadUrl}/api/${collection}?${search.toString()}`,
       {
         headers: {
@@ -66,6 +67,7 @@ export async function GET(
           tags: [tag.similar(type)],
         },
       },
+      { timeoutMs: 2000, retries: 1 },
     );
 
     if (!res.ok) {

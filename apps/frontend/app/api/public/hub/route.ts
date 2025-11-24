@@ -1,4 +1,6 @@
 import { tag } from "@unevent/shared";
+import { generateETag } from "@/lib/server/etag";
+import { fetchWithRetry } from "@/lib/server/fetcher";
 import { NextRequest } from "next/server";
 
 export const dynamic = "force-static";
@@ -39,14 +41,18 @@ export async function GET(req: NextRequest) {
   const upstream = `${payloadUrl}/api/hub?listingType=${listingType}`;
 
   try {
-    const res = await fetch(upstream, {
-      headers: {
-        "x-tenant": "unevent",
-        Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+    const res = await fetchWithRetry(
+      upstream,
+      {
+        headers: {
+          "x-tenant": "unevent",
+          Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+        },
+        cache: "force-cache",
+        next: { tags: [tag.hubSnapshot(listingType), tag.hubAny()] },
       },
-      cache: "force-cache",
-      next: { tags: [tag.hubSnapshot(listingType), tag.hubAny()] },
-    });
+      { timeoutMs: 2000, retries: 1 },
+    );
 
     if (!res.ok) {
       const errorText = await res.text().catch(() => `HTTP ${res.status}`);
@@ -54,13 +60,22 @@ export async function GET(req: NextRequest) {
       return new Response("Upstream error", { status: res.status });
     }
 
-    const data = await res.json();
+    const body = await res.text();
+    const etag = generateETag(body);
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      "Cache-Control": "public, s-maxage=900, stale-while-revalidate=900",
+      "Surrogate-Key": `${tag.hubSnapshot(listingType)} ${tag.hubAny()} ${tag.tenant("unevent")}`,
+      ETag: etag,
+    });
 
-    return Response.json(data, {
-      headers: {
-        "Cache-Control": "public, s-maxage=900, stale-while-revalidate=900",
-        "Surrogate-Key": `${tag.hubSnapshot(listingType)} ${tag.hubAny()} ${tag.tenant("unevent")}`,
-      },
+    if (req.headers.get("if-none-match") === etag) {
+      return new Response(null, { status: 304, headers });
+    }
+
+    return new Response(body, {
+      status: 200,
+      headers,
     });
   } catch (error) {
     console.error("Error fetching hub snapshot:", error);
