@@ -22,11 +22,21 @@ const nextConfig = {
           "*.r2.cloudflarestorage.com", // Cloudflare R2 default domain
       },
       // Add your backend domain if images are served from there
-      ...(process.env.NEXT_PUBLIC_API_URL
+
+      ...(process.env.API_URL
         ? [
             {
               protocol: "https",
-              hostname: new URL(process.env.NEXT_PUBLIC_API_URL).hostname,
+              hostname: new URL(process.env.API_URL).hostname,
+            },
+          ]
+        : []),
+
+      ...(process.env.API_URL && process.env.NODE_ENV !== "production"
+        ? [
+            {
+              protocol: "http",
+              hostname: new URL(process.env.API_URL).hostname,
             },
           ]
         : []),
