@@ -57,6 +57,7 @@ export function UnifiedListingForm({
   onSuccess,
 }: UnifiedListingFormProps) {
   const [activeTab, setActiveTab] = useState("info");
+  const [forceRender, setForceRender] = useState(0);
   const [savedListingId, setSavedListingId] = useState<number | undefined>(
     existingListing?.id,
   );
@@ -235,7 +236,7 @@ export function UnifiedListingForm({
 
         // Force re-render to ensure errors are displayed
         setTimeout(() => {
-          // Trigger validation on all fields to ensure UI updates
+          setForceRender(prev => prev + 1); // Force re-render
           trigger();
         }, 0);
       }
