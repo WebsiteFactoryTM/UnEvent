@@ -57,7 +57,6 @@ export function UnifiedListingForm({
   onSuccess,
 }: UnifiedListingFormProps) {
   const [activeTab, setActiveTab] = useState("info");
-  const [forceRender, setForceRender] = useState(0);
   const [savedListingId, setSavedListingId] = useState<number | undefined>(
     existingListing?.id,
   );
@@ -179,6 +178,7 @@ export function UnifiedListingForm({
         title: "Ciornă salvată",
         description:
           "Modificările au fost salvate ca ciornă. Poți continua mai târziu.",
+        variant: "success",
       });
     } catch (error) {
       console.error(error);
@@ -217,28 +217,19 @@ export function UnifiedListingForm({
       // If validation fails, set errors on the form
       const errorFields: string[] = [];
       if (error instanceof ZodError) {
-        console.log("Schema validation errors:", error.errors);
         error.errors.forEach((err) => {
-          console.log("Processing error:", err.path, err.message);
           const fieldPath = err.path.join(".") as any;
           // Get the root field name (first part of path) for tab navigation
           const rootField = err.path[0] as string;
           if (rootField && !errorFields.includes(rootField)) {
             errorFields.push(rootField);
           }
-          console.log("Setting error on path:", fieldPath);
+
           setError(fieldPath, {
             type: "validation",
             message: err.message,
           });
-          console.log("Errors after setError:", errors);
         });
-
-        // Force re-render to ensure errors are displayed
-        setTimeout(() => {
-          setForceRender(prev => prev + 1); // Force re-render
-          trigger();
-        }, 0);
       }
 
       // Show error toast and navigate to first error tab
