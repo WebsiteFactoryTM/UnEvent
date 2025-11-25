@@ -341,7 +341,14 @@ export const unifiedListingSchema = unifiedListingSchemaBase
       // For submission, require description (min 50 chars)
       if (data.moderationStatus === "draft") return true;
 
-      return data.description && data.description.length >= 50;
+      const hasDescription = data.description && data.description.length >= 50;
+      console.log("Description validation:", {
+        moderationStatus: data.moderationStatus,
+        description: data.description,
+        descriptionLength: data.description?.length,
+        hasDescription,
+      });
+      return hasDescription;
     },
     {
       message:

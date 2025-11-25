@@ -189,6 +189,8 @@ export function UnifiedListingForm({
     }
   };
 
+  console.log("Field errors", JSON.stringify(errors, null, 2));
+
   const onSubmit = async (data: UnifiedListingFormData) => {
     if (!canSubmit) {
       toast({
@@ -210,6 +212,10 @@ export function UnifiedListingForm({
     };
 
     try {
+      // Debug: log submission data
+      console.log("Submission data:", submissionData);
+      console.log("Description value:", submissionData.description);
+
       // Validate the submission data
       await unifiedListingSchema.parseAsync(submissionData);
     } catch (error) {
