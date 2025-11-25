@@ -128,7 +128,20 @@ const locationSchema = baseListingSchema.extend({
       amount: undefined,
       currency: "RON",
       period: "event",
-    }),
+    })
+    .refine(
+      (pricing) => {
+        // If pricing is disabled, skip validation
+        if (!pricing?.enabled) return true;
+
+        // If pricing is enabled, require type selection
+        return pricing.type !== undefined;
+      },
+      {
+        message: "Selectați tipul de preț când prețul este activat",
+        path: ["pricing", "type"], // Points to the type field for error display
+      },
+    ),
 });
 
 // Service-specific schema
