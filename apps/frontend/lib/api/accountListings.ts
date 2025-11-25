@@ -30,7 +30,7 @@ export const getUserListing = async (
       `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}/${listingId}?depth=1`,
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `JWT ${accessToken}`,
           "Content-Type": "application/json",
         },
         method: "GET",
@@ -64,7 +64,7 @@ export const getUserListings = async (
       `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[owner][equals]=${profileId}&depth=1`,
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `JWT ${accessToken}`,
           "Content-Type": "application/json",
         },
       },
@@ -106,12 +106,19 @@ export async function createListing(
     throw new Error("Listing data is required");
   }
   try {
+    // Use BFF route for writes (validation, rate limiting, security)
+    const baseUrl =
+      process.env.NEXT_PUBLIC_FRONTEND_URL ||
+      (typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:3000");
+
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}`,
+      `${baseUrl}/api/account/listings/${listingType}`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`, // BFF will normalize to JWT
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -125,13 +132,14 @@ export async function createListing(
 
     if (!response.ok) {
       const errorMessage =
+        responseData.error ||
         responseData.message ||
         responseData.errors?.[0]?.message ||
         "Failed to create listing";
       throw new Error(errorMessage);
     }
 
-    return responseData.doc || responseData;
+    return responseData;
   } catch (error) {
     console.error("Error creating listing:", error);
     if (error instanceof Error) {
@@ -162,12 +170,19 @@ export async function updateListing(
   }
 
   try {
+    // Use BFF route for writes (validation, rate limiting, security)
+    const baseUrl =
+      process.env.NEXT_PUBLIC_FRONTEND_URL ||
+      (typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:3000");
+
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}/${id}`,
+      `${baseUrl}/api/account/listings/${listingType}/${id}`,
       {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`, // BFF will normalize to JWT
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -178,13 +193,14 @@ export async function updateListing(
 
     if (!res.ok) {
       const errorMessage =
+        responseData.error ||
         responseData.message ||
         responseData.errors?.[0]?.message ||
         "Failed to update listing";
       throw new Error(errorMessage);
     }
 
-    return responseData.doc || responseData;
+    return responseData;
   } catch (error) {
     console.error("Error updating listing:", error);
     if (error instanceof Error) {
@@ -211,28 +227,36 @@ export async function deleteListing(
   }
 
   try {
+    // Use BFF route for writes (validation, rate limiting, security)
+    const baseUrl =
+      process.env.NEXT_PUBLIC_FRONTEND_URL ||
+      (typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:3000");
+
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}/${id}`,
+      `${baseUrl}/api/account/listings/${listingType}/${id}`,
       {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`, // BFF will normalize to JWT
           "Content-Type": "application/json",
         },
       },
     );
 
-    const responseData = await res.json();
+    const responseData = await res.json().catch(() => ({}));
 
     if (!res.ok) {
       const errorMessage =
+        responseData.error ||
         responseData.message ||
         responseData.errors?.[0]?.message ||
         "Failed to delete listing";
       throw new Error(errorMessage);
     }
 
-    return responseData.doc || responseData;
+    return responseData;
   } catch (error) {
     console.error("Error deleting listing:", error);
     if (error instanceof Error) {

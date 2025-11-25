@@ -105,21 +105,30 @@ const locationSchema = baseListingSchema.extend({
     .min(1, "Selectează cel puțin un tip de eveniment"), // Required in backend
   capacity: z
     .object({
-      indoor: z.number().min(0, "Introduceți un număr valid").optional(),
-      outdoor: z.number().min(0, "Introduceți un număr valid").optional(),
-      seating: z.number().min(0, "Introduceți un număr valid").optional(),
-      parking: z.number().min(0, "Introduceți un număr valid").optional(),
+      indoor: z.number().optional(),
+      outdoor: z.number().optional(),
+      seating: z.number().optional(),
+      parking: z.number().optional(),
     })
     .optional(),
-  surface: z.number().min(1, "Introduceți suprafața în m²").optional(),
+  surface: z.number().optional(),
   facilities: z.array(z.number()).optional(),
-  pricing: z.object({
-    enabled: z.boolean(),
-    type: z.enum(["fixed", "from", "contact"]).optional(),
-    amount: z.number().min(1, "Introduceți un preț valid").optional(),
-    currency: z.enum(["RON", "EUR", "USD"]).default("RON").optional(),
-    period: z.enum(["hour", "day", "event"]).optional(),
-  }),
+  pricing: z
+    .object({
+      enabled: z.boolean(),
+      type: z.enum(["fixed", "from", "contact"]).optional(),
+      amount: z.number().min(1, "Introduceți un preț valid").optional(),
+      currency: z.enum(["RON", "EUR", "USD"]).default("RON").optional(),
+      period: z.enum(["hour", "day", "event"]).optional(),
+    })
+    .optional()
+    .default({
+      enabled: false,
+      type: "contact",
+      amount: undefined,
+      currency: "RON",
+      period: "event",
+    }),
 });
 
 // Service-specific schema
@@ -131,16 +140,25 @@ const serviceSchema = baseListingSchema.extend({
   suitableFor: z
     .array(z.number())
     .min(1, "Selectează cel puțin un tip de eveniment"), // Required in backend
-  pricing: z.object({
-    enabled: z.boolean(),
-    type: z.enum(["fixed", "from", "contact"]).optional(),
-    amount: z
-      .number()
-      .min(1, "Prețul trebuie să fie mai mare decât 0")
-      .optional(),
-    currency: z.enum(["RON", "EUR", "USD"]).optional(),
-    period: z.enum(["hour", "day", "event"]).optional(),
-  }),
+  pricing: z
+    .object({
+      enabled: z.boolean(),
+      type: z.enum(["fixed", "from", "contact"]).optional(),
+      amount: z
+        .number()
+        .min(1, "Prețul trebuie să fie mai mare decât 0")
+        .optional(),
+      currency: z.enum(["RON", "EUR", "USD"]).optional(),
+      period: z.enum(["hour", "day", "event"]).optional(),
+    })
+    .optional()
+    .default({
+      enabled: false,
+      type: "contact",
+      amount: undefined,
+      currency: "RON",
+      period: "event",
+    }),
   features: z
     .array(
       z.object({
@@ -155,15 +173,25 @@ const serviceSchema = baseListingSchema.extend({
 const eventSchemaBase = baseListingSchema.extend({
   listingType: z.literal("event"),
   type: z.array(z.number()).min(1, "Selectează cel puțin un tip de eveniment"),
-  pricing: z.object({
-    enabled: z.boolean(),
-    type: z.enum(["free", "paid", "contact"]).optional(),
-    amount: z
-      .number()
-      .min(1, "Prețul trebuie să fie mai mare decât 0")
-      .optional(),
-    currency: z.enum(["RON", "EUR", "USD"]).optional(),
-  }),
+  pricing: z
+    .object({
+      enabled: z.boolean(),
+      type: z.enum(["free", "paid", "contact"]).optional(),
+      amount: z
+        .number()
+        .min(1, "Prețul trebuie să fie mai mare decât 0")
+        .optional(),
+      currency: z.enum(["RON", "EUR", "USD"]).optional(),
+      period: z.enum(["hour", "day", "event"]).optional(),
+    })
+    .optional()
+    .default({
+      enabled: false,
+      type: "free",
+      amount: undefined,
+      currency: "RON",
+      period: "event",
+    }),
   allDayEvent: z.boolean(),
   startDate: z.string().min(1, "Selectează data de început"), // Required in backend
   startTime: z.string().optional(),

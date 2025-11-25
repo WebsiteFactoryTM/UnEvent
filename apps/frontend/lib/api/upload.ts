@@ -1,5 +1,3 @@
-"use server";
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function uploadFile(
@@ -20,8 +18,6 @@ export async function uploadFile(
       if (folder) (data as any).folder = folder; // eslint-disable-line @typescript-eslint/no-explicit-any
       fd.append("data", JSON.stringify(data));
     }
-
-    console.log("token", token);
 
     const res = await fetch(`${API_URL}/api/media`, {
       method: "POST",

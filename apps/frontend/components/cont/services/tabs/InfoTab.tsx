@@ -454,7 +454,7 @@ export function InfoTab() {
             htmlFor="pricing-enabled"
             className="cursor-pointer font-medium"
           >
-            Adaugă preț pentru servicii
+            Adaugă preț pentru servicii (opțional)
           </Label>
         </div>
 

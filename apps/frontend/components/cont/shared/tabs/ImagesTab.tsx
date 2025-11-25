@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ImageIcon, Upload, X, Plus, Youtube } from "lucide-react";
 import type { UnifiedListingFormData } from "@/forms/listing/schema";
-import { useUploadManager } from "@/hooks/useUploadManager";
+import { useUploadManager, type UploadError } from "@/hooks/useUploadManager";
 import { UploadInput } from "@/components/upload/UploadInput";
 import { UploadPreview } from "@/components/upload/UploadPreview";
 import { useSession } from "next-auth/react";
@@ -70,6 +70,7 @@ export function ImagesTab() {
         );
       }
     } catch (error) {
+      // Error is already handled by useUploadManager and displayed via error state
       console.error("Error uploading featured image:", error);
     } finally {
       // featuredUM.clear();
@@ -96,20 +97,28 @@ export function ImagesTab() {
         })(),
       },
     } as React.ChangeEvent<HTMLInputElement>);
-    // Upload all
+    // Upload all (with error handling per file)
     try {
-      const results = await Promise.all(
+      const results = await Promise.allSettled(
         filesToAdd.map((f) => galleryUM.uploadSingle(f, "listing")),
       );
-      // Store as {id, url} objects
+      // Store only successful uploads as {id, url} objects
       const uploaded = results
-        .filter((d) => d.id && d.url)
-        .map((d) => ({ id: d.id, url: d.url! }));
-      setValue("gallery", [...currentGallery, ...uploaded], {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
+        .filter((r) => r.status === "fulfilled")
+        .map((r) => {
+          const doc = (r as PromiseFulfilledResult<any>).value;
+          return doc?.id && doc?.url ? { id: doc.id, url: doc.url } : null;
+        })
+        .filter((d): d is { id: number; url: string } => d !== null);
+
+      if (uploaded.length > 0) {
+        setValue("gallery", [...currentGallery, ...uploaded], {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
     } catch (error) {
+      // Error is already handled by useUploadManager and displayed via error state
       console.error("Error uploading gallery images:", error);
     }
   };
@@ -199,14 +208,20 @@ export function ImagesTab() {
                   Click pentru a încărca imagine
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Format: JPG, PNG • Max: 5MB • Recomandat: 1920x1080px
+                  Format: JPG, PNG, Webp • Max: 5MB • Recomandat: 1920x1080px
                 </p>
               </div>
             </UploadInput>
           )}
         </div>
 
-        {errors.featuredImage && (
+        {/* Upload-specific errors take priority over form validation errors */}
+        {featuredUM.error && (
+          <p className="text-sm text-destructive font-medium">
+            {featuredUM.error.message}
+          </p>
+        )}
+        {!featuredUM.error && errors.featuredImage && (
           <p className="text-sm text-destructive">
             {errors.featuredImage.message as string}
           </p>
@@ -286,11 +301,31 @@ export function ImagesTab() {
           </UploadInput>
         )}
 
-        {errors.gallery && (
-          <p className="text-sm text-destructive">
-            {errors.gallery.message as string}
+        {/* Display upload errors for gallery */}
+        {galleryUM.error && (
+          <p className="text-sm text-destructive font-medium">
+            {galleryUM.error.message}
           </p>
         )}
+        {galleryUM.errors && galleryUM.errors.size > 0 && (
+          <div className="space-y-1">
+            {Array.from(galleryUM.errors.values()).map(
+              (err: UploadError, idx: number) => (
+                <p key={idx} className="text-sm text-destructive">
+                  {err.message}
+                </p>
+              ),
+            )}
+          </div>
+        )}
+        {/* Form validation errors (only if no upload errors) */}
+        {!galleryUM.error &&
+          (!galleryUM.errors || galleryUM.errors.size === 0) &&
+          errors.gallery && (
+            <p className="text-sm text-destructive">
+              {errors.gallery.message as string}
+            </p>
+          )}
       </div>
 
       <Separator />

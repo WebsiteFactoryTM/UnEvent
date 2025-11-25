@@ -122,7 +122,7 @@ export function InfoTab() {
               variant="outline"
               role="combobox"
               aria-expanded={isTypeOpen}
-              className="w-full justify-between h-auto min-h-[2.5rem] px-3 py-2"
+              className="w-full justify-between h-auto min-h-10 px-3 py-2"
             >
               <span className="text-left">
                 {selectedTypes.length === 0
@@ -280,7 +280,7 @@ export function InfoTab() {
             htmlFor="pricing-enabled"
             className="cursor-pointer font-medium"
           >
-            Adaugă preț bilet
+            Adaugă preț bilet (opțional)
           </Label>
         </div>
 
