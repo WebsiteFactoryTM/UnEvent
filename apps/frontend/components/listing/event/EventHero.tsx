@@ -18,7 +18,6 @@ export default function EventHero({ event }: EventHeroProps) {
       : "Eveniment";
 
   const formatDate = (date: string) => {
-    console.log(date, "date");
     const newDate = new Date(date).toLocaleDateString("ro-RO", {
       day: "numeric",
       month: "long",

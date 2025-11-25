@@ -381,23 +381,25 @@ export function payloadToForm(
       },
       allDayEvent: eventData.allDayEvent || false,
       startDate: eventData.startDate
-        ? new Date(eventData.startDate).toLocaleDateString('sv-SE') // YYYY-MM-DD in local timezone
+        ? new Date(eventData.startDate).toLocaleDateString("sv-SE") // YYYY-MM-DD in local timezone
         : "",
-      startTime: eventData.startDate && !eventData.allDayEvent
-        ? new Date(eventData.startDate).toLocaleTimeString('sv-SE', {
-            hour: '2-digit',
-            minute: '2-digit'
-          }) // HH:MM in local timezone
-        : "",
+      startTime:
+        eventData.startDate && !eventData.allDayEvent
+          ? new Date(eventData.startDate).toLocaleTimeString("sv-SE", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }) // HH:MM in local timezone
+          : "",
       endDate: eventData.endDate
-        ? new Date(eventData.endDate).toLocaleDateString('sv-SE') // YYYY-MM-DD in local timezone
+        ? new Date(eventData.endDate).toLocaleDateString("sv-SE") // YYYY-MM-DD in local timezone
         : "",
-      endTime: eventData.endDate && !eventData.allDayEvent
-        ? new Date(eventData.endDate).toLocaleTimeString('sv-SE', {
-            hour: '2-digit',
-            minute: '2-digit'
-          }) // HH:MM in local timezone
-        : "",
+      endTime:
+        eventData.endDate && !eventData.allDayEvent
+          ? new Date(eventData.endDate).toLocaleTimeString("sv-SE", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }) // HH:MM in local timezone
+          : "",
       capacity: {
         total: eventData.capacity?.total || undefined,
         remaining: eventData.capacity?.remaining || undefined,
