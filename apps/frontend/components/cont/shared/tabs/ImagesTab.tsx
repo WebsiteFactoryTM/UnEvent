@@ -302,23 +302,27 @@ export function ImagesTab() {
             <div className="text-center space-y-1">
               <p className="text-sm font-medium">Se încarcă imaginile...</p>
               <p className="text-xs text-muted-foreground">
-                {galleryUM.files?.length ? `${galleryUM.files.length} fișiere` : "Procesare..."}
+                {galleryUM.files?.length
+                  ? `${galleryUM.files.length} fișiere`
+                  : "Procesare..."}
               </p>
             </div>
           </div>
-        ) : gallery.length < 10 && (
-          <UploadInput
-            multiple
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleGalleryUpload}
-          >
-            <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">
-                Adaugă imagini în galerie
-              </span>
-            </div>
-          </UploadInput>
+        ) : (
+          gallery.length < 10 && (
+            <UploadInput
+              multiple
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleGalleryUpload}
+            >
+              <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+                <Plus className="h-4 w-4" />
+                <span className="text-sm font-medium">
+                  Adaugă imagini în galerie
+                </span>
+              </div>
+            </UploadInput>
+          )
         )}
 
         {/* Display upload errors for gallery */}
