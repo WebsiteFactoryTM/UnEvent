@@ -14,27 +14,11 @@ export function ScheduleTab() {
     register,
     control,
     watch,
-    trigger,
+
     formState: { errors },
   } = useFormContext<EventFormData>();
 
   const allDayEvent = watch("allDayEvent");
-  const startDate = watch("startDate");
-  const endDate = watch("endDate");
-
-  // Real-time validation: when start date is selected, validate start time requirement
-  useEffect(() => {
-    if (startDate && !allDayEvent) {
-      trigger("startTime");
-    }
-  }, [startDate, allDayEvent, trigger]);
-
-  // Real-time validation: when end date is selected, validate end time requirement
-  useEffect(() => {
-    if (endDate && !allDayEvent) {
-      trigger("endTime");
-    }
-  }, [endDate, allDayEvent, trigger]);
 
   return (
     <div className="space-y-6">

@@ -18,13 +18,15 @@ export default function EventHero({ event }: EventHeroProps) {
       : "Eveniment";
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("ro-RO", {
+    console.log(date, "date");
+    const newDate = new Date(date).toLocaleDateString("ro-RO", {
       day: "numeric",
       month: "long",
       year: "numeric",
       hour: event?.allDayEvent ? undefined : "2-digit",
       minute: event?.allDayEvent ? undefined : "2-digit",
     });
+    return newDate;
   };
 
   const priceText =

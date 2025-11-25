@@ -335,6 +335,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
           message: "Selectează ora de început când ai ales data de început",
           path: ["startTime"],
         });
+        return false;
       }
 
       if (data.endDate && !data.endTime) {
@@ -343,6 +344,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
           message: "Selectează ora de sfârșit când ai ales data de sfârșit",
           path: ["endTime"],
         });
+        return false;
       }
 
       // Validate start < end only when all date/time fields are provided
@@ -357,6 +359,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
             message: "Date sau ore invalide",
             path: ["startDate"],
           });
+          return false;
         } else if (start >= end) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -364,7 +367,9 @@ export const unifiedListingSchema = unifiedListingSchemaBase
               "Data/ora de start trebuie să fie înainte de data/ora de sfârșit",
             path: ["endDate"],
           });
+          return false;
         }
+        return true;
       }
     }
   })
@@ -389,12 +394,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
       if (data.moderationStatus === "draft") return true;
 
       const hasDescription = data.description && data.description.length >= 50;
-      console.log("Description validation:", {
-        moderationStatus: data.moderationStatus,
-        description: data.description,
-        descriptionLength: data.description?.length,
-        hasDescription,
-      });
+
       return hasDescription;
     },
     {
