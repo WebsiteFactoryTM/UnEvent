@@ -16,6 +16,7 @@ export const isAdminOrSelf: Access = ({ req: { user } }) => {
 // Only owner or admin
 export const isOwnerOrAdmin: Access = ({ req }) => {
   const user = req.user
+
   if (!user) return false
   const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
 
@@ -56,9 +57,15 @@ export const requireRole =
   (allowedRoles: ('host' | 'admin' | 'organizer' | 'provider' | 'client')[]): Access =>
   ({ req }) => {
     const user = req.user
-    if (!user) return false // must be logged in
-    if (user.roles?.includes('admin')) return true // admin override
-    return allowedRoles.some((r) => user.roles?.includes(r))
+
+    if (!user) {
+      return false // must be logged in
+    }
+    if (user.roles?.includes('admin')) {
+      return true // admin override
+    }
+    const hasRole = allowedRoles.some((r) => user.roles?.includes(r))
+    return hasRole
   }
 
 export const isLoggedIn: Access = ({ req }) => !!req.user
