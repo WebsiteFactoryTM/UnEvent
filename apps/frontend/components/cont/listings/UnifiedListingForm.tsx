@@ -188,6 +188,7 @@ export function UnifiedListingForm({
       });
     }
   };
+  console.log("Errors", JSON.stringify(errors, null, 2));
 
   const onSubmit = async (data: UnifiedListingFormData) => {
     if (!canSubmit) {
@@ -210,16 +211,6 @@ export function UnifiedListingForm({
     };
 
     try {
-      // Debug: log submission data
-      console.log("Submission data:", submissionData);
-      console.log("Description value:", submissionData.description);
-      console.log("Event time fields:", {
-        startDate: (submissionData as any).startDate,
-        startTime: (submissionData as any).startTime,
-        endDate: (submissionData as any).endDate,
-        endTime: (submissionData as any).endTime,
-        allDayEvent: (submissionData as any).allDayEvent,
-      });
 
       // Validate the submission data
       await unifiedListingSchema.parseAsync(submissionData);
