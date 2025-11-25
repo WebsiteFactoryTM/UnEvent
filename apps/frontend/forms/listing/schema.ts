@@ -117,7 +117,11 @@ const locationSchema = baseListingSchema.extend({
     .object({
       enabled: z.boolean(),
       type: z.enum(["fixed", "from", "contact"]).optional(),
-      amount: z.number().min(1, "Introduceți un preț valid").optional(),
+      amount: z.preprocess(
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z.number().min(1, "Introduceți un preț valid").optional(),
+      ),
       currency: z.enum(["RON", "EUR", "USD"]).default("RON").optional(),
       period: z.enum(["hour", "day", "event"]).optional(),
     })
@@ -169,10 +173,11 @@ const serviceSchema = baseListingSchema.extend({
     .object({
       enabled: z.boolean(),
       type: z.enum(["fixed", "from", "contact"]).optional(),
-      amount: z
-        .number()
-        .min(1, "Prețul trebuie să fie mai mare decât 0")
-        .optional(),
+      amount: z.preprocess(
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z.number().min(1, "Prețul trebuie să fie mai mare decât 0").optional(),
+      ),
       currency: z.enum(["RON", "EUR", "USD"]).optional(),
       period: z.enum(["hour", "day", "event"]).optional(),
     })
@@ -227,10 +232,11 @@ const eventSchemaBase = baseListingSchema.extend({
     .object({
       enabled: z.boolean(),
       type: z.enum(["free", "paid", "contact"]).optional(),
-      amount: z
-        .number()
-        .min(1, "Prețul trebuie să fie mai mare decât 0")
-        .optional(),
+      amount: z.preprocess(
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z.number().min(1, "Prețul trebuie să fie mai mare decât 0").optional(),
+      ),
       currency: z.enum(["RON", "EUR", "USD"]).optional(),
       period: z.enum(["hour", "day", "event"]).optional(),
     })
