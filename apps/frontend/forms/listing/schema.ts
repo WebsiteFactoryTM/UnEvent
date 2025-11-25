@@ -105,13 +105,28 @@ const locationSchema = baseListingSchema.extend({
     .min(1, "Selectează cel puțin un tip de eveniment"), // Required in backend
   capacity: z
     .object({
-      indoor: z.number().optional(),
-      outdoor: z.number().optional(),
-      seating: z.number().optional(),
-      parking: z.number().optional(),
+      indoor: z.preprocess(
+        (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
+        z.number().optional()
+      ),
+      outdoor: z.preprocess(
+        (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
+        z.number().optional()
+      ),
+      seating: z.preprocess(
+        (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
+        z.number().optional()
+      ),
+      parking: z.preprocess(
+        (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
+        z.number().optional()
+      ),
     })
     .optional(),
-  surface: z.number().optional(),
+  surface: z.preprocess(
+    (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
+    z.number().optional()
+  ),
   facilities: z.array(z.number()).optional(),
   pricing: z
     .object({
