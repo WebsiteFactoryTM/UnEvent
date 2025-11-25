@@ -328,7 +328,7 @@ export const unifiedListingSchema = unifiedListingSchemaBase
 
     // Validate date/time logic for events
     if (!data.allDayEvent) {
-      // For non-all-day events, require start time when start date is set
+      // For non-all-day events, require time fields when dates are set
       if (data.startDate && !data.startTime) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -337,7 +337,6 @@ export const unifiedListingSchema = unifiedListingSchemaBase
         });
       }
 
-      // For non-all-day events, require end time when end date is set
       if (data.endDate && !data.endTime) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
