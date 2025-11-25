@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ImageIcon, Upload, X, Plus, Youtube } from "lucide-react";
+import { ImageIcon, Upload, X, Plus, Youtube, Loader2 } from "lucide-react";
 import type { UnifiedListingFormData } from "@/forms/listing/schema";
 import { useUploadManager, type UploadError } from "@/hooks/useUploadManager";
 import { UploadInput } from "@/components/upload/UploadInput";
@@ -161,7 +161,17 @@ export function ImagesTab() {
         </p>
 
         <div className="border-2 border-dashed rounded-lg p-6 bg-muted/30 hover:bg-muted/50 transition-colors">
-          {featuredImage ? (
+          {featuredUM.isUploading ? (
+            <div className="flex flex-col items-center justify-center space-y-3 py-4">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <div className="text-center space-y-1">
+                <p className="text-sm font-medium">Se încarcă imaginea...</p>
+                <p className="text-xs text-muted-foreground">
+                  {featuredUM.files?.[0]?.name || "Procesare..."}
+                </p>
+              </div>
+            </div>
+          ) : featuredImage ? (
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 bg-background rounded-lg">
                 {/* Use URL from form state if available, fallback to upload manager preview */}
