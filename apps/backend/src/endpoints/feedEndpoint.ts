@@ -112,8 +112,9 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       whereEntity.and?.push({ 'type.slug': { in: typeSlugs } })
     }
     if (query.entity !== 'events' && query.suitableFor) {
+      const suitableForSlugs = query.suitableFor.split(',').map((s) => s.trim())
       whereEntity.and?.push({
-        suitableFor: { in: query.suitableFor.split(',').map((s) => s.trim()) },
+        'suitableFor.slug': { in: suitableForSlugs },
       })
     }
 
