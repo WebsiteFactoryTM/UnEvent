@@ -188,7 +188,6 @@ export function UnifiedListingForm({
       });
     }
   };
-  console.log("Errors", JSON.stringify(errors, null, 2));
 
   const onSubmit = async (data: UnifiedListingFormData) => {
     if (!canSubmit) {
@@ -320,7 +319,7 @@ export function UnifiedListingForm({
 
       const firstErrorField = errorFields[0];
       // Extract root field from nested paths (e.g., "contact.phones.0.number" -> "contact")
-      const rootField = firstErrorField.split('.')[0];
+      const rootField = firstErrorField.split(".")[0];
       const targetTab = fieldToTab[rootField] || "info";
       setActiveTab(targetTab);
     }
