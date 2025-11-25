@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6"
-import Image from "next/image"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import Image from "next/image";
 
 const slides = [
   {
@@ -21,32 +21,41 @@ const slides = [
     description:
       "Găsești furnizori verificați pentru orice eveniment: DJ, trupe, foto-video, catering, organizatori. Citești ratinguri și review-uri, contactezi direct, ceri oferte și alegi echipa potrivită fără intermediari.",
   },
-]
+];
 
 export function AboutSlider() {
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length)
-  }
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
-  }
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
 
   return (
-    <section className="container mx-auto px-4 py-16 bg-muted/30">
+    <section className="w-screen mx-auto px-4 py-16 bg-muted/30">
       <div className="max-w-7xl mx-auto">
         <div className="glass-card overflow-hidden">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="relative aspect-square order-1 md:order-2">
-              <Image src="/assets/inchiriere-spatiu-aniversare-1024x1024.webp" alt="Despre UN:EVENT" fill className="object-cover rounded-lg" />
+              <Image
+                src="/assets/inchiriere-spatiu-aniversare-1024x1024.webp"
+                alt="Despre UN:EVENT"
+                fill
+                className="object-cover rounded-lg"
+              />
             </div>
 
             <div className="p-8 md:p-12 space-y-6 order-1 md:order-2">
               <div className="space-y-4 min-h-[200px]">
-                <h2 className="text-3xl md:text-4xl font-bold">{slides[currentSlide].title}</h2>
-                <p className="text-lg text-muted-foreground">{slides[currentSlide].description}</p>
+                <h2 className="text-3xl md:text-4xl font-bold">
+                  {slides[currentSlide].title}
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  {slides[currentSlide].description}
+                </p>
               </div>
 
               <div className="flex items-center gap-4">
@@ -77,7 +86,9 @@ export function AboutSlider() {
                       key={index}
                       onClick={() => setCurrentSlide(index)}
                       className={`h-2 rounded-full transition-all ${
-                        index === currentSlide ? "w-8 bg-primary" : "w-2 bg-muted-foreground/30"
+                        index === currentSlide
+                          ? "w-8 bg-primary"
+                          : "w-2 bg-muted-foreground/30"
                       }`}
                       aria-label={`Mergi la slide ${index + 1}`}
                     />
@@ -89,5 +100,5 @@ export function AboutSlider() {
         </div>
       </div>
     </section>
-  )
+  );
 }

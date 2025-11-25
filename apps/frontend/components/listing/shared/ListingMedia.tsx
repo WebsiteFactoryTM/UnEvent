@@ -98,7 +98,7 @@ export function ListingMedia({
         <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
           <button
             onClick={() => setLightboxOpen(false)}
-            className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+            className="absolute top-4 right-4 p-2 z-50 text-white hover:bg-white/10 rounded-full transition-colors"
             aria-label="Închide"
           >
             <FaXmark className="w-6 h-6" />
