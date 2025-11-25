@@ -116,6 +116,7 @@ export function UnifiedListingForm({
     formState: { errors },
     setError,
     clearErrors,
+    trigger,
   } = methods;
 
   const currentTabIndex = tabs.findIndex((tab) => tab.value === activeTab);
@@ -230,6 +231,9 @@ export function UnifiedListingForm({
             message: err.message,
           });
         });
+
+        // Force form re-validation to ensure errors are displayed
+        setTimeout(() => trigger(), 0);
       }
 
       // Show error toast and navigate to first error tab
