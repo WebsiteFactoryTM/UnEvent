@@ -458,6 +458,11 @@ export function InfoTab() {
                 placeholder="ex: 150"
                 {...register("capacity.indoor", { valueAsNumber: true })}
               />
+              {(errors as any).capacity?.indoor && (
+                <p className="text-sm text-destructive">
+                  {(errors as any).capacity.indoor.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -471,6 +476,11 @@ export function InfoTab() {
                 placeholder="ex: 200"
                 {...register("capacity.outdoor", { valueAsNumber: true })}
               />
+              {(errors as any).capacity?.outdoor && (
+                <p className="text-sm text-destructive">
+                  {(errors as any).capacity.outdoor.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -484,6 +494,11 @@ export function InfoTab() {
                 placeholder="ex: 180"
                 {...register("capacity.seating", { valueAsNumber: true })}
               />
+              {(errors as any).capacity?.seating && (
+                <p className="text-sm text-destructive">
+                  {(errors as any).capacity.seating.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -497,6 +512,11 @@ export function InfoTab() {
                 placeholder="ex: 50"
                 {...register("capacity.parking", { valueAsNumber: true })}
               />
+              {(errors as any).capacity?.parking && (
+                <p className="text-sm text-destructive">
+                  {(errors as any).capacity.parking.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -510,9 +530,9 @@ export function InfoTab() {
             placeholder="ex: 450"
             {...register("surface", { valueAsNumber: true })}
           />
-          {/* {errors.surface && (
-            <p className="text-sm text-destructive">{errors.surface.message}</p>
-          )} */}
+          {(errors as any).surface && (
+            <p className="text-sm text-destructive">{(errors as any).surface.message}</p>
+          )}
         </div>
       </div>
 
