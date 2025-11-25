@@ -230,10 +230,14 @@ export function UnifiedListingForm({
             type: "validation",
             message: err.message,
           });
+          console.log("Errors after setError:", errors);
         });
 
-        // Force form re-validation to ensure errors are displayed
-        setTimeout(() => trigger(), 0);
+        // Force re-render to ensure errors are displayed
+        setTimeout(() => {
+          // Trigger validation on all fields to ensure UI updates
+          trigger();
+        }, 0);
       }
 
       // Show error toast and navigate to first error tab
