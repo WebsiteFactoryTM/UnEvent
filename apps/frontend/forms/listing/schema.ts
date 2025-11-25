@@ -129,19 +129,31 @@ const locationSchema = baseListingSchema.extend({
       currency: "RON",
       period: "event",
     })
-    .refine(
-      (pricing) => {
-        // If pricing is disabled, skip validation
-        if (!pricing?.enabled) return true;
+    .superRefine((pricing, ctx) => {
+      // If pricing is disabled, skip all validation
+      if (!pricing?.enabled) return;
 
-        // If pricing is enabled, require type selection
-        return pricing.type !== undefined;
-      },
-      {
-        message: "Selectați tipul de preț când prețul este activat",
-        path: ["pricing", "type"], // Points to the type field for error display
-      },
-    ),
+      // If pricing is enabled, validate required fields
+      if (!pricing.type) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Selectați tipul de preț când prețul este activat",
+          path: ["type"],
+        });
+      }
+
+      // Additional validation for amount when type requires it
+      if (
+        pricing.type === "fixed" &&
+        (!pricing.amount || pricing.amount <= 0)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Introduceți un preț valid pentru tipul 'fixed'",
+          path: ["amount"],
+        });
+      }
+    }),
 });
 
 // Service-specific schema
@@ -171,7 +183,20 @@ const serviceSchema = baseListingSchema.extend({
       amount: undefined,
       currency: "RON",
       period: "event",
-    }),
+    })
+    .refine(
+      (pricing) => {
+        // If pricing is disabled, skip validation
+        if (!pricing?.enabled) return true;
+
+        // If pricing is enabled, require type selection
+        return pricing.type !== undefined;
+      },
+      {
+        message: "Selectați tipul de preț când prețul este activat",
+        path: ["pricing", "type"], // Points to the type field for error display
+      },
+    ),
   features: z
     .array(
       z.object({
@@ -204,7 +229,20 @@ const eventSchemaBase = baseListingSchema.extend({
       amount: undefined,
       currency: "RON",
       period: "event",
-    }),
+    })
+    .refine(
+      (pricing) => {
+        // If pricing is disabled, skip validation
+        if (!pricing?.enabled) return true;
+
+        // If pricing is enabled, require type selection
+        return pricing.type !== undefined;
+      },
+      {
+        message: "Selectați tipul de preț când prețul este activat",
+        path: ["pricing", "type"], // Points to the type field for error display
+      },
+    ),
   allDayEvent: z.boolean(),
   startDate: z.string().min(1, "Selectează data de început"), // Required in backend
   startTime: z.string().optional(),
