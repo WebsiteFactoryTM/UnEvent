@@ -296,7 +296,17 @@ export function ImagesTab() {
           </div>
         )}
 
-        {gallery.length < 10 && (
+        {galleryUM.isUploading ? (
+          <div className="flex flex-col items-center justify-center space-y-3 py-4 border-2 border-dashed rounded-lg bg-muted/30">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="text-center space-y-1">
+              <p className="text-sm font-medium">Se încarcă imaginile...</p>
+              <p className="text-xs text-muted-foreground">
+                {galleryUM.files?.length ? `${galleryUM.files.length} fișiere` : "Procesare..."}
+              </p>
+            </div>
+          </div>
+        ) : gallery.length < 10 && (
           <UploadInput
             multiple
             accept="image/jpeg,image/png,image/webp"
