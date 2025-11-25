@@ -11,6 +11,7 @@ declare module "next-auth" {
       roles?: string[];
       avatar?: string;
     };
+    error?: string;
   }
 
   interface User {
@@ -37,5 +38,6 @@ declare module "next-auth/jwt" {
     iat?: number;
     exp?: number;
     expires?: string;
+    error?: string;
   }
 }
