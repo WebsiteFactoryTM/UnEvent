@@ -322,38 +322,53 @@ const unifiedListingSchemaBase = z.discriminatedUnion("listingType", [
 
 // Apply refinements for validation
 export const unifiedListingSchema = unifiedListingSchemaBase
-  .refine(
-    (data) => {
-      // Only validate for events
-      if (data.listingType !== "event") return true;
+  .superRefine((data, ctx) => {
+    // Only validate for events
+    if (data.listingType !== "event") return;
 
-      // Validate date/time logic for events
-      if (!data.allDayEvent) {
-        // For non-all-day events, require time fields
-        if (!data.startTime) return false;
-        if (data.endDate && !data.endTime) return false;
+    // Validate date/time logic for events
+    if (!data.allDayEvent) {
+      // For non-all-day events, require start time when start date is set
+      if (data.startDate && !data.startTime) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Selectează ora de început când ai ales data de început",
+          path: ["startTime"],
+        });
+      }
 
-        // Validate start < end (only if both dates and times are provided)
-        if (data.endDate && data.endTime && data.startTime) {
-          const start = new Date(`${data.startDate}T${data.startTime}`);
-          const end = new Date(`${data.endDate}T${data.endTime}`);
+      // For non-all-day events, require end time when end date is set
+      if (data.endDate && !data.endTime) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Selectează ora de sfârșit când ai ales data de sfârșit",
+          path: ["endTime"],
+        });
+      }
 
-          // Check if dates are valid
-          if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-            return false; // Invalid dates
-          }
+      // Validate start < end only when all date/time fields are provided
+      if (data.startDate && data.startTime && data.endDate && data.endTime) {
+        const start = new Date(`${data.startDate}T${data.startTime}`);
+        const end = new Date(`${data.endDate}T${data.endTime}`);
 
-          return start < end;
+        // Check if dates are valid
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Date sau ore invalide",
+            path: ["startDate"],
+          });
+        } else if (start >= end) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message:
+              "Data/ora de start trebuie să fie înainte de data/ora de sfârșit",
+            path: ["endDate"],
+          });
         }
       }
-      return true;
-    },
-    {
-      message:
-        "Data/ora de start trebuie să fie înainte de data/ora de sfârșit",
-      path: ["endDate"],
-    },
-  )
+    }
+  })
   .refine(
     (data) => {
       // Strict validation only for pending (submission) status
