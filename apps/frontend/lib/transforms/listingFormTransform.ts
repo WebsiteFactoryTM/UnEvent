@@ -189,8 +189,18 @@ export function formToPayload(
           : null,
       },
       allDayEvent: eventData.allDayEvent,
-      startDate: eventData.startDate,
-      endDate: eventData.endDate || null,
+      startDate: eventData.allDayEvent
+        ? eventData.startDate
+        : eventData.startTime
+          ? `${eventData.startDate}T${eventData.startTime}`
+          : eventData.startDate,
+      endDate: eventData.endDate
+        ? eventData.allDayEvent
+          ? eventData.endDate
+          : eventData.endTime
+            ? `${eventData.endDate}T${eventData.endTime}`
+            : eventData.endDate
+        : null,
       capacity: eventData.capacity
         ? {
             total: eventData.capacity.total || null,
@@ -370,10 +380,20 @@ export function payloadToForm(
         currency: eventData.pricing.currency || "RON",
       },
       allDayEvent: eventData.allDayEvent || false,
-      startDate: eventData.startDate,
-      startTime: "",
-      endDate: eventData.endDate || "",
-      endTime: "",
+      startDate: eventData.startDate
+        ? new Date(eventData.startDate).toISOString().split("T")[0]
+        : "",
+      startTime:
+        eventData.startDate && !eventData.allDayEvent
+          ? new Date(eventData.startDate).toTimeString().slice(0, 5)
+          : "",
+      endDate: eventData.endDate
+        ? new Date(eventData.endDate).toISOString().split("T")[0]
+        : "",
+      endTime:
+        eventData.endDate && !eventData.allDayEvent
+          ? new Date(eventData.endDate).toTimeString().slice(0, 5)
+          : "",
       capacity: {
         total: eventData.capacity?.total || undefined,
         remaining: eventData.capacity?.remaining || undefined,
