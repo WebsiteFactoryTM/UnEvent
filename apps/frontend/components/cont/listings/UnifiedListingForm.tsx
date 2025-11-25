@@ -211,7 +211,6 @@ export function UnifiedListingForm({
     };
 
     try {
-
       // Validate the submission data
       await unifiedListingSchema.parseAsync(submissionData);
     } catch (error) {
@@ -320,7 +319,9 @@ export function UnifiedListingForm({
       };
 
       const firstErrorField = errorFields[0];
-      const targetTab = fieldToTab[firstErrorField] || "info";
+      // Extract root field from nested paths (e.g., "contact.phones.0.number" -> "contact")
+      const rootField = firstErrorField.split('.')[0];
+      const targetTab = fieldToTab[rootField] || "info";
       setActiveTab(targetTab);
     }
   };
