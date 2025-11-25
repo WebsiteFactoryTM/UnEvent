@@ -216,13 +216,16 @@ export function UnifiedListingForm({
       // If validation fails, set errors on the form
       const errorFields: string[] = [];
       if (error instanceof ZodError) {
+        console.log("Schema validation errors:", error.errors);
         error.errors.forEach((err) => {
+          console.log("Processing error:", err.path, err.message);
           const fieldPath = err.path.join(".") as any;
           // Get the root field name (first part of path) for tab navigation
           const rootField = err.path[0] as string;
           if (rootField && !errorFields.includes(rootField)) {
             errorFields.push(rootField);
           }
+          console.log("Setting error on path:", fieldPath);
           setError(fieldPath, {
             type: "validation",
             message: err.message,
@@ -317,7 +320,8 @@ export function UnifiedListingForm({
         socialLinks: "contact",
       };
 
-      const firstErrorField = errorFields[0];
+      const firstErrorField = errorFields.reverse()[0];
+
       // Extract root field from nested paths (e.g., "contact.phones.0.number" -> "contact")
       const rootField = firstErrorField.split(".")[0];
       const targetTab = fieldToTab[rootField] || "info";
