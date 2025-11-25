@@ -4,7 +4,7 @@ export default function Loading() {
       {/* Topbar skeleton */}
 
       {/* Main content skeleton */}
-      <main className="flex-1 p-4 lg:p-6 lg:ml-64">
+      <div className="flex-1 p-4 lg:p-6 lg:ml-64">
         <div className="space-y-6">
           <div className="flex items-center justify-between animate-pulse">
             <div className="h-6 w-40 rounded bg-muted" />
@@ -26,7 +26,7 @@ export default function Loading() {
             <div className="h-24 rounded-lg border bg-card" />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
