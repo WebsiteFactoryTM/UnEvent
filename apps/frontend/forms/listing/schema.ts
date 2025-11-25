@@ -106,26 +106,31 @@ const locationSchema = baseListingSchema.extend({
   capacity: z
     .object({
       indoor: z.preprocess(
-        (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
-        z.number().optional()
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z.number().optional(),
       ),
       outdoor: z.preprocess(
-        (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
-        z.number().optional()
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z.number().optional(),
       ),
       seating: z.preprocess(
-        (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
-        z.number().optional()
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z.number().optional(),
       ),
       parking: z.preprocess(
-        (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
-        z.number().optional()
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z.number().optional(),
       ),
     })
     .optional(),
   surface: z.preprocess(
-    (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : val),
-    z.number().optional()
+    (val) =>
+      val === "" || val === null || Number.isNaN(val) ? undefined : val,
+    z.number().optional(),
   ),
   facilities: z.array(z.number()).optional(),
   pricing: z
@@ -293,10 +298,17 @@ const eventSchemaBase = baseListingSchema.extend({
   capacity: z
     .object({
       total: z
-        .number()
-        .min(1, "Capacitatea trebuie să fie mai mare decât 0")
+        .preprocess(
+          (val) =>
+            val === "" || val === null || Number.isNaN(val) ? undefined : val,
+          z.number().optional(),
+        )
         .optional(),
-      remaining: z.number().optional(),
+      remaining: z.preprocess(
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z.number().optional(),
+      ),
     })
     .optional(),
 });
@@ -321,10 +333,16 @@ export const unifiedListingSchema = unifiedListingSchemaBase
         if (!data.startTime) return false;
         if (data.endDate && !data.endTime) return false;
 
-        // Validate start < end
-        if (data.endDate) {
+        // Validate start < end (only if both dates and times are provided)
+        if (data.endDate && data.endTime && data.startTime) {
           const start = new Date(`${data.startDate}T${data.startTime}`);
           const end = new Date(`${data.endDate}T${data.endTime}`);
+
+          // Check if dates are valid
+          if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return false; // Invalid dates
+          }
+
           return start < end;
         }
       }
