@@ -16,12 +16,12 @@ export const fetchHomeListings = async () => {
           ? `https://${process.env.VERCEL_URL}`
           : "http://localhost:3000");
 
-      const bffUrl = `${baseUrl}/api/public/home`;
+      const bffUrl = `${baseUrl}/api/public/home?t=${Date.now()}`;
 
       try {
         const res = await fetch(bffUrl, {
           headers: { Accept: "application/json" },
-          next: { revalidate: 900 },
+          next: { revalidate: 300 },
         });
 
         if (res.ok) {
@@ -43,10 +43,10 @@ export const fetchHomeListings = async () => {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/home`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/home?t=${Date.now()}`,
       {
         headers: { Accept: "application/json" },
-        next: { revalidate: 900 },
+        next: { revalidate: 300 },
       },
     );
 
