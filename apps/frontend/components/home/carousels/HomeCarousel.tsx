@@ -137,8 +137,8 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
     );
 
   return (
-    <section className="container mx-auto px-4 py-12">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <section className="container mx-auto px-4 py-4">
+      <div className="max-w-7xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold">{label}</h2>
           <Button asChild variant="ghost">
