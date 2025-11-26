@@ -69,8 +69,8 @@ export function ArchiveFilter({
         Array.isArray(selectedCity.geo) &&
         selectedCity.geo.length === 2
       ) {
-        // PayloadCMS stores geo as [lat, lng]
-        const [lat, lng] = selectedCity.geo;
+        // Cities store geo as [longitude, latitude] (GeoJSON standard)
+        const [lng, lat] = selectedCity.geo;
         // Update city and geo filters together
         setFilters({
           city: citySlug,

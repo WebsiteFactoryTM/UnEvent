@@ -284,8 +284,8 @@ export function payloadToForm(
     address: listing.address || "",
     geo: listing.geo
       ? {
-          lat: listing.geo[0],
-          lon: listing.geo[1],
+          lon: listing.geo[0], // longitude (first element)
+          lat: listing.geo[1], // latitude (second element)
           manualPin: false,
         }
       : {

@@ -44,9 +44,9 @@ export const ListingMap = ({
     if (geo?.lat && geo?.lon) {
       return { lat: geo.lat, lng: geo.lon };
     }
-    // PayloadCMS stores geo as [lat, lng]
+    // Cities store geo as [longitude, latitude] (GeoJSON standard)
     if (city?.geo && Array.isArray(city.geo) && city.geo.length === 2) {
-      return { lat: city.geo[0], lng: city.geo[1] };
+      return { lat: city.geo[1], lng: city.geo[0] };
     }
     // Default to Romania center
     return { lat: 45.9432, lng: 24.9668 };

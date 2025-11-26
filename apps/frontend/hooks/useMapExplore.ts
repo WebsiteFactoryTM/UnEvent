@@ -226,8 +226,8 @@ export function useMapExplore({
       return {
         id: `listing-${listing.id}`,
         title: listing.title,
-        latitude: geo[0], // First element is lat
-        longitude: geo[1], // Second element is lng
+        longitude: geo[0], // longitude (first element)
+        latitude: geo[1], // latitude (second element)
         thumbnail: listing.imageUrl,
         detailPath: `/${listingType}/${listing.slug}`,
       };
