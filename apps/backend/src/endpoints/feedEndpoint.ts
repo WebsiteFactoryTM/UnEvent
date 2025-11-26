@@ -395,7 +395,7 @@ function toCardItem(
     capacity: capacity,
     tier: doc.tier,
     // Reverse coordinates from [lng, lat] (GeoJSON) to [lat, lng] for frontend
-    geo: doc.geo ? [doc.geo[1], doc.geo[0]] : null,
+    geo: doc.geo ? [doc.geo[0], doc.geo[1]] : null,
   }
 }
 function getImageURL(doc: Location | Service | Event): string | undefined {

@@ -212,7 +212,7 @@ export function formToPayload(
       venueAddressDetails: {
         venueAddress: "",
         venueCity: eventData.city,
-        venueGeo: [eventData.geo?.lat || 0, eventData.geo?.lon || 0],
+        venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
       },
     } as Partial<Event>;
 
@@ -289,8 +289,8 @@ export function payloadToForm(
           manualPin: false,
         }
       : {
-          lat: 45.7489,
-          lon: 21.2087,
+          lon: 45.7489,
+          lat: 21.2087,
           manualPin: false,
         },
     contact: {

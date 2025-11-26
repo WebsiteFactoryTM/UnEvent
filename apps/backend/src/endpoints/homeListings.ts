@@ -186,6 +186,6 @@ function shapeListing(
     endDate: (doc as Event)?.endDate,
     type: doc?.type,
     isFavoritedByViewer: doc.isFavoritedByViewer || false,
-    geo: doc?.geo ? [doc.geo[1], doc.geo[0]] : null,
+    geo: doc?.geo ? [doc.geo[0], doc.geo[1]] : null,
   }
 }

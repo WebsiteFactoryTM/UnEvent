@@ -70,8 +70,8 @@ export function buildLocationJsonLd(location: any) {
     ...(location?.geo && {
       geo: {
         "@type": "GeoCoordinates",
-        latitude: Array.isArray(location?.geo) ? location.geo[0] : undefined,
-        longitude: Array.isArray(location?.geo) ? location.geo[1] : undefined,
+        latitude: Array.isArray(location?.geo) ? location.geo[1] : undefined,
+        longitude: Array.isArray(location?.geo) ? location.geo[0] : undefined,
       },
     }),
     ...(location?.rating &&

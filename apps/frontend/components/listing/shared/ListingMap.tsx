@@ -49,7 +49,7 @@ export const ListingMap = ({
       return { lat: city.geo[1], lng: city.geo[0] };
     }
     // Default to Romania center
-    return { lat: 45.9432, lng: 24.9668 };
+    return { lat: 24.9668, lng: 45.9432 };
   }, [geo, city]);
 
   return (
