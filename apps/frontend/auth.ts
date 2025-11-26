@@ -246,23 +246,11 @@ export const authOptions: NextAuthOptions = {
       const needsRefresh =
         !token.exp || token.exp - TOKEN_REFRESH_BUFFER_SECONDS <= now;
 
-      if (process.env.NEXTAUTH_TOKEN_DEBUG === "1") {
-        console.log("[Auth][JWT] Debug token state:", {
-          now,
-          exp: token.exp,
-          buffer: TOKEN_REFRESH_BUFFER_SECONDS,
-          needsRefresh,
-        });
-      }
-
       if (!needsRefresh) {
         return token;
       }
 
       try {
-        if (process.env.NEXTAUTH_TOKEN_DEBUG === "1") {
-          console.log("[Auth][JWT] Triggering Payload token refresh");
-        }
         return await refreshPayloadToken(token);
       } catch (error) {
         console.error("Error refreshing Payload token:", error);

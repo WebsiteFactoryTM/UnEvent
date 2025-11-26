@@ -52,19 +52,25 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
     const checkForUpdates = async () => {
       try {
         // Check if home data has been updated server-side
-        const response = await fetch('/api/public/home-updated?t=' + Date.now());
+        const response = await fetch(
+          "/api/public/home-updated?t=" + Date.now(),
+        );
 
         if (response.ok) {
           const { lastUpdate } = await response.json();
-          const lastChecked = parseInt(localStorage.getItem('homeLastChecked') || '0');
+          const lastChecked = parseInt(
+            localStorage.getItem("homeLastChecked") || "0",
+          );
 
           if (lastUpdate > lastChecked) {
             // Home data was updated server-side, invalidate and refetch
-            console.log('Home data updated server-side, invalidating React Query');
+            console.log(
+              "Home data updated server-side, invalidating React Query",
+            );
             queryClient.invalidateQueries({
               queryKey: ["listings", "home"],
             });
-            localStorage.setItem('homeLastChecked', lastUpdate.toString());
+            localStorage.setItem("homeLastChecked", lastUpdate.toString());
           }
         }
       } catch (error) {
