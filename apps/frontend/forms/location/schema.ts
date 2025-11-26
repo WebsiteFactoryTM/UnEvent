@@ -2,6 +2,28 @@ import { Listing } from "@/types/listings";
 import { City, Facility, Location } from "@/types/payload-types";
 import { z } from "zod";
 
+// Helper function for user-friendly URL validation
+const createUserFriendlyUrlSchema = (errorMessage: string = "URL invalid") => {
+  return z.preprocess(
+    (val) => {
+      if (typeof val === "string" && val && !val.match(/^https?:\/\//)) {
+        // Reject obviously invalid patterns
+        if (val.match(/^ww\./)) {
+          // Reject "ww.domain.com" typo
+          return val; // Let URL validation fail
+        }
+        // Check for basic domain format (must have at least one dot, not just "domain")
+        if (!val.includes(".") || val.split(".").length < 2) {
+          return val; // Let URL validation fail
+        }
+        return `https://${val}`;
+      }
+      return val;
+    },
+    z.string().url(errorMessage).optional().or(z.literal("")),
+  );
+};
+
 /**
  * Form schema for adding a new location
  * Maps to Location type from payload-types.ts where applicable
@@ -90,7 +112,7 @@ export const locationFormSchema = z.object({
       )
       .max(2, "Maximum 2 numere de telefon"),
     email: z.string().email("Email invalid"),
-    website: z.string().url("URL invalid").optional().or(z.literal("")),
+    website: createUserFriendlyUrlSchema(),
   }),
   socialLinks: z.object({
     facebook: z.string().url("URL invalid").optional().or(z.literal("")),
