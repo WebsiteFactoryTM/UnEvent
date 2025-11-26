@@ -3,6 +3,7 @@ import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { cookies } from "next/headers";
 import { decodeJwt } from "jose";
+import { withRefreshLock } from "./lib/auth/refresh-lock";
 
 const TOKEN_REFRESH_BUFFER_SECONDS = 60 * 5; // 5 minutes
 
@@ -11,6 +12,22 @@ const EXTENDED_LIFETIME_SECONDS = 7 * DAY_IN_SECONDS;
 const PAYLOAD_TOKEN_COOKIE = "payload-token";
 const isProduction =
   process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
+
+// --- add near other consts ---
+const SHARED_PARENT_COOKIE_DOMAIN = process.env.COOKIE_DOMAIN; // e.g. ".unevent.app" in prod only
+const CAN_SHARE_COOKIE = Boolean(SHARED_PARENT_COOKIE_DOMAIN);
+
+// tighten cookie attrs for when you actually use them in prod
+function cookieAttrs(rememberMe?: boolean) {
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: CAN_SHARE_COOKIE ? ("none" as const) : ("lax" as const),
+    path: "/",
+    maxAge: getCookieMaxAge(rememberMe),
+    ...(CAN_SHARE_COOKIE ? { domain: SHARED_PARENT_COOKIE_DOMAIN! } : {}),
+  };
+}
 
 const getCookieMaxAge = (rememberMe?: boolean) =>
   rememberMe ? EXTENDED_LIFETIME_SECONDS : DAY_IN_SECONDS;
@@ -35,18 +52,14 @@ const computeEffectiveExpiration = (
 };
 
 async function setPayloadCookie(tokenValue: string, rememberMe?: boolean) {
+  if (!CAN_SHARE_COOKIE) return; // testing: skip cross-site cookie
   const cookieStore = await cookies();
-  cookieStore.set(PAYLOAD_TOKEN_COOKIE, tokenValue, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: "lax",
-    path: "/",
-    maxAge: getCookieMaxAge(rememberMe),
-  });
+  cookieStore.set(PAYLOAD_TOKEN_COOKIE, tokenValue, cookieAttrs(rememberMe));
 }
 
 async function deletePayloadCookie() {
   try {
+    if (!CAN_SHARE_COOKIE) return;
     const cookieStore = await cookies();
     cookieStore.delete(PAYLOAD_TOKEN_COOKIE);
   } catch (error) {
@@ -66,61 +79,70 @@ async function notifyPayloadLogout(accessToken?: string) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
+      cache: "no-store",
     });
   } catch (error) {
     console.error("Failed to notify Payload logout:", error);
   }
 }
-
 async function refreshPayloadToken(
   token: JWT & { accessToken?: string; rememberMe?: boolean },
 ): Promise<JWT> {
   const currentToken = token.accessToken;
-  if (!currentToken) {
-    throw new Error("No access token available to refresh");
-  }
-  const apiBase = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBase) {
-    throw new Error("NEXT_PUBLIC_API_URL is not configured");
-  }
+  if (!currentToken) throw new Error("No access token available to refresh");
 
-  const response = await fetch(`${apiBase}/api/users/refresh-token`, {
+  const apiBase = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+  if (!apiBase) throw new Error("NEXT_PUBLIC_API_URL is not configured");
+
+  const res = await fetch(`${apiBase}/api/users/refresh-token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      // per your contract: requires *non-expired* bearer to return a new one
       Authorization: `Bearer ${currentToken}`,
     },
+    cache: "no-store",
   });
 
-  if (!response.ok) {
-    const errorBody = await response.text().catch(() => "");
-    throw new Error(
-      errorBody || `Failed to refresh Payload token (${response.status})`,
-    );
+  if (!res.ok) {
+    const msg = await res.text().catch(() => "");
+    throw new Error(msg || `Failed to refresh Payload token (${res.status})`);
   }
 
-  const data = await response.json();
-  const nextAccessToken = data.token ?? data?.doc?.token;
-  if (!nextAccessToken) {
-    throw new Error("Refresh response did not include a token");
-  }
+  const data: { refreshedToken?: string; exp?: number } = await res.json();
 
-  try {
-    await setPayloadCookie(nextAccessToken, token.rememberMe);
-  } catch (error) {
-    console.error(
-      "Failed to update payload-token cookie during refresh:",
-      error,
-    );
-  }
+  const nextAccessToken = data.refreshedToken; // 👈 correct field
+  if (!nextAccessToken)
+    throw new Error("Refresh response missing refreshedToken");
 
-  const newExp = computeEffectiveExpiration(nextAccessToken, token.rememberMe);
+  // Prefer server exp; fall back to decoding if missing
+  const nextExp =
+    typeof data.exp === "number"
+      ? data.exp
+      : computeEffectiveExpiration(nextAccessToken, token.rememberMe);
+
+  // Only try to set the browser cookie if we can actually share it (live on one parent domain)
+  if (CAN_SHARE_COOKIE) {
+    try {
+      const cookieStore = await cookies();
+      cookieStore.set(
+        PAYLOAD_TOKEN_COOKIE,
+        nextAccessToken,
+        cookieAttrs(token.rememberMe),
+      );
+    } catch (err) {
+      console.error(
+        "Failed to update payload-token cookie during refresh:",
+        err,
+      );
+    }
+  }
 
   return {
     ...token,
     accessToken: nextAccessToken,
     iat: Math.floor(Date.now() / 1000),
-    exp: newExp,
+    exp: nextExp, // 👈 align NextAuth token expiry with server exp
     error: undefined,
   };
 }
@@ -148,6 +170,7 @@ export const authOptions: NextAuthOptions = {
                 email: credentials?.email,
                 password: credentials?.password,
               }),
+              cache: "no-store",
             },
           );
 
@@ -182,7 +205,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
     // default maxAge, but will override dynamically
-    maxAge: 24 * 60 * 60, // 1 day
+    maxAge: 30 * 24 * 60 * 60, // 30 days (global upper bound)
   },
 
   callbacks: {
@@ -195,36 +218,52 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user }: { token: JWT; user?: any }) {
       const TOKEN_LIFETIME_DAYS = 7;
+      const DAY = 24 * 60 * 60;
+
       if (user) {
+        const absCap = user.rememberMe ? TOKEN_LIFETIME_DAYS * DAY : 1 * DAY;
+        token.absExp = Math.floor(Date.now() / 1000) + absCap;
         token.accessToken = user.token;
         token.email = user.email;
         token.id = user.id;
         token.roles = user.roles;
         token.name = user.displayName;
         token.avatar = user.avatarURL;
-        token.rememberMe = user.rememberMe; // 👈 save flag
-        // set expiry based on rememberMe
-        token.maxAge = user.rememberMe
-          ? TOKEN_LIFETIME_DAYS * 24 * 60 * 60
-          : 24 * 60 * 60;
+        token.rememberMe = user.rememberMe;
+
+        // If your login returns exp, use it; else decode
+        const firstExp =
+          typeof user.exp === "number"
+            ? user.exp
+            : computeEffectiveExpiration(user.token, user.rememberMe);
+
         token.iat = Math.floor(Date.now() / 1000);
-        token.exp = token.iat + token.maxAge;
+        token.exp = firstExp;
+
         token.profileId =
           typeof user.profile === "number" ? user.profile : user.profile?.id;
 
-        // Set Payload token cookie when user signs in
-        // This is safer than using events in serverless environments
         if (user.token) {
+          // in prod this will set a real cookie; in testing it's a no-op
           try {
             await setPayloadCookie(user.token, user.rememberMe);
-          } catch (error) {
-            console.error("Failed to set payload-token cookie:", error);
+          } catch (e) {
+            console.error("Failed to set payload-token cookie:", e);
           }
-          token.exp = computeEffectiveExpiration(user.token, user.rememberMe);
         }
       }
 
       const now = Math.floor(Date.now() / 1000);
+      if (token.absExp && now >= token.absExp) {
+        await deletePayloadCookie();
+        return {
+          ...token,
+          accessToken: undefined,
+          error: "SessionMaxAgeExceeded",
+          exp: 0,
+        };
+      }
+
       const currentExp =
         token.exp ||
         (token.accessToken
@@ -235,33 +274,35 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (!token.accessToken) {
+        // If the user was never logged in, don't emit an error.
+        if (!token.iat && !token.email) return token;
         await deletePayloadCookie();
-        return {
-          ...token,
-          error: "RefreshAccessTokenError",
-          exp: 0,
-        };
+        return { ...token, error: "RefreshAccessTokenError", exp: 0 };
       }
 
       const needsRefresh =
         !token.exp || token.exp - TOKEN_REFRESH_BUFFER_SECONDS <= now;
 
-      if (!needsRefresh) {
-        return token;
+      if (needsRefresh && token.accessToken) {
+        const lockKey = String(token.id ?? token.email ?? "anon");
+        try {
+          return await withRefreshLock(lockKey, () =>
+            refreshPayloadToken(token),
+          );
+        } catch (e) {
+          // after the inner catch where refresh failed:
+          if (token.exp && token.exp <= now) {
+            await deletePayloadCookie();
+            return {
+              ...token,
+              accessToken: undefined,
+              error: "TokenExpired",
+              exp: 0,
+            };
+          }
+        }
       }
-
-      try {
-        return await refreshPayloadToken(token);
-      } catch (error) {
-        console.error("Error refreshing Payload token:", error);
-        await deletePayloadCookie();
-        return {
-          ...token,
-          accessToken: undefined,
-          error: "RefreshAccessTokenError",
-          exp: 0,
-        };
-      }
+      return token;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {

@@ -24,19 +24,16 @@ import {
 } from "react-icons/fa6";
 
 import { signOut, useSession } from "next-auth/react";
-import { Session } from "next-auth";
+
 import { Loader2 } from "lucide-react";
 
 export function UserMenu() {
   const { data: session, status } = useSession({ required: false });
   const user = session?.user;
 
-  const router = useRouter();
-
   const handleLogout = () => {
-    // TODO: Implement logout logic
     signOut({
-      callbackUrl: "/",
+      callbackUrl: "/auth/autentificare",
     });
   };
 

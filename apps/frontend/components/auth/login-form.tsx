@@ -12,7 +12,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { signIn } from "next-auth/react";
 
@@ -46,6 +46,23 @@ export function LoginForm() {
     },
   });
 
+  const searchParams = useSearchParams();
+  const rawCallback = searchParams.get("callbackUrl");
+  const DEFAULT_REDIRECT = "/cont";
+  // Prevent open-redirects; allow only same-origin targets
+  const getSafeCallbackUrl = (raw?: string | null) => {
+    try {
+      if (!raw) return DEFAULT_REDIRECT;
+      const url = new URL(raw, window.location.origin);
+      if (url.origin !== window.location.origin) return DEFAULT_REDIRECT;
+      // keep path + query + hash, drop origin
+      return `${url.pathname}${url.search}${url.hash}` || DEFAULT_REDIRECT;
+    } catch {
+      return DEFAULT_REDIRECT;
+    }
+  };
+  const callbackUrl = getSafeCallbackUrl(rawCallback);
+
   const onSubmit = async (data: LoginFormData) => {
     setIsPending(true);
     try {
@@ -54,6 +71,7 @@ export function LoginForm() {
         password: data.password,
         rememberMe: data.rememberMe,
         redirect: false,
+        callbackUrl,
       });
 
       if (!res?.ok && res?.error) {
@@ -70,7 +88,8 @@ export function LoginForm() {
           description: "Bine ai revenit.",
           variant: "success",
         });
-        router.push("/cont");
+        const nextUrl = (res as any)?.url || callbackUrl;
+        router.push(nextUrl);
       }
     } catch (error) {
       if (error instanceof Error) {

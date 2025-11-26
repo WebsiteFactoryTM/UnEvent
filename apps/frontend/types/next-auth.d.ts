@@ -38,6 +38,7 @@ declare module "next-auth/jwt" {
     iat?: number;
     exp?: number;
     expires?: string;
+    absExp?: number;
     error?: string;
   }
 }

@@ -5,6 +5,7 @@ import { LoginForm } from "@/components/auth/login-form";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Autentificare | UN:EVENT",
@@ -15,7 +16,24 @@ export const metadata: Metadata = {
 export default async function LoginPage() {
   const session = await getServerSession(authOptions);
   if (session?.user) {
-    redirect("/cont");
+    return (
+      <AuthCard title="Autentificare" subtitle="Esti deja autentificat.">
+        <div className="space-y-4">
+          <p className="text-center text-lg font-medium">
+            Ce vrei sa faci mai departe?
+          </p>
+
+          <div className="flex gap-2">
+            <Link href="/cont">
+              <Button variant="default">Accesează contul meu</Button>
+            </Link>
+            <Link href="/">
+              <Button variant="secondary">Înapoi la pagina principală</Button>
+            </Link>
+          </div>
+        </div>
+      </AuthCard>
+    );
   }
 
   return (

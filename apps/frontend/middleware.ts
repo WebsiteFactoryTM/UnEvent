@@ -1,40 +1,41 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+// apps/frontend/middleware.ts
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export default withAuth(
+  // This runs only if `callbacks.authorized` returned true
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const { pathname } = req.nextUrl;
 
-  // Skip middleware for static assets and API routes
-  if (
-    pathname.startsWith("/_next/") ||
-    pathname.startsWith("/api/") ||
-    pathname.includes(".") // Skip files with extensions (images, css, js, etc.)
-  ) {
-    return NextResponse.next();
-  }
+    // If already authenticated, prevent visiting auth pages
+    if (pathname.startsWith("/auth") && token && !token.error) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    // fall through
+  },
+  {
+    pages: {
+      // Where to send unauthenticated users
+      signIn: "/auth/autentificare",
+    },
+    callbacks: {
+      /**
+       * Decide if the current request is allowed.
+       * We only protect `/cont/*` — everything else is public.
+       * We also require our API access token (not just any NextAuth session).
+       */
+      authorized: ({ token, req }) => {
+        const pathname = req.nextUrl.pathname;
+        const isProtected = pathname.startsWith("/cont");
+        const isAuthed = Boolean(token?.accessToken) && !token?.error;
+        return isProtected ? isAuthed : true;
+      },
+    },
+  },
+);
 
-  const token = await getToken({ req: request });
-  const isProtectedRoute = pathname.startsWith("/cont");
-  const isAuthPage = pathname.startsWith("/auth");
-
-  // If user is not authenticated and trying to access protected routes
-  if (!token && isProtectedRoute) {
-    return NextResponse.redirect(new URL("/auth/autentificare", request.url));
-  }
-
-  // If user is authenticated and trying to access auth pages, redirect to home
-  if (token && isAuthPage) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  return NextResponse.next();
-}
-
+// Run middleware only on the routes we care about
 export const config = {
-  matcher: [
-    /*
-     * Match all paths except static assets
-     */
-    "/cont/:path*",
-  ],
+  matcher: ["/cont/:path*", "/auth/:path*"],
 };
