@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Clock } from "lucide-react";
-import type { EventFormData } from "@/forms/event/schema";
+import type { EventFormData } from "@/forms/listing/schema";
 
 export function ScheduleTab() {
   const {

@@ -163,7 +163,7 @@ export function ContactTab() {
           <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             id="website"
-            type="url"
+            type="text"
             {...register("contact.website")}
             placeholder="https://exemplu.ro"
             className="pl-10"

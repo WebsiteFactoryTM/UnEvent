@@ -1,12 +1,14 @@
-import { EventFormData } from "@/forms/event/schema";
-import { LocationFormData } from "@/forms/location/schema";
-import { ServiceFormData } from "@/forms/service/schema";
 import { ListingType } from "@/types/listings";
 import { Event, Location, Service } from "@/types/payload-types";
 import {
   normalizeListing,
   normalizeListings,
 } from "@/lib/transforms/normalizeListing";
+import {
+  EventFormData,
+  LocationFormData,
+  ServiceFormData,
+} from "@/forms/listing/schema";
 
 type ListingCollectionSlug = "locations" | "events" | "services";
 

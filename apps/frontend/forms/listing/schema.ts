@@ -11,7 +11,7 @@ const createUserFriendlyUrlSchema = (errorMessage: string = "URL invalid") => {
           return val; // Let URL validation fail
         }
         // Check for basic domain format (must have at least one dot, not just "domain")
-        if (!val.includes('.') || val.split('.').length < 2) {
+        if (!val.includes(".") || val.split(".").length < 2) {
           return val; // Let URL validation fail
         }
         return `https://${val}`;
