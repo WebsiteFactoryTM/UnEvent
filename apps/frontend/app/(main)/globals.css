@@ -150,7 +150,7 @@
 }
 
 /* Added glassmorphism, glow effects, and animations from V0 style guide */
-.glass-card {
+/* .glass-card {
   background: rgba(0, 0, 0, 0.005);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -164,7 +164,7 @@
 }
 
 /* Glow and sheen layers */
-.glass-card::before {
+/* .glass-card::before {
   content: "";
   position: absolute;
   inset: -30% -30% auto -30%;
@@ -184,8 +184,8 @@
   filter: blur(8px);
   opacity: 0.7;
   animation: glass-glow 6s ease-in-out infinite alternate;
-}
-
+} */
+/* 
 .glass-card::after {
   content: "";
   position: absolute;
@@ -204,8 +204,8 @@
   transform: rotate(10deg) translateX(-120%);
   transition: transform 0.8s ease;
   pointer-events: none;
-}
-
+} */
+/* 
 .glass-card:hover {
   border-color: rgba(0, 0, 0, 0.15);
   box-shadow:
@@ -227,17 +227,36 @@
     transform: translateY(12px) scale(1.02);
     opacity: 0.8;
   }
-}
+} */
 
 /* Dark mode tuning */
-.dark .glass-card {
+/* .dark .glass-card {
   background: rgba(10, 10, 10, 0.35);
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
+} */
+/* Glassmorphism Feature Cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
 /* Glassmorphism Feature Cards */
 .feature-card {
   background: rgba(255, 255, 255, 0.05);
