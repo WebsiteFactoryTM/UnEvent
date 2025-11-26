@@ -3,9 +3,9 @@ import { generateETag } from "@/lib/server/etag";
 import { fetchWithRetry } from "@/lib/server/fetcher";
 import { NextRequest } from "next/server";
 
-export const dynamic = "force-static";
-export const revalidate = 900;
-export const fetchCache = "force-cache";
+export const dynamic = "force-dynamic";
+export const revalidate = 300; // Reduce to 5 minutes
+export const fetchCache = "default-cache";
 export const preferredRegion = "auto";
 
 export async function GET(req: NextRequest) {
