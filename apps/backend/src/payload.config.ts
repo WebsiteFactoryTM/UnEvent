@@ -45,6 +45,7 @@ import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia
 import { migrations } from './migrations'
 
 import { getTaxonomies } from './endpoints/taxonomies'
+import * as fixCities from './endpoints/fixCities'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -132,6 +133,11 @@ export default buildConfig({
       path: '/taxonomies',
       method: 'get',
       handler: getTaxonomies,
+    },
+    {
+      path: '/fix-cities',
+      method: 'post',
+      handler: fixCities.POST,
     },
   ],
   collections: [
