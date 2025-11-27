@@ -1,8 +1,12 @@
-import type { Payload } from 'payload'
-import { NextRequest, NextResponse } from 'next/server'
+import type { Payload, PayloadHandler, PayloadRequest } from 'payload'
 
-export async function POST(req: NextRequest) {
+import { isAdmin } from '../collections/_access/roles'
+
+export const fixCities: PayloadHandler = async (req: PayloadRequest) => {
   try {
+    if (!req.user || !isAdmin({ req })) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     // Get payload instance from the request context
     const payload = req.payload as Payload
 
@@ -16,7 +20,8 @@ export async function POST(req: NextRequest) {
           exists: true,
         },
       },
-      limit: 1000, // Process in batches if needed
+      limit: 0,
+      overrideAccess: true,
     })
 
     console.log(`Found ${cities.docs.length} cities with geo coordinates`)
@@ -38,6 +43,7 @@ export async function POST(req: NextRequest) {
           data: {
             geo: correctedGeo,
           },
+          overrideAccess: true,
         })
 
         updatedCount++
@@ -47,17 +53,19 @@ export async function POST(req: NextRequest) {
     console.log(`✅ Successfully updated ${updatedCount} cities`)
     console.log('Cities coordinate fix completed!')
 
-    return NextResponse.json({
+    return Response.json({
       success: true,
       message: `Fixed coordinates for ${updatedCount} cities`,
-      updatedCount
+      updatedCount,
     })
-
   } catch (error) {
     console.error('❌ Error fixing cities coordinates:', error)
-    return NextResponse.json(
-      { error: 'Failed to fix cities coordinates', details: error.message },
-      { status: 500 }
+    return Response.json(
+      {
+        error: 'Failed to fix cities coordinates',
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
     )
   }
 }
