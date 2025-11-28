@@ -97,21 +97,24 @@ export const syncListingTypeCounters = async (payload: Payload) => {
     // Reset counters for types with no listings to 0
     console.log('[syncListingTypeCounters] resetting types with no listings...')
     let resetCount = 0
-    let page = 1
 
+    // Use a simpler approach: fetch all types and reset those not in our counts
+    // This avoids complex $or queries that might not be supported
+    let page = 1
     for (;;) {
       const types = await payload.find({
         collection: 'listing-types',
         page,
         limit: 1000,
         depth: 0,
-        where: {
-          $or: [{ usageCount: { greater_than: 0 } }, { usageCountPublic: { greater_than: 0 } }],
-        },
       })
 
       for (const type of types.docs) {
-        if (!typeCounts.has(type.id)) {
+        // Reset if this type has counts but isn't in our aggregated data (meaning no listings use it)
+        const hasUsageCount = (type.usageCount ?? 0) > 0
+        const hasUsageCountPublic = (type.usageCountPublic ?? 0) > 0
+
+        if ((hasUsageCount || hasUsageCountPublic) && !typeCounts.has(type.id)) {
           try {
             await payload.update({
               collection: 'listing-types',
