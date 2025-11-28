@@ -138,12 +138,12 @@ export default buildConfig({
       handler: getTaxonomies,
     },
     {
-      path: '/test-city-counters',
+      path: '/update-city-counters',
       method: 'post',
       handler: testCityCountersHandler,
     },
     {
-      path: '/test-listing-type-counters',
+      path: '/update-listing-type-counters',
       method: 'post',
       handler: testListingTypeCountersHandler,
     },
