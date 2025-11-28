@@ -168,9 +168,10 @@ export function LocationHero({ location }: LocationHeroProps) {
           </div>
 
           {/* Social media */}
-          {socialLinks && Object.values(socialLinks).some((link) => link) && (
-            <SocialMedia socialLinks={socialLinks} />
-          )}
+          {socialLinks &&
+            Object.values(socialLinks).some((link) => link && link !== "") && (
+              <SocialMedia socialLinks={socialLinks} />
+            )}
         </div>
       )}
     </div>

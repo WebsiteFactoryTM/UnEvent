@@ -38,6 +38,7 @@ import { HubSnapshots } from './collections/HubSnapshot'
 import { registerBuildHubSnapshotScheduler } from './schedulers/buildHubSnapshot'
 import { hubHandler } from './endpoints/hubEndpoint'
 import { regenerateHubHandler } from './endpoints/regenerateHub'
+import { testCityCountersHandler } from './endpoints/testCityCounters'
 import { ListingType } from './payload-types'
 import { registerSyncListingTypeCountersScheduler } from './schedulers/syncListingTypeCounters'
 import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters'
@@ -134,6 +135,11 @@ export default buildConfig({
       path: '/taxonomies',
       method: 'get',
       handler: getTaxonomies,
+    },
+    {
+      path: '/test-city-counters',
+      method: 'post',
+      handler: testCityCountersHandler,
     },
   ],
   collections: [
