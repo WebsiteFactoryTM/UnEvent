@@ -18,6 +18,19 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+
+// Add this utility function
+function normalizeText(text: string): string {
+  const normalized = text
+    .toLowerCase()
+    .normalize("NFD") // Decompose accented characters
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+    .replace(/[^a-z0-9\s-]/g, "") // Optional: remove other special chars
+    .trim();
+
+  return normalized;
+}
 
 export interface SearchableSelectOption {
   value: string;
@@ -60,6 +73,10 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false);
 
+  const handleSearchChange = (value: string) => {
+    onSearchChange?.(normalizeText(value)); // Normalize before storing
+  };
+
   const selectedOption = options.find((option) => option.value === value);
 
   return (
@@ -84,11 +101,21 @@ export function SearchableSelect({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0" align="start">
-          <Command>
+          <Command
+            filter={(value, search) => {
+              const normalizedValue = normalizeText(value);
+              const normalizedSearch = normalizeText(search);
+
+              if (normalizedValue.includes(normalizedSearch)) {
+                return 1; // Match
+              }
+              return 0; // No match
+            }}
+          >
             <CommandInput
               placeholder={searchPlaceholder}
               value={searchValue}
-              onValueChange={onSearchChange}
+              onValueChange={handleSearchChange}
             />
             <CommandList>
               <CommandEmpty>{emptyText}</CommandEmpty>
