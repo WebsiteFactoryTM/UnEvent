@@ -135,11 +135,6 @@ export default buildConfig({
       method: 'get',
       handler: getTaxonomies,
     },
-    {
-      path: '/fix-cities',
-      method: 'get',
-      handler: fixCities,
-    },
   ],
   collections: [
     Users,
