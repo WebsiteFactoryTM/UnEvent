@@ -1,5 +1,6 @@
 import type { Payload } from 'payload'
 import cron from 'node-cron'
+import { queueHubSnapshotBuild } from '@/utils/hubSnapshotScheduler'
 
 let isRunning = false
 
@@ -123,6 +124,9 @@ export const syncCityCounters = async (payload: Payload) => {
     console.log(
       `[syncCityCounters] completed in ${duration}s: ${updateCount} cities updated, ${resetCount} cities reset`,
     )
+    queueHubSnapshotBuild(payload, 'locations', 'cities-change')
+    queueHubSnapshotBuild(payload, 'services', 'cities-change')
+    queueHubSnapshotBuild(payload, 'events', 'cities-change')
   } catch (e) {
     console.error('[syncCityCounters] failed:', e)
   } finally {
