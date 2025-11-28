@@ -7,9 +7,12 @@ import {
   FaGlobe,
   FaFacebook,
   FaInstagram,
+  FaLocationDot,
 } from "react-icons/fa6";
 import type { LocationListing } from "@/types/listings";
 import { ListingActions } from "../shared/ListingActions";
+import Link from "next/link";
+import SocialMedia from "../shared/SocialMedia";
 
 interface LocationHeroProps {
   location: LocationListing;
@@ -27,6 +30,15 @@ export function LocationHero({ location }: LocationHeroProps) {
 
   const contact = location?.contact;
   const socialLinks = location?.socialLinks;
+  const address = location?.address;
+
+  const suitableFor =
+    location.suitableFor && location.suitableFor.length > 0
+      ? location.suitableFor
+          .map((t) => (typeof t === "object" ? t.title : ""))
+          .filter(Boolean)
+          .join(", ")
+      : "";
 
   return (
     <div className="glass-card p-4 sm:p-6 space-y-6">
@@ -52,7 +64,7 @@ export function LocationHero({ location }: LocationHeroProps) {
 
         {/* Rating and meta */}
         <div className="flex flex-wrap items-center gap-4 text-sm">
-          {location.rating && location.reviewCount && (
+          {location.rating && location.reviewCount ? (
             <div className="flex items-center gap-1">
               <FaStar className="h-4 w-4 text-yellow-500" />
               <span className="font-semibold">{location.rating}</span>
@@ -60,13 +72,23 @@ export function LocationHero({ location }: LocationHeroProps) {
                 · {location.reviewCount} recenzii
               </span>
             </div>
-          )}
-          <span className="text-muted-foreground">{cityName}</span>
-          {location.capacity?.indoor && (
+          ) : null}
+          {address || cityName ? (
+            <div className="flex items-center gap-1">
+              <FaLocationDot className="w-4 h-4" />
+
+              <a href="#listing-map" className="text-muted-foreground">
+                <span className="text-muted-foreground">
+                  {address?.trim() ? address : cityName || "România"}
+                </span>
+              </a>
+            </div>
+          ) : null}
+          {location.capacity?.indoor ? (
             <span className="text-muted-foreground">
               Capacitate: {location.capacity.indoor} persoane
             </span>
-          )}
+          ) : null}
           <span className="text-muted-foreground">{locationType}</span>
           {location.pricing?.amount && (
             <span className="font-semibold text-foreground">
@@ -75,7 +97,14 @@ export function LocationHero({ location }: LocationHeroProps) {
           )}
         </div>
       </div>
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        {suitableFor && (
+          <div>
+            <span className="text-muted-foreground">Destinat pentru: </span>
+            <span className="font-medium">{suitableFor}</span>
+          </div>
+        )}
+      </div>
       {/* Actions */}
       <ListingActions
         title={location.title}
@@ -140,35 +169,7 @@ export function LocationHero({ location }: LocationHeroProps) {
 
           {/* Social media */}
           {socialLinks && Object.values(socialLinks).some((link) => link) && (
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold">Social Media</h4>
-              <div className="flex gap-2">
-                {socialLinks.facebook && (
-                  <Button variant="outline" size="icon" asChild>
-                    <a
-                      href={socialLinks.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Facebook"
-                    >
-                      <FaFacebook className="h-4 w-4" />
-                    </a>
-                  </Button>
-                )}
-                {socialLinks.instagram && (
-                  <Button variant="outline" size="icon" asChild>
-                    <a
-                      href={socialLinks.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Instagram"
-                    >
-                      <FaInstagram className="h-4 w-4" />
-                    </a>
-                  </Button>
-                )}
-              </div>
-            </div>
+            <SocialMedia socialLinks={socialLinks} />
           )}
         </div>
       )}

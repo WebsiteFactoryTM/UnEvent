@@ -2,12 +2,14 @@ import { FaStar, FaLocationDot } from "react-icons/fa6";
 import type { ServiceListing } from "@/types/listings";
 import type { Profile } from "@/types/payload-types";
 import { ListingActions } from "../shared/ListingActions";
+import SocialMedia from "../shared/SocialMedia";
 
 interface ServiceHeroProps {
   service: ServiceListing;
 }
 
 export default function ServiceHero({ service }: ServiceHeroProps) {
+  const address = service?.address;
   const provider =
     typeof service.owner === "object" ? (service.owner as Profile) : null;
   const cityName =
@@ -44,9 +46,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
         {/* Provider Name & Badges */}
         <div className="space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <h1 className="text-2xl md:text-3xl font-bold">
-              {provider?.name || service.title}
-            </h1>
+            <h1 className="text-2xl md:text-3xl font-bold">{service.title}</h1>
             <div className="flex flex-wrap gap-2">
               {isVerified && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
@@ -72,12 +72,17 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
                 <span>· {service.reviewCount} recenzii</span>
               </div>
             ) : null}
-            {cityName && (
+            {address || cityName ? (
               <div className="flex items-center gap-1">
                 <FaLocationDot className="w-4 h-4" />
-                <span>{cityName}</span>
+
+                <a href="#listing-map" className="text-muted-foreground">
+                  <span className="text-muted-foreground">
+                    {address?.trim() ? address : cityName || "România"}
+                  </span>
+                </a>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -151,6 +156,10 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
             </div>
           </div>
         )}
+        {service.socialLinks &&
+          Object.values(service.socialLinks).some((link) => link) && (
+            <SocialMedia socialLinks={service.socialLinks} />
+          )}
       </div>
     </div>
   );

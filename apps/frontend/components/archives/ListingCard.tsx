@@ -122,12 +122,16 @@ export function ListingCard({
             </div>
           )}
 
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <FaEye className="h-4 w-4" />
             <span>{views.toLocaleString("ro-RO")}</span>
-          </div>
+          </div> */}
         </div>
-        <Badge variant="outline">{type.slice(0, 100)}...</Badge>
+        {type.split(",").map((t) => (
+          <Badge variant="secondary" key={t}>
+            {t}
+          </Badge>
+        ))}
 
         {priceRange ?? (
           <p className="text-sm font-semibold text-foreground">{priceRange}</p>

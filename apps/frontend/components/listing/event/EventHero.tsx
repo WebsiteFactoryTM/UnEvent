@@ -1,7 +1,14 @@
 import { Badge } from "@/components/ui/badge";
-import { FaStar, FaCalendar, FaTicket, FaUsers } from "react-icons/fa6";
+import {
+  FaStar,
+  FaCalendar,
+  FaTicket,
+  FaUsers,
+  FaLocationDot,
+} from "react-icons/fa6";
 import type { EventListing } from "@/types/listings";
 import { ListingActions } from "../shared/ListingActions";
+import SocialMedia from "../shared/SocialMedia";
 
 interface EventHeroProps {
   event: EventListing;
@@ -10,6 +17,7 @@ interface EventHeroProps {
 export default function EventHero({ event }: EventHeroProps) {
   const cityName =
     typeof event?.city === "object" ? event?.city?.name : "România";
+  const address = event?.address;
   const eventType =
     Array.isArray(event?.type) && event?.type?.length > 0
       ? typeof event?.type[0] === "object"
@@ -69,7 +77,17 @@ export default function EventHero({ event }: EventHeroProps) {
               </span>
             </div>
           ) : null}
-          <span className="text-muted-foreground">{cityName}</span>
+          {address || cityName ? (
+            <div className="flex items-center gap-1">
+              <FaLocationDot className="w-4 h-4" />
+
+              <a href="#listing-map" className="text-muted-foreground">
+                <span className="text-muted-foreground">
+                  {address?.trim() ? address : cityName || "România"}
+                </span>
+              </a>
+            </div>
+          ) : null}
           <span className="text-muted-foreground">{eventType}</span>
           <span className="font-semibold text-foreground">{priceText}</span>
         </div>
@@ -121,6 +139,10 @@ export default function EventHero({ event }: EventHeroProps) {
         description={event?.description ?? ""}
         isFavoritedByViewer={event?.isFavoritedByViewer ?? false}
       />
+      {event.socialLinks &&
+        Object.values(event.socialLinks).some((link) => link) && (
+          <SocialMedia socialLinks={event.socialLinks} />
+        )}
     </div>
   );
 }

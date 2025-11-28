@@ -53,7 +53,7 @@ export const ListingMap = ({
   }, [geo, city]);
 
   return (
-    <div className="glass-card p-6 space-y-4">
+    <div className="glass-card p-6 space-y-4" id="listing-map">
       <h2 className="text-2xl font-bold">Locație & Adresă</h2>
 
       <div className="space-y-4">
