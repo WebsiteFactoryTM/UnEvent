@@ -14,7 +14,10 @@ export const testListingTypeCountersHandler: PayloadHandler = async (req: Payloa
   }
 
   try {
-    console.log('[testListingTypeCounters] Manual trigger started by user:', req.user?.email || 'dev')
+    console.log(
+      '[testListingTypeCounters] Manual trigger started by user:',
+      req.user?.email || 'dev',
+    )
     const startTime = Date.now()
 
     // Run the sync function

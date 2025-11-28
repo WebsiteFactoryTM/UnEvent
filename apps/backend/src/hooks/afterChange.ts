@@ -67,7 +67,10 @@ export const afterChange: CollectionAfterChangeHook = async ({
   }
 
   // Cities
-  if (collection.slug === 'cities') {
+  if (
+    collection.slug === 'cities' &&
+    (doc?.name !== previousDoc?.name || doc?.county !== previousDoc?.county)
+  ) {
     tags.add('cities:popular')
     tags.add('cities:typeahead')
     if (doc?.slug) {

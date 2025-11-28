@@ -20,7 +20,7 @@ export const syncListingTypeCounters = async (payload: Payload) => {
     console.log('[syncListingTypeCounters] start efficient recount')
 
     // Get accurate counts using aggregation queries
-    const typeCounts = new Map<string, { total: number; public: number }>()
+    const typeCounts = new Map<number, { total: number; public: number }>()
 
     // Count listings per type for each collection
     const collections = ['locations', 'services', 'events'] as const
@@ -106,10 +106,7 @@ export const syncListingTypeCounters = async (payload: Payload) => {
         limit: 1000,
         depth: 0,
         where: {
-          $or: [
-            { usageCount: { greater_than: 0 } },
-            { usageCountPublic: { greater_than: 0 } },
-          ],
+          $or: [{ usageCount: { greater_than: 0 } }, { usageCountPublic: { greater_than: 0 } }],
         },
       })
 

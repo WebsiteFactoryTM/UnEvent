@@ -10,14 +10,6 @@ const Cities: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'country', 'usageCount', 'verified'],
     group: 'Taxonomy',
-    // components: {
-    //   beforeList: [
-    //     {
-    //       path: '/collections/Cities/components/ImportButton',
-    //       exportName: 'ImportButton',
-    //     },
-    //   ],
-    // },
   },
   access: {
     read: ({ req }) => true,

@@ -20,7 +20,7 @@ export const syncCityCounters = async (payload: Payload) => {
     console.log('[syncCityCounters] start efficient recount')
 
     // Get accurate counts using aggregation queries
-    const cityCounts = new Map<string, number>()
+    const cityCounts = new Map<number, number>()
 
     // Count approved listings per city for each collection
     const collections = ['locations', 'services', 'events'] as const
@@ -38,16 +38,15 @@ export const syncCityCounters = async (payload: Payload) => {
           limit: batchSize,
           depth: 0,
           where: {
-            status: { equals: 'approved' }, // Only count approved listings
-            city: { exists: true } // Only listings with cities
-          }
+            moderationStatus: { equals: 'approved' }, // Only count approved listings
+            city: { exists: true }, // Only listings with cities
+          },
         })
 
         // Aggregate counts for this batch
         for (const listing of listings.docs) {
-          const cityId = listing.city && typeof listing.city === 'object'
-            ? listing.city.id
-            : listing.city
+          const cityId =
+            listing.city && typeof listing.city === 'object' ? listing.city.id : listing.city
 
           if (cityId) {
             cityCounts.set(cityId, (cityCounts.get(cityId) || 0) + 1)
@@ -80,7 +79,7 @@ export const syncCityCounters = async (payload: Payload) => {
 
       // Small delay every batch to be gentle on the database
       if (updateCount % batchSize === 0) {
-        await new Promise(resolve => setTimeout(resolve, 10))
+        await new Promise((resolve) => setTimeout(resolve, 10))
       }
     }
 
@@ -96,8 +95,8 @@ export const syncCityCounters = async (payload: Payload) => {
         limit: 1000,
         depth: 0,
         where: {
-          usageCount: { greater_than: 0 } // Only check cities that have counts
-        }
+          usageCount: { greater_than: 0 }, // Only check cities that have counts
+        },
       })
 
       for (const city of cities.docs) {
@@ -121,8 +120,9 @@ export const syncCityCounters = async (payload: Payload) => {
     }
 
     const duration = Math.round((Date.now() - started) / 1000)
-    console.log(`[syncCityCounters] completed in ${duration}s: ${updateCount} cities updated, ${resetCount} cities reset`)
-
+    console.log(
+      `[syncCityCounters] completed in ${duration}s: ${updateCount} cities updated, ${resetCount} cities reset`,
+    )
   } catch (e) {
     console.error('[syncCityCounters] failed:', e)
   } finally {
