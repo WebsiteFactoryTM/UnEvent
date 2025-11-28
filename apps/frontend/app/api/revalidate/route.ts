@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -14,6 +14,34 @@ export async function POST(req: Request) {
 
   for (const t of tags) {
     revalidateTag(t);
+
+    // If it's a listing tag, also revalidate related pages
+    if (t.startsWith("listing:slug:")) {
+      const slug = t.replace("listing:slug:", "");
+
+      // Check if we have collection tags in this same request
+      const hasLocations = tags.includes("collection:locations");
+      const hasServices = tags.includes("collection:services");
+      const hasEvents = tags.includes("collection:events");
+
+      // Only revalidate paths for collections present in this request
+      if (hasLocations) revalidatePath(`/locatii/${slug}`);
+      if (hasServices) revalidatePath(`/servicii/${slug}`);
+      if (hasEvents) revalidatePath(`/evenimente/${slug}`);
+    }
+
+    // Revalidate hub pages (listing type overview pages)
+    if (t.startsWith("hub:snapshot:")) {
+      const type = t.replace("hub:snapshot:", "");
+      if (type === "locations") revalidatePath("/locatii");
+      if (type === "services") revalidatePath("/servicii");
+      if (type === "events") revalidatePath("/evenimente");
+    }
+
+    // Revalidate home page
+    if (t === "home:snapshot" || t === "home") {
+      revalidatePath("/");
+    }
   }
 
   return NextResponse.json({ ok: true, count: tags.length });
