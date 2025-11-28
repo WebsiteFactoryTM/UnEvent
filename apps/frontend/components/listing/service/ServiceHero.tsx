@@ -157,9 +157,9 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
           </div>
         )}
         {service.socialLinks &&
-          Object.values(service.socialLinks).some((link) => link) && (
-            <SocialMedia socialLinks={service.socialLinks} />
-          )}
+          Object.values(service.socialLinks).some(
+            (link) => link && link !== "",
+          ) && <SocialMedia socialLinks={service.socialLinks} />}
       </div>
     </div>
   );

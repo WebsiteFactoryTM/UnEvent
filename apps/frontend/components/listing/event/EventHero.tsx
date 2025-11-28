@@ -140,9 +140,9 @@ export default function EventHero({ event }: EventHeroProps) {
         isFavoritedByViewer={event?.isFavoritedByViewer ?? false}
       />
       {event.socialLinks &&
-        Object.values(event.socialLinks).some((link) => link) && (
-          <SocialMedia socialLinks={event.socialLinks} />
-        )}
+        Object.values(event.socialLinks).some(
+          (link) => link && link !== "",
+        ) && <SocialMedia socialLinks={event.socialLinks} />}
     </div>
   );
 }

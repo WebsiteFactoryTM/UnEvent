@@ -127,11 +127,13 @@ export function ListingCard({
             <span>{views.toLocaleString("ro-RO")}</span>
           </div> */}
         </div>
-        {type.split(",").map((t) => (
-          <Badge variant="secondary" key={t}>
-            {t}
-          </Badge>
-        ))}
+        <div className="flex gap-2">
+          {type.split(",").map((t) => (
+            <Badge variant="secondary" key={t}>
+              {t}
+            </Badge>
+          ))}
+        </div>
 
         {priceRange ?? (
           <p className="text-sm font-semibold text-foreground">{priceRange}</p>

@@ -29,26 +29,28 @@ const SocialMedia = ({
     <div className="space-y-3 ">
       <h4 className="text-lg font-semibold">Social Media</h4>
       <div className="flex gap-2 flex-wrap">
-        {Object.entries(socialLinks).map(([key, value]) => {
-          const Icon = SocialMediaIcons[key as keyof typeof SocialMediaIcons];
-          return (
-            <Button
-              variant="outline"
-              size="icon"
-              asChild
-              key={`social-media-${key}`}
-            >
-              <a
-                href={value ?? "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={key}
+        {Object.entries(socialLinks)
+          .filter(([key, value]) => value && value !== "")
+          .map(([key, value]) => {
+            const Icon = SocialMediaIcons[key as keyof typeof SocialMediaIcons];
+            return (
+              <Button
+                variant="outline"
+                size="icon"
+                asChild
+                key={`social-media-${key}`}
               >
-                <Icon className="h-4 w-4" />
-              </a>
-            </Button>
-          );
-        })}
+                <a
+                  href={value ?? "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={key}
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              </Button>
+            );
+          })}
       </div>
     </div>
   );
