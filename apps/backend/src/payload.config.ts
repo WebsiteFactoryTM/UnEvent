@@ -47,8 +47,6 @@ import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia
 import { migrations } from './migrations'
 
 import { getTaxonomies } from './endpoints/taxonomies'
-import { fixCities } from './endpoints/fixCities'
-import { PayloadHandler } from 'payload'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

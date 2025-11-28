@@ -27,17 +27,19 @@ export function CityRow({
   cityLabel,
   items,
 }: CityRowProps) {
+  const listingTypeLabel =
+    listingType.charAt(0).toUpperCase() + listingType.slice(1);
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <h3 className="text-2xl md:text-3xl font-bold">
-            {cityLabel} — Recomandate
+            {listingTypeLabel} populare în {cityLabel}
           </h3>
         </div>
         <Button asChild variant="ghost">
           <Link href={`/${listingType}/oras/${citySlug}`}>
-            Vezi toate în {cityLabel}
+            Vezi mai multe în {cityLabel}
           </Link>
         </Button>
       </div>

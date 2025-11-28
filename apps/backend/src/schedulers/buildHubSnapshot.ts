@@ -25,7 +25,7 @@ export async function buildHubSnapshot(
   // 0) Top 6 cities (dynamic, fallback to static list)
   const citiesRes = await payload.find({
     collection: 'cities',
-    sort: '-usageCount,-updatedAt',
+    sort: ['-usageCount', '-updatedAt'],
     depth: 0,
     limit: 100,
   })
@@ -48,7 +48,7 @@ export async function buildHubSnapshot(
       type: { equals: collection },
       isActive: { equals: true },
     },
-    sort: '-usageCountPublic,-usageCount,-updatedAt',
+    sort: ['-usageCountPublic', '-usageCount', '-updatedAt'],
     limit: 10,
     depth: 0,
   })
@@ -62,7 +62,7 @@ export async function buildHubSnapshot(
   const featured = await payload.find({
     collection,
     where: { moderationStatus: { equals: 'approved' }, tier: { in: ['recommended', 'sponsored'] } }, // adapt
-    sort: '-verified,-rating,-reviewsCount,-updatedAt',
+    sort: ['-rating', '-reviewsCount', '-updatedAt'],
     limit: 12,
     depth: 1, // keep snapshots light & fast
   })
@@ -84,7 +84,7 @@ export async function buildHubSnapshot(
         moderationStatus: { equals: 'approved' },
         tier: { in: ['recommended', 'sponsored'] },
       },
-      sort: '-verified,-rating,-reviewsCount,-updatedAt',
+      sort: ['-rating', '-reviewsCount', '-updatedAt'],
       limit: 9,
       depth: 1,
     })
@@ -109,7 +109,6 @@ export async function buildHubSnapshot(
   )
 
   console.log(`[HubSnapshot] Found ${popularSearchCombos.length} popular search combos`)
-  console.log(popularSearchCombos)
 
   // 5) Upsert snapshot with new fields
   const data: Omit<HubSnapshot, 'id' | 'updatedAt' | 'createdAt'> = {
