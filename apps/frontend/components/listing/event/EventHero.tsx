@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   FaStar,
   FaCalendar,
@@ -124,7 +125,7 @@ export default function EventHero({ event }: EventHeroProps) {
 
         <div className="flex items-start gap-3">
           <FaTicket className="h-5 w-5 text-muted-foreground mt-0.5" />
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-medium">Acces</p>
             <p className="text-sm text-muted-foreground">{priceText}</p>
           </div>
@@ -138,6 +139,7 @@ export default function EventHero({ event }: EventHeroProps) {
         id={event?.id}
         description={event?.description ?? ""}
         isFavoritedByViewer={event?.isFavoritedByViewer ?? false}
+        ticketUrl={event?.ticketUrl ?? undefined}
       />
       {event.socialLinks &&
         Object.values(event.socialLinks).some(

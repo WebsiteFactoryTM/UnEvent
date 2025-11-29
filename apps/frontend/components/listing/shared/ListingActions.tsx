@@ -36,6 +36,7 @@ interface ListingActionsProps {
   isFavoritedByViewer: boolean;
   description: string;
   listingType: ListingType;
+  ticketUrl?: string;
 }
 
 export function ListingActions({
@@ -44,6 +45,7 @@ export function ListingActions({
   id,
   isFavoritedByViewer,
   listingType,
+  ticketUrl,
 }: ListingActionsProps) {
   const { isFavorited, toggleAsync } = useFavorites({
     listingType: listingType as ListingType,
@@ -116,67 +118,89 @@ export function ListingActions({
   };
 
   return (
-    <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-3">
-      <Button
-        onClick={handleFavorite}
-        variant={isFavorited ? "default" : "outline"}
-        size="sm"
-        className="gap-2"
-      >
-        <FaHeart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
-        <span className="hidden sm:inline">
-          {isFavorited ? "Salvat" : "Salvează"}
-        </span>
-      </Button>
-
-      <Button
-        onClick={handleShare}
-        variant="outline"
-        size="sm"
-        className="gap-2 bg-transparent"
-      >
-        <FaShareNodes className="h-4 w-4" />
-        <span className="hidden sm:inline">Distribuie</span>
-      </Button>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-            <FaFlag className="h-4 w-4" />
-            <span className="hidden sm:inline">Raportează</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Raportează listarea</DialogTitle>
-            <DialogDescription>
-              Dacă ai identificat o problemă cu această listare, te rugăm să ne
-              informezi.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="report-reason">Motivul raportării</Label>
-              <Textarea
-                id="report-reason"
-                placeholder="Descrie problema..."
-                className="mt-2"
-              />
-            </div>
-            <Button className="w-full">Trimite raport</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-      {listingType === "evenimente" && (
+    <div className="flex flex-wrap gap-3 justify-between">
+      <div className="inline-flex gap-3">
         <Button
+          onClick={handleFavorite}
+          variant={isFavorited ? "default" : "outline"}
           size="sm"
-          onClick={handleParticipate}
-          className="col-span-3 sm:col-span-1 sm:ml-auto gap-2 bg-primary hover:bg-primary/90"
-          // disabled={capacity?.remaining === 0}
+          className="gap-2"
         >
-          <FaTicket className="h-4 w-4" />
-          {isParticipating ? "Anulează participarea" : "Participă la eveniment"}
+          <FaHeart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
+          <span className="hidden sm:inline">
+            {isFavorited ? "Salvat" : "Salvează"}
+          </span>
         </Button>
+
+        <Button
+          onClick={handleShare}
+          variant="outline"
+          size="sm"
+          className="gap-2 bg-transparent"
+        >
+          <FaShareNodes className="h-4 w-4" />
+          <span className="hidden sm:inline">Distribuie</span>
+        </Button>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 bg-transparent"
+            >
+              <FaFlag className="h-4 w-4" />
+              <span className="hidden sm:inline">Raportează</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Raportează listarea</DialogTitle>
+              <DialogDescription>
+                Dacă ai identificat o problemă cu această listare, te rugăm să
+                ne informezi.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="report-reason">Motivul raportării</Label>
+                <Textarea
+                  id="report-reason"
+                  placeholder="Descrie problema..."
+                  className="mt-2"
+                />
+              </div>
+              <Button className="w-full">Trimite raport</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+      {listingType === "evenimente" && (
+        <div className="gap-3 inline-flex place-self-end">
+          <Button
+            size="sm"
+            onClick={handleParticipate}
+            className="col-span-3 sm:col-span-1 sm:ml-auto gap-2 bg-primary hover:bg-primary/90"
+            // disabled={capacity?.remaining === 0}
+          >
+            <FaTicket className="h-4 w-4" />
+            {isParticipating
+              ? "Anulează participarea"
+              : "Participă la eveniment"}
+          </Button>
+          {ticketUrl && (
+            <Button
+              asChild
+              variant="default"
+              size="sm"
+              className="col-span-3 sm:col-span-1 sm:ml-auto gap-2 bg-primary hover:bg-primary/90"
+            >
+              <a href={ticketUrl} target="_blank" rel="noopener noreferrer">
+                Cumpără bilet
+              </a>
+            </Button>
+          )}
+        </div>
       )}
       {listingType !== "evenimente" && (
         <Sheet>
