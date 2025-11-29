@@ -13,53 +13,53 @@
  * via the `definition` "supportedTimezones".
  */
 export type SupportedTimezones =
-  | "Pacific/Midway"
-  | "Pacific/Niue"
-  | "Pacific/Honolulu"
-  | "Pacific/Rarotonga"
-  | "America/Anchorage"
-  | "Pacific/Gambier"
-  | "America/Los_Angeles"
-  | "America/Tijuana"
-  | "America/Denver"
-  | "America/Phoenix"
-  | "America/Chicago"
-  | "America/Guatemala"
-  | "America/New_York"
-  | "America/Bogota"
-  | "America/Caracas"
-  | "America/Santiago"
-  | "America/Buenos_Aires"
-  | "America/Sao_Paulo"
-  | "Atlantic/South_Georgia"
-  | "Atlantic/Azores"
-  | "Atlantic/Cape_Verde"
-  | "Europe/London"
-  | "Europe/Berlin"
-  | "Africa/Lagos"
-  | "Europe/Athens"
-  | "Africa/Cairo"
-  | "Europe/Moscow"
-  | "Asia/Riyadh"
-  | "Asia/Dubai"
-  | "Asia/Baku"
-  | "Asia/Karachi"
-  | "Asia/Tashkent"
-  | "Asia/Calcutta"
-  | "Asia/Dhaka"
-  | "Asia/Almaty"
-  | "Asia/Jakarta"
-  | "Asia/Bangkok"
-  | "Asia/Shanghai"
-  | "Asia/Singapore"
-  | "Asia/Tokyo"
-  | "Asia/Seoul"
-  | "Australia/Brisbane"
-  | "Australia/Sydney"
-  | "Pacific/Guam"
-  | "Pacific/Noumea"
-  | "Pacific/Auckland"
-  | "Pacific/Fiji";
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
 
 export interface Config {
   auth: {
@@ -72,21 +72,21 @@ export interface Config {
     profiles: Profile;
     verifications: Verification;
     favorites: Favorite;
-    "listing-types": ListingType;
+    'listing-types': ListingType;
     cities: City;
     events: Event;
     locations: Location;
     services: Service;
     facilities: Facility;
-    "metrics-daily": MetricsDaily;
+    'metrics-daily': MetricsDaily;
     aggregates: Aggregate;
-    "listing-rank": ListingRank;
+    'listing-rank': ListingRank;
     reviews: Review;
-    "hub-snapshots": HubSnapshot;
+    'hub-snapshots': HubSnapshot;
     search: Search;
-    "payload-locked-documents": PayloadLockedDocument;
-    "payload-preferences": PayloadPreference;
-    "payload-migrations": PayloadMigration;
+    'payload-locked-documents': PayloadLockedDocument;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
@@ -95,27 +95,21 @@ export interface Config {
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     verifications: VerificationsSelect<false> | VerificationsSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
-    "listing-types": ListingTypesSelect<false> | ListingTypesSelect<true>;
+    'listing-types': ListingTypesSelect<false> | ListingTypesSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     locations: LocationsSelect<false> | LocationsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     facilities: FacilitiesSelect<false> | FacilitiesSelect<true>;
-    "metrics-daily": MetricsDailySelect<false> | MetricsDailySelect<true>;
+    'metrics-daily': MetricsDailySelect<false> | MetricsDailySelect<true>;
     aggregates: AggregatesSelect<false> | AggregatesSelect<true>;
-    "listing-rank": ListingRankSelect<false> | ListingRankSelect<true>;
+    'listing-rank': ListingRankSelect<false> | ListingRankSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
-    "hub-snapshots": HubSnapshotsSelect<false> | HubSnapshotsSelect<true>;
+    'hub-snapshots': HubSnapshotsSelect<false> | HubSnapshotsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
-    "payload-locked-documents":
-      | PayloadLockedDocumentsSelect<false>
-      | PayloadLockedDocumentsSelect<true>;
-    "payload-preferences":
-      | PayloadPreferencesSelect<false>
-      | PayloadPreferencesSelect<true>;
-    "payload-migrations":
-      | PayloadMigrationsSelect<false>
-      | PayloadMigrationsSelect<true>;
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
     defaultIDType: number;
@@ -128,7 +122,7 @@ export interface Config {
   };
   locale: null;
   user: User & {
-    collection: "users";
+    collection: 'users';
   };
   jobs: {
     tasks: unknown;
@@ -162,12 +156,15 @@ export interface User {
   displayName?: string | null;
   profile?: (number | null) | Profile;
   avatarURL?: string | null;
-  roles: ("organizer" | "host" | "provider" | "client" | "admin")[];
-  status?: ("active" | "pending" | "suspended") | null;
+  roles: ('organizer' | 'host' | 'provider' | 'client' | 'admin')[];
+  status?: ('active' | 'pending' | 'suspended') | null;
   agreeTermsAndConditions: boolean;
   agreePrivacyPolicy: boolean;
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -195,7 +192,7 @@ export interface Profile {
    * URL-friendly identifier
    */
   slug?: string | null;
-  userType?: ("organizer" | "host" | "provider" | "client")[] | null;
+  userType?: ('organizer' | 'host' | 'provider' | 'client')[] | null;
   /**
    * Full name or business name
    */
@@ -207,7 +204,7 @@ export interface Profile {
   /**
    * Verification status
    */
-  verifiedStatus?: ("none" | "pending" | "approved" | "rejected") | null;
+  verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
   verification?: (number | null) | Verification;
   /**
    * Display name
@@ -277,9 +274,10 @@ export interface Profile {
 export interface Media {
   id: number;
   alt?: string | null;
-  context: "listing" | "avatar" | "event" | "document" | "verification";
+  context: 'listing' | 'avatar' | 'event' | 'document' | 'verification';
   uploadedBy?: (number | null) | Profile;
   temp?: boolean | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -300,25 +298,25 @@ export interface Verification {
   id: number;
   entity:
     | {
-        relationTo: "profiles";
+        relationTo: 'profiles';
         value: number | Profile;
       }
     | {
-        relationTo: "events";
+        relationTo: 'events';
         value: number | Event;
       }
     | {
-        relationTo: "locations";
+        relationTo: 'locations';
         value: number | Location;
       }
     | {
-        relationTo: "services";
+        relationTo: 'services';
         value: number | Service;
       };
-  status?: ("pending" | "approved" | "rejected") | null;
+  status?: ('pending' | 'approved' | 'rejected') | null;
   documents?:
     | {
-        type?: ("id" | "company" | "other") | null;
+        type?: ('id' | 'company' | 'other') | null;
         file: number | Media;
         notes?: string | null;
         id?: string | null;
@@ -368,14 +366,14 @@ export interface Event {
   /**
    * Status of the listing
    */
-  moderationStatus?: ("pending" | "approved" | "rejected" | "draft") | null;
+  moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
    * Verification status
    */
-  verifiedStatus?: ("none" | "pending" | "approved" | "rejected") | null;
+  verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
   verification?: (number | null) | Verification;
   /**
    * Number of views
@@ -389,7 +387,7 @@ export interface Event {
   /**
    * Tier of the listing
    */
-  tier?: ("new" | "standard" | "sponsored" | "recommended") | null;
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   /**
    * Keywords to help find this listing
    */
@@ -420,7 +418,7 @@ export interface Event {
    * Type of event
    */
   type: (number | ListingType)[];
-  eventStatus: "upcoming" | "in-progress" | "finished";
+  eventStatus: 'upcoming' | 'in-progress' | 'finished';
   startDate: string;
   endDate?: string | null;
   /**
@@ -435,10 +433,14 @@ export interface Event {
     remaining?: number | null;
   };
   pricing: {
-    type: "free" | "paid" | "contact";
+    type: 'free' | 'paid' | 'contact';
     amount?: number | null;
-    currency?: ("RON" | "EUR" | "USD") | null;
+    currency?: ('RON' | 'EUR' | 'USD') | null;
   };
+  /**
+   * URL where users can purchase tickets
+   */
+  ticketUrl?: string | null;
   /**
    * Last day to register for the event
    */
@@ -451,25 +453,25 @@ export interface Event {
    * Location where the event will be held
    */
   venue?: (number | null) | Location;
-  venueAddressDetails: {
-    venueAddress: string;
-    venueCity: number | City;
+  venueAddressDetails?: {
+    venueAddress?: string | null;
+    venueCity?: (number | null) | City;
     /**
      * @minItems 2
      * @maxItems 2
      */
-    venueGeo: [number, number];
+    venueGeo?: [number, number] | null;
   };
   requirements?:
     | {
-        requirement: string;
+        requirement?: string | null;
         description?: string | null;
         id?: string | null;
       }[]
     | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ("draft" | "published") | null;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -496,7 +498,7 @@ export interface City {
   /**
    * Where this city data originated from
    */
-  source?: ("seeded" | "google" | "user") | null;
+  source?: ('seeded' | 'google' | 'user') | null;
   /**
    * Geographic coordinates (latitude, longitude)
    *
@@ -548,7 +550,7 @@ export interface ListingType {
   /**
    * Which taxonomy type this belongs to
    */
-  type: "events" | "locations" | "services";
+  type: 'events' | 'locations' | 'services';
   /**
    * Order within category (maintains the defined hierarchy)
    */
@@ -603,14 +605,14 @@ export interface Location {
   /**
    * Status of the listing
    */
-  moderationStatus?: ("pending" | "approved" | "rejected" | "draft") | null;
+  moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
    * Verification status
    */
-  verifiedStatus?: ("none" | "pending" | "approved" | "rejected") | null;
+  verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
   verification?: (number | null) | Verification;
   /**
    * Number of views
@@ -624,7 +626,7 @@ export interface Location {
   /**
    * Tier of the listing
    */
-  tier?: ("new" | "standard" | "sponsored" | "recommended") | null;
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   /**
    * Keywords to help find this listing
    */
@@ -682,23 +684,16 @@ export interface Location {
    */
   surface?: number | null;
   pricing: {
-    type: "fixed" | "from" | "contact";
+    type: 'fixed' | 'from' | 'contact';
     amount?: number | null;
-    currency?: ("RON" | "EUR" | "USD") | null;
-    period?: ("hour" | "day" | "event") | null;
+    currency?: ('RON' | 'EUR' | 'USD') | null;
+    period?: ('hour' | 'day' | 'event') | null;
   };
   availability: {
-    type: "always" | "custom" | "appointment";
+    type: 'always' | 'custom' | 'appointment';
     schedule?:
       | {
-          day:
-            | "monday"
-            | "tuesday"
-            | "wednesday"
-            | "thursday"
-            | "friday"
-            | "saturday"
-            | "sunday";
+          day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
           startTime: string;
           endTime: string;
           id?: string | null;
@@ -711,7 +706,7 @@ export interface Location {
   facilities?: (number | Facility)[] | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ("draft" | "published") | null;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -777,14 +772,14 @@ export interface Service {
   /**
    * Status of the listing
    */
-  moderationStatus?: ("pending" | "approved" | "rejected" | "draft") | null;
+  moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
    * Verification status
    */
-  verifiedStatus?: ("none" | "pending" | "approved" | "rejected") | null;
+  verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
   verification?: (number | null) | Verification;
   /**
    * Number of views
@@ -798,7 +793,7 @@ export interface Service {
   /**
    * Tier of the listing
    */
-  tier?: ("new" | "standard" | "sponsored" | "recommended") | null;
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   /**
    * Keywords to help find this listing
    */
@@ -834,23 +829,16 @@ export interface Service {
    */
   suitableFor: (number | ListingType)[];
   pricing: {
-    type: "fixed" | "from" | "contact";
+    type: 'fixed' | 'from' | 'contact';
     amount?: number | null;
-    currency?: ("RON" | "EUR" | "USD") | null;
-    period?: ("hour" | "day" | "event") | null;
+    currency?: ('RON' | 'EUR' | 'USD') | null;
+    period?: ('hour' | 'day' | 'event') | null;
   };
   availability: {
-    type: "always" | "custom" | "appointment";
+    type: 'always' | 'custom' | 'appointment';
     schedule?:
       | {
-          day:
-            | "monday"
-            | "tuesday"
-            | "wednesday"
-            | "thursday"
-            | "friday"
-            | "saturday"
-            | "sunday";
+          day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
           startTime: string;
           endTime: string;
           id?: string | null;
@@ -866,7 +854,7 @@ export interface Service {
     | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ("draft" | "published") | null;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -877,18 +865,18 @@ export interface Favorite {
   user: number | Profile;
   target:
     | {
-        relationTo: "locations";
+        relationTo: 'locations';
         value: number | Location;
       }
     | {
-        relationTo: "events";
+        relationTo: 'events';
         value: number | Event;
       }
     | {
-        relationTo: "services";
+        relationTo: 'services';
         value: number | Service;
       };
-  kind: "locations" | "events" | "services";
+  kind: 'locations' | 'events' | 'services';
   targetKey: string;
   updatedAt: string;
   createdAt: string;
@@ -906,21 +894,21 @@ export interface MetricsDaily {
    */
   target:
     | {
-        relationTo: "locations";
+        relationTo: 'locations';
         value: number | Location;
       }
     | {
-        relationTo: "events";
+        relationTo: 'events';
         value: number | Event;
       }
     | {
-        relationTo: "services";
+        relationTo: 'services';
         value: number | Service;
       };
   /**
    * Type of listing for faster filtering
    */
-  kind: "locations" | "events" | "services";
+  kind: 'locations' | 'events' | 'services';
   /**
    * UTC date (YYYY-MM-DD) for this metric snapshot
    */
@@ -951,21 +939,21 @@ export interface Aggregate {
    */
   target:
     | {
-        relationTo: "locations";
+        relationTo: 'locations';
         value: number | Location;
       }
     | {
-        relationTo: "events";
+        relationTo: 'events';
         value: number | Event;
       }
     | {
-        relationTo: "services";
+        relationTo: 'services';
         value: number | Service;
       };
   /**
    * Type of listing for faster filtering
    */
-  kind: "locations" | "events" | "services";
+  kind: 'locations' | 'events' | 'services';
   /**
    * Total views in last 7 days
    */
@@ -1012,21 +1000,21 @@ export interface ListingRank {
    */
   target:
     | {
-        relationTo: "locations";
+        relationTo: 'locations';
         value: number | Location;
       }
     | {
-        relationTo: "events";
+        relationTo: 'events';
         value: number | Event;
       }
     | {
-        relationTo: "services";
+        relationTo: 'services';
         value: number | Service;
       };
   /**
    * Type of listing for faster filtering
    */
-  kind: "locations" | "events" | "services";
+  kind: 'locations' | 'events' | 'services';
   /**
    * Segment identifier (e.g., "timisoara|locatii" for city+type)
    */
@@ -1048,23 +1036,23 @@ export interface Review {
   id: number;
   listing:
     | {
-        relationTo: "locations";
+        relationTo: 'locations';
         value: number | Location;
       }
     | {
-        relationTo: "events";
+        relationTo: 'events';
         value: number | Event;
       }
     | {
-        relationTo: "services";
+        relationTo: 'services';
         value: number | Service;
       };
-  listingType: "locations" | "events" | "services";
+  listingType: 'locations' | 'events' | 'services';
   user: number | Profile;
   /**
    * Status of the review
    */
-  status?: ("pending" | "approved" | "rejected") | null;
+  status?: ('pending' | 'approved' | 'rejected') | null;
   rejectionReason?: string | null;
   /**
    * Comment of the review
@@ -1080,15 +1068,15 @@ export interface Review {
   criteriaRatings?:
     | {
         criteria:
-          | "cleanliness"
-          | "location"
-          | "amenities"
-          | "organization"
-          | "entertainment"
-          | "value"
-          | "quality"
-          | "timeliness"
-          | "communication";
+          | 'cleanliness'
+          | 'location'
+          | 'amenities'
+          | 'organization'
+          | 'entertainment'
+          | 'value'
+          | 'quality'
+          | 'timeliness'
+          | 'communication';
         rating: number;
         id?: string | null;
       }[]
@@ -1102,7 +1090,7 @@ export interface Review {
  */
 export interface HubSnapshot {
   id: number;
-  listingType: "locations" | "services" | "events";
+  listingType: 'locations' | 'services' | 'events';
   typeaheadCities?:
     | {
         slug: string;
@@ -1191,19 +1179,19 @@ export interface Search {
   priority?: number | null;
   doc:
     | {
-        relationTo: "locations";
+        relationTo: 'locations';
         value: number | Location;
       }
     | {
-        relationTo: "services";
+        relationTo: 'services';
         value: number | Service;
       }
     | {
-        relationTo: "events";
+        relationTo: 'events';
         value: number | Event;
       }
     | {
-        relationTo: "profiles";
+        relationTo: 'profiles';
         value: number | Profile;
       };
   description?: string | null;
@@ -1220,76 +1208,76 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: "users";
+        relationTo: 'users';
         value: number | User;
       } | null)
     | ({
-        relationTo: "media";
+        relationTo: 'media';
         value: number | Media;
       } | null)
     | ({
-        relationTo: "profiles";
+        relationTo: 'profiles';
         value: number | Profile;
       } | null)
     | ({
-        relationTo: "verifications";
+        relationTo: 'verifications';
         value: number | Verification;
       } | null)
     | ({
-        relationTo: "favorites";
+        relationTo: 'favorites';
         value: number | Favorite;
       } | null)
     | ({
-        relationTo: "listing-types";
+        relationTo: 'listing-types';
         value: number | ListingType;
       } | null)
     | ({
-        relationTo: "cities";
+        relationTo: 'cities';
         value: number | City;
       } | null)
     | ({
-        relationTo: "events";
+        relationTo: 'events';
         value: number | Event;
       } | null)
     | ({
-        relationTo: "locations";
+        relationTo: 'locations';
         value: number | Location;
       } | null)
     | ({
-        relationTo: "services";
+        relationTo: 'services';
         value: number | Service;
       } | null)
     | ({
-        relationTo: "facilities";
+        relationTo: 'facilities';
         value: number | Facility;
       } | null)
     | ({
-        relationTo: "metrics-daily";
+        relationTo: 'metrics-daily';
         value: number | MetricsDaily;
       } | null)
     | ({
-        relationTo: "aggregates";
+        relationTo: 'aggregates';
         value: number | Aggregate;
       } | null)
     | ({
-        relationTo: "listing-rank";
+        relationTo: 'listing-rank';
         value: number | ListingRank;
       } | null)
     | ({
-        relationTo: "reviews";
+        relationTo: 'reviews';
         value: number | Review;
       } | null)
     | ({
-        relationTo: "hub-snapshots";
+        relationTo: 'hub-snapshots';
         value: number | HubSnapshot;
       } | null)
     | ({
-        relationTo: "search";
+        relationTo: 'search';
         value: number | Search;
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: "users";
+    relationTo: 'users';
     value: number | User;
   };
   updatedAt: string;
@@ -1302,7 +1290,7 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: number;
   user: {
-    relationTo: "users";
+    relationTo: 'users';
     value: number | User;
   };
   key?: string | null;
@@ -1343,6 +1331,9 @@ export interface UsersSelect<T extends boolean = true> {
   agreePrivacyPolicy?: T;
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
@@ -1367,6 +1358,7 @@ export interface MediaSelect<T extends boolean = true> {
   context?: T;
   uploadedBy?: T;
   temp?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1573,6 +1565,7 @@ export interface EventsSelect<T extends boolean = true> {
         amount?: T;
         currency?: T;
       };
+  ticketUrl?: T;
   registrationDeadline?: T;
   participants?: T;
   venue?: T;
@@ -2015,3 +2008,5 @@ export interface HomeListingsSelect<T extends boolean = true> {
 export interface Auth {
   [k: string]: unknown;
 }
+
+

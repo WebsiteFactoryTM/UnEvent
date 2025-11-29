@@ -438,6 +438,10 @@ export interface Event {
     currency?: ('RON' | 'EUR' | 'USD') | null;
   };
   /**
+   * URL where users can purchase tickets
+   */
+  ticketUrl?: string | null;
+  /**
    * Last day to register for the event
    */
   registrationDeadline?: string | null;
@@ -1561,6 +1565,7 @@ export interface EventsSelect<T extends boolean = true> {
         amount?: T;
         currency?: T;
       };
+  ticketUrl?: T;
   registrationDeadline?: T;
   participants?: T;
   venue?: T;
