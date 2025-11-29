@@ -18,7 +18,8 @@
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
     "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
     "generate:cities": "node scripts/generate-cities.mjs",
-    "migrate:run": "cross-env NODE_OPTIONS=--no-deprecation payload migrate"
+    "migrate:run": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
+    "copy:types": "node scripts/copy-types-to-frontend.mjs"
   },
   "dependencies": {
     "@unevent/shared": "workspace:*",
