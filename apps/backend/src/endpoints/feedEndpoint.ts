@@ -248,7 +248,7 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
             : { startDate: { less_than_equal: qEndISO } }, // time end => inclusive
         )
       } else {
-        whereEntity.and?.push({ startDate: { greater_than_equal: qStartISO } })
+        whereEntity.and?.push({ endDate: { greater_than_equal: qStartISO } })
       }
     }
     // Step 2: Get candidate pool from the entity collection
