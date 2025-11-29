@@ -159,6 +159,13 @@ export const Events: CollectionConfig = {
       ],
     },
     {
+      name: 'ticketUrl',
+      type: 'text',
+      admin: {
+        description: 'URL where users can purchase tickets',
+      },
+    },
+    {
       name: 'registrationDeadline',
       type: 'date',
       admin: {
