@@ -40,6 +40,38 @@ const FeedQuerySchema = z.object({
 
 type FeedQuery = z.infer<typeof FeedQuerySchema>
 
+function hasTimePart(s?: string): boolean {
+  return !!s && /T\d{2}:\d{2}/.test(s)
+}
+
+function normalizeQueryBounds(start?: string, end?: string) {
+  let qStartISO: string | undefined
+  let qEndISO: string | undefined
+  let endIsExclusive = false
+
+  if (start) {
+    // date-only -> start of day UTC, else keep provided instant
+    qStartISO = hasTimePart(start)
+      ? new Date(start).toISOString()
+      : new Date(`${start}T00:00:00.000Z`).toISOString()
+  }
+
+  if (end) {
+    if (hasTimePart(end)) {
+      qEndISO = new Date(end).toISOString() // inclusive
+      endIsExclusive = false
+    } else {
+      // date-only -> next day 00:00 UTC (exclusive upper bound)
+      const d = new Date(`${end}T00:00:00.000Z`)
+      d.setUTCDate(d.getUTCDate() + 1)
+      qEndISO = d.toISOString()
+      endIsExclusive = true
+    }
+  }
+
+  return { qStartISO, qEndISO, endIsExclusive }
+}
+
 /**
  * Feed endpoint handler
  * GET /api/feed?entity=locations&city=timisoara&type=restaurante&page=1&limit=24
@@ -184,12 +216,40 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       whereEntity.and?.push({ 'capacity.indoor': { less_than_equal: query.capacityMax } })
     }
 
-    // Date filters (only for events)
-    if (query.entity === 'events' && query.startDate) {
-      whereEntity.and?.push({ startDate: { greater_than_equal: query.startDate } })
-    }
-    if (query.entity === 'events' && query.endDate) {
-      whereEntity.and?.push({ endDate: { less_than_equal: query.endDate } })
+    // Date filters (only for events) - CORRECT overlap logic
+    const { qStartISO, qEndISO, endIsExclusive } = normalizeQueryBounds(
+      query.startDate || new Date().toISOString(),
+      query.endDate,
+    )
+
+    // Date filters (only for events) — overlap semantics with time-aware bounds
+    if (query.entity === 'events') {
+      const hasStart = Boolean(qStartISO)
+      const hasEnd = Boolean(qEndISO)
+
+      if (hasStart && hasEnd) {
+        // Overlap: event.start < qEnd  AND  event.end >= qStart
+        whereEntity.and?.push({
+          and: [
+            endIsExclusive
+              ? { startDate: { less_than: qEndISO } } // end (date-only) => exclusive
+              : { startDate: { less_than_equal: qEndISO } }, // end (with time) => inclusive
+            { endDate: { greater_than_equal: qStartISO } },
+          ],
+        })
+      } else if (hasStart) {
+        // Any event ongoing at/after qStart
+        whereEntity.and?.push({ endDate: { greater_than_equal: qStartISO } })
+      } else if (hasEnd) {
+        // Any event that has started by qEnd
+        whereEntity.and?.push(
+          endIsExclusive
+            ? { startDate: { less_than: qEndISO } } // date-only end => exclusive
+            : { startDate: { less_than_equal: qEndISO } }, // time end => inclusive
+        )
+      } else {
+        whereEntity.and?.push({ startDate: { greater_than_equal: qStartISO } })
+      }
     }
     // Step 2: Get candidate pool from the entity collection
     const candidatePool = await req.payload.find({

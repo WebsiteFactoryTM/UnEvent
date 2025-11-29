@@ -48,7 +48,7 @@ export async function buildHubSnapshot(
       type: { equals: collection },
       isActive: { equals: true },
     },
-    sort: ['-usageCountPublic', '-usageCount', '-updatedAt'],
+    sort: ['-usageCount', '-updatedAt'],
     limit: 10,
     depth: 0,
   })

@@ -15,6 +15,7 @@ import { type ListingCardData } from "@/lib/normalizers/hub";
 import { ListingType } from "@/types/listings";
 import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
 import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
+
 export const revalidate = 3600; // ISR: revalidate every hour
 
 const toCard = (
