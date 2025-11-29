@@ -207,6 +207,7 @@ export function formToPayload(
             remaining: eventData.capacity.remaining || null,
           }
         : undefined,
+      ticketUrl: eventData.ticketUrl || null,
       eventStatus: "upcoming" as const,
       venue: undefined,
       venueAddressDetails: {
@@ -404,6 +405,7 @@ export function payloadToForm(
         total: eventData.capacity?.total || undefined,
         remaining: eventData.capacity?.remaining || undefined,
       },
+      ticketUrl: eventData.ticketUrl || "",
     } as Partial<EventFormData>;
   }
 

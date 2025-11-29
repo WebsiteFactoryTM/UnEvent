@@ -18,7 +18,10 @@ import {
 } from "@/components/ui/popover";
 import { ChevronDown, X } from "lucide-react";
 import { useTaxonomies } from "@/lib/react-query/taxonomies.queries";
-import type { UnifiedListingFormData } from "@/forms/listing/schema";
+import type {
+  UnifiedListingFormData,
+  EventFormData,
+} from "@/forms/listing/schema";
 import type { ListingType } from "@/types/payload-types";
 
 export function InfoTab() {
@@ -330,6 +333,40 @@ export function InfoTab() {
             </p>
           </div>
         )}
+      </div>
+
+      <Separator />
+
+      {/* Ticket URL */}
+      <div className="space-y-2">
+        <Label htmlFor="ticketUrl">Link pentru cumpărarea biletelor</Label>
+        <Input
+          id="ticketUrl"
+          type="url"
+          placeholder="https://example.com/tickets"
+          {...register("ticketUrl" as keyof EventFormData)}
+          aria-invalid={
+            (errors as Partial<Record<keyof EventFormData, any>>).ticketUrl
+              ? "true"
+              : "false"
+          }
+          aria-describedby={
+            (errors as Partial<Record<keyof EventFormData, any>>).ticketUrl
+              ? "ticketUrl-error"
+              : undefined
+          }
+        />
+        {(errors as Partial<Record<keyof EventFormData, any>>).ticketUrl && (
+          <p id="ticketUrl-error" className="text-sm text-destructive">
+            {
+              (errors as Partial<Record<keyof EventFormData, any>>).ticketUrl
+                ?.message
+            }
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground">
+          Opțional - Link către pagina unde utilizatorii pot cumpăra bilete
+        </p>
       </div>
     </div>
   );

@@ -333,6 +333,7 @@ const eventSchemaBase = baseListingSchema.extend({
       ),
     })
     .optional(),
+  ticketUrl: createUserFriendlyUrlSchema("URL invalid").optional(),
 });
 
 // Discriminated union of all listing types
@@ -564,5 +565,6 @@ export function defaultListingFormValues(
       total: undefined,
       remaining: undefined,
     },
+    ticketUrl: "",
   } as Partial<EventFormData>;
 }
