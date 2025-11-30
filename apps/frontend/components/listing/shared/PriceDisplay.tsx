@@ -20,8 +20,6 @@ const PriceDisplay = ({
   pricing,
   ticketUrl,
 }: PriceDisplayProps) => {
-  console.log(pricing);
-
   // Helper to get period label in Romanian
   const getPeriodLabel = (
     period: "hour" | "day" | "event" | null | undefined,
