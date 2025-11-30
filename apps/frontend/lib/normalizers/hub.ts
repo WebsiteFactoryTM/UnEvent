@@ -25,6 +25,7 @@ export type ListingCardData = {
   date?: string;
   participants?: number;
   initialIsFavorited?: boolean;
+  tier?: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
 };
 
 function getTypeLabelFromRelation(
@@ -62,7 +63,7 @@ export function normalizeLocation(listing: Location): ListingCardData {
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
     type: getTypeLabelFromRelation(listing.type, "Locație"),
-    verified: listing.status === "approved",
+    verified: listing.verifiedStatus === "approved",
     rating:
       typeof listing.rating === "number" &&
       typeof listing.reviewCount === "number"
@@ -73,6 +74,7 @@ export function normalizeLocation(listing: Location): ListingCardData {
     capacity: listing.capacity,
     priceRange: undefined,
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
+    tier: listing.tier,
   };
 }
 
@@ -85,7 +87,7 @@ export function normalizeService(listing: Service): ListingCardData {
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
     type: getTypeLabelFromRelation(listing.type, "Serviciu"),
-    verified: listing.status === "approved",
+    verified: listing.verifiedStatus === "approved",
     rating:
       typeof listing.rating === "number" &&
       typeof listing.reviewCount === "number"
@@ -95,6 +97,7 @@ export function normalizeService(listing: Service): ListingCardData {
     listingType: "servicii",
     priceRange: undefined,
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
+    tier: listing.tier,
   };
 }
 
@@ -107,7 +110,7 @@ export function normalizeEvent(listing: Event): ListingCardData {
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
     type: getTypeLabelFromRelation(listing.type, "Eveniment"),
-    verified: listing.status === "approved",
+    verified: listing.verifiedStatus === "approved",
     rating:
       typeof listing.rating === "number" &&
       typeof listing.reviewCount === "number"
@@ -118,6 +121,7 @@ export function normalizeEvent(listing: Event): ListingCardData {
     date: listing.startDate,
     participants: listing.participants ?? undefined,
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
+    tier: listing.tier,
   };
 }
 

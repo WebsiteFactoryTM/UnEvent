@@ -48,7 +48,7 @@ export function LocationHero({ location }: LocationHeroProps) {
             {location.title}
           </h1>
           <div className="flex gap-2 shrink-0">
-            {location.status === "approved" && (
+            {location.verifiedStatus === "approved" && (
               <Badge className="bg-green-500/90 backdrop-blur-sm">
                 Verificat
               </Badge>
@@ -56,6 +56,11 @@ export function LocationHero({ location }: LocationHeroProps) {
             {location.tier === "recommended" && (
               <Badge className="bg-blue-500/90 backdrop-blur-sm">
                 Recomandat
+              </Badge>
+            )}
+            {location.tier === "sponsored" && (
+              <Badge className="bg-yellow-500/90 backdrop-blur-sm">
+                Sponsorizat
               </Badge>
             )}
           </div>

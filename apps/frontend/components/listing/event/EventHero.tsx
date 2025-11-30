@@ -47,7 +47,7 @@ export default function EventHero({ event }: EventHeroProps) {
             {event?.title}
           </h1>
           <div className="flex gap-2 shrink-0">
-            {event?.moderationStatus === "approved" && (
+            {event?.verifiedStatus === "approved" && (
               <Badge className="bg-green-500/90 backdrop-blur-sm">
                 Verificat
               </Badge>
@@ -55,6 +55,11 @@ export default function EventHero({ event }: EventHeroProps) {
             {event?.tier === "recommended" && (
               <Badge className="bg-blue-500/90 backdrop-blur-sm">
                 Recomandat
+              </Badge>
+            )}
+            {event?.tier === "sponsored" && (
+              <Badge className="bg-yellow-500/90 backdrop-blur-sm">
+                Sponsorizat
               </Badge>
             )}
           </div>
