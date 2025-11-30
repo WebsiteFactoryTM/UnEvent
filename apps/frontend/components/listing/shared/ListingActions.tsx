@@ -177,7 +177,7 @@ export function ListingActions({
       </div>
       {listingType === "evenimente" && (
         <div className="gap-3 inline-flex place-self-end">
-          <Button
+          {/* <Button
             size="sm"
             onClick={handleParticipate}
             className="col-span-3 sm:col-span-1 sm:ml-auto gap-2 bg-primary hover:bg-primary/90"
@@ -187,19 +187,25 @@ export function ListingActions({
             {isParticipating
               ? "Anulează participarea"
               : "Participă la eveniment"}
-          </Button>
-          {ticketUrl && (
+          </Button> */}
+          {ticketUrl ? (
             <Button
               asChild
               variant="default"
               size="sm"
               className="col-span-3 sm:col-span-1 sm:ml-auto gap-2 bg-primary hover:bg-primary/90"
             >
-              <a href={ticketUrl} target="_blank" rel="noopener noreferrer">
+              <a
+                href={ticketUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gap-2 flex items-center"
+              >
+                <FaTicket className="h-4 w-4" />
                 Cumpără bilet
               </a>
             </Button>
-          )}
+          ) : null}
         </div>
       )}
       {listingType !== "evenimente" && (
