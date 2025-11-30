@@ -187,5 +187,6 @@ function shapeListing(
     type: doc?.type,
     isFavoritedByViewer: doc.isFavoritedByViewer || false,
     geo: doc?.geo ? [doc.geo[0], doc.geo[1]] : null,
+    verifiedStatus: doc?.verifiedStatus,
   }
 }
