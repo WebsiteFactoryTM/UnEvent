@@ -32,7 +32,11 @@ export const afterChange: CollectionAfterChangeHook = async ({
     // 1. Currently approved (show changes)
     // 2. Was approved but now isn't (remove from cache)
     // 3. Just became approved (add to cache)
-    const shouldRevalidate = currentStatus === 'approved' || previousStatus === 'approved'
+    const shouldRevalidate =
+      currentStatus === 'approved' ||
+      previousStatus === 'approved' ||
+      currentStatus === 'draft' ||
+      previousStatus === 'draft'
 
     if (shouldRevalidate) {
       const collectionType = collection.slug as 'events' | 'locations' | 'services'
@@ -60,7 +64,7 @@ export const afterChange: CollectionAfterChangeHook = async ({
 
       const currentlyHubEligible = isHubSnapshotCandidate(doc)
       const previouslyHubEligible = isHubSnapshotCandidate(previousDoc)
-      if (currentlyHubEligible || previouslyHubEligible) {
+      if (currentlyHubEligible || previouslyHubEligible || currentStatus === 'draft') {
         queueHubSnapshotBuild(req.payload, collectionType, 'listing-change')
       }
     }
