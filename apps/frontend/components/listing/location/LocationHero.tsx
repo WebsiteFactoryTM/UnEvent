@@ -5,14 +5,13 @@ import {
   FaPhone,
   FaEnvelope,
   FaGlobe,
-  FaFacebook,
-  FaInstagram,
   FaLocationDot,
 } from "react-icons/fa6";
 import type { LocationListing } from "@/types/listings";
 import { ListingActions } from "../shared/ListingActions";
-import Link from "next/link";
+
 import SocialMedia from "../shared/SocialMedia";
+import PriceDisplay from "../shared/PriceDisplay";
 
 interface LocationHeroProps {
   location: LocationListing;
@@ -90,11 +89,9 @@ export function LocationHero({ location }: LocationHeroProps) {
             </span>
           ) : null}
           <span className="text-muted-foreground">{locationType}</span>
-          {location.pricing?.amount && (
-            <span className="font-semibold text-foreground">
-              de la {location.pricing.amount} {location.pricing.currency}
-            </span>
-          )}
+          {location.pricing ? (
+            <PriceDisplay listingType="locatii" pricing={location.pricing} />
+          ) : null}
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">

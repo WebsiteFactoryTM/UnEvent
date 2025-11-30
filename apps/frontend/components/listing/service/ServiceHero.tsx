@@ -3,6 +3,7 @@ import type { ServiceListing } from "@/types/listings";
 import type { Profile } from "@/types/payload-types";
 import { ListingActions } from "../shared/ListingActions";
 import SocialMedia from "../shared/SocialMedia";
+import PriceDisplay from "../shared/PriceDisplay";
 
 interface ServiceHeroProps {
   service: ServiceListing;
@@ -31,13 +32,6 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
           .filter(Boolean)
           .join(", ")
       : "";
-
-  const priceText =
-    service.pricing?.type === "contact"
-      ? "La cerere"
-      : service.pricing?.amount
-        ? `de la ${service.pricing.amount} ${service.pricing.currency || "RON"}${service.pricing.period ? ` / ${service.pricing.period === "hour" ? "oră" : service.pricing.period === "day" ? "zi" : "eveniment"}` : ""}`
-        : "";
 
   return (
     <div className="glass-card p-6 md:p-8 space-y-6">
@@ -100,12 +94,9 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
               <span className="font-medium">{serviceCategories}</span>
             </div>
           )}
-          {priceText && (
-            <div className="sm:col-span-2">
-              <span className="text-muted-foreground">Preț: </span>
-              <span className="font-semibold text-lg">{priceText}</span>
-            </div>
-          )}
+          {service.pricing ? (
+            <PriceDisplay listingType="servicii" pricing={service.pricing} />
+          ) : null}
         </div>
 
         {/* Actions */}

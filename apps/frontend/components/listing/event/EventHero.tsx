@@ -1,15 +1,9 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  FaStar,
-  FaCalendar,
-  FaTicket,
-  FaUsers,
-  FaLocationDot,
-} from "react-icons/fa6";
+import { FaStar, FaCalendar, FaUsers, FaLocationDot } from "react-icons/fa6";
 import type { EventListing } from "@/types/listings";
 import { ListingActions } from "../shared/ListingActions";
 import SocialMedia from "../shared/SocialMedia";
+import PriceDisplay from "../shared/PriceDisplay";
 
 interface EventHeroProps {
   event: EventListing;
@@ -123,13 +117,13 @@ export default function EventHero({ event }: EventHeroProps) {
           </div>
         )}
 
-        <div className="flex items-start gap-3">
-          <FaTicket className="h-5 w-5 text-muted-foreground mt-0.5" />
-          <div className="flex-1">
-            <p className="text-sm font-medium">Acces</p>
-            <p className="text-sm text-muted-foreground">{priceText}</p>
-          </div>
-        </div>
+        {event?.pricing ? (
+          <PriceDisplay
+            listingType="evenimente"
+            pricing={event?.pricing}
+            ticketUrl={event?.ticketUrl}
+          />
+        ) : null}
       </div>
 
       {/* Actions */}
