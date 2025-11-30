@@ -20,6 +20,7 @@ import type { Location } from "@/types/payload-types";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import FavoriteButton from "../common/FavoriteButton";
+import { MdVerified } from "react-icons/md";
 
 interface ListingCardProps {
   id: number;
@@ -44,6 +45,7 @@ interface ListingCardProps {
   date?: string;
   participants?: number;
   initialIsFavorited?: boolean;
+  tier?: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
 }
 
 export function ListingCard({
@@ -63,9 +65,44 @@ export function ListingCard({
   date,
   participants,
   initialIsFavorited,
+  tier,
 }: ListingCardProps) {
   const { indoor } = capacity || {};
 
+  const renderTierBadge = () => {
+    switch (tier) {
+      case "new":
+        return (
+          <Badge
+            variant="secondary"
+            className="text-xs bg-green-500/90 backdrop-blur-sm"
+          >
+            Nou
+          </Badge>
+        );
+
+      case "sponsored":
+        return (
+          <Badge
+            variant="secondary"
+            className="text-xs bg-yellow-500/90 backdrop-blur-sm"
+          >
+            Sponsorizat
+          </Badge>
+        );
+      case "recommended":
+        return (
+          <Badge
+            variant="secondary"
+            className="text-xs bg-blue-500/90 backdrop-blur-sm"
+          >
+            Recomandat
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
   return (
     <Card className="glass-card overflow-hidden h-full flex flex-col">
       <CardHeader className="p-0 relative">
@@ -77,9 +114,7 @@ export function ListingCard({
             className="object-cover"
           />
           {verified && (
-            <Badge className="absolute top-2 left-2 bg-green-500/90 backdrop-blur-sm">
-              Verificat
-            </Badge>
+            <MdVerified className="absolute top-2 left-2 text-neutral-200 h-8 w-8" />
           )}
           <FavoriteButton
             listingType={listingType}
@@ -90,7 +125,10 @@ export function ListingCard({
       </CardHeader>
 
       <CardContent className="flex-1 p-4 space-y-3">
-        <h3 className="font-semibold text-lg line-clamp-2">{name}</h3>
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="font-semibold text-lg line-clamp-2">{name}</h3>
+          {tier && tier !== "standard" ? renderTierBadge() : null}
+        </div>
         <p className="text-sm text-muted-foreground line-clamp-3">
           {description}
         </p>

@@ -303,6 +303,7 @@ const CityArchive = ({
                 }
                 views={0}
                 listingType={entity}
+                tier={item.tier}
               />
             ))}
           </div>

@@ -46,6 +46,7 @@ export default function FeaturedGrid({
             date={item.date}
             participants={item.participants}
             initialIsFavorited={item.initialIsFavorited}
+            tier={item.tier}
           />
         ))}
       </div>

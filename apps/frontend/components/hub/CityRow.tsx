@@ -68,6 +68,7 @@ export function CityRow({
                 date={item.date}
                 participants={item.participants}
                 initialIsFavorited={item.initialIsFavorited}
+                tier={item.tier}
               />
             </CarouselItem>
           ))}
