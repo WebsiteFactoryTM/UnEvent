@@ -25,6 +25,50 @@ export const afterChange: CollectionAfterChangeHook = async ({
 
   // Listings - only revalidate if approved or was approved (to handle status changes)
   if (['events', 'services', 'locations'].includes(collection.slug)) {
+    // Counter fields that don't require revalidation when changed
+    const counterFields = ['favoritesCount', 'bookingsCount', 'reviewCount', 'views', 'rating']
+    const timestampFields = ['updatedAt', 'lastViewedAt']
+
+    // Check if only counter/timestamp fields changed (skip revalidation for these)
+    if (previousDoc) {
+      // Get all unique keys from both documents
+      const allKeys = new Set([...Object.keys(doc || {}), ...Object.keys(previousDoc || {})])
+
+      const changedFields = Array.from(allKeys).filter((key) => {
+        const currentValue = doc?.[key]
+        const previousValue = previousDoc?.[key]
+
+        // Handle null/undefined equality
+        if (currentValue === previousValue) return false
+
+        // Handle objects/arrays (simple JSON comparison)
+        if (
+          currentValue != null &&
+          previousValue != null &&
+          typeof currentValue === 'object' &&
+          typeof previousValue === 'object'
+        ) {
+          try {
+            return JSON.stringify(currentValue) !== JSON.stringify(previousValue)
+          } catch {
+            // If JSON.stringify fails, fall back to simple comparison
+            return currentValue !== previousValue
+          }
+        }
+
+        return currentValue !== previousValue
+      })
+
+      // If only counter or timestamp fields changed, skip revalidation
+      const onlyCountersOrTimestampsChanged =
+        changedFields.length > 0 &&
+        changedFields.every((key) => counterFields.includes(key) || timestampFields.includes(key))
+
+      if (onlyCountersOrTimestampsChanged) {
+        return
+      }
+    }
+
     const currentStatus = doc?.moderationStatus
     const previousStatus = previousDoc?.moderationStatus
 
