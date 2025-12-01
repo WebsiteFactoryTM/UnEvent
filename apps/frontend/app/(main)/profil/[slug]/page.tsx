@@ -17,6 +17,54 @@ import type { Profile } from "@/types/payload-types";
 import { normalizeListing } from "@/lib/transforms/normalizeListing";
 import type { Listing } from "@/types/listings";
 
+export const revalidate = 300; // ISR: revalidate every 5 minutes
+
+export async function generateStaticParams() {
+  // Fetch all profile slugs for static generation
+  const payloadUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+  if (!payloadUrl || !process.env.SVC_TOKEN) {
+    // During build, if env vars aren't available, return empty array
+    // Pages will be generated on-demand
+    return [];
+  }
+
+  try {
+    // Fetch profiles with pagination - limit to first 500 for build performance
+    const url = `${payloadUrl}/api/profiles?limit=500&select=slug`;
+    const res = await fetch(url, {
+      headers: {
+        "x-tenant": "unevent",
+        Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+      },
+      cache: "force-cache",
+      // Don't revalidate during build
+      next: { revalidate: false },
+    });
+
+    if (!res.ok) {
+      console.warn(
+        "Failed to fetch profiles for static generation:",
+        res.status,
+      );
+      return [];
+    }
+
+    const data = await res.json();
+    const profiles = data?.docs || [];
+
+    // Return array of params objects with slug
+    return profiles
+      .filter((profile: { slug?: string }) => profile.slug)
+      .map((profile: { slug: string }) => ({
+        slug: profile.slug,
+      }));
+  } catch (error) {
+    console.error("Error fetching profiles for static generation:", error);
+    // Return empty array on error - pages will be generated on-demand
+    return [];
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {

@@ -14,8 +14,16 @@ interface ProfileReviewsProps {
 
 export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
   const hasReviews = reviews.length > 0;
-  const avgRating = rating?.average || 0;
-  const totalReviews = rating?.count || 0;
+
+  // Calculate average rating from actual reviews if available, otherwise use profile rating
+  const calculatedAvgRating = hasReviews
+    ? reviews.reduce((sum, review) => sum + (review.rating || 0), 0) /
+      reviews.length
+    : 0;
+  const avgRating = hasReviews ? calculatedAvgRating : rating?.average || 0;
+
+  // Use reviews count if available, otherwise use profile rating count
+  const totalReviews = hasReviews ? reviews.length : rating?.count || 0;
 
   // Calculate rating distribution from actual reviews
   const distribution = hasReviews
@@ -145,10 +153,10 @@ export function ProfileReviews({ reviews, rating }: ProfileReviewsProps) {
           </div>
 
           {/* CTA */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
+          {/* <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Button className="glow-on-hover">Lasă o evaluare</Button>
             <Button variant="outline">Politică recenzii</Button>
-          </div>
+          </div> */}
         </div>
       ) : (
         <div className="text-center py-12 space-y-4">
