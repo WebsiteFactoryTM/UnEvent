@@ -3,6 +3,7 @@ import { createProfileAfterUserCreate } from './hooks/createProfileAfterUserCrea
 import type { CollectionConfig } from 'payload'
 import { ensureBaseClientRole } from './hooks/ensureBaseClientRole'
 import { deleteProfileUserDelete } from './hooks/deleteProfileAfterUserDelete'
+import { changeRole } from './endpoints/changeRole'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -87,4 +88,11 @@ export const Users: CollectionConfig = {
     beforeValidate: [ensureBaseClientRole],
     beforeDelete: [deleteProfileUserDelete],
   },
+  endpoints: [
+    {
+      path: '/changeRole',
+      method: 'post',
+      handler: changeRole,
+    },
+  ],
 }
