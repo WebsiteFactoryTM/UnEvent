@@ -25,21 +25,20 @@ import {
 } from "react-icons/fa6";
 
 import { HamburgerIcon } from "./HamburgerIcon";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const { data: session, status } = useSession({ required: false });
   const user = session?.user;
-  const router = useRouter();
 
   const handleLogout = () => {
-    console.log("[v0] Logout clicked");
-    setOpen(false);
-    router.push("/");
+    signOut({
+      callbackUrl: "/auth/autentificare",
+    });
   };
-
   const handleNavigation = (href: string) => {
     setOpen(false);
     router.push(href);

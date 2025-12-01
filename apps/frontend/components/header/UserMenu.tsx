@@ -129,35 +129,41 @@ export function UserMenu() {
 
         <DropdownMenuSeparator className="bg-white/10" />
 
-        <DropdownMenuItem asChild>
-          <Link
-            href="/cont/locatiile-mele"
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <FaLocationDot className="h-4 w-4" />
-            Locațiile Mele
-          </Link>
-        </DropdownMenuItem>
+        {hasHostRole && (
+          <DropdownMenuItem asChild>
+            <Link
+              href="/cont/locatiile-mele"
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <FaLocationDot className="h-4 w-4" />
+              Locațiile Mele
+            </Link>
+          </DropdownMenuItem>
+        )}
 
-        <DropdownMenuItem asChild>
-          <Link
-            href="/cont/serviciile-mele"
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <FaBriefcase className="h-4 w-4" />
-            Serviciile Mele
-          </Link>
-        </DropdownMenuItem>
+        {hasProviderRole && (
+          <DropdownMenuItem asChild>
+            <Link
+              href="/cont/serviciile-mele"
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <FaBriefcase className="h-4 w-4" />
+              Serviciile Mele
+            </Link>
+          </DropdownMenuItem>
+        )}
 
-        <DropdownMenuItem asChild>
-          <Link
-            href="/cont/evenimentele-mele"
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <FaCalendarDays className="h-4 w-4" />
-            Evenimentele Mele
-          </Link>
-        </DropdownMenuItem>
+        {hasOrganizerRole && (
+          <DropdownMenuItem asChild>
+            <Link
+              href="/cont/evenimentele-mele"
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <FaCalendarDays className="h-4 w-4" />
+              Evenimentele Mele
+            </Link>
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuSeparator className="bg-white/10" />
 
