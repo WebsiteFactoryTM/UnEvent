@@ -126,6 +126,62 @@ export const afterChange: CollectionAfterChangeHook = async ({
     }
   }
 
+  // Profiles - invalidate profile cache when profile is updated
+  if (collection.slug === 'profiles') {
+    // Counter fields that don't require revalidation
+    const counterFields = ['views', 'rating', 'favorites']
+    const timestampFields = ['updatedAt', 'lastOnline', 'memberSince']
+
+    // Check if only counter/timestamp fields changed (skip revalidation for these)
+    if (previousDoc) {
+      const allKeys = new Set([...Object.keys(doc || {}), ...Object.keys(previousDoc || {})])
+
+      const changedFields = Array.from(allKeys).filter((key) => {
+        const currentValue = doc?.[key]
+        const previousValue = previousDoc?.[key]
+
+        if (currentValue === previousValue) return false
+
+        if (
+          currentValue != null &&
+          previousValue != null &&
+          typeof currentValue === 'object' &&
+          typeof previousValue === 'object'
+        ) {
+          try {
+            return JSON.stringify(currentValue) !== JSON.stringify(previousValue)
+          } catch {
+            return currentValue !== previousValue
+          }
+        }
+
+        return currentValue !== previousValue
+      })
+
+      const onlyCountersOrTimestampsChanged =
+        changedFields.length > 0 &&
+        changedFields.every((key) => counterFields.includes(key) || timestampFields.includes(key))
+
+      if (onlyCountersOrTimestampsChanged) {
+        // Still add home tag for conservative refresh
+        tags.add(tag.home())
+        const list = Array.from(tags)
+        await notifyNext(list, req.payload)
+        await purgeCDN(list)
+        return
+      }
+    }
+
+    // Invalidate profile cache by slug
+    if (doc?.slug) {
+      tags.add(tag.profileSlug(doc.slug))
+    }
+    // Also invalidate old slug if it changed
+    if (previousDoc?.slug && previousDoc.slug !== doc?.slug) {
+      tags.add(tag.profileSlug(previousDoc.slug))
+    }
+  }
+
   // Home aggregates content; conservative refresh
   tags.add(tag.home())
 

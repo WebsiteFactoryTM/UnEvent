@@ -14,6 +14,7 @@ export const tag = {
   hubAny: () => "hub:any",
   homeSnapshot: () => "home:snapshot",
   home: () => "home", // legacy broad tag if needed
+  profileSlug: (slug: string) => `profile:slug:${slug}`,
 } as const;
 
 export function normalize(obj: Record<string, any>) {
