@@ -5,6 +5,7 @@ import cron from 'node-cron'
 import { revalidate } from '@/utils/revalidate'
 import { buildPopularSearchCombos } from '@/utils/popularSearchCombos'
 import { tag } from '@unevent/shared'
+import { getSchedulerIntervalHours, hoursToCron } from '../utils/schedulerConfig'
 
 // Fallback cities if DB query returns nothing
 const TOP_CITIES_FALLBACK = [
@@ -204,12 +205,52 @@ function toCityLabel(slug: string) {
 
 export const registerBuildHubSnapshotScheduler = (payload: Payload) => {
   console.log('[registerBuildHubSnapshotScheduler] registering cron jobs')
-  // locations at :05
-  cron.schedule('5 6,12,18,0 * * *', () => buildHubSnapshot(payload, 'locations'))
-  // services at :07
-  cron.schedule('7 6,12,18,0 * * *', () => buildHubSnapshot(payload, 'services'))
-  // events at :09
-  cron.schedule('9 6,12,18,0 * * *', () => buildHubSnapshot(payload, 'events'))
+
+  // Hub snapshots run 4x daily (every 6 hours) by default
+  // Configurable via SCHEDULER_HUB_SNAPSHOT_INTERVAL_HOURS
+  // In production: 6 hours (4x daily)
+  // In staging: 18 hours (3x slower)
+  // In dev: 36 hours (6x slower)
+  const snapshotIntervalHours = getSchedulerIntervalHours('hub_snapshot', 6, {
+    envVarName: 'SCHEDULER_HUB_SNAPSHOT_INTERVAL_HOURS',
+  })
+
+  // For intervals >= 24 hours, use daily schedule
+  // For intervals < 24 hours, use hourly schedule
+  let locationsCron: string
+  let servicesCron: string
+  let eventsCron: string
+
+  if (snapshotIntervalHours >= 24) {
+    // Daily schedule
+    locationsCron = `5 2 * * *` // Daily at 02:05
+    servicesCron = `7 2 * * *` // Daily at 02:07
+    eventsCron = `9 2 * * *` // Daily at 02:09
+  } else if (snapshotIntervalHours >= 1) {
+    // Use hours interval
+    locationsCron = hoursToCron(snapshotIntervalHours, 5)
+    servicesCron = hoursToCron(snapshotIntervalHours, 7)
+    eventsCron = hoursToCron(snapshotIntervalHours, 9)
+  } else {
+    // Less than 1 hour - use minutes (fallback, shouldn't happen normally)
+    const minutes = Math.floor(snapshotIntervalHours * 60)
+    locationsCron = `${5} */${minutes} * * *`
+    servicesCron = `${7} */${minutes} * * *`
+    eventsCron = `${9} */${minutes} * * *`
+  }
+
+  console.log(
+    `[HubSnapshot] locations scheduled: ${locationsCron} (${snapshotIntervalHours}h interval)`,
+  )
+  cron.schedule(locationsCron, () => buildHubSnapshot(payload, 'locations'))
+
+  console.log(
+    `[HubSnapshot] services scheduled: ${servicesCron} (${snapshotIntervalHours}h interval)`,
+  )
+  cron.schedule(servicesCron, () => buildHubSnapshot(payload, 'services'))
+
+  console.log(`[HubSnapshot] events scheduled: ${eventsCron} (${snapshotIntervalHours}h interval)`)
+  cron.schedule(eventsCron, () => buildHubSnapshot(payload, 'events'))
 
   // Build snapshots at init if they don't exist (non-blocking, fire-and-forget)
   // This ensures snapshots are available immediately on fresh deployments

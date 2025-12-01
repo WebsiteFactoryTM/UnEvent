@@ -1,5 +1,6 @@
 import cron from 'node-cron'
 import { Payload } from 'payload'
+import { getSchedulerIntervalHours, hoursToCron } from '../utils/schedulerConfig'
 
 let isRunning = false
 
@@ -155,7 +156,24 @@ export const registerSyncListingTypeCountersScheduler = (payload: Payload) => {
     return
   }
 
-  // Every day at 02:17
-  cron.schedule('17 2 * * *', () => syncListingTypeCounters(payload))
-  console.log('[syncListingTypeCounters] daily cron registered: 17 2 * * *')
+  // Runs daily (24 hours) by default
+  // Configurable via SCHEDULER_SYNC_LISTING_TYPES_INTERVAL_HOURS
+  // In production: 24 hours (daily)
+  // In staging: 72 hours (3x slower = every 3 days)
+  // In dev: 144 hours (6x slower = every 6 days)
+  const intervalHours = getSchedulerIntervalHours('sync_listing_types', 24, {
+    envVarName: 'SCHEDULER_SYNC_LISTING_TYPES_INTERVAL_HOURS',
+  })
+
+  // For daily or longer intervals, use specific time (02:17)
+  // For shorter intervals, use hours-based cron
+  const cronExpression =
+    intervalHours >= 24
+      ? `17 2 */${Math.round(intervalHours / 24)} * *` // Daily or every N days at 02:17
+      : hoursToCron(intervalHours, 17) // Every N hours at :17
+
+  console.log(
+    `[syncListingTypeCounters] cron registered: ${cronExpression} (${intervalHours}h interval)`,
+  )
+  cron.schedule(cronExpression, () => syncListingTypeCounters(payload))
 }

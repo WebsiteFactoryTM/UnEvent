@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 import cron from 'node-cron'
 import { queueHubSnapshotBuild } from '@/utils/hubSnapshotScheduler'
+import { getSchedulerIntervalHours, hoursToCron } from '../utils/schedulerConfig'
 
 let isRunning = false
 
@@ -143,6 +144,23 @@ export const registerSyncCityCountersScheduler = (payload: Payload) => {
     console.log('[syncCityCounters] scheduler disabled (SCHEDULER_IS_PRIMARY != true)')
     return
   }
-  cron.schedule('23 2 * * *', () => syncCityCounters(payload))
-  console.log('[syncCityCounters] daily cron registered: 23 2 * * *')
+
+  // Runs daily (24 hours) by default
+  // Configurable via SCHEDULER_SYNC_CITIES_INTERVAL_HOURS
+  // In production: 24 hours (daily)
+  // In staging: 72 hours (3x slower = every 3 days)
+  // In dev: 144 hours (6x slower = every 6 days)
+  const intervalHours = getSchedulerIntervalHours('sync_cities', 24, {
+    envVarName: 'SCHEDULER_SYNC_CITIES_INTERVAL_HOURS',
+  })
+
+  // For daily or longer intervals, use specific time (02:23)
+  // For shorter intervals, use hours-based cron
+  const cronExpression =
+    intervalHours >= 24
+      ? `23 2 */${Math.round(intervalHours / 24)} * *` // Daily or every N days at 02:23
+      : hoursToCron(intervalHours, 23) // Every N hours at :23
+
+  console.log(`[syncCityCounters] cron registered: ${cronExpression} (${intervalHours}h interval)`)
+  cron.schedule(cronExpression, () => syncCityCounters(payload))
 }

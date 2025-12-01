@@ -1,5 +1,6 @@
 import type { Payload } from 'payload'
 import cron from 'node-cron'
+import { getSchedulerIntervalHours, hoursToCron } from '../utils/schedulerConfig'
 
 async function cleanupTempMedia(payload: Payload) {
   const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
@@ -30,6 +31,17 @@ async function cleanupTempMedia(payload: Payload) {
 }
 
 export const registerCleanupTempMediaScheduler = (payload: Payload) => {
-  // Run every hour at minute 13
-  cron.schedule('13 * * * *', () => cleanupTempMedia(payload))
+  // Runs hourly (1 hour) by default
+  // Configurable via SCHEDULER_CLEANUP_MEDIA_INTERVAL_HOURS
+  // In production: 1 hour
+  // In staging: 3 hours (3x slower)
+  // In dev: 6 hours (6x slower)
+  const intervalHours = getSchedulerIntervalHours('cleanup_media', 1, {
+    envVarName: 'SCHEDULER_CLEANUP_MEDIA_INTERVAL_HOURS',
+  })
+
+  // Always run at minute 13 to stagger from other jobs
+  const cronExpression = hoursToCron(intervalHours, 13)
+  console.log(`[CleanupTempMedia] cron registered: ${cronExpression} (${intervalHours}h interval)`)
+  cron.schedule(cronExpression, () => cleanupTempMedia(payload))
 }

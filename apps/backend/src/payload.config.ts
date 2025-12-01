@@ -45,6 +45,7 @@ import { registerSyncListingTypeCountersScheduler } from './schedulers/syncListi
 import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters'
 import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia'
 import { migrations } from './migrations'
+import { logSchedulerConfig } from './utils/schedulerConfig'
 
 import { getTaxonomies } from './endpoints/taxonomies'
 
@@ -362,12 +363,19 @@ export default buildConfig({
   ],
   onInit: async (payload) => {
     if (process.env.ENABLE_JOBS === 'true') {
+      console.log('[Payload] Initializing schedulers...')
+      logSchedulerConfig()
+
       initFeedSchedulers(payload)
       // hourly, staggered minutes
       registerBuildHubSnapshotScheduler(payload)
       registerSyncListingTypeCountersScheduler(payload)
       registerSyncCityCountersScheduler(payload)
       registerCleanupTempMediaScheduler(payload)
+
+      console.log('[Payload] ✅ All schedulers initialized')
+    } else {
+      console.log('[Payload] Schedulers disabled (ENABLE_JOBS != true)')
     }
   },
 })
