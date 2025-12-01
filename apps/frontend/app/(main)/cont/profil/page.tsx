@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { getProfile } from "@/lib/api/profile";
@@ -35,7 +36,19 @@ export default async function ProfilPage() {
     <HydrationBoundary state={dehydratedState}>
       <SectionCard title="Informații Profil">
         <div className="space-y-6">
-          <ProfileHeader profileId={Number(session.user.profile)} />
+          <div className="flex justify-between">
+            <ProfileHeader profileId={Number(session.user.profile)} />
+            <Button asChild variant="outline">
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`/profil/${profileData.slug}`}
+              >
+                Vezi profil
+              </Link>
+            </Button>
+          </div>
+
           <ProfilePersonalDetailsForm profile={profileData} />
         </div>
       </SectionCard>
