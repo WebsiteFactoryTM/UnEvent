@@ -255,6 +255,10 @@ export const authOptions: NextAuthOptions = {
 
       const now = Math.floor(Date.now() / 1000);
       if (token.absExp && now >= token.absExp) {
+        // Notify Payload to logout before clearing session
+        if (token.accessToken) {
+          await notifyPayloadLogout(token.accessToken);
+        }
         await deletePayloadCookie();
         return {
           ...token,
@@ -276,6 +280,9 @@ export const authOptions: NextAuthOptions = {
       if (!token.accessToken) {
         // If the user was never logged in, don't emit an error.
         if (!token.iat && !token.email) return token;
+        // User was logged in but lost accessToken - logout from Payload if we had one
+        // Note: We don't have accessToken here, so we can't notify Payload
+        // but we should still clear the session
         await deletePayloadCookie();
         return { ...token, error: "RefreshAccessTokenError", exp: 0 };
       }
@@ -292,6 +299,10 @@ export const authOptions: NextAuthOptions = {
         } catch (e) {
           // after the inner catch where refresh failed:
           if (token.exp && token.exp <= now) {
+            // Token expired - notify Payload to logout before clearing session
+            if (token.accessToken) {
+              await notifyPayloadLogout(token.accessToken);
+            }
             await deletePayloadCookie();
             return {
               ...token,
@@ -306,6 +317,26 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
+      const now = Math.floor(Date.now() / 1000);
+      const isExpired = token.exp && token.exp <= now;
+
+      // If there's an error, no accessToken, or token is expired, invalidate the session
+      if (token.error || !token.accessToken || isExpired) {
+        // Return an invalid session structure - NextAuth will treat this as unauthenticated
+        // Setting expires to past date ensures NextAuth recognizes it as expired
+        return {
+          ...session,
+          user: {
+            id: "",
+            email: null as any,
+            name: null as any,
+          },
+          accessToken: undefined,
+          expires: new Date(0).toISOString(), // Past date to force expiration
+          error: token.error || "SessionExpired",
+        };
+      }
+
       session.user = {
         id: token.id!,
         name: token.name || undefined,
@@ -319,11 +350,6 @@ export const authOptions: NextAuthOptions = {
       if (token.exp) {
         // optional: expose remaining lifetime (for debugging / renewal)
         session.expires = new Date(token.exp * 1000).toISOString();
-      }
-
-      if (token.error) {
-        (session as Session & { error?: string }).error = token.error as string;
-        session.accessToken = undefined;
       }
 
       return session;
