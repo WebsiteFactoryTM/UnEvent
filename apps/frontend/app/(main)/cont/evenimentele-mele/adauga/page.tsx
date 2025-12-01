@@ -1,8 +1,26 @@
 import React from "react";
 import { UnifiedListingForm } from "@/components/cont/listings/UnifiedListingForm";
 import BackButton from "@/components/cont/shared/BackButton";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
+import { hasRequiredRole } from "@/lib/auth/checkRole";
+import { NoRoleAccess } from "@/components/cont/NoRoleAccess";
 
-const CreateEventPage = () => {
+const CreateEventPage = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return (
+      <div>Trebuie să fii autentificat pentru a accesa această pagină.</div>
+    );
+  }
+
+  if (!hasRequiredRole(session, "organizer")) {
+    return (
+      <NoRoleAccess requiredRole="organizer" pageName="Adaugă eveniment" />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

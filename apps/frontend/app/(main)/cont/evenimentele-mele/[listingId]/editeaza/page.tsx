@@ -5,6 +5,8 @@ import { getServerSession } from "next-auth";
 import Link from "next/link";
 import React from "react";
 import BackButton from "@/components/cont/shared/BackButton";
+import { hasRequiredRole } from "@/lib/auth/checkRole";
+import { NoRoleAccess } from "@/components/cont/NoRoleAccess";
 
 const EditEventPage = async ({
   params,
@@ -18,6 +20,12 @@ const EditEventPage = async ({
 
   if (!listingId || !accessToken || !profileId) {
     return <div>Unauthorized</div>;
+  }
+
+  if (!hasRequiredRole(session, "organizer")) {
+    return (
+      <NoRoleAccess requiredRole="organizer" pageName="Editează eveniment" />
+    );
   }
 
   const listing = await getUserListing(

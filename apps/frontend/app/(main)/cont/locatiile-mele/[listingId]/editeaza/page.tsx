@@ -4,6 +4,8 @@ import BackButton from "@/components/cont/shared/BackButton";
 import { getUserListing } from "@/lib/api/accountListings";
 import { getServerSession } from "next-auth";
 import React from "react";
+import { hasRequiredRole } from "@/lib/auth/checkRole";
+import { NoRoleAccess } from "@/components/cont/NoRoleAccess";
 
 const EditLocationPage = async ({
   params,
@@ -17,6 +19,10 @@ const EditLocationPage = async ({
 
   if (!listingId || !accessToken || !profileId) {
     return <div>Unauthorized</div>;
+  }
+
+  if (!hasRequiredRole(session, "host")) {
+    return <NoRoleAccess requiredRole="host" pageName="Editează locația ta" />;
   }
 
   const listing = await getUserListing(

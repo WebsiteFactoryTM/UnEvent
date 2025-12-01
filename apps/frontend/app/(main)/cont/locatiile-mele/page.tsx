@@ -11,6 +11,8 @@ import RejectedListings from "@/components/cont/RejectedListings";
 import ListingView from "@/components/cont/ListingView";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import Link from "next/link";
+import { hasRequiredRole } from "@/lib/auth/checkRole";
+import { NoRoleAccess } from "@/components/cont/NoRoleAccess";
 
 export default async function LocatiilemePage() {
   const session = await getServerSession(authOptions);
@@ -21,6 +23,10 @@ export default async function LocatiilemePage() {
     return (
       <div>Trebuie să fii autentificat pentru a accesa această pagină.</div>
     );
+  }
+
+  if (!hasRequiredRole(session, "host")) {
+    return <NoRoleAccess requiredRole="host" pageName="Locațiile mele" />;
   }
 
   const queryClient = getQueryClient();

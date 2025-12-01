@@ -5,6 +5,8 @@ import { getUserListing } from "@/lib/api/accountListings";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import React from "react";
+import { hasRequiredRole } from "@/lib/auth/checkRole";
+import { NoRoleAccess } from "@/components/cont/NoRoleAccess";
 
 const EditServicePage = async ({
   params,
@@ -18,6 +20,12 @@ const EditServicePage = async ({
 
   if (!listingId || !accessToken || !profileId) {
     return <div>Unauthorized</div>;
+  }
+
+  if (!hasRequiredRole(session, "provider")) {
+    return (
+      <NoRoleAccess requiredRole="provider" pageName="Editează serviciu" />
+    );
   }
 
   const listing = await getUserListing(
