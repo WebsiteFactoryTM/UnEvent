@@ -4,8 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { FaLocationDot, FaClock, FaCircle } from "react-icons/fa6";
 import type { User, Profile } from "@/types/payload-types";
 
+type ProfileWithUser = Profile & { user?: number | User };
+
 interface ProfileMetricsProps {
-  user: User & { profile: Profile };
+  profile: ProfileWithUser;
 }
 
 const roleLabels: Record<string, string> = {
@@ -16,8 +18,9 @@ const roleLabels: Record<string, string> = {
   admin: "Administrator",
 };
 
-export function ProfileMetrics({ user }: ProfileMetricsProps) {
-  const profile = user.profile;
+export function ProfileMetrics({ profile }: ProfileMetricsProps) {
+  const user =
+    profile.user && typeof profile.user === "object" ? profile.user : undefined;
   const lastOnline = profile.lastOnline ? new Date(profile.lastOnline) : null;
   const isOnline =
     lastOnline && Date.now() - lastOnline.getTime() < 5 * 60 * 1000; // 5 minutes
@@ -26,7 +29,7 @@ export function ProfileMetrics({ user }: ProfileMetricsProps) {
     <div className="glass-card p-4 md:p-6 animate-fade-in-up animation-delay-100">
       <div className="flex flex-wrap gap-3">
         {/* Roles */}
-        {user.roles.map((role) => (
+        {user?.roles?.map((role) => (
           <Badge key={role} variant="secondary">
             {roleLabels[role] || role}
           </Badge>

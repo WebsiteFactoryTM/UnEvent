@@ -19,12 +19,15 @@ import {
 } from "react-icons/fa6";
 import type { User, Profile } from "@/types/payload-types";
 
+type ProfileWithUser = Profile & { user?: number | User };
+
 interface ProfileSidebarProps {
-  user: User & { profile: Profile };
+  profile: ProfileWithUser;
 }
 
-export function ProfileSidebar({ user }: ProfileSidebarProps) {
-  const profile = user.profile;
+export function ProfileSidebar({ profile }: ProfileSidebarProps) {
+  const user =
+    profile.user && typeof profile.user === "object" ? profile.user : undefined;
   const socials = profile.socialMedia;
 
   const handleShare = async () => {
@@ -77,7 +80,7 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
             variant="outline"
             className="w-full justify-start gap-2 bg-transparent"
           >
-            <a href={`mailto:${user.email}`}>
+            <a href={user?.email ? `mailto:${user.email}` : "#"}>
               <FaEnvelope className="h-4 w-4" />
               Trimite email
             </a>

@@ -5,12 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { FaStar, FaCircleCheck } from "react-icons/fa6";
 import type { User, Profile } from "@/types/payload-types";
 
+type ProfileWithUser = Profile & { user?: number | User };
+
 interface ProfileHeroProps {
-  user: User & { profile: Profile };
+  profile: ProfileWithUser;
 }
 
-export function ProfileHero({ user }: ProfileHeroProps) {
-  const profile = user.profile;
+export function ProfileHero({ profile }: ProfileHeroProps) {
+  const user =
+    profile.user && typeof profile.user === "object" ? profile.user : undefined;
   const isVerified = profile.verifiedStatus === "approved";
   const memberSince = profile.memberSince
     ? new Date(profile.memberSince).toLocaleDateString("ro-RO", {
@@ -26,7 +29,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
         {/* Avatar */}
         <Avatar className="h-24 w-24 md:h-32 md:w-32 ring-4 ring-primary/20">
           <AvatarImage
-            src={user.avatarURL || undefined}
+            src={user?.avatarURL || undefined}
             alt={profile.displayName || profile.name}
           />
           <AvatarFallback className="text-2xl md:text-3xl">
