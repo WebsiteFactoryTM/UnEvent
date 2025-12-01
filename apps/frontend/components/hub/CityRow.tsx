@@ -51,25 +51,7 @@ export function CityRow({
               key={`${item.listingType}_${item.slug}_${item.id}`}
               className="md:basis-1/2 lg:basis-1/3"
             >
-              <ListingCard
-                id={item.id}
-                name={item.title}
-                slug={item.slug}
-                description={item.description}
-                image={item.image}
-                city={item.city}
-                type={item.type}
-                verified={item.verified}
-                rating={item.rating}
-                views={item.views}
-                listingType={item.listingType}
-                capacity={item.capacity}
-                priceRange={item.priceRange}
-                date={item.date}
-                participants={item.participants}
-                initialIsFavorited={item.initialIsFavorited}
-                tier={item.tier}
-              />
+              <ListingCard {...item} />
             </CarouselItem>
           ))}
         </CarouselContent>

@@ -30,23 +30,7 @@ export default function FeaturedGrid({
         {items.slice(0, 12).map((item) => (
           <ListingCard
             key={`${item.listingType}_${item.slug}_${item.id}`}
-            id={item.id}
-            name={item.title}
-            slug={item.slug}
-            description={item.description}
-            image={item.image}
-            city={item.city}
-            type={item.type}
-            verified={item.verified}
-            rating={item.rating}
-            views={item.views}
-            listingType={item.listingType}
-            capacity={item.capacity}
-            priceRange={item.priceRange}
-            date={item.date}
-            participants={item.participants}
-            initialIsFavorited={item.initialIsFavorited}
-            tier={item.tier}
+            {...item}
           />
         ))}
       </div>

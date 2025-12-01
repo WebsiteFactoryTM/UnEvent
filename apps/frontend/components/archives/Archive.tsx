@@ -14,6 +14,7 @@ import { ListingCardData } from "@/lib/normalizers/hub";
 import { ArchiveMapView } from "./ArchiveMapView";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Map } from "lucide-react";
+import type { Location } from "@/types/payload-types";
 
 // Utility function to convert eventWhen filter to date ranges
 function convertEventWhenToDates(
@@ -109,6 +110,40 @@ type CardItem = {
   tier: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
   geo?: [number, number] | null;
 };
+
+function cardItemToListingCardData(
+  item: CardItem,
+  entity: ListingType,
+): ListingCardData {
+  // Convert capacity number to Location["capacity"] format
+  let capacity: Location["capacity"] | null | undefined = undefined;
+  if (entity === "locatii" && item.capacity > 0) {
+    capacity = { indoor: item.capacity };
+  }
+
+  return {
+    id: item.listingId,
+    title: item.title,
+    slug: item.slug,
+    description: item.description,
+    image: {
+      url: item.imageUrl || "/placeholder.svg",
+      alt: item.title,
+    },
+    city: item.cityLabel,
+    type: item.type,
+    verified: item.verified,
+    rating:
+      item.ratingAvg !== undefined && item.ratingCount !== undefined
+        ? { average: item.ratingAvg, count: item.ratingCount }
+        : undefined,
+    views: 0,
+    listingType: entity,
+    capacity,
+    date: item.startDate,
+    tier: item.tier,
+  };
+}
 
 const CityArchive = ({
   entity,
@@ -285,25 +320,7 @@ const CityArchive = ({
             {combinedListings.map((item: CardItem) => (
               <ListingCard
                 key={item.slug}
-                id={item.listingId}
-                name={item.title}
-                slug={item.slug}
-                description={item.description}
-                image={{
-                  url: item.imageUrl || "/placeholder.svg",
-                  alt: item.title,
-                }}
-                city={item.cityLabel}
-                type={item.type}
-                verified={item.verified}
-                rating={
-                  item.ratingAvg
-                    ? { average: item.ratingAvg, count: item.ratingCount || 0 }
-                    : undefined
-                }
-                views={0}
-                listingType={entity}
-                tier={item.tier}
+                {...cardItemToListingCardData(item, entity)}
               />
             ))}
           </div>

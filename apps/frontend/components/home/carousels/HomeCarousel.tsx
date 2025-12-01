@@ -11,12 +11,12 @@ import {
 import Link from "next/link";
 import { CarouselSkeleton } from "./CarouselSkeleton";
 import { ListingCard } from "@/components/archives/ListingCard";
-import { City, Location, Media, Service, Event } from "@/types/payload-types";
+import { Location, Service, Event } from "@/types/payload-types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchHomeListings } from "@/lib/api/home";
-
-import { ListingType } from "@/types/listings";
-import { useMemo, useEffect, useRef } from "react";
+import { ListingCardData, normalizeListing } from "@/lib/normalizers/hub";
+import { Listing, ListingType } from "@/types/listings";
+import { useEffect, useRef, useMemo } from "react";
 
 interface HomeCarouselProps {
   listingType: ListingType;
@@ -46,6 +46,13 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
   });
 
   const listings = data?.[category] ?? [];
+
+  // Normalize listings to ListingCardData format
+  const normalizedListings = useMemo(() => {
+    return listings.map((listing: Listing) =>
+      normalizeListing(listingType, listing),
+    );
+  }, [listings, listingType]);
 
   // Check for server-side updates every 30 seconds
   useEffect(() => {
@@ -154,47 +161,12 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
           className="w-full"
         >
           <CarouselContent>
-            {listings?.map((listing: Location | Service | Event) => (
+            {normalizedListings.map((cardData: ListingCardData) => (
               <CarouselItem
-                key={listing.id}
+                key={cardData.id}
                 className="md:basis-1/2 lg:basis-1/3"
               >
-                <ListingCard
-                  id={listing.id}
-                  name={listing.title}
-                  slug={listing.slug || ""}
-                  description={listing.description || ""}
-                  image={{
-                    url:
-                      (listing.featuredImage as Media)?.url ||
-                      "/placeholder.svg",
-                    alt: (listing.featuredImage as Media)?.alt || listing.title,
-                  }}
-                  city={(listing.city as City | null)?.name || "România"}
-                  type={listing.type.map((type: any) => type.title).join(", ")}
-                  verified={listing.verifiedStatus === "approved"}
-                  views={listing.views || 0}
-                  listingType={listingType}
-                  capacity={(listing as Location).capacity ?? undefined}
-                  priceRange={
-                    listing.pricing?.amount
-                      ? `de la ${listing.pricing.amount} ${listing.pricing.currency}`
-                      : undefined
-                  }
-                  date={(listing as Event).startDate ?? undefined}
-                  participants={(listing as Event).participants ?? undefined}
-                  rating={
-                    listing.rating && listing.reviewCount
-                      ? {
-                          average: listing.rating,
-                          count: listing.reviewCount,
-                        }
-                      : undefined
-                  }
-                  initialIsFavorited={
-                    listing.isFavoritedByViewer as boolean | undefined
-                  }
-                />
+                <ListingCard {...cardData} />
               </CarouselItem>
             ))}
           </CarouselContent>

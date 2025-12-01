@@ -21,36 +21,11 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import FavoriteButton from "../common/FavoriteButton";
 import { MdVerified } from "react-icons/md";
-
-interface ListingCardProps {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  image: {
-    url: string;
-    alt: string;
-  };
-  city: string;
-  type: string;
-  verified: boolean;
-  rating?: {
-    average: number;
-    count: number;
-  };
-  views: number;
-  listingType: "locatii" | "servicii" | "evenimente";
-  capacity?: Location["capacity"] | null | undefined;
-  priceRange?: string;
-  date?: string;
-  participants?: number;
-  initialIsFavorited?: boolean;
-  tier?: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
-}
+import type { ListingCardData } from "@/lib/normalizers/hub";
 
 export function ListingCard({
   id,
-  name,
+  title,
   slug,
   description,
   image,
@@ -66,7 +41,7 @@ export function ListingCard({
   participants,
   initialIsFavorited,
   tier,
-}: ListingCardProps) {
+}: ListingCardData) {
   const { indoor } = capacity || {};
 
   const renderTierBadge = () => {
@@ -126,7 +101,7 @@ export function ListingCard({
 
       <CardContent className="flex-1 p-4 space-y-3">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="font-semibold text-lg line-clamp-2">{name}</h3>
+          <h3 className="font-semibold text-lg line-clamp-2">{title}</h3>
           {tier && tier !== "standard" ? renderTierBadge() : null}
         </div>
         <p className="text-sm text-muted-foreground line-clamp-3">
@@ -173,7 +148,7 @@ export function ListingCard({
           ))}
         </div>
 
-        {priceRange ?? (
+        {priceRange && (
           <p className="text-sm font-semibold text-foreground">{priceRange}</p>
         )}
 

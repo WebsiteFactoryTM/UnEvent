@@ -19,14 +19,12 @@ import { FaLocationDot, FaUsers, FaHeart, FaStar } from "react-icons/fa6";
 import Image from "next/image";
 import Link from "next/link";
 import { useSimilarListings } from "@/lib/react-query/listings.queries";
-import {
-  City,
-  Location,
-  ListingType as SuitableForType,
-} from "@/types/payload-types";
+import { City, ListingType as SuitableForType } from "@/types/payload-types";
 import { Listing, ListingType } from "@/types/listings";
 import { CarouselSkeleton } from "@/components/home/carousels/CarouselSkeleton";
 import { ListingCard } from "@/components/archives/ListingCard";
+import { normalizeListing } from "@/lib/normalizers/hub";
+import { useMemo } from "react";
 
 interface ListingRecommendationsProps {
   typeRecommendations: ListingType;
@@ -61,6 +59,15 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
     limit,
   );
 
+  // Normalize listings to ListingCardData format
+  // Must be called before early returns to follow Rules of Hooks
+  const normalizedListings = useMemo(() => {
+    if (!similarListings || similarListings.length === 0) return [];
+    return similarListings.map((listing: Listing) =>
+      normalizeListing(typeRecommendations, listing),
+    );
+  }, [similarListings, typeRecommendations]);
+
   if (isLoading) return <CarouselSkeleton count={3} showAvatar={false} />;
 
   if (error)
@@ -69,7 +76,8 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
         Am întâmpinat o eroare la încărcarea recomandărilor
       </div>
     );
-  if (!similarListings || similarListings.length === 0)
+
+  if (!normalizedListings || normalizedListings.length === 0)
     return (
       <div className="text-center py-8 text-muted-foreground">
         <p>Nu sunt rezultate pentru această căutare</p>
@@ -109,64 +117,14 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
           className="w-full"
         >
           <CarouselContent>
-            {similarListings?.map((listing: Listing) => {
-              const id = listing.id;
-              const slug = listing.slug;
-              const image =
-                typeof listing.featuredImage === "object"
-                  ? listing.featuredImage
-                  : null;
-              const city =
-                typeof listing.city === "object" ? listing.city : null;
-              const locationType =
-                Array.isArray(listing.type) && listing.type.length > 0
-                  ? typeof listing.type[0] === "object"
-                    ? listing.type[0].title
-                    : "Locație"
-                  : "Locație";
-              const verified = listing.status === "approved";
-              const capacity =
-                typeof (listing as Location).capacity === "object"
-                  ? (listing as Location).capacity?.indoor
-                  : null;
-              const rating =
-                typeof listing.rating === "number" ? listing.rating : undefined;
-              const reviewCount =
-                typeof listing.reviewCount === "number"
-                  ? listing.reviewCount
-                  : undefined;
-
-              return (
-                <CarouselItem key={id} className="md:basis-1/2 lg:basis-1/3">
-                  <ListingCard
-                    id={id}
-                    name={listing.title}
-                    slug={slug || ""}
-                    description={listing.description || ""}
-                    image={{
-                      url: image?.url || "/placeholder.svg",
-                      alt: listing.title,
-                    }}
-                    city={city?.name || ""}
-                    type={locationType}
-                    verified={verified}
-                    rating={
-                      rating
-                        ? { average: rating, count: reviewCount || 0 }
-                        : undefined
-                    }
-                    capacity={
-                      capacity as Location["capacity"] | null | undefined
-                    }
-                    views={listing.views || 0}
-                    listingType={typeRecommendations}
-                    initialIsFavorited={
-                      listing.isFavoritedByViewer as boolean | undefined
-                    }
-                  />
-                </CarouselItem>
-              );
-            })}
+            {normalizedListings.map((cardData) => (
+              <CarouselItem
+                key={cardData.id}
+                className="md:basis-1/2 lg:basis-1/3"
+              >
+                <ListingCard {...cardData} />
+              </CarouselItem>
+            ))}
           </CarouselContent>
           <CarouselPrevious />
           <CarouselNext />
