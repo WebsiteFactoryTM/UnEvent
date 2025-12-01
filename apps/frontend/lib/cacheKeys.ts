@@ -61,8 +61,13 @@ export const favoritesKeys = {
   all: ["favorites"] as const,
   listing: (type: string, id: number | string) =>
     ["favorite", type, id] as const,
-  userFavorites: (userId: string) =>
-    [...favoritesKeys.all, "user", userId] as const,
+  userFavorites: (
+    userId: string,
+    kind?: "locations" | "events" | "services",
+  ) =>
+    kind
+      ? ([...favoritesKeys.all, "user", userId, kind] as const)
+      : ([...favoritesKeys.all, "user", userId] as const),
 };
 
 /**
