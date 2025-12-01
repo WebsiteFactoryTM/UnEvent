@@ -75,6 +75,8 @@ export function UserMenu() {
   const hasProviderRole = user?.roles?.includes("provider");
   const hasOrganizerRole = user?.roles?.includes("organizer");
 
+  console.log("user", user);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

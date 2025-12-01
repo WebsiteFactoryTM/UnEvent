@@ -61,3 +61,35 @@ export async function updateProfile(
     throw new Error("Failed to update profile");
   }
 }
+
+export async function updateProfileAvatar(
+  avatarId: number | null,
+  profileId: number,
+  authToken?: string | undefined,
+): Promise<Profile> {
+  if (!authToken) {
+    throw new Error("No authentication token provided");
+  }
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/profiles/${profileId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ avatar: avatarId }),
+      },
+    );
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "");
+      throw new Error(errorText || "Failed to update avatar");
+    }
+    const data = await response.json();
+    return data.doc;
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    throw error;
+  }
+}
