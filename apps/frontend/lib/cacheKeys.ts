@@ -97,6 +97,11 @@ export const usersKeys = {
 export const profileKeys = {
   all: ["profiles"] as const,
   detail: (id: string | number) => [...profileKeys.all, String(id)] as const,
+  bySlug: (slug: string) => [...profileKeys.all, "slug", slug] as const,
+  listings: (id: string | number) =>
+    [...profileKeys.all, String(id), "listings"] as const,
+  reviews: (id: string | number) =>
+    [...profileKeys.all, String(id), "reviews"] as const,
 };
 
 /**
