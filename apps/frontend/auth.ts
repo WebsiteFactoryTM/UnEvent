@@ -216,7 +216,15 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user }: { token: JWT; user?: any }) {
+    async jwt({
+      token,
+      user,
+      trigger,
+    }: {
+      token: JWT;
+      user?: any;
+      trigger?: string;
+    }) {
       const TOKEN_LIFETIME_DAYS = 7;
       const DAY = 24 * 60 * 60;
 
@@ -250,6 +258,53 @@ export const authOptions: NextAuthOptions = {
           } catch (e) {
             console.error("Failed to set payload-token cookie:", e);
           }
+        }
+      }
+
+      // If session.update() was called (trigger === 'update'), fetch fresh user data
+      if (trigger === "update" && token.accessToken && token.id) {
+        try {
+          const apiBase =
+            process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+          if (apiBase) {
+            const res = await fetch(`${apiBase}/api/users/${token.id}`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token.accessToken}`,
+              },
+              cache: "no-store",
+            });
+
+            if (res.ok) {
+              const responseData = await res.json();
+              // PayloadCMS might return user directly or wrapped in 'doc'
+              const freshUser = responseData.doc || responseData;
+
+              // Update token with fresh user data
+              if (freshUser.roles) {
+                token.roles = freshUser.roles;
+              }
+              if (freshUser.displayName) {
+                token.name = freshUser.displayName;
+              }
+              if (freshUser.avatarURL) {
+                token.avatar = freshUser.avatarURL;
+              }
+              if (freshUser.profile) {
+                token.profileId =
+                  typeof freshUser.profile === "number"
+                    ? freshUser.profile
+                    : freshUser.profile?.id;
+              }
+            }
+          }
+        } catch (error) {
+          console.error(
+            "Failed to fetch fresh user data on session update:",
+            error,
+          );
+          // Don't fail the session update if fetch fails, just log error
         }
       }
 
