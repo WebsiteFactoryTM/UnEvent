@@ -166,15 +166,27 @@ function getRedisForBullMQ(): Redis | null {
 /**
  * Get or create the notifications queue
  * This queue is consumed by the worker service
- * Returns null if Redis is unavailable
+ * Returns null if Redis is unavailable (after max attempts)
  */
 function getNotificationsQueue(): Queue | null {
-  // Check if Redis is available before creating/returning queue
-  const redis = getRedisForBullMQ()
-  if (!redis || !isRedisAvailable) {
+  // Check if we've exceeded max connection attempts
+  if (connectionAttempts >= MAX_CONNECTION_ATTEMPTS && !isRedisAvailable) {
     return null
   }
 
+  // Get Redis client (may be connecting)
+  const redis = getRedisForBullMQ()
+  if (!redis) {
+    return null
+  }
+
+  // Check Redis status - allow queue creation if connecting/reconnecting
+  // Only reject if explicitly closed/ended
+  if (redis.status === 'end' || redis.status === 'close') {
+    return null
+  }
+
+  // If queue already exists, return it
   if (notificationsQueue) {
     return notificationsQueue
   }
@@ -273,7 +285,7 @@ export async function enqueueNotification(
 ): Promise<{ id: string | undefined }> {
   const queue = getNotificationsQueue()
 
-  // If queue is unavailable (Redis connection failed), fail gracefully
+  // If queue is unavailable (Redis connection failed after max attempts), fail gracefully
   if (!queue) {
     console.warn(
       `[NotificationsQueue] ⚠️ Skipping ${type} - Redis unavailable. Check UPSTASH_REDIS_URL or REDIS_HOST environment variables.`,
@@ -302,10 +314,21 @@ export async function enqueueNotification(
     return { id: job.id }
   } catch (error) {
     // Log error but don't throw - allow the main operation to continue
-    console.error(
-      `[NotificationsQueue] ❌ Failed to enqueue ${type}:`,
-      error instanceof Error ? error.message : error,
-    )
+    // This can happen if Redis is still connecting - the queue will retry automatically
+    const errorMessage = error instanceof Error ? error.message : String(error)
+
+    // If it's a connection error and Redis is still connecting, it's not a real failure
+    if (
+      redisClient &&
+      (redisClient.status === 'connecting' || redisClient.status === 'reconnecting')
+    ) {
+      console.warn(
+        `[NotificationsQueue] ⚠️ Redis still connecting, skipping ${type}. Will retry on next notification.`,
+      )
+    } else {
+      console.error(`[NotificationsQueue] ❌ Failed to enqueue ${type}:`, errorMessage)
+    }
+
     // Return success to prevent blocking the main operation
     return { id: undefined }
   }
