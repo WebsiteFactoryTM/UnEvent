@@ -9,6 +9,7 @@ import sharp from 'sharp'
 import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
 import { r2Adapter } from './utils/r2Adapter'
 import { shouldUseCloudStorage } from './utils/storage'
+import { resendAdapter } from '@payloadcms/email-resend'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -58,6 +59,11 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   serverURL:
     process.env.PAYLOAD_PUBLIC_SERVER_URL || `http://localhost:${process.env.PORT || 4000}`,
+  email: resendAdapter({
+    defaultFromAddress: process.env.RESEND_FROM_EMAIL || 'contact@unevent.ro',
+    defaultFromName: 'Ernest de la UnEvent',
+    apiKey: process.env.RESEND_API_KEY || '',
+  }),
   bin: [
     {
       scriptPath: path.resolve(dirname, 'seed.ts'),
