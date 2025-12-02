@@ -63,16 +63,22 @@ export const sendWelcomeEmail: CollectionAfterChangeHook = async ({ doc, req, op
       ? `${frontendUrl}/confirm-email?token=${confirmToken}`
       : `${frontendUrl}/confirm-email?userId=${user.id}` // Fallback if no token (shouldn't happen with verify: true)
 
-    await enqueueNotification('user.welcome', {
+    const result = await enqueueNotification('user.welcome', {
       first_name: user.displayName || user.email.split('@')[0] || '',
       email: user.email,
       confirm_url: confirmUrl,
       support_email: process.env.SUPPORT_EMAIL || 'support@unevent.com',
     })
 
-    req.payload.logger.info(
-      `[sendWelcomeEmail] ✅ Enqueued welcome email for user ${user.id}${confirmToken ? ' (with token)' : ' (no token - user may need manual verification)'}`,
-    )
+    if (result.id) {
+      req.payload.logger.info(
+        `[sendWelcomeEmail] ✅ Enqueued welcome email for user ${user.id}${confirmToken ? ' (with token)' : ' (no token - user may need manual verification)'} (job: ${result.id})`,
+      )
+    } else {
+      req.payload.logger.warn(
+        `[sendWelcomeEmail] ⚠️ Skipped welcome email for user ${user.id} - Redis unavailable`,
+      )
+    }
   } catch (error) {
     // Don't throw - email failure shouldn't break user creation
     req.payload.logger.error(

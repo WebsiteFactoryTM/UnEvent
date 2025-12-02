@@ -59,7 +59,7 @@ export const notifyAdminNewListing: CollectionAfterChangeHook = async ({
     const adminUrl = process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:4000'
     const dashboardUrl = `${adminUrl}/admin/collections/${collection.slug}/${doc.id}`
 
-    await enqueueNotification('admin.listing.pending', {
+    const result = await enqueueNotification('admin.listing.pending', {
       listing_title: doc.title,
       listing_type: collection.slug, // 'events', 'locations', or 'services'
       listing_id: String(doc.id),
@@ -67,9 +67,15 @@ export const notifyAdminNewListing: CollectionAfterChangeHook = async ({
       dashboard_url: dashboardUrl,
     })
 
-    req.payload.logger.info(
-      `[notifyAdminNewListing] ✅ Enqueued admin.listing.pending for listing ${doc.id}`,
-    )
+    if (result.id) {
+      req.payload.logger.info(
+        `[notifyAdminNewListing] ✅ Enqueued admin.listing.pending for listing ${doc.id} (job: ${result.id})`,
+      )
+    } else {
+      req.payload.logger.warn(
+        `[notifyAdminNewListing] ⚠️ Skipped admin.listing.pending for listing ${doc.id} - Redis unavailable`,
+      )
+    }
   } catch (error) {
     // Don't throw - email failure shouldn't break listing creation
     req.payload.logger.error(

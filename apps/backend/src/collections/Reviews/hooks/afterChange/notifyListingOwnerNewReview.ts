@@ -116,7 +116,7 @@ export const notifyListingOwnerNewReview: CollectionAfterChangeHook = async ({
         : doc.comment
       : undefined
 
-    await enqueueNotification('review.new', {
+    const result = await enqueueNotification('review.new', {
       first_name: firstName,
       userEmail: user.email,
       listing_title: listing.title,
@@ -127,9 +127,15 @@ export const notifyListingOwnerNewReview: CollectionAfterChangeHook = async ({
       listing_url: listingUrl,
     })
 
-    req.payload.logger.info(
-      `[notifyListingOwnerNewReview] ✅ Enqueued review.new for review ${doc.id}`,
-    )
+    if (result.id) {
+      req.payload.logger.info(
+        `[notifyListingOwnerNewReview] ✅ Enqueued review.new for review ${doc.id} (job: ${result.id})`,
+      )
+    } else {
+      req.payload.logger.warn(
+        `[notifyListingOwnerNewReview] ⚠️ Skipped review.new for review ${doc.id} - Redis unavailable`,
+      )
+    }
   } catch (error) {
     // Don't throw - email failure shouldn't break review creation
     req.payload.logger.error(

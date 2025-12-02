@@ -4,11 +4,7 @@ import { enqueueNotification } from '@/utils/notificationsQueue'
 /**
  * Notify admins when a new review is created with pending status
  */
-export const notifyAdminNewReview: CollectionAfterChangeHook = async ({
-  doc,
-  operation,
-  req,
-}) => {
+export const notifyAdminNewReview: CollectionAfterChangeHook = async ({ doc, operation, req }) => {
   // Only trigger on create
   if (operation !== 'create') {
     return
@@ -21,8 +17,7 @@ export const notifyAdminNewReview: CollectionAfterChangeHook = async ({
 
   try {
     // Get listing info
-    const listingId =
-      typeof doc.listing === 'number' ? doc.listing : doc.listing?.id || doc.listing
+    const listingId = typeof doc.listing === 'number' ? doc.listing : doc.listing?.id || doc.listing
     const listingType = doc.listingType // 'locations', 'events', or 'services'
 
     let listingTitle = 'Unknown Listing'
@@ -42,8 +37,7 @@ export const notifyAdminNewReview: CollectionAfterChangeHook = async ({
     }
 
     // Get reviewer info
-    const reviewerId =
-      typeof doc.user === 'number' ? doc.user : doc.user?.id || doc.user
+    const reviewerId = typeof doc.user === 'number' ? doc.user : doc.user?.id || doc.user
 
     let reviewerName = 'Unknown'
 
@@ -55,18 +49,15 @@ export const notifyAdminNewReview: CollectionAfterChangeHook = async ({
         })
         reviewerName = reviewerProfile?.name || 'Unknown'
       } catch (err) {
-        req.payload.logger.warn(
-          `[notifyAdminNewReview] Could not fetch reviewer info: ${err}`,
-        )
+        req.payload.logger.warn(`[notifyAdminNewReview] Could not fetch reviewer info: ${err}`)
       }
     }
 
     // Build admin dashboard URL
-    const adminUrl =
-      process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:4000'
+    const adminUrl = process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:4000'
     const dashboardUrl = `${adminUrl}/admin/collections/reviews/${doc.id}`
 
-    await enqueueNotification('admin.review.pending', {
+    const result = await enqueueNotification('admin.review.pending', {
       listing_title: listingTitle,
       listing_type: listingType || 'unknown',
       reviewer_name: reviewerName,
@@ -75,9 +66,15 @@ export const notifyAdminNewReview: CollectionAfterChangeHook = async ({
       dashboard_url: dashboardUrl,
     })
 
-    req.payload.logger.info(
-      `[notifyAdminNewReview] ✅ Enqueued admin.review.pending for review ${doc.id}`,
-    )
+    if (result.id) {
+      req.payload.logger.info(
+        `[notifyAdminNewReview] ✅ Enqueued admin.review.pending for review ${doc.id} (job: ${result.id})`,
+      )
+    } else {
+      req.payload.logger.warn(
+        `[notifyAdminNewReview] ⚠️ Skipped admin.review.pending for review ${doc.id} - Redis unavailable`,
+      )
+    }
   } catch (error) {
     // Don't throw - email failure shouldn't break review creation
     req.payload.logger.error(
@@ -86,4 +83,3 @@ export const notifyAdminNewReview: CollectionAfterChangeHook = async ({
     )
   }
 }
-

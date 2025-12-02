@@ -83,7 +83,7 @@ export const notifyListingModeration: CollectionAfterChangeHook = async ({
     const listingUrl = `${frontendUrl}/${listingType}/${doc.slug || doc.id}`
 
     if (currentStatus === 'approved') {
-      await enqueueNotification('listing.approved', {
+      const result = await enqueueNotification('listing.approved', {
         first_name: firstName,
         userEmail: user.email,
         listing_title: doc.title,
@@ -92,11 +92,17 @@ export const notifyListingModeration: CollectionAfterChangeHook = async ({
         listing_url: listingUrl,
       })
 
-      req.payload.logger.info(
-        `[notifyListingModeration] ✅ Enqueued listing.approved for listing ${doc.id}`,
-      )
+      if (result.id) {
+        req.payload.logger.info(
+          `[notifyListingModeration] ✅ Enqueued listing.approved for listing ${doc.id} (job: ${result.id})`,
+        )
+      } else {
+        req.payload.logger.warn(
+          `[notifyListingModeration] ⚠️ Skipped listing.approved for listing ${doc.id} - Redis unavailable`,
+        )
+      }
     } else if (currentStatus === 'rejected') {
-      await enqueueNotification('listing.rejected', {
+      const result = await enqueueNotification('listing.rejected', {
         first_name: firstName,
         userEmail: user.email,
         listing_title: doc.title,
@@ -106,9 +112,15 @@ export const notifyListingModeration: CollectionAfterChangeHook = async ({
         support_email: process.env.SUPPORT_EMAIL || 'support@unevent.com',
       })
 
-      req.payload.logger.info(
-        `[notifyListingModeration] ✅ Enqueued listing.rejected for listing ${doc.id}`,
-      )
+      if (result.id) {
+        req.payload.logger.info(
+          `[notifyListingModeration] ✅ Enqueued listing.rejected for listing ${doc.id} (job: ${result.id})`,
+        )
+      } else {
+        req.payload.logger.warn(
+          `[notifyListingModeration] ⚠️ Skipped listing.rejected for listing ${doc.id} - Redis unavailable`,
+        )
+      }
     }
   } catch (error) {
     // Don't throw - email failure shouldn't break listing update

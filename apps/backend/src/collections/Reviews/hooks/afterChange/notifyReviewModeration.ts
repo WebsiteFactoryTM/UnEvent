@@ -105,7 +105,7 @@ export const notifyReviewModeration: CollectionAfterChangeHook = async ({
     const listingUrl = `${frontendUrl}/${listingType}/${listingId}`
 
     if (currentStatus === 'approved') {
-      await enqueueNotification('review.approved', {
+      const result = await enqueueNotification('review.approved', {
         first_name: firstName,
         userEmail: user.email,
         listing_title: listingTitle,
@@ -113,11 +113,17 @@ export const notifyReviewModeration: CollectionAfterChangeHook = async ({
         listing_url: listingUrl,
       })
 
-      req.payload.logger.info(
-        `[notifyReviewModeration] ✅ Enqueued review.approved for review ${doc.id}`,
-      )
+      if (result.id) {
+        req.payload.logger.info(
+          `[notifyReviewModeration] ✅ Enqueued review.approved for review ${doc.id} (job: ${result.id})`,
+        )
+      } else {
+        req.payload.logger.warn(
+          `[notifyReviewModeration] ⚠️ Skipped review.approved for review ${doc.id} - Redis unavailable`,
+        )
+      }
     } else if (currentStatus === 'rejected') {
-      await enqueueNotification('review.rejected', {
+      const result = await enqueueNotification('review.rejected', {
         first_name: firstName,
         userEmail: user.email,
         listing_title: listingTitle,
@@ -126,9 +132,15 @@ export const notifyReviewModeration: CollectionAfterChangeHook = async ({
         support_email: process.env.SUPPORT_EMAIL || 'support@unevent.com',
       })
 
-      req.payload.logger.info(
-        `[notifyReviewModeration] ✅ Enqueued review.rejected for review ${doc.id}`,
-      )
+      if (result.id) {
+        req.payload.logger.info(
+          `[notifyReviewModeration] ✅ Enqueued review.rejected for review ${doc.id} (job: ${result.id})`,
+        )
+      } else {
+        req.payload.logger.warn(
+          `[notifyReviewModeration] ⚠️ Skipped review.rejected for review ${doc.id} - Redis unavailable`,
+        )
+      }
     }
   } catch (error) {
     // Don't throw - email failure shouldn't break review update
