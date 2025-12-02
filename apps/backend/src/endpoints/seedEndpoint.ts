@@ -8,6 +8,7 @@ import seedEvents from '@/scripts/seed/seed-events'
 import seedServices from '@/scripts/seed/seed-services'
 import seedListings from '@/scripts/seed/seed-listings'
 import { getRedis } from '@/utils/redis'
+import * as Sentry from '@sentry/nextjs'
 
 // Map of option values to their corresponding seed functions
 const seedFunctions = {
@@ -78,6 +79,26 @@ export const seed: PayloadHandler = async (req) => {
     })
   } catch (error) {
     console.error(`Error seeding ${option}:`, error)
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'seed')
+        scope.setTag('seed_option', option)
+        scope.setContext('request', {
+          option,
+          method: 'GET',
+        })
+        if (req.user) {
+          scope.setUser({
+            id: String(req.user.id),
+            email: req.user.email,
+          })
+        }
+        Sentry.captureException(error)
+      })
+    }
+
     return new Response(
       JSON.stringify({
         error: `Failed to seed ${option}`,

@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 import cron from 'node-cron'
 import { getSchedulerIntervalHours, hoursToCron } from '../utils/schedulerConfig'
+import * as Sentry from '@sentry/nextjs'
 
 async function cleanupTempMedia(payload: Payload) {
   const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
@@ -21,12 +22,29 @@ async function cleanupTempMedia(payload: Payload) {
           await payload.delete({ collection: 'media', id: doc.id })
         } catch (e) {
           console.error('[CleanupTempMedia] Failed to delete media', doc.id, e)
+          if (e instanceof Error) {
+            Sentry.withScope((scope) => {
+              scope.setTag('scheduler', 'cleanupTempMedia')
+              scope.setTag('operation', 'delete')
+              scope.setContext('media', {
+                id: doc.id,
+              })
+              Sentry.captureException(e)
+            })
+          }
         }
       }),
     )
     // If there are more, schedule next run will catch them
   } catch (e) {
     console.error('[CleanupTempMedia] Query error', e)
+    if (e instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('scheduler', 'cleanupTempMedia')
+        scope.setTag('operation', 'query')
+        Sentry.captureException(e)
+      })
+    }
   }
 }
 

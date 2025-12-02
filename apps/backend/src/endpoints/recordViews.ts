@@ -1,6 +1,7 @@
 import type { PayloadHandler } from 'payload'
 
 import { bumpView } from '@/collections/Feed/counters'
+import * as Sentry from '@sentry/nextjs'
 
 // Script must define a "script" function export that accepts the sanitized config
 export const incrementView: PayloadHandler = async (req) => {
@@ -45,6 +46,24 @@ export const incrementView: PayloadHandler = async (req) => {
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : 'Unknown error'
     console.log('Error recording view:', errMsg)
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'increment-view')
+        scope.setContext('request', {
+          method: 'POST',
+        })
+        if (req.user) {
+          scope.setUser({
+            id: String(req.user.id),
+            email: req.user.email,
+          })
+        }
+        Sentry.captureException(error)
+      })
+    }
+
     return new Response(JSON.stringify({ error: errMsg }), { status: 400 })
   }
 }

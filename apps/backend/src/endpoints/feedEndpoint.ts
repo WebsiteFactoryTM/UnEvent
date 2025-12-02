@@ -4,6 +4,7 @@ import type { PayloadRequest, Where } from 'payload'
 import { z } from 'zod'
 import { dailyJitter } from '../collections/Feed/scoring'
 import type { PayloadHandler } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 import type {
   Location,
   Event,
@@ -401,6 +402,25 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
         },
       )
     }
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'feed')
+        scope.setContext('request', {
+          query: req.query,
+          method: req.method,
+        })
+        if (req.user) {
+          scope.setUser({
+            id: String(req.user.id),
+            email: req.user.email,
+          })
+        }
+        Sentry.captureException(error)
+      })
+    }
+
     const errMsg = error instanceof Error ? error.message : 'Unknown error'
     return new Response(
       JSON.stringify({

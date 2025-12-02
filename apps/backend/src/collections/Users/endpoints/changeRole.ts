@@ -1,5 +1,6 @@
 import { PayloadHandler, PayloadRequest } from 'payload'
 import { z } from 'zod'
+import * as Sentry from '@sentry/nextjs'
 
 const ChangeRoleSchema = z.object({
   role: z.enum(['organizer', 'host', 'provider', 'client']),
@@ -109,6 +110,24 @@ export const changeRole: PayloadHandler = async (req: PayloadRequest) => {
         { status: 400 },
       )
     }
+
+    // Report to Sentry with context
+    if (err instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'change-role')
+        scope.setContext('request', {
+          method: 'POST',
+        })
+        if (req.user) {
+          scope.setUser({
+            id: String(req.user.id),
+            email: req.user.email,
+          })
+        }
+        Sentry.captureException(err)
+      })
+    }
+
     const errMsg = err instanceof Error ? err.message : 'Failed to change role'
     return new Response(JSON.stringify({ error: errMsg }), { status: 500 })
   }

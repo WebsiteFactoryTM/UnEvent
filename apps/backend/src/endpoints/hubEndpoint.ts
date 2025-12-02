@@ -1,5 +1,6 @@
 import type { PayloadRequest } from 'payload'
 import type { PayloadHandler } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 
 export const hubHandler: PayloadHandler = async (req: PayloadRequest) => {
   try {
@@ -30,6 +31,25 @@ export const hubHandler: PayloadHandler = async (req: PayloadRequest) => {
     )
   } catch (error) {
     console.error(error)
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'hub')
+        scope.setContext('request', {
+          listingType: req.query.listingType,
+          method: 'GET',
+        })
+        if (req.user) {
+          scope.setUser({
+            id: String(req.user.id),
+            email: req.user.email,
+          })
+        }
+        Sentry.captureException(error)
+      })
+    }
+
     return new Response(JSON.stringify({ error: 'Error getting hub' }), { status: 500 })
   }
 }

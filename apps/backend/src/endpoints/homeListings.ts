@@ -1,5 +1,6 @@
 import { Event, Location, Service } from '@/payload-types'
 import { Payload, PayloadHandler, PayloadRequest } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 
 type ShapedHomeListings = {
   featuredLocations: Location[]
@@ -117,6 +118,24 @@ export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
     return new Response(JSON.stringify(shaped), { status: 200 })
   } catch (error) {
     console.error(error)
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'home')
+        scope.setContext('request', {
+          method: 'GET',
+        })
+        if (req.user) {
+          scope.setUser({
+            id: String(req.user.id),
+            email: req.user.email,
+          })
+        }
+        Sentry.captureException(error)
+      })
+    }
+
     return new Response('Internal server error', { status: 500 })
   }
 }

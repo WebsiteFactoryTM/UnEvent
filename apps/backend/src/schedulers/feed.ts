@@ -4,6 +4,7 @@ import { flushCountersToDaily } from '../collections/Feed/counters'
 import { aggregateDaily } from '../collections/Feed/workers/aggregateDaily'
 import { rankSegments } from '../collections/Feed/workers/rankSegments'
 import { getSchedulerInterval, minutesToCron } from '../utils/schedulerConfig'
+import * as Sentry from '@sentry/nextjs'
 
 export const initFeedSchedulers = async (payload: Payload) => {
   console.log('[Feed] Initializing feed algorithm workers...')
@@ -28,6 +29,17 @@ export const initFeedSchedulers = async (payload: Payload) => {
       console.log(`[Feed] flushCountersToDaily completed in ${Date.now() - start}ms`)
     } catch (error) {
       console.error('[Feed] Error in flushCountersToDaily cron:', error)
+      if (error instanceof Error) {
+        Sentry.withScope((scope) => {
+          scope.setTag('scheduler', 'feed')
+          scope.setTag('job', 'flushCountersToDaily')
+          scope.setContext('scheduler', {
+            interval: flushInterval,
+            cron: flushCron,
+          })
+          Sentry.captureException(error)
+        })
+      }
     }
   })
 
@@ -48,6 +60,17 @@ export const initFeedSchedulers = async (payload: Payload) => {
       console.log(`[Feed] aggregateDaily completed in ${Date.now() - start}ms`)
     } catch (error) {
       console.error('[Feed] Error in aggregateDaily cron:', error)
+      if (error instanceof Error) {
+        Sentry.withScope((scope) => {
+          scope.setTag('scheduler', 'feed')
+          scope.setTag('job', 'aggregateDaily')
+          scope.setContext('scheduler', {
+            interval: aggregateInterval,
+            cron: aggregateCron,
+          })
+          Sentry.captureException(error)
+        })
+      }
     }
   })
 
@@ -68,6 +91,17 @@ export const initFeedSchedulers = async (payload: Payload) => {
       console.log(`[Feed] rankSegments completed in ${Date.now() - start}ms`)
     } catch (error) {
       console.error('[Feed] Error in rankSegments cron:', error)
+      if (error instanceof Error) {
+        Sentry.withScope((scope) => {
+          scope.setTag('scheduler', 'feed')
+          scope.setTag('job', 'rankSegments')
+          scope.setContext('scheduler', {
+            interval: rankInterval,
+            cron: rankCron,
+          })
+          Sentry.captureException(error)
+        })
+      }
     }
   })
 

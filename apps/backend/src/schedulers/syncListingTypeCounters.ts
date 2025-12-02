@@ -1,6 +1,7 @@
 import cron from 'node-cron'
 import { Payload } from 'payload'
 import { getSchedulerIntervalHours, hoursToCron } from '../utils/schedulerConfig'
+import * as Sentry from '@sentry/nextjs'
 
 let isRunning = false
 
@@ -144,6 +145,15 @@ export const syncListingTypeCounters = async (payload: Payload) => {
     )
   } catch (e) {
     console.error('[syncListingTypeCounters] failed:', e)
+    if (e instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('scheduler', 'syncListingTypeCounters')
+        scope.setContext('scheduler', {
+          duration: Math.round((Date.now() - started) / 1000),
+        })
+        Sentry.captureException(e)
+      })
+    }
   } finally {
     isRunning = false
   }

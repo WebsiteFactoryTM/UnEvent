@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/pixel-factory-srl/unevent-backend"
+    }
+  }
+}

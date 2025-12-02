@@ -1,6 +1,7 @@
 import { buildHubSnapshot } from '@/schedulers/buildHubSnapshot'
 import type { PayloadRequest } from 'payload'
 import type { PayloadHandler } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 
 export const regenerateHubHandler: PayloadHandler = async (req: PayloadRequest) => {
   if (req.method !== 'GET')
@@ -16,6 +17,24 @@ export const regenerateHubHandler: PayloadHandler = async (req: PayloadRequest) 
     return new Response(JSON.stringify({ message: 'Hub regenerated' }), { status: 200 })
   } catch (error) {
     console.error(error)
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'regenerate-hub')
+        scope.setContext('request', {
+          method: 'GET',
+        })
+        if (req.user) {
+          scope.setUser({
+            id: String(req.user.id),
+            email: req.user.email,
+          })
+        }
+        Sentry.captureException(error)
+      })
+    }
+
     return new Response(JSON.stringify({ error: 'Error regenerating hub' }), { status: 500 })
   }
 }

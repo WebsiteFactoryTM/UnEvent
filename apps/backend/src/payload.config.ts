@@ -48,6 +48,9 @@ import { migrations } from './migrations'
 import { logSchedulerConfig } from './utils/schedulerConfig'
 
 import { getTaxonomies } from './endpoints/taxonomies'
+import * as Sentry from '@sentry/nextjs'
+import { sentryPlugin } from '@payloadcms/plugin-sentry'
+import pg from 'pg'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -172,6 +175,8 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pg: pg as any,
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
@@ -235,6 +240,9 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
+    sentryPlugin({
+      Sentry,
+    }),
     payloadCloudPlugin(),
     // Cloud Storage Plugin (R2) - only enabled when R2 credentials are configured
     // Phase 1: Uses public bucket for all files. Private bucket routing will be added in Phase 2.

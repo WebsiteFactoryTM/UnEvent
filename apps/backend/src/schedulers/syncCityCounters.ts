@@ -2,6 +2,7 @@ import type { Payload } from 'payload'
 import cron from 'node-cron'
 import { queueHubSnapshotBuild } from '@/utils/hubSnapshotScheduler'
 import { getSchedulerIntervalHours, hoursToCron } from '../utils/schedulerConfig'
+import * as Sentry from '@sentry/nextjs'
 
 let isRunning = false
 
@@ -130,6 +131,15 @@ export const syncCityCounters = async (payload: Payload) => {
     queueHubSnapshotBuild(payload, 'events', 'cities-change')
   } catch (e) {
     console.error('[syncCityCounters] failed:', e)
+    if (e instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('scheduler', 'syncCityCounters')
+        scope.setContext('scheduler', {
+          duration: Math.round((Date.now() - started) / 1000),
+        })
+        Sentry.captureException(e)
+      })
+    }
   } finally {
     isRunning = false
   }

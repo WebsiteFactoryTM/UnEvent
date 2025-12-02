@@ -1,4 +1,5 @@
 import { PayloadHandler, PayloadRequest, Where } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 
 export const getUserFavorites: PayloadHandler = async (req: PayloadRequest) => {
   if (req.method !== 'GET') {
@@ -87,6 +88,24 @@ export const getUserFavorites: PayloadHandler = async (req: PayloadRequest) => {
     })
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : 'Unknown error'
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'get-user-favorites')
+        scope.setContext('request', {
+          method: 'GET',
+        })
+        if (req.user) {
+          scope.setUser({
+            id: String(req.user.id),
+            email: req.user.email,
+          })
+        }
+        Sentry.captureException(error)
+      })
+    }
+
     return new Response(JSON.stringify({ error: errMsg }), { status: 500 })
   }
 }

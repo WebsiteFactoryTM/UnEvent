@@ -6,6 +6,7 @@ import { revalidate } from '@/utils/revalidate'
 import { buildPopularSearchCombos } from '@/utils/popularSearchCombos'
 import { tag } from '@unevent/shared'
 import { getSchedulerIntervalHours, hoursToCron } from '../utils/schedulerConfig'
+import * as Sentry from '@sentry/nextjs'
 
 // Fallback cities if DB query returns nothing
 const TOP_CITIES_FALLBACK = [
@@ -150,6 +151,15 @@ export async function buildHubSnapshot(
     }
   } catch (error) {
     console.error(`[HubSnapshot] Error upserting snapshot for ${collection}:`, error)
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('scheduler', 'buildHubSnapshot')
+        scope.setContext('scheduler', {
+          collection,
+        })
+        Sentry.captureException(error)
+      })
+    }
     throw error
   }
   revalidate({ tags: [tag.hubSnapshot(collection)], payload })
