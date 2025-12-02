@@ -1,5 +1,6 @@
 import { isAdmin, isAdminOrSelf } from '@/collections/_access/roles'
 import { createProfileAfterUserCreate } from './hooks/createProfileAfterUserCreate'
+import { sendWelcomeEmail } from './hooks/sendWelcomeEmail'
 import type { CollectionConfig } from 'payload'
 import { ensureBaseClientRole } from './hooks/ensureBaseClientRole'
 import { deleteProfileUserDelete } from './hooks/deleteProfileAfterUserDelete'
@@ -18,7 +19,7 @@ export const Users: CollectionConfig = {
     create: () => true, // allow public registration
   },
   auth: {
-    // verify: true,
+    verify: true,
     maxLoginAttempts: 3,
     tokenExpiration: 24 * 60 * 60, // 1 day
     useAPIKey: true,
@@ -84,7 +85,7 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
-    afterChange: [createProfileAfterUserCreate],
+    afterChange: [createProfileAfterUserCreate, sendWelcomeEmail],
     beforeValidate: [ensureBaseClientRole],
     beforeDelete: [deleteProfileUserDelete],
   },
