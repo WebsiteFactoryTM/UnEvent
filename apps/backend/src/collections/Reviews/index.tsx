@@ -2,6 +2,9 @@ import { CollectionConfig } from 'payload'
 import { isOwnerOrAdmin, isLoggedIn } from '../_access/roles'
 import { attachOwner } from './hooks/beforeChange/attachOwner'
 import { recalcReviewAggregates } from './hooks/afterOperation/recalcReviewAggregates'
+import { notifyReviewModeration } from './hooks/afterChange/notifyReviewModeration'
+import { notifyListingOwnerNewReview } from './hooks/afterChange/notifyListingOwnerNewReview'
+import { notifyAdminNewReview } from './hooks/afterChange/notifyAdminNewReview'
 
 export const kindOptions = ['locations', 'events', 'services'] as const
 export type Kind = (typeof kindOptions)[number]
@@ -20,6 +23,7 @@ export const Reviews: CollectionConfig = {
   },
   hooks: {
     beforeChange: [attachOwner],
+    afterChange: [notifyReviewModeration, notifyListingOwnerNewReview, notifyAdminNewReview],
     afterOperation: [recalcReviewAggregates],
   },
   timestamps: true,
@@ -46,7 +50,7 @@ export const Reviews: CollectionConfig = {
       type: 'relationship',
       relationTo: 'profiles',
       required: true,
-      maxDepth: 2,
+      maxDepth: 1,
     },
     {
       name: 'status',
