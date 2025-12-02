@@ -10,12 +10,11 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/api/auth";
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Mail, CheckCircle2 } from "lucide-react";
 
 const signUpSchema = z.object({
   email: z
@@ -71,10 +70,10 @@ const roleOptions = [
 
 export function SignUpForm() {
   const { toast } = useToast();
-  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
 
   const {
     register,
@@ -118,37 +117,15 @@ export function SignUpForm() {
       // Create the user account
       await signUp(data);
 
+      // Store email for success message
+      setUserEmail(data.email);
+      setIsSuccess(true);
+
       toast({
-        title: "Succes",
-        description: "Cont creat cu succes.",
+        title: "Cont creat cu succes!",
+        description: "Te rugăm să verifici email-ul pentru a-ți activa contul.",
+        variant: "default",
       });
-
-      // Automatically log in the user after successful signup using NextAuth
-      const loginResult = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-        callbackUrl: "/cont",
-      });
-
-      if (loginResult?.ok) {
-        // Both signup and login successful - show success component
-        setIsSuccess(true);
-        toast({
-          title: "Bine ai venit!",
-          description: "Cont creat și autentificare reușită.",
-          variant: "success",
-        });
-      } else {
-        // Account created but login failed - redirect to login page
-        toast({
-          title: "Cont creat",
-          description:
-            "Contul a fost creat cu succes. Te rugăm să te autentifici.",
-          variant: "default",
-        });
-        router.push("/auth/autentificare");
-      }
     } catch (err) {
       const error =
         err instanceof Error ? err : new Error("Eroare la crearea contului");
@@ -163,20 +140,57 @@ export function SignUpForm() {
     }
   };
 
-  // Show success component if both signup and login succeeded
+  // Show success component after account creation
   if (isSuccess) {
     return (
-      <div className="space-y-4">
-        <p className="text-center text-lg font-medium">
-          Cont creat cu succes! Ești autentificat.
-        </p>
-        <p className="text-center text-sm text-muted-foreground">
-          Ce vrei să faci mai departe?
-        </p>
-        <div className="flex gap-2">
-          <Link href="/cont" className="flex-1">
+      <div className="space-y-6">
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="rounded-full bg-primary/10 p-4">
+            <Mail className="h-8 w-8 text-primary" />
+          </div>
+          <div className="space-y-2 text-center">
+            <h3 className="text-xl font-semibold">Cont creat cu succes!</h3>
+            <p className="text-sm text-muted-foreground">
+              Am trimis un email de confirmare la
+            </p>
+            <p className="text-sm font-medium text-foreground break-all">
+              {userEmail}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+          <div className="flex items-start space-x-2">
+            <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+            <div className="space-y-1 text-sm">
+              <p className="font-medium">Ce urmează?</p>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground ml-2">
+                <li>Verifică-ți inbox-ul pentru email-ul de confirmare</li>
+                <li>Click pe link-ul din email pentru a-ți activa contul</li>
+                <li>După activare, poți să te autentifici</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2 text-center">
+          <p className="text-xs text-muted-foreground">
+            Nu ai primit email-ul? Verifică și folderul de spam sau{" "}
+            <Link
+              href="/auth/inregistrare"
+              className="underline hover:text-foreground"
+              onClick={() => setIsSuccess(false)}
+            >
+              încearcă din nou
+            </Link>
+            .
+          </p>
+        </div>
+
+        <div className="flex gap-2 pt-2">
+          <Link href="/auth/autentificare" className="flex-1">
             <Button variant="default" className="w-full">
-              Accesează contul meu
+              Mergi la autentificare
             </Button>
           </Link>
           <Link href="/" className="flex-1">
