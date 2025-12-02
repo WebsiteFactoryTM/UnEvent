@@ -1,0 +1,40 @@
+{
+  "name": "@unevent/worker",
+  "version": "1.0.0",
+  "description": "Worker service for processing email notifications and running scheduled cronjobs",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "seed": "tsx scripts/seed.ts",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.20",
+    "@react-email/render": "^1.1.2",
+    "@sentry/node": "^10",
+    "@sentry/profiling-node": "^10",
+    "bullmq": "^5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ioredis": "^5.8.2",
+    "react": "^19.1.0",
+    "react-email": "^3.0.1",
+    "resend": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.5.4",
+    "@types/react": "^19.1.8",
+    "eslint": "^9.16.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0",
+    "pnpm": "^9 || ^10"
+  }
+}
