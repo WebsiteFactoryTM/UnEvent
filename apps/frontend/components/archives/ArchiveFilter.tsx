@@ -57,6 +57,8 @@ export function ArchiveFilter({
     // popularFallback: true,
   });
 
+  console.log(eventTypes);
+
   // Helper function to handle city changes with geo filter updates
   const handleCityChange = useCallback(
     (citySlug: string) => {
@@ -144,18 +146,15 @@ export function ArchiveFilter({
                   <Label htmlFor="event-type">Ce eveniment organizezi?</Label>
                   <SearchableSelect
                     id="event-type"
+                    groupEnabled
                     options={
                       eventTypes
                         ?.map((type: ListingTypePayload) => ({
                           value: type.slug || "",
                           label: type.title || "",
+                          group: type.category || "",
                         }))
-                        .sort(
-                          (
-                            a: { label: string; value: string },
-                            b: { label: string; value: string },
-                          ) => a.label.localeCompare(b.label),
-                        ) || []
+                        .sort((a, b) => a.label.localeCompare(b.label)) || []
                     }
                     value={(filters.suitableFor as string) || ""}
                     onValueChange={(v) => {
@@ -207,6 +206,7 @@ export function ArchiveFilter({
                         ?.map((type: ListingTypePayload) => ({
                           value: type.slug || "",
                           label: type.title || "",
+                          group: type.category || "",
                         }))
                         .sort(
                           (
@@ -220,6 +220,7 @@ export function ArchiveFilter({
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip locație..."
                     className="w-full"
+                    groupEnabled
                   />
                 </div>
               </div>
@@ -333,6 +334,7 @@ export function ArchiveFilter({
                         ?.map((type: ListingTypePayload) => ({
                           value: type.slug || "",
                           label: type.title || "",
+                          group: type.category || "",
                         }))
                         .sort(
                           (
@@ -346,6 +348,7 @@ export function ArchiveFilter({
                     placeholder="Selectează serviciul"
                     searchPlaceholder="Caută serviciu..."
                     className="w-full"
+                    groupEnabled
                   />
                 </div>
 
@@ -394,6 +397,7 @@ export function ArchiveFilter({
                         ?.map((type: ListingTypePayload) => ({
                           value: type.slug || "",
                           label: type.title || "",
+                          group: type.category || "",
                         }))
                         .sort(
                           (
@@ -407,6 +411,7 @@ export function ArchiveFilter({
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     className="w-full"
+                    groupEnabled
                   />
                 </div>
               </div>
@@ -435,6 +440,7 @@ export function ArchiveFilter({
                         ?.map((type: ListingTypePayload) => ({
                           value: type.slug || "",
                           label: type.title || "",
+                          group: type.category || "",
                         }))
                         .sort(
                           (
@@ -448,6 +454,7 @@ export function ArchiveFilter({
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     className="w-full"
+                    groupEnabled
                   />
                 </div>
 

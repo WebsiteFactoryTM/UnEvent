@@ -72,13 +72,36 @@ export function SearchableSelect({
   error,
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false);
+  const [inputFocused, setInputFocused] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Detect if we're on a mobile device
+  const isMobile = React.useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return (
+      /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+      (window.matchMedia && window.matchMedia("(max-width: 768px)").matches)
+    );
+  }, []);
 
   const handleSearchChange = (value: string) => {
     onSearchChange?.(normalizeText(value)); // Normalize before storing
   };
+  const handleInputFocus = () => {
+    setInputFocused(true);
+  };
+  const handleInputBlur = () => {
+    // Don't reset on blur if popover is still open - user might be selecting
+    // This allows keyboard to stay open while navigating
+  };
+  // Reset input focus state when popover closes
+  React.useEffect(() => {
+    if (!open) {
+      setInputFocused(false);
+    }
+  }, [open]);
 
   const selectedOption = options.find((option) => option.value === value);
-
   return (
     <div className="w-full">
       <Popover open={open} onOpenChange={setOpen}>
@@ -100,7 +123,16 @@ export function SearchableSelect({
             <FaChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
+        <PopoverContent
+          className="w-full p-0"
+          align="start"
+          onOpenAutoFocus={(e) => {
+            // Prevent auto-focus on mobile to avoid keyboard popup
+            if (isMobile) {
+              e.preventDefault();
+            }
+          }}
+        >
           <Command
             filter={(value, search) => {
               const normalizedValue = normalizeText(value);
@@ -113,9 +145,14 @@ export function SearchableSelect({
             }}
           >
             <CommandInput
+              ref={inputRef}
               placeholder={searchPlaceholder}
               value={searchValue}
               onValueChange={handleSearchChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              inputMode={isMobile && !inputFocused ? "none" : "text"}
+              autoFocus={!isMobile}
             />
             <CommandList>
               <CommandEmpty>{emptyText}</CommandEmpty>
