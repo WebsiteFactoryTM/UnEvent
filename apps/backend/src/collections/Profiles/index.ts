@@ -4,11 +4,9 @@ import { updateUserRoles } from './hooks/afterChange/updateUserRoles'
 import { updateMemberSince } from './hooks/beforeChange/updateMemberSince'
 import { linkProfileToUserAfterChange } from './hooks/afterOperation/linkProfileToUser'
 import { updateUserAvatar } from './hooks/afterChange/updateUserAvatar'
-
-import { createSlugField } from '../../utils/slugifySlug'
-import type { Profile } from '@/payload-types'
 import { updateUserDisplayName } from './hooks/afterChange/updateUserDisplayName'
 import { markAvatarPermanent } from './hooks/afterChange/markAvatarPermanent'
+import { ensureUniqueSlug } from './hooks/ensureUniqueSlug'
 
 export const Profiles: CollectionConfig = {
   slug: 'profiles',
@@ -52,7 +50,7 @@ export const Profiles: CollectionConfig = {
       admin: {
         description: 'URL-friendly identifier',
       },
-      hooks: { beforeValidate: [createSlugField<Profile>('name')] },
+      hooks: { beforeValidate: [ensureUniqueSlug] },
     },
     {
       name: 'userType',
