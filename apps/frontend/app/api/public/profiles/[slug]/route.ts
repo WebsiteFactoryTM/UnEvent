@@ -2,6 +2,7 @@ import { tag } from "@unevent/shared";
 import { fetchWithRetry } from "@/lib/server/fetcher";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
@@ -84,6 +85,20 @@ export async function GET(req: NextRequest, { params }: Params) {
     });
   } catch (error) {
     console.error(`Error fetching profile ${slug}:`, error);
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag("endpoint", "profile");
+        scope.setContext("request", {
+          slug,
+          isDraft,
+          url: req.url,
+        });
+        Sentry.captureException(error);
+      });
+    }
+
     return new Response("Internal Server Error", { status: 500 });
   }
 }

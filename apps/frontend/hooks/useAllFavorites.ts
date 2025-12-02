@@ -55,7 +55,7 @@ export function useAllFavorites(kind?: "locations" | "events" | "services") {
   const queryClient = useQueryClient();
   const accessToken = (session as any)?.accessToken;
 
-  const userId = session?.user?.profile || "";
+  const userId = (session as any)?.user?.profile || "";
 
   const query = useInfiniteQuery<PaginatedFavoritesResponse, Error>({
     queryKey: favoritesKeys.userFavorites(String(userId || ""), kind),

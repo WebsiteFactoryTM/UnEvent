@@ -1,6 +1,7 @@
 import { tag } from "@unevent/shared";
 import { fetchWithRetry } from "@/lib/server/fetcher";
 import { NextRequest } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
@@ -115,6 +116,20 @@ export async function GET(req: NextRequest, { params }: Params) {
     });
   } catch (error) {
     console.error(`Error fetching listings for profile ${slug}:`, error);
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag("endpoint", "profile-listings");
+        scope.setContext("request", {
+          slug,
+          profileId: profileIdParam,
+          url: req.url,
+        });
+        Sentry.captureException(error);
+      });
+    }
+
     return new Response("Internal Server Error", { status: 500 });
   }
 }

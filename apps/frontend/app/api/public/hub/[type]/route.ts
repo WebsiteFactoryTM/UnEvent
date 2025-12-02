@@ -1,6 +1,7 @@
 import { tag } from "@unevent/shared";
 import { generateETag } from "@/lib/server/etag";
 import { fetchWithRetry } from "@/lib/server/fetcher";
+import * as Sentry from "@sentry/nextjs";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -73,6 +74,19 @@ export async function GET(req: Request, { params }: RouteParams) {
     return new Response(body, { status: 200, headers });
   } catch (error) {
     console.error("Error fetching hub snapshot:", error);
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag("endpoint", "hub");
+        scope.setContext("request", {
+          type,
+          url: req.url,
+        });
+        Sentry.captureException(error);
+      });
+    }
+
     return new Response("Internal Server Error", { status: 500 });
   }
 }

@@ -15,6 +15,7 @@ import { FaCircleExclamation } from "react-icons/fa6";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { signIn } from "next-auth/react";
+import * as Sentry from "@sentry/nextjs";
 
 const loginSchema = z.object({
   email: z
@@ -94,6 +95,18 @@ export function LoginForm() {
     } catch (error) {
       if (error instanceof Error) {
         console.log("error", error);
+
+        // Report to Sentry with context
+        Sentry.withScope((scope) => {
+          scope.setTag("error_type", "login");
+          scope.setContext("login", {
+            email: data.email,
+            hasRememberMe: data.rememberMe,
+          });
+          // Don't capture password in context
+          Sentry.captureException(error);
+        });
+
         toast({
           title: "Eroare",
           description: "Errore la autentificare.",

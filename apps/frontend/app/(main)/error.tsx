@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect } from "react";
 import { FaHouse } from "react-icons/fa6";
+import * as Sentry from "@sentry/nextjs";
 
 export default function Error({
   error,
@@ -13,8 +14,8 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error(error);
+    // Log the error to Sentry
+    Sentry.captureException(error);
   }, [error]);
 
   return (

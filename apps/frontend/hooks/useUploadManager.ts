@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { uploadFile } from "@/lib/api/upload";
 import type { Media } from "@/types/payload-types";
+import * as Sentry from "@sentry/nextjs";
 
 type UseUploadManagerOptions = {
   token?: string;
@@ -246,6 +247,26 @@ export function useUploadManager(options: UseUploadManagerOptions = {}) {
       } catch (error) {
         console.error("Error uploading file:", error);
         const uploadError = formatUploadError(error, file);
+
+        // Report to Sentry for server errors (not user errors like file size)
+        if (
+          error instanceof Error &&
+          uploadError.type !== "file_size" &&
+          uploadError.type !== "file_type"
+        ) {
+          Sentry.withScope((scope) => {
+            scope.setTag("error_type", "upload");
+            scope.setTag("upload_error_type", uploadError.type);
+            scope.setContext("upload", {
+              fileName: file.name,
+              fileSize: file.size,
+              fileType: file.type,
+              errorType: uploadError.type,
+            });
+            Sentry.captureException(error);
+          });
+        }
+
         setError(uploadError);
         setErrors((prev) => {
           const next = new Map(prev);

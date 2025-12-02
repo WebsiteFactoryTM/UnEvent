@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { tag } from "@unevent/shared";
 import { fetchWithRetry } from "@/lib/server/fetcher";
+import * as Sentry from "@sentry/nextjs";
 
 const VALID_ENTITIES = ["locations", "events", "services"] as const;
 type Entity = (typeof VALID_ENTITIES)[number];
@@ -90,6 +91,20 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching feed:", error);
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag("endpoint", "feed");
+        scope.setContext("request", {
+          entity: entityParam,
+          city: city,
+          url: url.toString(),
+        });
+        Sentry.captureException(error);
+      });
+    }
+
     return new Response("Internal Server Error", { status: 500 });
   }
 }

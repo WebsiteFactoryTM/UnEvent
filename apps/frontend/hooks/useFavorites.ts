@@ -99,7 +99,7 @@ export function useFavorites({
       queryClient.setQueryData<boolean>(favoriteKey, data.isFavorite);
 
       // Invalidate user favorites cache if it exists (for useAllFavorites)
-      const userId = session?.user?.profile || "";
+      const userId = (session as any)?.user?.profile || "";
       if (userId) {
         queryClient.invalidateQueries({
           queryKey: favoritesKeys.userFavorites(String(userId)),
