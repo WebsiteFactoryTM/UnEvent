@@ -11,10 +11,10 @@ export interface UserWelcomeClientEmailProps {
 export function UserWelcomeClientEmail({
   firstName,
   dashboardUrl,
-  supportEmail = "contact@unevent.com",
+  supportEmail = "contact@unevent.ro",
 }: UserWelcomeClientEmailProps) {
-  const defaultDashboardUrl = process.env.FRONTEND_URL || "https://unevent.com";
-  
+  const defaultDashboardUrl = process.env.FRONTEND_URL || "https://unevent.ro";
+
   return (
     <EmailLayout preview="Bine ai venit pe Unevent — descoperă evenimente și locații">
       <Heading style={heading}>
@@ -24,7 +24,8 @@ export function UserWelcomeClientEmail({
       <Text style={paragraph}>Salut{firstName ? `, ${firstName}` : ""}!</Text>
 
       <Text style={paragraph}>
-        Contul tău a fost verificat cu succes. Acum poți explora tot ce are Unevent de oferit!
+        Contul tău a fost verificat cu succes. Acum poți explora tot ce are
+        Unevent de oferit!
       </Text>
 
       <Text style={paragraph}>
@@ -32,8 +33,12 @@ export function UserWelcomeClientEmail({
       </Text>
 
       <Text style={bulletPoint}>🎪 Descoperă evenimente din orașul tău</Text>
-      <Text style={bulletPoint}>📍 Găsește locații pentru petreceri și evenimente</Text>
-      <Text style={bulletPoint}>🛠️ Explorează servicii pentru organizarea evenimentelor</Text>
+      <Text style={bulletPoint}>
+        📍 Găsește locații pentru petreceri și evenimente
+      </Text>
+      <Text style={bulletPoint}>
+        🛠️ Explorează servicii pentru organizarea evenimentelor
+      </Text>
       <Text style={bulletPoint}>⭐ Salvează favoritele și lasă recenzii</Text>
 
       <Section style={buttonContainer}>
@@ -104,4 +109,3 @@ const signature = {
   lineHeight: "20px",
   margin: "24px 0 0",
 };
-

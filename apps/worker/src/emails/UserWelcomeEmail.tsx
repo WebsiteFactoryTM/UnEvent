@@ -11,7 +11,7 @@ export interface UserWelcomeEmailProps {
 export function UserWelcomeEmail({
   firstName,
   confirmUrl,
-  supportEmail = "support@unevent.com",
+  supportEmail = "contact@unevent.ro",
 }: UserWelcomeEmailProps) {
   return (
     <EmailLayout preview="Bine ai venit la UN:EVENT — confirmă-ți emailul">

@@ -333,7 +333,7 @@ export const EMAIL_TEMPLATES: Partial<
   "admin.listing.pending": {
     type: "admin.listing.pending",
     getRecipients: (p: AdminListingPendingPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.com"],
+      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.ro"],
     getSubject: (p) =>
       `📋 Listare nouă așteaptă aprobare: „${p.listing_title}”`,
     getPreheader: () =>
@@ -354,7 +354,7 @@ export const EMAIL_TEMPLATES: Partial<
   "admin.review.pending": {
     type: "admin.review.pending",
     getRecipients: (p: AdminReviewPendingPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.com"],
+      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.ro"],
     getSubject: (p) =>
       `⭐ Recenzie nouă așteaptă aprobare pentru „${p.listing_title}"`,
     getPreheader: () =>
@@ -442,7 +442,7 @@ export const EMAIL_TEMPLATES: Partial<
   "admin.user.new": {
     type: "admin.user.new",
     getRecipients: (p: AdminUserNewPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.com"],
+      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.ro"],
     getSubject: (p) => `👤 Utilizator nou înregistrat: ${p.user_email}`,
     getPreheader: () => "Un nou utilizator s-a înregistrat pe platformă.",
     getTextFallback: (p) =>

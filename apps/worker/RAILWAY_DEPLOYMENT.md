@@ -67,8 +67,8 @@ SENTRY_ENVIRONMENT=production
 
 # Email (Resend)
 RESEND_API_KEY=re_xxxxxxxxxxxxx
-RESEND_FROM_EMAIL=noreply@unevent.com
-ADMIN_EMAILS=admin@unevent.com,admin2@unevent.com
+RESEND_FROM_EMAIL=noreply@unevent.ro
+ADMIN_EMAILS=contact@unevent.ro,admin2@unevent.ro
 
 # Scheduler
 ADMIN_DIGEST_TIME=07:00

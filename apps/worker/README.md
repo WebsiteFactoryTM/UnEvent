@@ -64,10 +64,10 @@ Create a `.env` file in `apps/worker/` or set these in your environment:
 #### Email Configuration (Resend)
 
 - `RESEND_API_KEY` - Resend API key for sending emails (required for email sending)
-- `RESEND_FROM_EMAIL` - From email address (default: `noreply@unevent.com`)
+- `RESEND_FROM_EMAIL` - From email address (default: `noreply@unevent.ro`)
 - `TEST_EMAIL` - **Development only**: Override all email recipients to this address (required for Resend testing without domain verification)
 - `RESEND_OVERRIDE_TO` - Alternative override for all email recipients in non-production (fallback if `TEST_EMAIL` not set)
-- `ADMIN_EMAILS` - Comma-separated list of admin emails for daily digest (default: `admin@unevent.com`)
+- `ADMIN_EMAILS` - Comma-separated list of admin emails for daily digest (default: `admin@unevent.ro`)
 
 **Email Behavior:**
 - If `RESEND_API_KEY` is not set, emails are logged but not sent
@@ -104,12 +104,12 @@ ADMIN_DIGEST_TIME=07:00
 
 # Email (Resend)
 RESEND_API_KEY=re_xxxxxxxxxxxxx
-RESEND_FROM_EMAIL=noreply@unevent.com
+RESEND_FROM_EMAIL=noreply@unevent.ro
 # In development, use TEST_EMAIL to avoid Resend domain verification requirements:
 TEST_EMAIL=office.pixelfactory@gmail.com
 # Alternative override (fallback if TEST_EMAIL not set):
 # RESEND_OVERRIDE_TO=test@example.com
-ADMIN_EMAILS=admin@unevent.com,admin2@unevent.com
+ADMIN_EMAILS=contact@unevent.ro,admin2@unevent.ro
 ```
 
 ## Development

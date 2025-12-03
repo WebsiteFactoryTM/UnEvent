@@ -11,11 +11,11 @@ export interface UserWelcomeProviderEmailProps {
 export function UserWelcomeProviderEmail({
   firstName,
   dashboardUrl,
-  supportEmail = "contact@unevent.com",
+  supportEmail = "contact@unevent.ro",
 }: UserWelcomeProviderEmailProps) {
   const defaultDashboardUrl = process.env.FRONTEND_URL
     ? `${process.env.FRONTEND_URL}/cont/servicii-mele`
-    : "https://unevent.com/cont/servicii-mele";
+    : "https://unevent.ro/cont/servicii-mele";
 
   return (
     <EmailLayout preview="Creează primul pachet și apari în căutări">
