@@ -10,6 +10,7 @@ import {
 } from "./healthcheck.js";
 import { closeQueues } from "./queues/index.js";
 import { closeRedisConnection } from "./redis.js";
+import { getEnvironmentDescription } from "./config/workerSettings.js";
 
 // Initialize Sentry before anything else
 if (process.env.SENTRY_DSN) {
@@ -106,6 +107,7 @@ process.on("uncaughtException", (error: Error) => {
 async function main() {
   console.log("[Worker] Starting worker service...");
   console.log(`[Worker] NODE_ENV: ${process.env.NODE_ENV || "development"}`);
+  console.log(`[Worker] Environment: ${getEnvironmentDescription()}`);
 
   try {
     // Start healthcheck server

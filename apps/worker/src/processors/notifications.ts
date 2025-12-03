@@ -2,6 +2,7 @@ import { Worker, Job } from "bullmq";
 import { getRedisConnection } from "../redis.js";
 import { sendEmailFromRegistry } from "../email.js";
 import { EMAIL_TEMPLATES, type EmailEventType } from "../emails/registry.js";
+import { getWorkerSettings } from "../config/workerSettings.js";
 import * as Sentry from "@sentry/node";
 
 export interface NotificationJobData {
@@ -14,6 +15,9 @@ export interface NotificationJobData {
  * Handles event-driven email notifications from Payload hooks
  */
 export function createNotificationsProcessor(): Worker {
+  // Get environment-aware settings
+  const settings = getWorkerSettings("notifications");
+
   const worker = new Worker<NotificationJobData>(
     "notifications",
     async (job: Job<NotificationJobData>) => {
@@ -39,9 +43,7 @@ export function createNotificationsProcessor(): Worker {
           const result = await sendEmailFromRegistry(type, payload);
 
           if (!result.success) {
-            throw new Error(
-              `Failed to send email (${type}): ${result.error}`,
-            );
+            throw new Error(`Failed to send email (${type}): ${result.error}`);
           }
 
           console.log(
@@ -77,7 +79,11 @@ export function createNotificationsProcessor(): Worker {
     },
     {
       connection: getRedisConnection(),
-      concurrency: 10, // Process up to 10 notification jobs concurrently
+      // Environment-aware settings (adjusted for dev/staging/production)
+      concurrency: settings.concurrency,
+      lockDuration: settings.lockDuration,
+      stalledInterval: settings.stalledInterval,
+      maxStalledCount: settings.maxStalledCount,
     },
   );
 

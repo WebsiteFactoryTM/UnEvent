@@ -2,6 +2,7 @@ import { Worker, Job } from "bullmq";
 import { getRedisConnection } from "../redis.js";
 import { sendEmailFromRegistry } from "../email.js";
 import { EMAIL_TEMPLATES, type EmailEventType } from "../emails/registry.js";
+import { getWorkerSettings } from "../config/workerSettings.js";
 import * as Sentry from "@sentry/node";
 
 export interface MaintenanceJobData {
@@ -14,6 +15,9 @@ export interface MaintenanceJobData {
  * Handles scheduled maintenance tasks and cronjobs
  */
 export function createMaintenanceProcessor(): Worker {
+  // Get environment-aware settings
+  const settings = getWorkerSettings("maintenance");
+
   const worker = new Worker<MaintenanceJobData>(
     "maintenance",
     async (job: Job<MaintenanceJobData>) => {
@@ -42,9 +46,7 @@ export function createMaintenanceProcessor(): Worker {
           const result = await sendEmailFromRegistry(type, payload || {});
 
           if (!result.success) {
-            throw new Error(
-              `Failed to send email (${type}): ${result.error}`,
-            );
+            throw new Error(`Failed to send email (${type}): ${result.error}`);
           }
 
           console.log(
@@ -80,7 +82,11 @@ export function createMaintenanceProcessor(): Worker {
     },
     {
       connection: getRedisConnection(),
-      concurrency: 5, // Process up to 5 maintenance jobs concurrently
+      // Environment-aware settings (adjusted for dev/staging/production)
+      concurrency: settings.concurrency,
+      lockDuration: settings.lockDuration,
+      stalledInterval: settings.stalledInterval,
+      maxStalledCount: settings.maxStalledCount,
     },
   );
 
