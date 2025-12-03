@@ -44,8 +44,9 @@ export const fetchListing = async (
           headers: Object.keys(headers).length > 0 ? headers : undefined,
           next: {
             tags: [`${listingType}_${slug}`],
+            revalidate: isDraftMode ? 0 : undefined, // Let page/route control revalidation
           },
-          cache: isDraftMode ? "no-store" : "force-cache",
+          cache: isDraftMode ? "no-store" : "default",
         },
       );
 
@@ -85,8 +86,10 @@ export const fetchListing = async (
 
     try {
       const response = await fetch(bffUrl, {
-        // Server-side fetch should use cache (unless draft mode)
-        next: isDraftMode ? { revalidate: 0 } : { revalidate: 300 },
+        // Server-side fetch: let the BFF route handle caching/revalidation
+        // Don't override with revalidate here - it prevents tag-based invalidation
+        next: isDraftMode ? { revalidate: 0 } : undefined,
+        cache: isDraftMode ? "no-store" : "default",
       });
 
       if (!response.ok) {
@@ -108,7 +111,8 @@ export const fetchListing = async (
               Object.keys(fallbackHeaders).length > 0
                 ? fallbackHeaders
                 : undefined,
-            cache: isDraftMode ? "no-store" : "force-cache",
+            cache: isDraftMode ? "no-store" : "default",
+            next: isDraftMode ? { revalidate: 0 } : undefined,
           });
 
           if (fallbackResponse.ok) {

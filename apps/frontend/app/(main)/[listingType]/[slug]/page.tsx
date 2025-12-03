@@ -39,7 +39,9 @@ import { ListingType as SuitableForType } from "@/types/payload-types";
 import { fetchHubSnapshot } from "@/lib/api/hub";
 import { draftMode } from "next/headers";
 
-export const revalidate = 1800; // ISR: revalidate every hour
+// Use auto to support both ISR and tag-based revalidation
+export const dynamic = "auto";
+export const revalidate = 1800; // 30 minutes
 
 export async function generateStaticParams() {
   const types: ListingType[] = ["locatii", "servicii", "evenimente"];

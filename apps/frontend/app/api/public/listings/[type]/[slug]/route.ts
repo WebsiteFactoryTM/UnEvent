@@ -61,10 +61,14 @@ export async function GET(req: NextRequest, { params }: Params) {
           "x-tenant": "unevent",
           Authorization: authHeader,
         },
-        cache: isDraft ? "no-store" : "force-cache",
+        // Use default cache + tags to enable tag-based revalidation
+        cache: isDraft ? "no-store" : "default",
         next: isDraft
-          ? undefined
-          : { tags: [tag.listingSlug(slug), tag.collection(type)] },
+          ? { revalidate: 0 }
+          : {
+              tags: [tag.listingSlug(slug), tag.collection(type)],
+              revalidate: 300, // Fallback: revalidate every 5 min if tags don't trigger
+            },
       },
       { timeoutMs: 2000, retries: isDraft ? 0 : 1 },
     );
