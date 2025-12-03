@@ -12,8 +12,6 @@ interface ProfileHeroProps {
 }
 
 export function ProfileHero({ profile }: ProfileHeroProps) {
-  const user =
-    profile.user && typeof profile.user === "object" ? profile.user : undefined;
   const isVerified = profile.verifiedStatus === "approved";
   const memberSince = profile.memberSince
     ? new Date(profile.memberSince).toLocaleDateString("ro-RO", {
@@ -23,13 +21,20 @@ export function ProfileHero({ profile }: ProfileHeroProps) {
       })
     : null;
 
+  const avatarUrl =
+    profile.avatar &&
+    typeof profile.avatar === "object" &&
+    "url" in profile.avatar
+      ? profile.avatar.url || undefined
+      : undefined;
+
   return (
     <div className="glass-card p-6 md:p-8 space-y-6 animate-fade-in-up">
       <div className="flex flex-col md:flex-row gap-6">
         {/* Avatar */}
         <Avatar className="h-24 w-24 md:h-32 md:w-32 ring-4 ring-primary/20">
           <AvatarImage
-            src={user?.avatarURL || undefined}
+            src={avatarUrl}
             alt={profile.displayName || profile.name}
           />
           <AvatarFallback className="text-2xl md:text-3xl">

@@ -19,10 +19,10 @@ export function ListingApprovedEmail({
 }: ListingApprovedEmailProps) {
   const listingTypeLabel =
     listingType === "events"
-      ? "eveniment"
+      ? "evenimentul"
       : listingType === "locations"
-        ? "locație"
-        : "serviciu";
+        ? "locația"
+        : "serviciul";
 
   return (
     <EmailLayout preview={`Listarea ta „${listingTitle}” a fost acceptată`}>

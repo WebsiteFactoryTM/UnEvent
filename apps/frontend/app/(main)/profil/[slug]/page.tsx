@@ -86,9 +86,7 @@ export async function generateMetadata({
     typeof profile.avatar === "object" &&
     "url" in profile.avatar
       ? profile.avatar.url
-      : typeof profile.user === "object" && profile.user?.avatarURL
-        ? profile.user.avatarURL
-        : null;
+      : null;
 
   return {
     title: `${displayName} | UN:EVENT`,
@@ -183,12 +181,11 @@ export default async function ProfilePage({
   const user =
     typeof profile.user === "object" && profile.user ? profile.user : null;
   const avatarURL =
-    (profile.avatar &&
-      typeof profile.avatar === "object" &&
-      "url" in profile.avatar &&
-      profile.avatar.url) ||
-    user?.avatarURL ||
-    null;
+    profile.avatar &&
+    typeof profile.avatar === "object" &&
+    "url" in profile.avatar
+      ? profile.avatar.url
+      : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
