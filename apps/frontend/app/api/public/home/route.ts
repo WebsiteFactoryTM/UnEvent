@@ -27,8 +27,11 @@ export async function GET(req: NextRequest) {
           "x-tenant": "unevent",
           Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
         },
-        cache: "force-cache",
-        next: { tags: [tag.homeSnapshot(), tag.home()] },
+        cache: "default",
+        next: {
+          tags: [tag.homeSnapshot(), tag.home()],
+          revalidate: 300, // Fallback: 5 min
+        },
       },
       { timeoutMs: 2000, retries: 1 },
     );

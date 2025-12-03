@@ -47,8 +47,11 @@ export async function GET(req: Request, { params }: RouteParams) {
           "x-tenant": "unevent",
           Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
         },
-        cache: "force-cache",
-        next: { tags: [tag.hubSnapshot(type), tag.hubAny()] },
+        cache: "default",
+        next: {
+          tags: [tag.hubSnapshot(type), tag.hubAny()],
+          revalidate: 900, // Fallback: 15 min
+        },
       },
       { timeoutMs: 2000, retries: 1 },
     );

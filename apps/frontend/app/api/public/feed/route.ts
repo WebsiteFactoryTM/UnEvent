@@ -56,13 +56,14 @@ export async function GET(req: NextRequest) {
           "x-tenant": "unevent",
           Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
         },
-        cache: "force-cache",
+        cache: "default",
         next: {
           tags: [
             tag.tenant("unevent"),
             tag.collection(entityParam),
             ...(city ? [tag.city(city)] : []),
           ],
+          revalidate: 60, // Fallback: 1 min (feed is dynamic)
         },
       },
       { timeoutMs: 2000, retries: 1 },

@@ -50,8 +50,11 @@ export async function GET(req: NextRequest, { params }: Params) {
             "x-tenant": "unevent",
             Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
           },
-          cache: "force-cache",
-          next: { tags: [tag.profileSlug(slug)] },
+          cache: "default",
+          next: {
+            tags: [tag.profileSlug(slug)],
+            revalidate: 300, // Fallback: 5 min
+          },
         },
         { timeoutMs: 2000, retries: 1 },
       );
@@ -85,8 +88,11 @@ export async function GET(req: NextRequest, { params }: Params) {
               "x-tenant": "unevent",
               Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
             },
-            cache: "force-cache",
-            next: { tags: [tag.collection(collection)] },
+            cache: "default",
+            next: {
+              tags: [tag.collection(collection)],
+              revalidate: 300, // Fallback: 5 min
+            },
           },
           { timeoutMs: 2000, retries: 1 },
         );

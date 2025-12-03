@@ -53,8 +53,13 @@ export async function GET(req: NextRequest, { params }: Params) {
           "x-tenant": "unevent",
           Authorization: authHeader,
         },
-        cache: isDraft ? "no-store" : "force-cache",
-        next: isDraft ? undefined : { tags: [tag.profileSlug(slug)] },
+        cache: isDraft ? "no-store" : "default",
+        next: isDraft
+          ? { revalidate: 0 }
+          : {
+              tags: [tag.profileSlug(slug)],
+              revalidate: 300, // Fallback: 5 min
+            },
       },
       { timeoutMs: 2000, retries: isDraft ? 0 : 1 },
     );

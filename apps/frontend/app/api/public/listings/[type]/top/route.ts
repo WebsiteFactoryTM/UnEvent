@@ -49,9 +49,10 @@ export async function GET(
           "x-tenant": "unevent",
           Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
         },
-        cache: "force-cache",
+        cache: "default",
         next: {
           tags: [tag.top(type), tag.collection(type)],
+          revalidate: 600, // Fallback: 10 min
         },
       },
       { timeoutMs: 2000, retries: 1 },
