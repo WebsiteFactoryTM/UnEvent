@@ -162,7 +162,11 @@ export async function buildHubSnapshot(
     }
     throw error
   }
-  revalidate({ tags: [tag.hubSnapshot(collection)], payload })
+  // Revalidate both specific hub snapshot and the general hub:any tag
+  revalidate({
+    tags: [tag.hubSnapshot(collection), tag.hubAny()],
+    payload,
+  })
 }
 
 /** Helpers — adapt to your real field names / media */
