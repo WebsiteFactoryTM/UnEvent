@@ -90,12 +90,12 @@ export const notifyListingOwnerNewReview: CollectionAfterChangeHook<Review> = as
           user = userRef
         }
 
-        if (!user?.email) {
+    if (!user?.email) {
           req.payload.logger.warn(
             `[notifyListingOwnerNewReview] No email found for owner ${ownerId} (review ${doc.id})`,
           )
-          return
-        }
+      return
+    }
 
         email = user.email
         firstName = profile.displayName || profile.name || user.displayName || email.split('@')[0]
@@ -170,17 +170,17 @@ export const notifyListingOwnerNewReview: CollectionAfterChangeHook<Review> = as
     if (reviewerProfile) {
       if (typeof reviewerProfile === 'number') {
         // Need to fetch reviewer profile
-        try {
+      try {
           const reviewer = await req.payload.findByID({
-            collection: 'profiles',
+          collection: 'profiles',
             id: reviewerProfile,
-          })
+        })
           reviewerName = reviewer?.displayName || reviewer?.name || 'Un utilizator'
-        } catch (err) {
+      } catch (err) {
           const errorMessage = err instanceof Error ? err.message : String(err)
           req.payload.logger.debug(
             `[notifyListingOwnerNewReview] Could not fetch reviewer profile ${reviewerProfile}: ${errorMessage}`,
-          )
+        )
           // Non-critical, use fallback
         }
       } else {

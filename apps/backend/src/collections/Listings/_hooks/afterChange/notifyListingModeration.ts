@@ -168,7 +168,7 @@ export const notifyListingModeration: CollectionAfterChangeHook = async ({
         listing_url: accountListingUrl,
         listing_id: String(doc.id),
         reason: doc.rejectionReason || undefined,
-        support_email: process.env.SUPPORT_EMAIL || 'contact@unevent.com',
+        support_email: process.env.SUPPORT_EMAIL || 'contact@unevent.ro',
       })
 
       if (result.id) {

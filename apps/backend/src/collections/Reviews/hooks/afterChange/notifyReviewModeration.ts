@@ -207,7 +207,7 @@ export const notifyReviewModeration: CollectionAfterChangeHook<Review> = async (
         listing_title: listingTitle,
         listing_type: listingTypeSlug || 'unknown',
         reason: doc.rejectionReason || undefined,
-        support_email: process.env.SUPPORT_EMAIL || 'contact@unevent.com',
+        support_email: process.env.SUPPORT_EMAIL || 'contact@unevent.ro',
       })
 
       if (result.id) {

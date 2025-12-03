@@ -47,10 +47,10 @@ export const notifyAdminNewListing: CollectionAfterChangeHook = async ({
 
     try {
       // First, try to get the profile to access user relationship
-      const profile = await req.payload.findByID({
-        collection: 'profiles',
-        id: ownerId,
-      })
+          const profile = await req.payload.findByID({
+            collection: 'profiles',
+            id: ownerId,
+          })
 
       if (!profile) {
         req.payload.logger.warn(
@@ -90,8 +90,8 @@ export const notifyAdminNewListing: CollectionAfterChangeHook = async ({
         } else {
           createdBy = profile.displayName || profile.name || `Profile ID: ${ownerId}`
         }
-      }
-    } catch (err) {
+        }
+      } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err)
       req.payload.logger.error(
         `[notifyAdminNewListing] Failed to fetch creator info for owner ${ownerId} (listing ${doc.id}):`,
