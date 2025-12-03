@@ -184,13 +184,13 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground/80">
-            Instagram
+            YouTube
           </label>
           <Input
-            defaultValue={profile.socialMedia?.instagram || ""}
+            defaultValue={profile.socialMedia?.youtube || ""}
             type="url"
             className="bg-muted/50 border-input text-foreground"
-            {...register("socialMedia.instagram")}
+            {...register("socialMedia.youtube")}
           />
         </div>
         <div className="space-y-2">
