@@ -37,7 +37,7 @@ export default function Loading() {
 
           <div className="space-y-8">
             <Skeleton className="h-16 w-full" />
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-64 w-full" />
@@ -45,7 +45,7 @@ export default function Loading() {
           </div>
           <div className="space-y-8">
             <Skeleton className="h-16 w-full" />
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-64 w-full" />
@@ -53,7 +53,7 @@ export default function Loading() {
           </div>
           <div className="space-y-8">
             <Skeleton className="h-16 w-full" />
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-64 w-full" />
@@ -61,7 +61,7 @@ export default function Loading() {
           </div>
           <div className="space-y-8">
             <Skeleton className="h-16 w-full" />
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-64 w-full" />
