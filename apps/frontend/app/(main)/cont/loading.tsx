@@ -2,7 +2,7 @@ export default function Loading() {
   return (
     <div className="min-h-screen bg-background">
       {/* Main content skeleton */}
-      <main className="flex-1 p-4 lg:p-6 lg:ml-64">
+      <main className="flex-1 p-4 lg:p-6">
         <div className="space-y-6">
           <div className="flex items-center justify-between animate-pulse">
             <div className="h-6 w-40 rounded bg-muted" />

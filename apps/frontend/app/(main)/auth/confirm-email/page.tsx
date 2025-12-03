@@ -154,10 +154,10 @@ export default function ConfirmEmailPage() {
             <p className="text-xs text-muted-foreground text-center max-w-md">
               Dacă problema persistă, te rugăm să ne contactezi la{" "}
               <a
-                href="mailto:support@unevent.com"
+                href="mailto:contact@unevent.ro"
                 className="underline hover:text-foreground"
               >
-                support@unevent.com
+                contact@unevent.ro
               </a>
             </p>
           </div>
