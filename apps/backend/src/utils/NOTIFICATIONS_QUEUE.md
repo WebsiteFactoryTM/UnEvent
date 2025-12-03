@@ -27,7 +27,7 @@ import { enqueueNotification } from '@/utils/notificationsQueue'
 await enqueueNotification('user.welcome', {
   first_name: 'John',
   email: 'john@example.com',
-  confirm_url: 'https://unevent.com/confirm?token=abc123',
+  confirm_url: 'https://unevent.ro/confirm?token=abc123',
 })
 ```
 
@@ -72,7 +72,7 @@ export const sendWelcomeEmail: CollectionAfterChangeHook = async ({
       first_name: doc.displayName || doc.email.split('@')[0],
       email: doc.email,
       confirm_url: confirmUrl,
-      support_email: 'support@unevent.com',
+      support_email: 'contact@unevent.ro',
     })
   } catch (error) {
     req.payload.logger.error('Failed to enqueue welcome email:', error)
@@ -92,7 +92,7 @@ await enqueueNotification('event.reminder.24h', {
   start_date: '2024-12-15', // YYYY-MM-DD
   start_time: '18:00', // HH:mm
   eventId: String(event.id),
-  eventUrl: `https://unevent.com/events/${event.id}`,
+  eventUrl: `https://unevent.ro/events/${event.id}`,
 })
 ```
 
@@ -119,7 +119,7 @@ export const notifyListingApproved: CollectionAfterChangeHook = async ({
     first_name: doc.owner?.firstName || '',
     listing_title: doc.title,
     listing_id: String(doc.id),
-    listing_url: `https://unevent.com/listings/${doc.id}`,
+    listing_url: `https://unevent.ro/listings/${doc.id}`,
   })
 }
 ```

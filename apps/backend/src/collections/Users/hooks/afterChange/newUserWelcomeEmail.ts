@@ -108,7 +108,7 @@ export const newUserWelcomeEmail: CollectionAfterChangeHook = async ({
 
     // Dashboard URL
     const frontendUrl = process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
-    const supportEmail = process.env.SUPPORT_EMAIL || 'contact@unevent.com'
+    const supportEmail = process.env.SUPPORT_EMAIL || 'contact@unevent.ro'
 
     // Send welcome email for each role
     const emailPromises = rolesToNotify.map(async (userType) => {

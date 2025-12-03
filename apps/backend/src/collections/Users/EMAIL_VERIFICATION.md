@@ -28,7 +28,7 @@ PayloadCMS has a built-in `verify: true` option that automatically:
    
    export default buildConfig({
      email: resendAdapter({
-       defaultFromAddress: process.env.RESEND_FROM_EMAIL || 'noreply@unevent.com',
+       defaultFromAddress: process.env.RESEND_FROM_EMAIL || 'noreply@unevent.ro',
        apiKey: process.env.RESEND_API_KEY,
      }),
      // ... rest of config

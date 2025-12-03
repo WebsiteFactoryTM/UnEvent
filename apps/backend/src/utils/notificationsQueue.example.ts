@@ -30,7 +30,7 @@ export const sendWelcomeEmailExample: CollectionAfterChangeHook = async ({
       first_name: doc.firstName || doc.name || '',
       email: doc.email,
       confirm_url: confirmUrl,
-      support_email: process.env.SUPPORT_EMAIL || 'support@unevent.com',
+      support_email: process.env.SUPPORT_EMAIL || 'contact@unevent.ro',
     })
 
     req.payload.logger.info(`[Welcome Email] Enqueued for user ${doc.id}`)

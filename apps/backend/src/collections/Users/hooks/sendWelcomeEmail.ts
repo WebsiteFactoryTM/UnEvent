@@ -67,7 +67,7 @@ export const sendWelcomeEmail: CollectionAfterChangeHook = async ({ doc, req, op
       first_name: user.displayName || user.email.split('@')[0] || '',
       email: user.email,
       confirm_url: confirmUrl,
-      support_email: process.env.SUPPORT_EMAIL || 'support@unevent.com',
+      support_email: process.env.SUPPORT_EMAIL || 'contact@unevent.ro',
     })
 
     if (result.id) {

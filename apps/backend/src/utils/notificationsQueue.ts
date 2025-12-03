@@ -274,7 +274,7 @@ export type EmailEventType =
  * await enqueueNotification('user.welcome', {
  *   first_name: 'John',
  *   email: 'john@example.com',
- *   confirm_url: 'https://unevent.com/confirm?token=...',
+ *   confirm_url: 'https://unevent.ro/confirm?token=...',
  * })
  * ```
  */

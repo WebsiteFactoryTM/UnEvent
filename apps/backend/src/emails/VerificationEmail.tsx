@@ -14,7 +14,7 @@ export function VerificationEmail({ user, token }: VerificationEmailProps) {
   const frontendUrl = process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
   const confirmUrl = `${frontendUrl}/auth/confirm-email?token=${token}`
   const firstName = user.displayName || user.email.split('@')[0] || ''
-  const supportEmail = process.env.ADMIN_EMAIL || 'contact@unevent.com'
+  const supportEmail = process.env.ADMIN_EMAIL || 'contact@unevent.ro'
 
   return (
     <EmailLayout preview="Bine ai venit la UN:EVENT — confirmă-ți emailul">

@@ -14,7 +14,7 @@ export function ResetPasswordEmail({ user, token }: ResetPasswordEmailProps) {
   const frontendUrl = process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
   const resetUrl = `${frontendUrl}/auth/resetare-parola?token=${token}`
   const firstName = user.displayName || user.email.split('@')[0] || ''
-  const supportEmail = process.env.ADMIN_EMAIL || 'contact@unevent.com'
+  const supportEmail = process.env.ADMIN_EMAIL || 'contact@unevent.ro'
 
   return (
     <EmailLayout preview="Resetează-ți parola pentru contul UN:EVENT">
