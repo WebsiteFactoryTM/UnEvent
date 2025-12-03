@@ -40,6 +40,22 @@ import {
   AdminUserNewEmail,
   type AdminUserNewEmailProps,
 } from "./AdminUserNewEmail.js";
+import {
+  UserWelcomeClientEmail,
+  type UserWelcomeClientEmailProps,
+} from "./UserWelcomeClientEmail.js";
+import {
+  UserWelcomeHostEmail,
+  type UserWelcomeHostEmailProps,
+} from "./UserWelcomeHostEmail.js";
+import {
+  UserWelcomeOrganizerEmail,
+  type UserWelcomeOrganizerEmailProps,
+} from "./UserWelcomeOrganizerEmail.js";
+import {
+  UserWelcomeProviderEmail,
+  type UserWelcomeProviderEmailProps,
+} from "./UserWelcomeProviderEmail.js";
 
 /**
  * All logical email event types used across the app.
@@ -48,6 +64,10 @@ import {
 export type EmailEventType =
   // User-facing
   | "user.welcome"
+  | "user.welcome.client"
+  | "user.welcome.host"
+  | "user.welcome.organizer"
+  | "user.welcome.provider"
   | "user.reset.start"
   | "user.reset.confirmed"
   // | "message.new"
@@ -109,6 +129,28 @@ export interface UserWelcomePayload {
   first_name?: string;
   email: string;
   confirm_url: string;
+  support_email?: string;
+}
+
+/**
+ * Payload for post-verification welcome emails
+ *
+ * Logic:
+ * - Every user is a "client" by default
+ * - If user has ONLY "client" role → send user.welcome.client
+ * - If user has any other role besides client → send welcome email(s) for those roles ONLY
+ * - Multiple roles = multiple welcome emails (e.g., both host and organizer)
+ *
+ * Examples:
+ * - User roles: ["client"] → send user.welcome.client
+ * - User roles: ["client", "host"] → send user.welcome.host (NOT client)
+ * - User roles: ["client", "host", "organizer"] → send user.welcome.host AND user.welcome.organizer (NOT client)
+ */
+export interface UserWelcomeVerifiedPayload {
+  first_name?: string;
+  email: string;
+  user_type: "client" | "host" | "organizer" | "provider";
+  dashboard_url?: string;
   support_email?: string;
 }
 
@@ -314,11 +356,11 @@ export const EMAIL_TEMPLATES: Partial<
     getRecipients: (p: AdminReviewPendingPayload) =>
       process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.com"],
     getSubject: (p) =>
-      `⭐ Recenzie nouă așteaptă aprobare pentru „${p.listing_title}”`,
+      `⭐ Recenzie nouă așteaptă aprobare pentru „${p.listing_title}"`,
     getPreheader: () =>
       "O nouă recenzie a fost creată și așteaptă aprobarea ta.",
     getTextFallback: (p) =>
-      `O nouă recenzie pentru „${p.listing_title}” a fost creată și așteaptă aprobarea ta.\n\nListare: ${p.listing_title} (${p.listing_type})\nRecenzent: ${p.reviewer_name}\nRating: ${p.rating}/5\nID recenzie: ${p.review_id}`,
+      `O nouă recenzie pentru „${p.listing_title}" a fost creată și așteaptă aprobarea ta.\n\nListare: ${p.listing_title} (${p.listing_type})\nRecenzent: ${p.reviewer_name}\nRating: ${p.rating}/5\nID recenzie: ${p.review_id}`,
     render: (p) =>
       AdminReviewPendingEmail({
         listingTitle: p.listing_title,
@@ -329,5 +371,90 @@ export const EMAIL_TEMPLATES: Partial<
         dashboardUrl: p.dashboard_url,
       } satisfies AdminReviewPendingEmailProps),
     tags: { category: "admin", template: "admin.review.pending" },
+  },
+
+  // Post-verification welcome emails (sent ONLY if user has no other roles besides "client")
+  "user.welcome.client": {
+    type: "user.welcome.client",
+    getRecipients: (p: UserWelcomeVerifiedPayload) => p.email,
+    getSubject: () => `🎉 Bun venit pe Unevent!`,
+    getPreheader: () =>
+      "Ești gata să descoperi cele mai tari evenimente din orașul tău.",
+    getTextFallback: (p) =>
+      `Salut${p.first_name ? `, ${p.first_name}` : ""}!\n\nBine ai venit pe Unevent! Ești gata să descoperi evenimente, locații și servicii din orașul tău.`,
+    render: (p) =>
+      UserWelcomeClientEmail({
+        firstName: p.first_name ?? "",
+        dashboardUrl: p.dashboard_url,
+        supportEmail: p.support_email,
+      } satisfies UserWelcomeClientEmailProps),
+    tags: { category: "user", template: "user.welcome.client" },
+  },
+
+  "user.welcome.host": {
+    type: "user.welcome.host",
+    getRecipients: (p: UserWelcomeVerifiedPayload) => p.email,
+    getSubject: () => `✅ Ești Gazdă pe UN:EVENT`,
+    getPreheader: () => "Publică prima ta locație în 2 minute.",
+    getTextFallback: (p) =>
+      `Salut${p.first_name ? `, ${p.first_name}` : ""}! Ți-am activat rolul Gazdă.\n\n4 pași rapizi ca să atragi rezervări:\n• Încarcă 8–10 poze luminoase\n• Adaugă titlu locație, descriere, capacitate, dotări\n• Marchează precis adresa pe hartă\n• Adaugă date de contact\n\nListează-ți acum locația și primește cereri.`,
+    render: (p) =>
+      UserWelcomeHostEmail({
+        firstName: p.first_name ?? "",
+        dashboardUrl: p.dashboard_url,
+        supportEmail: p.support_email,
+      } satisfies UserWelcomeHostEmailProps),
+    tags: { category: "user", template: "user.welcome.host" },
+  },
+
+  "user.welcome.organizer": {
+    type: "user.welcome.organizer",
+    getRecipients: (p: UserWelcomeVerifiedPayload) => p.email,
+    getSubject: () => `✅ Ești Organizator pe UN:EVENT`,
+    getPreheader: () => "Publică primul tău eveniment.",
+    getTextFallback: (p) =>
+      `Salut${p.first_name ? `, ${p.first_name}` : ""}! Rolul Organizator este activ.\n\nAdaugă un eveniment cu dată, locație, descriere și media.\n\nCum să-ți crești vizibilitatea:\n• Adaugă titlu și descriere cât mai precise și locația exactă\n• Adaugă + 4–6 imagini relevante\n• Setează link spre achiziționare bilete ori opțiune "Intrare liberă"\n• Adaugă date de contact`,
+    render: (p) =>
+      UserWelcomeOrganizerEmail({
+        firstName: p.first_name ?? "",
+        dashboardUrl: p.dashboard_url,
+        supportEmail: p.support_email,
+      } satisfies UserWelcomeOrganizerEmailProps),
+    tags: { category: "user", template: "user.welcome.organizer" },
+  },
+
+  "user.welcome.provider": {
+    type: "user.welcome.provider",
+    getRecipients: (p: UserWelcomeVerifiedPayload) => p.email,
+    getSubject: () => `✅ Ești Prestator Servicii pe UN:EVENT`,
+    getPreheader: () => "Creează primul pachet și apari în căutări.",
+    getTextFallback: (p) =>
+      `Salut${p.first_name ? `, ${p.first_name}` : ""}! Ești Prestator servicii pe UN:EVENT.\n\n4 idei ca să ieși în față:\n• Adaugă titlu și descriere cât mai precise\n• Încarcă 6–10 foto servicii sau portofoliu\n• Selectează orașul\n• Adaugă date de contact`,
+    render: (p) =>
+      UserWelcomeProviderEmail({
+        firstName: p.first_name ?? "",
+        dashboardUrl: p.dashboard_url,
+        supportEmail: p.support_email,
+      } satisfies UserWelcomeProviderEmailProps),
+    tags: { category: "user", template: "user.welcome.provider" },
+  },
+
+  "admin.user.new": {
+    type: "admin.user.new",
+    getRecipients: (p: AdminUserNewPayload) =>
+      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.com"],
+    getSubject: (p) => `👤 Utilizator nou înregistrat: ${p.user_email}`,
+    getPreheader: () => "Un nou utilizator s-a înregistrat pe platformă.",
+    getTextFallback: (p) =>
+      `Un nou utilizator s-a înregistrat pe platformă.\n\nEmail: ${p.user_email}\nNume: ${p.display_name || "N/A"}\nRoluri: ${p.roles.join(", ")}\nID: ${p.user_id}`,
+    render: (p) =>
+      AdminUserNewEmail({
+        userEmail: p.user_email,
+        displayName: p.display_name,
+        userId: p.user_id,
+        roles: p.roles,
+        dashboardUrl: p.dashboard_url,
+      } satisfies AdminUserNewEmailProps),
+    tags: { category: "admin", template: "admin.user.new" },
   },
 };

@@ -5,6 +5,7 @@ import type { CollectionConfig } from 'payload'
 import { ensureBaseClientRole } from './hooks/ensureBaseClientRole'
 import { deleteProfileUserDelete } from './hooks/deleteProfileAfterUserDelete'
 import { notifyAdminNewUser } from './hooks/afterChange/notifyAdminNewUser'
+import { newUserWelcomeEmail } from './hooks/afterChange/newUserWelcomeEmail'
 import { changeRole } from './endpoints/changeRole'
 import { render } from '@react-email/render'
 import { VerificationEmail } from '@/emails/VerificationEmail'
@@ -134,7 +135,7 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
-    afterChange: [createProfileAfterUserCreate, notifyAdminNewUser],
+    afterChange: [createProfileAfterUserCreate, notifyAdminNewUser, newUserWelcomeEmail],
     // sendWelcomeEmail hook disabled - Payload handles verification emails automatically
     // when verify: true is enabled and email adapter is configured
     // afterChange: [createProfileAfterUserCreate, sendWelcomeEmail],

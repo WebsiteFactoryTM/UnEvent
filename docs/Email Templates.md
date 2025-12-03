@@ -230,3 +230,59 @@ A fost trimisă o solicitare de verificare pentru utilizatorul {{first\_name}}.
 Verifică documentele și aprobă/respinge.  
 CTA: Deschide verificarea → {{dashboard\_url}}  
 — UN:EVENT Admin
+
+
+Rol Gazdă activat
+Subiect: ✅ Ești Gazdă pe UN:EVENT
+Preheader: Publică prima ta locație în 2 minute.
+Conținut:
+Salut, {{first_name}}! Ți-am activat rolul Gazdă.
+
+4 pași rapizi ca să atragi rezervări
+Iată cum să pornești:
+• Încarcă 8–10 poze luminoase
+• Adaugă titlu locație, descriere, capacitate, dotări
+• Marchează precis adresa pe hartă
+• Adaugă date de contact
+
+Listează-ți acum locația și primește cereri.
+CTA: Adaugă locație → {{/cont/locatiile-mele}}
+Ai întrebări? Scrie-ne la contact@unevent.ro.
+— UN:EVENT
+
+
+
+Rol Servicii activat
+Subiect: ✅ Ești Prestator Servicii pe UN:EVENT
+Preheader: Creează primul pachet și apari în căutări.
+Conținut:
+Salut, {{first_name}}! Ești Prestator servicii pe UN:EVENT.
+
+4 idei ca să ieși în față
+• Adaugă titlu și descriere cât mai precise
+• Încarcă 6–10 foto servicii sau portofoliu
+• Selectează orașul
+• Adaugă date de contact
+
+CTA: Creează pachet → {{/cont/serviciile-mele}}
+Ai întrebări? Scrie-ne la contact@unevent.ro.
+— UN:EVENT
+
+
+
+Rol Organizator activat
+Subiect: ✅ Ești Organizator pe UN:EVENT
+Preheader: Publică primul tău eveniment.
+Conținut:
+Salut, {{first_name}}! Rolul Organizator este activ.
+Adaugă un eveniment cu dată, locație, descriere și media.
+
+Cum să-ți crești vizibilitatea
+• Adaugă titlu și descriere cât mai precise și locația exactă
+• Adaugă + 4–6 imagini relevante
+• Setează link spre achiziționare bilete ori opțiune "Intrare liberă"
+• Adaugă date de contact
+
+CTA: Creează eveniment → {{/cont/evenimentele-mele}}
+Ai întrebări? Scrie-ne la contact@unevent.ro.
+— UN:EVENT

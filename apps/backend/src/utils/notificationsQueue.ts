@@ -230,6 +230,10 @@ function getNotificationsQueue(): Queue | null {
 export type EmailEventType =
   // User-facing
   | 'user.welcome'
+  | 'user.welcome.client'
+  | 'user.welcome.host'
+  | 'user.welcome.organizer'
+  | 'user.welcome.provider'
   | 'user.reset.start'
   | 'user.reset.confirmed'
   | 'message.new'
