@@ -2,9 +2,10 @@ import { tag } from "@unevent/shared";
 import { fetchWithRetry } from "@/lib/server/fetcher";
 import { NextRequest } from "next/server";
 
-export const dynamic = "force-static";
+// Use auto to allow both static generation and tag-based revalidation
+export const dynamic = "auto";
 export const revalidate = 600;
-export const fetchCache = "force-cache";
+export const fetchCache = "default-cache";
 export const preferredRegion = "auto";
 
 const ALLOWED_TYPES = ["events", "locations", "services"] as const;

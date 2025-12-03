@@ -3,9 +3,20 @@ import { fetchWithRetry } from "@/lib/server/fetcher";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
-export const dynamic = "force-static";
+/**
+ * BFF (Backend for Frontend) route for fetching listings with edge caching
+ *
+ * Caching Strategy:
+ * - dynamic = "auto": Allows ISR + on-demand revalidation via tags
+ * - revalidate = 300: Time-based fallback (5min) if tags don't trigger
+ * - fetchCache = "default-cache": Enables fetch caching with tag support
+ * - Tags: listingSlug, collection type, city - cleared when listing updates
+ *
+ * Note: "force-static" would prevent tag-based revalidation from working properly
+ */
+export const dynamic = "auto";
 export const revalidate = 300;
-export const fetchCache = "force-cache";
+export const fetchCache = "default-cache";
 export const preferredRegion = "auto";
 
 type Params = {
@@ -64,6 +75,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     const data = await res.json();
     const doc = data?.docs?.[0];
+    console.log("doc", doc);
 
     if (!doc) {
       return new Response("Not found", { status: 404 });
