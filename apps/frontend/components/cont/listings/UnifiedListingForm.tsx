@@ -130,12 +130,14 @@ export function UnifiedListingForm({
     }
     if (!isLastTab) {
       setActiveTab(tabs[currentTabIndex + 1].value);
+      window.scrollTo({ top: 100, behavior: "smooth" });
     }
   };
 
   const handlePrevious = () => {
     if (!isFirstTab) {
       setActiveTab(tabs[currentTabIndex - 1].value);
+      window.scrollTo({ top: 100, behavior: "smooth" });
     }
   };
 
@@ -322,6 +324,7 @@ export function UnifiedListingForm({
       const rootField = firstErrorField.split(".")[0];
       const targetTab = fieldToTab[rootField] || "info";
       setActiveTab(targetTab);
+      window.scrollTo({ top: 100, behavior: "smooth" });
     }
   };
 
@@ -378,7 +381,11 @@ export function UnifiedListingForm({
       >
         <Tabs
           value={activeTab}
-          onValueChange={setActiveTab}
+          onValueChange={(value) => {
+            setActiveTab(value);
+            console.log("scrolling to top");
+            window.scrollTo({ top: 100, behavior: "smooth" });
+          }}
           className="flex-1 flex flex-col"
         >
           <div className="border-b bg-background">

@@ -55,20 +55,15 @@ export default async function ProfilPage() {
       {/* Verification Section */}
       <SectionCard title="Verificare Cont">
         <div className="space-y-4">
-          <div className="flex items-start gap-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+          <div className="flex items-center gap-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
             <div className="shrink-0 w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
               <FaCircleCheck className="w-5 h-5 text-yellow-500" />
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-foreground mb-1">
-                Verificare în Așteptare
-              </h4>
+              <h4 className="font-semibold text-foreground mb-1">În curând!</h4>
               <p className="text-sm text-muted-foreground mb-3">
-                Documentele tale sunt în curs de verificare. Vei primi un email
-                când procesul este finalizat.
-              </p>
-              <p className="text-xs text-muted-foreground/70">
-                Trimis la: 15 ianuarie 2025
+                Funcționalitate de verificare cont este în dezvoltare. Vei primi
+                un email când este disponibilă.
               </p>
             </div>
           </div>
