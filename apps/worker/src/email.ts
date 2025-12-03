@@ -46,9 +46,14 @@ function sanitizeEmails(emails: string | string[]): string[] {
   const validEmails: string[] = [];
 
   for (const email of emailArray) {
-    if (!email || typeof email !== "string") continue;
+    if (!email || typeof email !== "string") {
+      continue;
+    }
+
     const trimmed = email.trim();
-    if (trimmed.length === 0) continue;
+    if (trimmed.length === 0) {
+      continue;
+    }
 
     // Handle comma-separated emails in a single string
     if (trimmed.includes(",")) {
@@ -56,14 +61,10 @@ function sanitizeEmails(emails: string | string[]): string[] {
       for (const e of split) {
         if (isValidEmail(e)) {
           validEmails.push(e);
-        } else {
-          console.warn(`[Email] Invalid email address skipped: ${e}`);
         }
       }
     } else if (isValidEmail(trimmed)) {
       validEmails.push(trimmed);
-    } else {
-      console.warn(`[Email] Invalid email address skipped: ${trimmed}`);
     }
   }
 
@@ -99,10 +100,6 @@ function getActualRecipient(originalTo: string | string[]): string[] {
     if (testEmailSanitized.length === 0) {
       throw new Error(`TEST_EMAIL is set but invalid: ${testEmail}`);
     }
-    const originalRecipients = sanitized.join(", ");
-    console.log(
-      `[Email] Development mode: Overriding recipient(s) ${originalRecipients} -> ${testEmailSanitized[0]}`,
-    );
     return testEmailSanitized;
   }
 
@@ -112,10 +109,6 @@ function getActualRecipient(originalTo: string | string[]): string[] {
     if (overrideSanitized.length === 0) {
       throw new Error(`RESEND_OVERRIDE_TO is set but invalid: ${overrideTo}`);
     }
-    const originalRecipients = sanitized.join(", ");
-    console.log(
-      `[Email] Overriding recipient(s) ${originalRecipients} -> ${overrideSanitized[0]}`,
-    );
     return overrideSanitized;
   }
 
@@ -170,6 +163,21 @@ export async function sendTemplatedEmail(
 
     // Determine actual recipients based on environment
     const actualTo = getActualRecipient(to);
+
+    // Validate each email one more time before sending
+    for (let i = 0; i < actualTo.length; i++) {
+      const email = actualTo[i];
+      if (!email || typeof email !== "string") {
+        throw new Error(
+          `Invalid email type at index ${i}: ${JSON.stringify(email)}`,
+        );
+      }
+      if (!isValidEmail(email)) {
+        throw new Error(
+          `Invalid email format at index ${i}: ${JSON.stringify(email)}`,
+        );
+      }
+    }
 
     // Send via Resend
     const { data, error } = await client.emails.send({
@@ -252,16 +260,56 @@ export async function sendEmailFromRegistry(
   type: string,
   payload: Record<string, unknown>,
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  const template = EMAIL_TEMPLATES[type as EmailEventType];
-
-  if (!template) {
-    const error = `Email template not found for type: ${type}`;
-    console.warn(`[Email] ${error}`);
-    return { success: false, error };
-  }
-
   try {
-    const recipients = template.getRecipients(payload);
+    const template = EMAIL_TEMPLATES[type as EmailEventType];
+
+    if (!template) {
+      const error = `Email template not found for type: ${type}`;
+      console.warn(`[Email] ${error}`);
+      return { success: false, error };
+    }
+
+    let recipients: string | string[];
+    try {
+      recipients = template.getRecipients(payload);
+
+      // Validate recipients format before proceeding
+      if (!recipients) {
+        throw new Error(`getRecipients returned null/undefined for ${type}`);
+      }
+      if (typeof recipients !== "string" && !Array.isArray(recipients)) {
+        throw new Error(
+          `getRecipients returned invalid type for ${type}: ${typeof recipients}. Expected string or string[]`,
+        );
+      }
+      if (Array.isArray(recipients) && recipients.length === 0) {
+        throw new Error(`getRecipients returned empty array for ${type}`);
+      }
+      if (typeof recipients === "string" && recipients.trim().length === 0) {
+        throw new Error(`getRecipients returned empty string for ${type}`);
+      }
+
+      // Additional validation for array contents
+      if (Array.isArray(recipients)) {
+        for (let i = 0; i < recipients.length; i++) {
+          const email = recipients[i];
+          if (!email || typeof email !== "string") {
+            throw new Error(
+              `getRecipients returned array with invalid item at index ${i} for ${type}: ${JSON.stringify(email)}`,
+            );
+          }
+        }
+      }
+    } catch (recipientError) {
+      console.error(
+        `[Email] Error in getRecipients for ${type}:`,
+        recipientError,
+      );
+      throw new Error(
+        `Failed to get recipients: ${recipientError instanceof Error ? recipientError.message : String(recipientError)}`,
+      );
+    }
+
     const subject = template.getSubject(payload);
     const textFallback = template.getTextFallback?.(payload);
     const react = template.render(payload);
@@ -294,11 +342,15 @@ export async function sendEmailFromRegistry(
       `[Email] Error sending email from registry (${type}):`,
       error,
     );
+
+    // Get template for tags if available
+    const templateForTags = EMAIL_TEMPLATES[type as EmailEventType];
+
     Sentry.captureException(error as Error, {
       tags: {
         component: "email",
         emailType: "registry",
-        ...template.tags,
+        ...(templateForTags?.tags || {}),
       },
       extra: {
         emailType: type,

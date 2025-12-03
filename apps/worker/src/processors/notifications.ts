@@ -23,23 +23,16 @@ export function createNotificationsProcessor(): Worker {
     async (job: Job<NotificationJobData>) => {
       const { type, payload } = job.data;
 
-      console.log(`[Notifications] Processing job ${job.id}: ${type}`, payload);
-
       try {
         // Handle test ping job
         if (type === "ping") {
-          console.log("[Notifications] ping received:", payload);
           return { success: true, type, processedAt: new Date().toISOString() };
         }
 
         // Check if this is an email type registered in the registry
         const template = EMAIL_TEMPLATES[type as EmailEventType];
-        if (template) {
-          console.log(
-            `[Notifications] Sending email via registry: ${type}`,
-            payload,
-          );
 
+        if (template) {
           const result = await sendEmailFromRegistry(type, payload);
 
           if (!result.success) {
@@ -77,10 +70,6 @@ export function createNotificationsProcessor(): Worker {
 
             throw new Error(`Failed to send email (${type}): ${errorMsg}`);
           }
-
-          console.log(
-            `[Notifications] ✅ Email sent successfully (${type}, messageId: ${result.messageId})`,
-          );
         } else {
           // Unknown type - log but don't fail (might be a new type not yet implemented)
           console.warn(
@@ -167,13 +156,6 @@ export function createNotificationsProcessor(): Worker {
   worker.on("closing", () => {
     console.log("[Notifications] ⚠️ Worker is closing...");
     readyLogged = false; // Reset so we log again if it reopens
-  });
-
-  // Diagnostic: Log when jobs are active
-  worker.on("active", (job: Job) => {
-    console.log(
-      `[Notifications] 🔄 Job ${job.id} started processing: ${job.data.type}`,
-    );
   });
 
   return worker;

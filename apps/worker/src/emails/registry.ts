@@ -334,12 +334,60 @@ export const EMAIL_TEMPLATES: Partial<
     type: "admin.listing.pending",
     getRecipients: (p: AdminListingPendingPayload) => {
       const adminEmails = process.env.ADMIN_EMAILS;
+
       if (adminEmails) {
         // Split by comma and trim whitespace
-        return adminEmails
+        let emails = adminEmails
           .split(",")
           .map((e) => e.trim())
-          .filter(Boolean);
+          .filter(Boolean)
+          .filter((e) => e.length > 0);
+
+        // Validate each email format
+        const validEmails: string[] = [];
+        for (let i = 0; i < emails.length; i++) {
+          const email = emails[i];
+
+          if (!email || typeof email !== "string") {
+            console.error(
+              `[EmailRegistry] Invalid email type at index ${i}:`,
+              email,
+            );
+            continue;
+          }
+
+          if (!email.includes("@")) {
+            console.error(
+              `[EmailRegistry] Email missing @ at index ${i}:`,
+              email,
+            );
+            continue;
+          }
+
+          // Basic email format check
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            console.error(
+              `[EmailRegistry] Invalid email format at index ${i}:`,
+              email,
+            );
+            continue;
+          }
+
+          validEmails.push(email);
+        }
+
+        emails = validEmails;
+
+        // Validate we have at least one email
+        if (emails.length === 0) {
+          console.warn(
+            `[EmailRegistry] ADMIN_EMAILS parsed to empty array after validation, using default`,
+          );
+          return ["contact@unevent.ro"];
+        }
+
+        return emails;
       }
       return ["contact@unevent.ro"];
     },
@@ -364,12 +412,50 @@ export const EMAIL_TEMPLATES: Partial<
     type: "admin.review.pending",
     getRecipients: (p: AdminReviewPendingPayload) => {
       const adminEmails = process.env.ADMIN_EMAILS;
+      console.log(
+        `[EmailRegistry] admin.review.pending - ADMIN_EMAILS env var:`,
+        {
+          raw: adminEmails,
+          type: typeof adminEmails,
+          length: adminEmails?.length,
+        },
+      );
+
       if (adminEmails) {
         // Split by comma and trim whitespace
-        return adminEmails
+        let emails = adminEmails
           .split(",")
           .map((e) => e.trim())
-          .filter(Boolean);
+          .filter(Boolean)
+          .filter((e) => e.length > 0);
+
+        // Validate each email format
+        const validEmails: string[] = [];
+        for (const email of emails) {
+          if (
+            typeof email === "string" &&
+            email.includes("@") &&
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+          ) {
+            validEmails.push(email);
+          } else {
+            console.error(
+              `[EmailRegistry] Invalid email format in admin.review.pending:`,
+              email,
+            );
+          }
+        }
+
+        emails = validEmails;
+
+        if (emails.length === 0) {
+          console.warn(
+            `[EmailRegistry] ADMIN_EMAILS parsed to empty array, using default`,
+          );
+          return ["contact@unevent.ro"];
+        }
+
+        return emails;
       }
       return ["contact@unevent.ro"];
     },
@@ -461,12 +547,42 @@ export const EMAIL_TEMPLATES: Partial<
     type: "admin.user.new",
     getRecipients: (p: AdminUserNewPayload) => {
       const adminEmails = process.env.ADMIN_EMAILS;
+
       if (adminEmails) {
         // Split by comma and trim whitespace
-        return adminEmails
+        let emails = adminEmails
           .split(",")
           .map((e) => e.trim())
-          .filter(Boolean);
+          .filter(Boolean)
+          .filter((e) => e.length > 0);
+
+        // Validate each email format
+        const validEmails: string[] = [];
+        for (const email of emails) {
+          if (
+            typeof email === "string" &&
+            email.includes("@") &&
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+          ) {
+            validEmails.push(email);
+          } else {
+            console.error(
+              `[EmailRegistry] Invalid email format in admin.user.new:`,
+              email,
+            );
+          }
+        }
+
+        emails = validEmails;
+
+        if (emails.length === 0) {
+          console.warn(
+            `[EmailRegistry] ADMIN_EMAILS parsed to empty array, using default`,
+          );
+          return ["contact@unevent.ro"];
+        }
+
+        return emails;
       }
       return ["contact@unevent.ro"];
     },
