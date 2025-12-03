@@ -1,4 +1,4 @@
-import { Heading, Section, Text } from "@react-email/components";
+import { Button, Heading, Section, Text } from "@react-email/components";
 import * as React from "react";
 import { EmailLayout } from "./Layout.js";
 
@@ -8,6 +8,7 @@ export interface ListingRejectedEmailProps {
   listingType: string;
   listingId: string;
   reason?: string;
+  listingUrl?: string;
   supportEmail?: string;
 }
 
@@ -17,7 +18,8 @@ export function ListingRejectedEmail({
   listingType,
   listingId,
   reason,
-  supportEmail = "support@unevent.com",
+  listingUrl,
+  supportEmail = "contact@unevent.ro",
 }: ListingRejectedEmailProps) {
   const listingTypeLabel =
     listingType === "events"
@@ -44,6 +46,13 @@ export function ListingRejectedEmail({
         Poți să editezi listarea și să o resubmiți pentru revizuire. Dacă ai
         întrebări sau ai nevoie de clarificări, te rugăm să ne contactezi.
       </Text>
+      {listingUrl && (
+        <Section style={buttonContainer}>
+          <Button style={button} href={listingUrl}>
+            Editează listarea
+          </Button>
+        </Section>
+      )}
       <Text style={paragraph}>
         Pentru suport, contactează-ne la{" "}
         <a href={`mailto:${supportEmail}`} style={link}>
@@ -92,6 +101,22 @@ const reasonText = {
   margin: "0",
 };
 
+const buttonContainer = {
+  padding: "20px 0",
+  textAlign: "center" as const,
+};
+
+const button = {
+  backgroundColor: "#000000",
+  borderRadius: "4px",
+  color: "#ffffff",
+  fontSize: "16px",
+  fontWeight: 600,
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "inline-block",
+  padding: "12px 24px",
+};
 const link = {
   color: "#000000",
   textDecoration: "underline",

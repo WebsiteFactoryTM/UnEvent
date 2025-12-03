@@ -1,26 +1,40 @@
 import type { CollectionAfterChangeHook } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 import { enqueueNotification } from '@/utils/notificationsQueue'
+import { Profile, Review, User } from '@/payload-types'
 
 /**
- * Notify admins when a new review is created with pending status
+ * Notify admins when a review is created or updated to pending status
  */
-export const notifyAdminNewReview: CollectionAfterChangeHook = async ({ doc, operation, req }) => {
-  // Only trigger on create
-  if (operation !== 'create') {
+export const notifyAdminNewReview: CollectionAfterChangeHook<Review> = async ({
+  doc,
+  previousDoc,
+  operation,
+  req,
+}) => {
+  // Only trigger on create or update
+  if (operation !== 'create' && operation !== 'update') {
     return
   }
 
+  const currentStatus = doc.status
+  const previousStatus = previousDoc?.status
+
   // Only notify if status is pending
-  if (doc.status !== 'pending') {
+  if (currentStatus !== 'pending') {
+    return
+  }
+
+  // For updates, only notify if status changed TO pending (was not pending before)
+  if (operation === 'update' && previousStatus === 'pending') {
     return
   }
 
   try {
-    // Get listing info
-    const listingId = typeof doc.listing === 'number' ? doc.listing : doc.listing?.id || doc.listing
-    const listingType = doc.listingType // 'locations', 'events', or 'services'
-
+    // Get listing info - fetch listing to get title
+    const listingId = doc.listing.value as number
     let listingTitle = 'Unknown Listing'
+    const listingType = doc.listingType
 
     if (listingId && listingType) {
       try {
@@ -30,27 +44,72 @@ export const notifyAdminNewReview: CollectionAfterChangeHook = async ({ doc, ope
         })
         listingTitle = listing?.title || 'Unknown Listing'
       } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err)
         req.payload.logger.warn(
-          `[notifyAdminNewReview] Could not fetch listing ${listingId}: ${err}`,
+          `[notifyAdminNewReview] Could not fetch listing ${listingId}: ${errorMessage}`,
         )
+        // Don't report to Sentry for non-critical listing fetch (we have fallback)
       }
     }
 
-    // Get reviewer info
-    const reviewerId = typeof doc.user === 'number' ? doc.user : doc.user?.id || doc.user
+    // Get reviewer info - profile should already be populated (maxDepth: 1)
+    const reviewerProfile = doc.user as Profile | number | null
+    let reviewerName: string
 
-    let reviewerName = 'Unknown'
-
-    if (reviewerId) {
+    if (!reviewerProfile) {
+      req.payload.logger.warn(
+        `[notifyAdminNewReview] No reviewer found for review ${doc.id} - skipping admin notification`,
+      )
+      reviewerName = 'Unknown Reviewer'
+    } else if (typeof reviewerProfile === 'number') {
+      // Profile is just an ID, need to fetch it
       try {
-        const reviewerProfile = await req.payload.findByID({
+        const profile = await req.payload.findByID({
           collection: 'profiles',
-          id: reviewerId,
+          id: reviewerProfile,
         })
-        reviewerName = reviewerProfile?.name || 'Unknown'
+        reviewerName = profile?.displayName || profile?.name || `Profile ID: ${reviewerProfile}`
       } catch (err) {
-        req.payload.logger.warn(`[notifyAdminNewReview] Could not fetch reviewer info: ${err}`)
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        req.payload.logger.error(
+          `[notifyAdminNewReview] Failed to fetch profile ${reviewerProfile} (review ${doc.id}):`,
+          errorMessage,
+        )
+        if (err instanceof Error) {
+          Sentry.withScope((scope) => {
+            scope.setTag('hook', 'notifyAdminNewReview')
+            scope.setTag('operation', 'fetch_profile')
+            scope.setTag('review_id', String(doc.id))
+            scope.setTag('reviewer_id', String(reviewerProfile))
+            scope.setContext('review', {
+              id: doc.id,
+              rating: doc.rating,
+              reviewerId: reviewerProfile,
+              listingId: listingId ? String(listingId) : 'unknown',
+              listingType: listingType || 'unknown',
+            })
+            Sentry.captureException(err)
+          })
+        }
+        reviewerName = `Profile ID: ${reviewerProfile}`
       }
+    } else {
+      // Profile is already populated, use it directly
+      const user = reviewerProfile.user as User | number | null
+      if (user && typeof user !== 'number' && user?.email) {
+        reviewerName = user.email
+      } else if (user && typeof user !== 'number' && user?.displayName) {
+        reviewerName = user.displayName
+      } else {
+        reviewerName =
+          reviewerProfile.displayName || reviewerProfile.name || `Profile ID: ${reviewerProfile.id}`
+      }
+    }
+
+    const reviewerId = typeof doc.user === 'number' ? doc.user : doc.user?.id
+    // Validate we have a meaningful reviewer name
+    if (!reviewerName || reviewerName === 'Unknown') {
+      reviewerName = reviewerId ? `Reviewer ID: ${reviewerId}` : 'Unknown Reviewer'
     }
 
     // Build admin dashboard URL
@@ -68,7 +127,7 @@ export const notifyAdminNewReview: CollectionAfterChangeHook = async ({ doc, ope
 
     if (result.id) {
       req.payload.logger.info(
-        `[notifyAdminNewReview] ✅ Enqueued admin.review.pending for review ${doc.id} (job: ${result.id})`,
+        `[notifyAdminNewReview] ✅ Enqueued admin.review.pending for review ${doc.id} (reviewer: ${reviewerName || reviewerId || 'Unknown'}, job: ${result.id})`,
       )
     } else {
       req.payload.logger.warn(
@@ -76,10 +135,38 @@ export const notifyAdminNewReview: CollectionAfterChangeHook = async ({ doc, ope
       )
     }
   } catch (error) {
-    // Don't throw - email failure shouldn't break review creation
+    // Don't throw - email failure shouldn't break review creation/update
+    const errorMessage = error instanceof Error ? error.message : String(error)
     req.payload.logger.error(
-      `[notifyAdminNewReview] ❌ Failed to enqueue notification for review ${doc.id}:`,
-      error,
+      `[notifyAdminNewReview] ❌ Failed to enqueue notification for review ${doc.id} (status: ${previousStatus || 'new'} → ${currentStatus}):`,
+      errorMessage,
     )
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('hook', 'notifyAdminNewReview')
+        scope.setTag('operation', 'enqueue_notification')
+        scope.setTag('review_id', String(doc.id))
+        scope.setTag('status', currentStatus)
+        scope.setContext('review', {
+          id: doc.id,
+          rating: doc.rating,
+          reviewerId:
+            typeof doc.user === 'number'
+              ? doc.user
+              : typeof doc.user === 'object'
+                ? doc.user?.id || 'unknown'
+                : 'unknown',
+          listingId:
+            typeof doc.listing.value === 'number'
+              ? doc.listing.value
+              : doc.listing?.value?.id || 'unknown',
+          listingType: doc.listingType || 'unknown',
+          status: currentStatus,
+          previousStatus: previousStatus || 'new',
+          operation,
+        })
+        Sentry.captureException(error)
+      })
+    }
   }
 }

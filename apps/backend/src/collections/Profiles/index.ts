@@ -41,6 +41,7 @@ export const Profiles: CollectionConfig = {
       relationTo: 'users',
       required: true,
       hasMany: false,
+      maxDepth: 1,
     },
     {
       name: 'slug',

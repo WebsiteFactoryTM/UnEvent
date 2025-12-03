@@ -15,7 +15,7 @@ export function ReviewRejectedEmail({
   listingTitle,
   listingType,
   reason,
-  supportEmail = "support@unevent.com",
+  supportEmail = "contact@unevent.ro",
 }: ReviewRejectedEmailProps) {
   return (
     <EmailLayout

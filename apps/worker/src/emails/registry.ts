@@ -191,42 +191,6 @@ export interface AdminUserNewPayload {
 export const EMAIL_TEMPLATES: Partial<
   Record<EmailEventType, EmailTemplateConfig<any>>
 > = {
-  "user.welcome": {
-    type: "user.welcome",
-    getRecipients: (p: UserWelcomePayload) => p.email,
-    getSubject: () => "Bine ai venit la UN:EVENT — confirmă-ți emailul",
-    getPreheader: () => "Activează-ți contul în câteva secunde.",
-    getTextFallback: (p) =>
-      `Salut, ${p.first_name ?? "acolo"}!\n\nTe-ai înregistrat cu succes la UN:EVENT. Confirmă adresa de email pentru a-ți activa contul:\n${p.confirm_url}\n\nDacă nu ai creat tu contul, ignoră acest email.`,
-    render: (p) =>
-      UserWelcomeEmail({
-        firstName: p.first_name ?? "",
-        confirmUrl: p.confirm_url,
-        supportEmail: p.support_email,
-      } satisfies UserWelcomeEmailProps),
-    tags: { category: "user", template: "user.welcome" },
-  },
-
-  "event.reminder.24h": {
-    type: "event.reminder.24h",
-    getRecipients: (p: EventReminderPayload) => p.userEmail,
-    getSubject: (p) => `🔔 Reminder: participi la „${p.event_title}” mâine`,
-    getPreheader: (p) =>
-      `Ne vedem la ${p.start_time} în ${p.city ?? ""} — verifică detaliile evenimentului.`,
-    getTextFallback: (p) =>
-      `Reminder: ${p.event_title} are loc mâine, ${new Date(
-        `${p.start_date}T${p.start_time}`,
-      ).toLocaleString("ro-RO")}.`,
-    render: (p) =>
-      EventReminderEmail({
-        eventTitle: p.event_title,
-        eventDate: `${p.start_date}T${p.start_time}`,
-        eventId: p.eventId,
-        eventUrl: p.eventUrl,
-      } satisfies EventReminderEmailProps),
-    tags: { category: "user", template: "event.reminder.24h" },
-  },
-
   "listing.approved": {
     type: "listing.approved",
     getRecipients: (p: ListingApprovedPayload) => p.userEmail,
@@ -259,6 +223,7 @@ export const EMAIL_TEMPLATES: Partial<
         listingTitle: p.listing_title,
         listingType: p.listing_type,
         listingId: p.listing_id,
+        listingUrl: p.listing_url,
         reason: p.reason,
         supportEmail: p.support_email,
       } satisfies ListingRejectedEmailProps),
@@ -326,7 +291,7 @@ export const EMAIL_TEMPLATES: Partial<
   "admin.listing.pending": {
     type: "admin.listing.pending",
     getRecipients: (p: AdminListingPendingPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["admin@unevent.com"],
+      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.com"],
     getSubject: (p) =>
       `📋 Listare nouă așteaptă aprobare: „${p.listing_title}”`,
     getPreheader: () =>
@@ -347,7 +312,7 @@ export const EMAIL_TEMPLATES: Partial<
   "admin.review.pending": {
     type: "admin.review.pending",
     getRecipients: (p: AdminReviewPendingPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["admin@unevent.com"],
+      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.com"],
     getSubject: (p) =>
       `⭐ Recenzie nouă așteaptă aprobare pentru „${p.listing_title}”`,
     getPreheader: () =>
@@ -364,76 +329,5 @@ export const EMAIL_TEMPLATES: Partial<
         dashboardUrl: p.dashboard_url,
       } satisfies AdminReviewPendingEmailProps),
     tags: { category: "admin", template: "admin.review.pending" },
-  },
-
-  "admin.user.new": {
-    type: "admin.user.new",
-    getRecipients: (p: AdminUserNewPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["admin@unevent.com"],
-    getSubject: (p) => `👤 Utilizator nou înregistrat: ${p.user_email}`,
-    getPreheader: () => "Un nou utilizator s-a înregistrat în platformă.",
-    getTextFallback: (p) =>
-      `Un nou utilizator s-a înregistrat în platformă.\n\nEmail: ${p.user_email}${p.display_name ? `\nNume: ${p.display_name}` : ""}\nRoluri: ${p.roles.join(", ")}\nID: ${p.user_id}`,
-    render: (p) =>
-      AdminUserNewEmail({
-        userEmail: p.user_email,
-        displayName: p.display_name,
-        userId: p.user_id,
-        roles: p.roles,
-        dashboardUrl: p.dashboard_url,
-      } satisfies AdminUserNewEmailProps),
-    tags: { category: "admin", template: "admin.user.new" },
-  },
-
-  "admin.digest.daily": {
-    type: "admin.digest.daily",
-    getRecipients: (p: AdminDigestPayload) =>
-      p.adminEmails ||
-      process.env.ADMIN_EMAILS?.split(",") || ["admin@unevent.com"],
-    getSubject: (p) =>
-      `Daily Admin Digest - ${
-        p.date ??
-        new Date().toLocaleDateString("ro-RO", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      }`,
-    getPreheader: () =>
-      "Rezumat zilnic: evenimente, recenzii, utilizatori, moderări.",
-    getTextFallback: (p) => {
-      const stats = p.stats ?? {
-        newEvents: 0,
-        newReviews: 0,
-        newUsers: 0,
-        pendingModerations: 0,
-      };
-      const displayDate =
-        p.date ??
-        new Date().toLocaleDateString("ro-RO", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-      return `Daily Admin Digest for ${displayDate}\n\nNew Events: ${
-        stats.newEvents ?? 0
-      }\nNew Reviews: ${stats.newReviews ?? 0}\nNew Users: ${
-        stats.newUsers ?? 0
-      }\nPending Moderations: ${stats.pendingModerations ?? 0}`;
-    },
-    render: (p) => {
-      const displayDate =
-        p.date ??
-        new Date().toLocaleDateString("ro-RO", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-      return AdminDailyDigestEmail({
-        date: displayDate,
-        stats: p.stats,
-      } satisfies AdminDailyDigestEmailProps);
-    },
-    tags: { category: "admin", template: "admin.digest.daily" },
   },
 };
