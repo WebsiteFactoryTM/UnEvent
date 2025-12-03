@@ -36,9 +36,13 @@ export default async function ProfilPage() {
     <HydrationBoundary state={dehydratedState}>
       <SectionCard title="Informații Profil">
         <div className="space-y-6">
-          <div className="flex justify-between">
+          <div className="flex flex-col sm:flex-row justify-between gap-3">
             <ProfileHeader profileId={Number(session.user.profile)} />
-            <Button asChild variant="outline">
+            <Button
+              asChild
+              variant="outline"
+              className="order-first sm:order-last"
+            >
               <Link
                 target="_blank"
                 rel="noopener noreferrer"

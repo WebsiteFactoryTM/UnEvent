@@ -119,35 +119,48 @@ export default function ProfileHeader({ profileId }: { profileId: number }) {
   const isUploading = uploadUM.isUploading || isUpdatingProfile;
 
   return (
-    <div className="flex items-center gap-6">
-      <div className="relative">
-        <Image
-          src={avatarUrl}
-          alt={profile.displayName || profile.name}
-          width={96}
-          height={96}
-          className="w-24 h-24 rounded-full object-cover border-2 border-border"
-        />
-        <button
-          onClick={handleAvatarClick}
-          disabled={isUploading}
-          className="absolute bottom-0 right-0 p-2 bg-muted hover:bg-muted/80 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          type="button"
-        >
-          {isUploading ? (
-            <Loader2 className="w-3 h-3 text-muted-foreground animate-spin" />
-          ) : (
-            <FaUpload className="w-3 h-3 text-muted-foreground" />
-          )}
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleAvatarUpload}
-          className="hidden"
-        />
+    <div className="flex flex-col sm:flex-row items-center gap-6">
+      <div>
+        <div className="relative flex items-center justify-center">
+          <Image
+            src={avatarUrl}
+            alt={profile.displayName || profile.name}
+            width={96}
+            height={96}
+            className="w-24 h-24 rounded-full object-cover border-2 border-border"
+          />
+          <button
+            onClick={handleAvatarClick}
+            disabled={isUploading}
+            className="absolute bottom-0 right-0 p-2 bg-muted hover:bg-muted/80 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            type="button"
+          >
+            {isUploading ? (
+              <Loader2 className="w-3 h-3 text-muted-foreground animate-spin" />
+            ) : (
+              <FaUpload className="w-3 h-3 text-muted-foreground" />
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleAvatarUpload}
+            className="hidden"
+          />
+        </div>
+        <p className="text-sm text-muted-foreground mt-1">
+          {isUploading
+            ? "Se încarcă fotografia..."
+            : "Schimbă fotografia de profil"}
+        </p>
+        {uploadUM.error && (
+          <p className="text-sm text-destructive font-medium mt-1">
+            {uploadUM.error.message}
+          </p>
+        )}
       </div>
+
       <div className="flex-1">
         <h3 className="text-lg font-semibold text-foreground">
           {profile.displayName || profile.name}
@@ -164,16 +177,6 @@ export default function ProfileHeader({ profileId }: { profileId: number }) {
               </Badge>
             ))}
           </div>
-        )}
-        <p className="text-sm text-muted-foreground mt-1">
-          {isUploading
-            ? "Se încarcă fotografia..."
-            : "Schimbă fotografia de profil"}
-        </p>
-        {uploadUM.error && (
-          <p className="text-sm text-destructive font-medium mt-1">
-            {uploadUM.error.message}
-          </p>
         )}
       </div>
     </div>
