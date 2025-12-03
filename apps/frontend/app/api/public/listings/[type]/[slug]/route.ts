@@ -80,8 +80,6 @@ export async function GET(req: NextRequest, { params }: Params) {
     const data = await res.json();
     const doc = data?.docs?.[0];
 
-    console.log("doc", doc);
-
     if (!doc) {
       return new Response("Not found", { status: 404 });
     }
@@ -104,7 +102,7 @@ export async function GET(req: NextRequest, { params }: Params) {
               // Root cause: CF_API_TOKEN/CF_ZONE_ID not configured, so CDN never purges
               // TODO: Re-enable when Cloudflare CDN purging is configured
               "Cache-Control":
-                "public, s-maxage=0, must-revalidate",
+                "public, s-maxage=300, stale-while-revalidate=600",
               "Surrogate-Key": `${tag.listingSlug(slug)} ${tag.collection(type)} ${tag.tenant("unevent")}${citySlug}`,
             }),
       },
