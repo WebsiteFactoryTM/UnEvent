@@ -122,14 +122,20 @@ export function formToPayload(
       surface: locationData.surface || undefined,
       facilities: locationData.facilities ?? [],
       pricing: {
-        type: locationData.pricing.type || "contact",
+        // Auto-determine type: if enabled and has amount, use "from", else "contact"
+        type:
+          locationData.pricing.enabled && locationData.pricing.amount
+            ? "from"
+            : "contact",
         amount: locationData.pricing.enabled
           ? locationData.pricing.amount || null
           : null,
         currency: locationData.pricing.enabled
-          ? locationData.pricing.currency || null
+          ? locationData.pricing.currency || "RON"
+          : "EUR",
+        period: locationData.pricing.enabled
+          ? locationData.pricing.period || "event"
           : null,
-        period: locationData.pricing.period || null,
       },
       availability: {
         type: "always" as const,
@@ -148,14 +154,20 @@ export function formToPayload(
       type: serviceData.type ?? [],
       suitableFor: serviceData.suitableFor ?? [],
       pricing: {
-        type: serviceData.pricing.type || "contact",
+        // Auto-determine type: if enabled and has amount, use "from", else "contact"
+        type:
+          serviceData.pricing.enabled && serviceData.pricing.amount
+            ? "from"
+            : "contact",
         amount: serviceData.pricing.enabled
           ? serviceData.pricing.amount || null
           : null,
         currency: serviceData.pricing.enabled
-          ? serviceData.pricing.currency || null
+          ? serviceData.pricing.currency || "RON"
+          : "EUR",
+        period: serviceData.pricing.enabled
+          ? serviceData.pricing.period || "event"
           : null,
-        period: serviceData.pricing.period || null,
       },
       features:
         serviceData.features && serviceData.features.length > 0
