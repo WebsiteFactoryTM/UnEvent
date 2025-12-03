@@ -6,6 +6,7 @@ import {
   normalizeListing,
   normalizeListings,
 } from "../transforms/normalizeListing";
+import { tag } from "@unevent/shared";
 
 export const fetchListing = async (
   listingType: "locations" | "events" | "services",
@@ -43,7 +44,8 @@ export const fetchListing = async (
         {
           headers: Object.keys(headers).length > 0 ? headers : undefined,
           next: {
-            tags: [`${listingType}_${slug}`],
+            // Use consistent tag format with backend
+            tags: [tag.listingSlug(slug), tag.collection(listingType)],
             revalidate: isDraftMode ? 0 : undefined, // Let page/route control revalidation
           },
           cache: isDraftMode ? "no-store" : "default",
