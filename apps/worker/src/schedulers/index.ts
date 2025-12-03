@@ -29,6 +29,25 @@ export async function registerSchedulers(): Promise<void> {
   const heartbeatInterval = getHeartbeatInterval();
   const heartbeatMinutes = Math.floor(heartbeatInterval / 60000);
 
+  // Remove existing heartbeat job if it exists (allows interval updates on redeploy)
+  try {
+    const existingJobs = await maintenanceQueue.getRepeatableJobs();
+    const heartbeatJob = existingJobs.find(
+      (job) => job.id === "heartbeat-recurring",
+    );
+    if (heartbeatJob) {
+      await maintenanceQueue.removeRepeatableByKey(heartbeatJob.key);
+      console.log(
+        `[Schedulers] Removed existing heartbeat job to update interval`,
+      );
+    }
+  } catch (error) {
+    console.warn(
+      `[Schedulers] Could not remove existing heartbeat job:`,
+      error,
+    );
+  }
+
   await maintenanceQueue.add(
     "heartbeat",
     { type: "heartbeat" },
@@ -48,6 +67,25 @@ export async function registerSchedulers(): Promise<void> {
   // Runs at 07:00 UTC daily
   const adminDigestTime = process.env.ADMIN_DIGEST_TIME || "07:00";
   const [hours, minutes] = adminDigestTime.split(":").map(Number);
+
+  // Remove existing admin digest job if time changed
+  try {
+    const existingJobs = await maintenanceQueue.getRepeatableJobs();
+    const digestJob = existingJobs.find(
+      (job) => job.id === "admin-digest-daily-recurring",
+    );
+    if (digestJob) {
+      await maintenanceQueue.removeRepeatableByKey(digestJob.key);
+      console.log(
+        `[Schedulers] Removed existing admin digest job to update schedule`,
+      );
+    }
+  } catch (error) {
+    console.warn(
+      `[Schedulers] Could not remove existing admin digest job:`,
+      error,
+    );
+  }
 
   await maintenanceQueue.add(
     "admin-digest-daily",
