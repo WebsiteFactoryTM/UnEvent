@@ -79,7 +79,6 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     const data = await res.json();
     const doc = data?.docs?.[0];
-    console.log("doc", doc);
 
     if (!doc) {
       return new Response("Not found", { status: 404 });
