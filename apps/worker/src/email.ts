@@ -134,13 +134,15 @@ export interface TemplatedEmailOptions {
 export async function sendTemplatedEmail(
   options: TemplatedEmailOptions,
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const defaultFrom =
+    process.env.RESEND_FROM_EMAIL ||
+    `"Ernest de la UnEvent" <${process.env.RESEND_FROM_ADDRESS || "contact@unevent.ro"}>`;
   const {
     to,
     subject,
     react,
     textFallback,
-    from = process.env.RESEND_FROM_EMAIL || 
-      `"Ernest from UnEvent" <${process.env.RESEND_FROM_ADDRESS || "noreply@unevent.ro"}>`,
+    from = defaultFrom,
     replyTo,
   } = options;
 
@@ -385,7 +387,8 @@ export async function sendEmailHTML(options: {
 
   try {
     const actualTo = getActualRecipient(to);
-    const defaultFrom = process.env.RESEND_FROM_EMAIL || 
+    const defaultFrom =
+      process.env.RESEND_FROM_EMAIL ||
       `"Ernest from UnEvent" <${process.env.RESEND_FROM_ADDRESS || "noreply@unevent.ro"}>`;
     const { data, error } = await client.emails.send({
       from: from || defaultFrom,
