@@ -23,7 +23,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
   // Extract token (client may send "Bearer" or "JWT", we normalize to JWT)
   const token = authHeader.replace(/^(Bearer|JWT)\s+/i, "");
-  const payloadAuthHeader = `JWT ${token}`;
+  const payloadAuthHeader = `Bearer ${token}`;
 
   try {
     const body = await req.json();
@@ -95,7 +95,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 
   // Extract token (client may send "Bearer" or "JWT", we normalize to JWT)
   const token = authHeader.replace(/^(Bearer|JWT)\s+/i, "");
-  const payloadAuthHeader = `JWT ${token}`;
+  const payloadAuthHeader = `Bearer ${token}`;
 
   try {
     const res = await fetch(`${payloadUrl}/api/${type}/${id}`, {

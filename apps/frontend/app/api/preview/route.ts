@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     `${process.env.NEXT_PUBLIC_API_URL}/api/users/me`,
     {
       headers: {
-        Authorization: `JWT ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     },
   );

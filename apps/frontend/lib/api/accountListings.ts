@@ -32,7 +32,7 @@ export const getUserListing = async (
       `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}/${listingId}?depth=1`,
       {
         headers: {
-          Authorization: `JWT ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
         method: "GET",
@@ -66,7 +66,7 @@ export const getUserListings = async (
       `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[owner][equals]=${profileId}&depth=1`,
       {
         headers: {
-          Authorization: `JWT ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       },

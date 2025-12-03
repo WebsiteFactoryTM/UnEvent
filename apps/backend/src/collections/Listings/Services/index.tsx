@@ -18,7 +18,7 @@ export const Services: CollectionConfig = {
     group: 'Listings',
     preview: (doc) => {
       return `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/api/preview?url=${encodeURIComponent(
-        `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/services/${doc.slug}`,
+        `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/servicii/${doc.slug}`,
       )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
     },
   },

@@ -33,7 +33,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     if (!payloadToken) {
       return new Response("Unauthorized", { status: 401 });
     }
-    authHeader = `JWT ${payloadToken}`;
+    authHeader = `Bearer ${payloadToken}`;
   } else {
     if (!process.env.SVC_TOKEN) {
       return new Response("SVC_TOKEN not configured", { status: 500 });

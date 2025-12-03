@@ -89,7 +89,6 @@ export default function EventHero({ event }: EventHeroProps) {
             </div>
           ) : null}
           <span className="text-muted-foreground">{eventType}</span>
-          <span className="font-semibold text-foreground">{priceText}</span>
         </div>
       </div>
 
