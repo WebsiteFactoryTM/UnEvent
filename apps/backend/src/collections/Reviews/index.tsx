@@ -1,6 +1,7 @@
 import { CollectionConfig } from 'payload'
 import { isOwnerOrAdmin, isLoggedIn } from '../_access/roles'
 import { attachOwner } from './hooks/beforeChange/attachOwner'
+import { preventDuplicateReview } from './hooks/beforeChange/preventDuplicateReview'
 import { recalcReviewAggregates } from './hooks/afterOperation/recalcReviewAggregates'
 import { notifyReviewModeration } from './hooks/afterChange/notifyReviewModeration'
 import { notifyListingOwnerNewReview } from './hooks/afterChange/notifyListingOwnerNewReview'
@@ -22,7 +23,7 @@ export const Reviews: CollectionConfig = {
     delete: ({ req }) => isOwnerOrAdmin({ req }),
   },
   hooks: {
-    beforeChange: [attachOwner],
+    beforeChange: [attachOwner, preventDuplicateReview],
     afterChange: [notifyReviewModeration, notifyListingOwnerNewReview, notifyAdminNewReview],
     afterOperation: [recalcReviewAggregates],
   },
@@ -50,7 +51,7 @@ export const Reviews: CollectionConfig = {
       type: 'relationship',
       relationTo: 'profiles',
       required: true,
-      maxDepth: 1,
+      maxDepth: 2,
     },
     {
       name: 'status',

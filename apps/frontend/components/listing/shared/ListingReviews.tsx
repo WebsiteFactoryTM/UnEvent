@@ -1,9 +1,12 @@
+"use client";
+
 import type { ListingType } from "@/types/listings";
 import { Suspense, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 
 import ListingReviewsList from "./ListingReviewsList";
 import ReviewForm from "./ReviewForm";
+import { useReviews } from "@/hooks/useReviews";
 
 export function ListingReviews({
   type,
@@ -18,6 +21,11 @@ export function ListingReviews({
   listingReviewCount: number | null;
   hasReviewedByViewer: boolean;
 }) {
+  const { userPendingReview } = useReviews({
+    type,
+    listingId,
+  });
+
   return (
     <div className="glass-card p-4 sm:p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -41,7 +49,11 @@ export function ListingReviews({
         hasReviewedByViewer={hasReviewedByViewer}
       />
 
-      <ListingReviewsList type={type} listingId={listingId as number} />
+      <ListingReviewsList
+        type={type}
+        listingId={listingId as number}
+        userPendingReview={userPendingReview ?? undefined}
+      />
     </div>
   );
 }

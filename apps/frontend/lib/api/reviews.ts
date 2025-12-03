@@ -33,6 +33,7 @@ export interface FetchReviewsParams {
   page?: number;
   limit?: number;
   status?: "approved" | "pending" | "rejected";
+  userId?: number; // Optional: filter by user profile ID
 }
 
 export async function fetchReviews({
@@ -41,15 +42,21 @@ export async function fetchReviews({
   page = 1,
   limit = 10,
   status = "approved",
+  userId,
 }: FetchReviewsParams): Promise<PaginatedResult<Review>> {
   if (!API_URL) throw new Error("Missing NEXT_PUBLIC_API_URL");
 
-  const query = {
+  const query: Record<string, any> = {
     "listing.relationTo": { equals: listingType },
     "listing.value": { equals: listingId },
     status: { equals: status },
     listingType: { equals: listingType },
-  } as const;
+  };
+
+  // Add user filter if provided
+  if (userId) {
+    query.user = { equals: userId };
+  }
 
   // This query could be much more complex
   // and qs-esm would handle it beautifully
@@ -58,7 +65,7 @@ export async function fetchReviews({
       where: query,
       limit,
       page,
-      depth: 2,
+      depth: 3, // Increased from 2 to 3 to ensure avatar Media objects are populated
     },
     { addQueryPrefix: true },
   );

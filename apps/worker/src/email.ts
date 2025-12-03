@@ -139,7 +139,8 @@ export async function sendTemplatedEmail(
     subject,
     react,
     textFallback,
-    from = process.env.RESEND_FROM_EMAIL || "noreply@unevent.ro",
+    from = process.env.RESEND_FROM_EMAIL || 
+      `"Ernest from UnEvent" <${process.env.RESEND_FROM_ADDRESS || "noreply@unevent.ro"}>`,
     replyTo,
   } = options;
 
@@ -384,8 +385,10 @@ export async function sendEmailHTML(options: {
 
   try {
     const actualTo = getActualRecipient(to);
+    const defaultFrom = process.env.RESEND_FROM_EMAIL || 
+      `"Ernest from UnEvent" <${process.env.RESEND_FROM_ADDRESS || "noreply@unevent.ro"}>`;
     const { data, error } = await client.emails.send({
-      from: from || process.env.RESEND_FROM_EMAIL || "noreply@unevent.ro",
+      from: from || defaultFrom,
       to: actualTo,
       subject,
       html,

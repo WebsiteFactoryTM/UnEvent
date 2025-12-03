@@ -23,7 +23,7 @@ const ReviewForm = ({
 }) => {
   const { data: session } = useSession();
   const user = session?.user;
-  const { addReview, isAdding, hasUserReview } = useReviews({
+  const { addReview, isAdding, hasUserReview, userPendingReview } = useReviews({
     type,
     listingId,
   });
@@ -60,6 +60,31 @@ const ReviewForm = ({
   }
 
   if (hasReviewedByViewer || hasUserReview) {
+    // If user has a pending review, show a more informative message
+    if (userPendingReview) {
+      return (
+        <div className="p-4 rounded-lg border border-dashed border-border space-y-4 opacity-70">
+          <p className="text-sm text-muted-foreground">
+            Recenzia ta este în așteptarea aprobării de către administrator.
+          </p>
+          {userPendingReview.comment && (
+            <div className="mt-2 p-3 bg-muted/50 rounded-md">
+              <p className="text-xs font-medium mb-1">Recenzia ta:</p>
+              <p className="text-sm text-muted-foreground">
+                {userPendingReview.comment}
+              </p>
+              <div className="flex items-center gap-1 mt-2">
+                <FaStar className="h-3 w-3 text-yellow-500" />
+                <span className="text-xs font-semibold">
+                  {userPendingReview.rating}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    // Otherwise, show generic message
     return (
       <div className="p-4 rounded-lg border border-border space-y-4">
         <p className="text-sm text-muted-foreground">
