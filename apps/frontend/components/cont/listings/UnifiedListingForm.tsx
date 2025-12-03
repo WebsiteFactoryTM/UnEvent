@@ -388,25 +388,23 @@ export function UnifiedListingForm({
           }}
           className="flex-1 flex flex-col"
         >
-          <div className="border-b bg-background">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-4">
-              <TabsList
-                className="grid w-full h-auto"
-                style={{
-                  gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`,
-                }}
-              >
-                {tabs.map((tab) => (
-                  <TabsTrigger
-                    key={tab.value}
-                    value={tab.value}
-                    className="text-xs sm:text-sm px-2 py-2"
-                  >
-                    {tab.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </div>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-4xl">
+            <TabsList
+              className="grid w-full h-auto"
+              style={{
+                gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`,
+              }}
+            >
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="text-xs sm:text-sm px-1 sm:px-2 py-2"
+                >
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
           </div>
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-4xl">
