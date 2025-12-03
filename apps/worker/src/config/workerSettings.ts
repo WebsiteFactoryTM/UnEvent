@@ -59,14 +59,16 @@ export function getWorkerSettings(
 
     case "development":
     default:
-      // 4x slower for development (most conservative)
+      // 2x slower for development (conservative but still responsive)
+      // Note: stalledInterval doesn't control new job polling, but we keep it reasonable
+      // to ensure jobs are picked up within ~30-60 seconds
       console.log(
-        `[WorkerSettings] ${type}: development mode (4x slower polling)`,
+        `[WorkerSettings] ${type}: development mode (2x slower polling)`,
       );
       return {
-        concurrency: Math.max(1, Math.floor(settings.concurrency / 4)),
-        lockDuration: settings.lockDuration * 4,
-        stalledInterval: settings.stalledInterval * 4,
+        concurrency: Math.max(1, Math.floor(settings.concurrency / 2)),
+        lockDuration: settings.lockDuration * 2,
+        stalledInterval: Math.min(settings.stalledInterval * 2, 60000), // Cap at 60s for dev
         maxStalledCount: settings.maxStalledCount,
       };
   }
@@ -80,7 +82,7 @@ export function getEnvironmentDescription(): string {
   const descriptions = {
     production: "Production (real-time)",
     staging: "Staging (2x slower)",
-    development: "Development (4x slower)",
+    development: "Development (2x slower, responsive)",
   };
   return (
     descriptions[env as keyof typeof descriptions] || descriptions.development

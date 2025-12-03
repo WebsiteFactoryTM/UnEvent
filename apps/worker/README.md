@@ -106,7 +106,7 @@ ADMIN_DIGEST_TIME=07:00
 RESEND_API_KEY=re_xxxxxxxxxxxxx
 RESEND_FROM_EMAIL=noreply@unevent.ro
 # In development, use TEST_EMAIL to avoid Resend domain verification requirements:
-TEST_EMAIL=office.pixelfactory@gmail.com
+TEST_EMAIL=contact@unevent.ro
 # Alternative override (fallback if TEST_EMAIL not set):
 # RESEND_OVERRIDE_TO=test@example.com
 ADMIN_EMAILS=contact@unevent.ro,admin2@unevent.ro

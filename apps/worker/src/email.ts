@@ -27,6 +27,50 @@ function getResendClient(): Resend | null {
 }
 
 /**
+ * Validate email address format
+ */
+function isValidEmail(email: string): boolean {
+  if (!email || typeof email !== "string") return false;
+  const trimmed = email.trim();
+  if (trimmed.length === 0) return false;
+  // Basic email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(trimmed);
+}
+
+/**
+ * Sanitize and validate email addresses
+ */
+function sanitizeEmails(emails: string | string[]): string[] {
+  const emailArray = Array.isArray(emails) ? emails : [emails];
+  const validEmails: string[] = [];
+
+  for (const email of emailArray) {
+    if (!email || typeof email !== "string") continue;
+    const trimmed = email.trim();
+    if (trimmed.length === 0) continue;
+
+    // Handle comma-separated emails in a single string
+    if (trimmed.includes(",")) {
+      const split = trimmed.split(",").map((e) => e.trim());
+      for (const e of split) {
+        if (isValidEmail(e)) {
+          validEmails.push(e);
+        } else {
+          console.warn(`[Email] Invalid email address skipped: ${e}`);
+        }
+      }
+    } else if (isValidEmail(trimmed)) {
+      validEmails.push(trimmed);
+    } else {
+      console.warn(`[Email] Invalid email address skipped: ${trimmed}`);
+    }
+  }
+
+  return validEmails;
+}
+
+/**
  * Determine the actual recipient based on environment
  * In development, uses TEST_EMAIL to avoid Resend domain verification requirements
  */
@@ -35,38 +79,51 @@ function getActualRecipient(originalTo: string | string[]): string[] {
   const testEmail = process.env.TEST_EMAIL;
   const overrideTo = process.env.RESEND_OVERRIDE_TO;
 
-  // In production, always send to real recipients
+  // First, sanitize and validate the original recipients
+  const sanitized = sanitizeEmails(originalTo);
+
+  if (sanitized.length === 0) {
+    throw new Error(
+      `No valid email addresses found. Original: ${JSON.stringify(originalTo)}`,
+    );
+  }
+
+  // In production, always send to real recipients (validated)
   if (isProduction) {
-    return Array.isArray(originalTo) ? originalTo : [originalTo];
+    return sanitized;
   }
 
   // In development, use TEST_EMAIL if set (for Resend testing without domain verification)
   if (testEmail) {
-    const originalRecipients = Array.isArray(originalTo)
-      ? originalTo.join(", ")
-      : originalTo;
+    const testEmailSanitized = sanitizeEmails(testEmail);
+    if (testEmailSanitized.length === 0) {
+      throw new Error(`TEST_EMAIL is set but invalid: ${testEmail}`);
+    }
+    const originalRecipients = sanitized.join(", ");
     console.log(
-      `[Email] Development mode: Overriding recipient(s) ${originalRecipients} -> ${testEmail}`,
+      `[Email] Development mode: Overriding recipient(s) ${originalRecipients} -> ${testEmailSanitized[0]}`,
     );
-    return [testEmail];
+    return testEmailSanitized;
   }
 
   // Fallback to RESEND_OVERRIDE_TO if TEST_EMAIL is not set
   if (overrideTo) {
-    const originalRecipients = Array.isArray(originalTo)
-      ? originalTo.join(", ")
-      : originalTo;
+    const overrideSanitized = sanitizeEmails(overrideTo);
+    if (overrideSanitized.length === 0) {
+      throw new Error(`RESEND_OVERRIDE_TO is set but invalid: ${overrideTo}`);
+    }
+    const originalRecipients = sanitized.join(", ");
     console.log(
-      `[Email] Overriding recipient(s) ${originalRecipients} -> ${overrideTo}`,
+      `[Email] Overriding recipient(s) ${originalRecipients} -> ${overrideSanitized[0]}`,
     );
-    return [overrideTo];
+    return overrideSanitized;
   }
 
   // No override set - send to real recipients (may fail in dev without domain verification)
   console.warn(
-    `[Email] No TEST_EMAIL or RESEND_OVERRIDE_TO set in development. Sending to real recipients (may fail without domain verification): ${Array.isArray(originalTo) ? originalTo.join(", ") : originalTo}`,
+    `[Email] ⚠️ No TEST_EMAIL or RESEND_OVERRIDE_TO set in development. Sending to real recipients (may fail without domain verification): ${sanitized.join(", ")}`,
   );
-  return Array.isArray(originalTo) ? originalTo : [originalTo];
+  return sanitized;
 }
 
 export interface TemplatedEmailOptions {
@@ -126,21 +183,40 @@ export async function sendTemplatedEmail(
 
     if (error) {
       console.error("[Email] Resend error:", error);
-      Sentry.captureException(
-        new Error(`Resend error: ${JSON.stringify(error)}`),
-        {
-          tags: {
-            component: "email",
-            emailType: "templated",
-          },
-          extra: {
-            to: actualTo,
-            subject,
-            error,
-          },
+
+      // Handle Resend API restrictions in development
+      const errorMessage =
+        typeof error === "string" ? error : JSON.stringify(error);
+      const isResendRestriction =
+        errorMessage.includes("You can only send testing emails") ||
+        errorMessage.includes("verify a domain");
+
+      if (isResendRestriction && process.env.NODE_ENV !== "production") {
+        console.warn(
+          `[Email] ⚠️ Resend API restriction in development. Set TEST_EMAIL or RESEND_OVERRIDE_TO to avoid this error.`,
+        );
+        console.warn(
+          `[Email] Would have sent to: ${actualTo.join(", ")}, subject: ${subject}`,
+        );
+        // In dev, don't fail - just log
+        return {
+          success: false,
+          error: `Resend API restriction: ${errorMessage}. Set TEST_EMAIL env var to test emails.`,
+        };
+      }
+
+      Sentry.captureException(new Error(`Resend error: ${errorMessage}`), {
+        tags: {
+          component: "email",
+          emailType: "templated",
         },
-      );
-      return { success: false, error: JSON.stringify(error) };
+        extra: {
+          to: actualTo,
+          subject,
+          error,
+        },
+      });
+      return { success: false, error: errorMessage };
     }
 
     console.log(`[Email] ✅ Sent successfully to ${actualTo.join(", ")}`, {

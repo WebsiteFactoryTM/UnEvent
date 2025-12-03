@@ -47,7 +47,23 @@ export function getRedisConnection(): Redis {
     });
 
     redisClient.on("connect", () => {
-      console.log("[Redis] Connected to Upstash Redis (TLS)");
+      console.log("[Redis] ✅ Connected to Upstash Redis (TLS)");
+    });
+
+    redisClient.on("ready", () => {
+      console.log("[Redis] ✅ Redis ready for commands");
+    });
+
+    redisClient.on("close", () => {
+      console.warn("[Redis] ⚠️ Redis connection closed");
+    });
+
+    redisClient.on("reconnecting", (delay: number) => {
+      console.warn(`[Redis] ⚠️ Redis reconnecting in ${delay}ms...`);
+    });
+
+    redisClient.on("end", () => {
+      console.warn("[Redis] ⚠️ Redis connection ended");
     });
 
     return redisClient;
@@ -81,8 +97,24 @@ export function getRedisConnection(): Redis {
 
   redisClient.on("connect", () => {
     console.log(
-      `[Redis] Connected to ${host}:${port}${useTLS ? " (TLS)" : ""}`,
+      `[Redis] ✅ Connected to ${host}:${port}${useTLS ? " (TLS)" : ""}`,
     );
+  });
+
+  redisClient.on("ready", () => {
+    console.log("[Redis] ✅ Redis ready for commands");
+  });
+
+  redisClient.on("close", () => {
+    console.warn("[Redis] ⚠️ Redis connection closed");
+  });
+
+  redisClient.on("reconnecting", (delay: number) => {
+    console.warn(`[Redis] ⚠️ Redis reconnecting in ${delay}ms...`);
+  });
+
+  redisClient.on("end", () => {
+    console.warn("[Redis] ⚠️ Redis connection ended");
   });
 
   return redisClient;

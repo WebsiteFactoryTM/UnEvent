@@ -15,7 +15,7 @@ function getHeartbeatInterval(): number {
       return 10 * 60 * 1000; // 10 minutes
     case "development":
     default:
-      return 15 * 60 * 1000; // 15 minutes
+      return 10 * 60 * 1000; // 10 minutes (reduced from 15 for better responsiveness)
   }
 }
 

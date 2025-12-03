@@ -332,8 +332,17 @@ export const EMAIL_TEMPLATES: Partial<
 
   "admin.listing.pending": {
     type: "admin.listing.pending",
-    getRecipients: (p: AdminListingPendingPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.ro"],
+    getRecipients: (p: AdminListingPendingPayload) => {
+      const adminEmails = process.env.ADMIN_EMAILS;
+      if (adminEmails) {
+        // Split by comma and trim whitespace
+        return adminEmails
+          .split(",")
+          .map((e) => e.trim())
+          .filter(Boolean);
+      }
+      return ["contact@unevent.ro"];
+    },
     getSubject: (p) =>
       `📋 Listare nouă așteaptă aprobare: „${p.listing_title}”`,
     getPreheader: () =>
@@ -353,8 +362,17 @@ export const EMAIL_TEMPLATES: Partial<
 
   "admin.review.pending": {
     type: "admin.review.pending",
-    getRecipients: (p: AdminReviewPendingPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.ro"],
+    getRecipients: (p: AdminReviewPendingPayload) => {
+      const adminEmails = process.env.ADMIN_EMAILS;
+      if (adminEmails) {
+        // Split by comma and trim whitespace
+        return adminEmails
+          .split(",")
+          .map((e) => e.trim())
+          .filter(Boolean);
+      }
+      return ["contact@unevent.ro"];
+    },
     getSubject: (p) =>
       `⭐ Recenzie nouă așteaptă aprobare pentru „${p.listing_title}"`,
     getPreheader: () =>
@@ -441,8 +459,17 @@ export const EMAIL_TEMPLATES: Partial<
 
   "admin.user.new": {
     type: "admin.user.new",
-    getRecipients: (p: AdminUserNewPayload) =>
-      process.env.ADMIN_EMAILS?.split(",") || ["contact@unevent.ro"],
+    getRecipients: (p: AdminUserNewPayload) => {
+      const adminEmails = process.env.ADMIN_EMAILS;
+      if (adminEmails) {
+        // Split by comma and trim whitespace
+        return adminEmails
+          .split(",")
+          .map((e) => e.trim())
+          .filter(Boolean);
+      }
+      return ["contact@unevent.ro"];
+    },
     getSubject: (p) => `👤 Utilizator nou înregistrat: ${p.user_email}`,
     getPreheader: () => "Un nou utilizator s-a înregistrat pe platformă.",
     getTextFallback: (p) =>

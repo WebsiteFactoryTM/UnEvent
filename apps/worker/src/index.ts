@@ -121,6 +121,74 @@ async function main() {
 
     console.log("[Worker] Processors initialized");
 
+    // Diagnostic: Check queue status periodically
+    const checkQueueStatus = async () => {
+      try {
+        const { notificationsQueue } = await import("./queues/index.js");
+        const waiting = await notificationsQueue.getWaitingCount();
+        const active = await notificationsQueue.getActiveCount();
+        const delayed = await notificationsQueue.getDelayedCount();
+        const failed = await notificationsQueue.getFailedCount();
+
+        console.log(
+          `[Worker] Queue status check (${new Date().toISOString()}):`,
+        );
+        console.log(`  - Waiting: ${waiting}`);
+        console.log(`  - Active: ${active}`);
+        console.log(`  - Delayed: ${delayed}`);
+        console.log(`  - Failed: ${failed}`);
+
+        if (waiting > 0) {
+          console.log(
+            `[Worker] ⚠️ ${waiting} job(s) waiting in queue - worker should pick them up soon`,
+          );
+          // Show some waiting jobs for debugging
+          try {
+            const waitingJobs = await notificationsQueue.getWaiting(0, 5);
+            console.log(`[Worker] Sample waiting jobs:`);
+            for (const job of waitingJobs) {
+              console.log(
+                `  - Job ${job.id}: ${job.data?.type || "unknown"} (enqueued: ${new Date(job.timestamp).toISOString()})`,
+              );
+            }
+          } catch (err) {
+            console.warn("[Worker] Could not fetch waiting jobs:", err);
+          }
+        }
+
+        // If there are failed jobs, show details
+        if (failed > 0) {
+          console.log(
+            `[Worker] ⚠️ ${failed} failed job(s) detected. Fetching details...`,
+          );
+          try {
+            const failedJobs = await notificationsQueue.getFailed(0, 10);
+            for (const job of failedJobs) {
+              console.error(`[Worker] Failed job ${job.id}:`);
+              console.error(`  - Type: ${job.data?.type || "unknown"}`);
+              console.error(
+                `  - Attempts: ${job.attemptsMade}/${job.opts?.attempts || 3}`,
+              );
+              console.error(
+                `  - Error: ${job.failedReason || "Unknown error"}`,
+              );
+              if (job.stacktrace && job.stacktrace.length > 0) {
+                console.error(`  - Stack trace: ${job.stacktrace[0]}`);
+              }
+            }
+          } catch (err) {
+            console.warn("[Worker] Could not fetch failed job details:", err);
+          }
+        }
+      } catch (error) {
+        console.warn("[Worker] Could not check queue status:", error);
+      }
+    };
+
+    // Check immediately and then periodically
+    setTimeout(checkQueueStatus, 5000); // Check after 5 seconds
+    setInterval(checkQueueStatus, 30000); // Then every 30 seconds
+
     // Register schedulers (these create recurring jobs)
     console.log("[Worker] Registering schedulers...");
     await registerSchedulers();

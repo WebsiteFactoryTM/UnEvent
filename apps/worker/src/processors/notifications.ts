@@ -43,7 +43,39 @@ export function createNotificationsProcessor(): Worker {
           const result = await sendEmailFromRegistry(type, payload);
 
           if (!result.success) {
-            throw new Error(`Failed to send email (${type}): ${result.error}`);
+            const errorMsg = result.error || "Unknown error";
+
+            // In development, handle common issues gracefully
+            if (process.env.NODE_ENV === "development") {
+              const isResendRestriction =
+                errorMsg.includes("You can only send testing emails") ||
+                errorMsg.includes("verify a domain") ||
+                errorMsg.includes("Resend API restriction");
+              const isMissingApiKey = errorMsg.includes("RESEND_API_KEY");
+              const isInvalidEmail = errorMsg.includes("Invalid `to` field");
+
+              if (isResendRestriction || isMissingApiKey || isInvalidEmail) {
+                console.warn(
+                  `[Notifications] ⚠️ Skipping email send (${type}) in development mode: ${errorMsg}`,
+                );
+                console.warn(
+                  `[Notifications] Tip: Set TEST_EMAIL or RESEND_OVERRIDE_TO env var to test emails`,
+                );
+                console.warn(
+                  `[Notifications] Would have sent to: ${JSON.stringify(payload)}`,
+                );
+                // Return success to prevent job failure in dev
+                return {
+                  success: true,
+                  type,
+                  skipped: true,
+                  reason: errorMsg,
+                  processedAt: new Date().toISOString(),
+                };
+              }
+            }
+
+            throw new Error(`Failed to send email (${type}): ${errorMsg}`);
           }
 
           console.log(
@@ -91,8 +123,24 @@ export function createNotificationsProcessor(): Worker {
     console.log(`[Notifications] Job ${job.id} completed`);
   });
 
-  worker.on("failed", (job: Job | undefined, err: Error) => {
-    console.error(`[Notifications] Job ${job?.id} failed:`, err);
+  worker.on("failed", async (job: Job | undefined, err: Error) => {
+    const jobId = job?.id || "unknown";
+    const jobType = job?.data?.type || "unknown";
+    const jobData = job?.data || {};
+
+    console.error(
+      `[Notifications] ❌ Job ${jobId} failed (type: ${jobType}):`,
+      err,
+    );
+    console.error(
+      `[Notifications] Failed job data:`,
+      JSON.stringify(jobData, null, 2),
+    );
+    console.error(`[Notifications] Error details:`, {
+      message: err.message,
+      stack: err.stack,
+      name: err.name,
+    });
   });
 
   worker.on("error", (err: Error) => {
@@ -102,6 +150,30 @@ export function createNotificationsProcessor(): Worker {
         component: "notifications-worker",
       },
     });
+  });
+
+  // Diagnostic: Log when worker is ready and listening (only once)
+  let readyLogged = false;
+  worker.on("ready", () => {
+    if (!readyLogged) {
+      console.log(
+        `[Notifications] ✅ Worker ready and listening for jobs (concurrency: ${settings.concurrency}, stalledInterval: ${settings.stalledInterval}ms)`,
+      );
+      readyLogged = true;
+    }
+  });
+
+  // Diagnostic: Log when worker is closing
+  worker.on("closing", () => {
+    console.log("[Notifications] ⚠️ Worker is closing...");
+    readyLogged = false; // Reset so we log again if it reopens
+  });
+
+  // Diagnostic: Log when jobs are active
+  worker.on("active", (job: Job) => {
+    console.log(
+      `[Notifications] 🔄 Job ${job.id} started processing: ${job.data.type}`,
+    );
   });
 
   return worker;
