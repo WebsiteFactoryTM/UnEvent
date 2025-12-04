@@ -18,6 +18,7 @@ import {
   FaMessage,
 } from "react-icons/fa6";
 import type { User, Profile } from "@/types/payload-types";
+import { ReportDialog } from "@/components/common/ReportDialog";
 
 type ProfileWithUser = Profile & { user?: number | User };
 
@@ -48,6 +49,30 @@ export function ProfileSidebar({ profile }: ProfileSidebarProps) {
     }
   };
 
+  const handleContact = () => {
+    if (profile.phone) {
+      // Format phone number for WhatsApp (remove spaces and non-digit characters except +)
+      let cleanPhone = profile.phone.replace(/\s+/g, "").replace(/[^\d+]/g, "");
+
+      // Handle Romanian phone numbers: convert 0xxx to +40xxx
+      if (cleanPhone.startsWith("0")) {
+        cleanPhone = "+40" + cleanPhone.substring(1);
+      } else if (cleanPhone.startsWith("40") && !cleanPhone.startsWith("+40")) {
+        cleanPhone = "+" + cleanPhone;
+      } else if (!cleanPhone.startsWith("+")) {
+        cleanPhone = "+" + cleanPhone;
+      }
+
+      // Remove + for WhatsApp URL (wa.me expects digits only)
+      const whatsappPhone = cleanPhone.replace(/\+/g, "");
+
+      // WhatsApp automatically detects URLs and makes them clickable (no HTML tags needed)
+      const message = `Bună! V-am găsit pe UN:EVENT și aș avea câteva întrebări.`;
+      const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Quick Actions */}
@@ -68,13 +93,16 @@ export function ProfileSidebar({ profile }: ProfileSidebarProps) {
               </a>
             </Button>
           )}
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-2 bg-transparent"
-          >
-            <FaMessage className="h-4 w-4" />
-            Trimite mesaj
-          </Button>
+          {profile.phone ? (
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2 bg-transparent"
+              onClick={handleContact}
+            >
+              <FaMessage className="h-4 w-4" />
+              Trimite mesaj
+            </Button>
+          ) : null}
           <Button
             asChild
             variant="outline"
@@ -206,13 +234,25 @@ export function ProfileSidebar({ profile }: ProfileSidebarProps) {
             <FaShareNodes className="h-4 w-4" />
             Distribuie profil
           </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-2 text-destructive hover:text-destructive bg-transparent"
-          >
-            <FaFlag className="h-4 w-4" />
-            Raportează profil
-          </Button>
+          <ReportDialog
+            trigger={
+              <Button
+                variant="outline"
+                className="w-full justify-start gap-2 text-destructive hover:text-destructive bg-transparent"
+              >
+                <FaFlag className="h-4 w-4" />
+                Raportează profil
+              </Button>
+            }
+            type="profile"
+            entityId={
+              typeof profile.id === "number" ? profile.id : Number(profile.id)
+            }
+            entityTitle={profile.displayName || profile.name || "Profil"}
+            entityUrl={
+              typeof window !== "undefined" ? window.location.href : ""
+            }
+          />
         </CardContent>
       </Card>
     </div>

@@ -8,14 +8,6 @@ import {
   FaTicket,
 } from "react-icons/fa6";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -29,6 +21,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useFavorites } from "@/hooks/useFavorites";
 import { ListingType } from "@/types/listings";
 import { useState } from "react";
+import { ReportDialog } from "@/components/common/ReportDialog";
+import { getListingTypeSlug } from "@/lib/getListingType";
 
 interface ListingActionsProps {
   title: string;
@@ -110,10 +104,6 @@ export function ListingActions({
     }
   };
 
-  const handleReport = () => {
-    console.log("[v0] Report event:", id);
-  };
-
   const handleParticipate = () => {
     setIsParticipating(!isParticipating);
     console.log("[v0] Participate in event:", id);
@@ -168,8 +158,8 @@ export function ListingActions({
           <span className="hidden sm:inline">Distribuie</span>
         </Button>
 
-        <Dialog>
-          <DialogTrigger asChild>
+        <ReportDialog
+          trigger={
             <Button
               variant="outline"
               size="sm"
@@ -178,28 +168,13 @@ export function ListingActions({
               <FaFlag className="h-4 w-4" />
               <span className="hidden sm:inline">Raportează</span>
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Raportează listarea</DialogTitle>
-              <DialogDescription>
-                Dacă ai identificat o problemă cu această listare, te rugăm să
-                ne informezi.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="report-reason">Motivul raportării</Label>
-                <Textarea
-                  id="report-reason"
-                  placeholder="Descrie problema..."
-                  className="mt-2"
-                />
-              </div>
-              <Button className="w-full">Trimite raport</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+          }
+          type="listing"
+          entityId={id}
+          entityTitle={title}
+          entityUrl={typeof window !== "undefined" ? window.location.href : ""}
+          listingType={getListingTypeSlug(listingType)}
+        />
       </div>
       {listingType === "evenimente" && (
         <div className="gap-3 inline-flex place-self-end">
