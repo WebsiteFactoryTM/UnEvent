@@ -65,11 +65,24 @@ export async function generateMetadata({
 
   const title = titles[listingType] || "UN:EVENT";
   const description = descriptions[listingType] || "";
+  const canonicalUrl = `https://unevent.ro/${listingType}`;
+
   return {
     title,
     description,
-    alternates: { canonical: `/${listingType}` },
-    metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_URL!),
+    alternates: { canonical: canonicalUrl },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "UN:EVENT",
+      type: "website",
+      locale: "ro_RO",
+    },
   };
 }
 

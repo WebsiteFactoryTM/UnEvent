@@ -1,0 +1,31 @@
+User-agent: *
+Allow: /
+
+# Block admin and API routes
+Disallow: /admin
+Disallow: /api/
+Disallow: /cont/
+Disallow: /auth/
+
+# Block draft and preview pages
+Disallow: /preview
+Disallow: /draft
+
+# Block search result pages with parameters (prevent duplicate content)
+Disallow: /*?*priceMin=
+Disallow: /*?*priceMax=
+Disallow: /*?*capacityMin=
+Disallow: /*?*facilities=
+Disallow: /*?*lat=
+Disallow: /*?*lng=
+Disallow: /*?*radius=
+Disallow: /*?*ratingMin=
+
+# Allow clean city and category URLs
+Allow: /locatii/oras/
+Allow: /servicii/oras/
+Allow: /evenimente/oras/
+
+# Sitemap location
+Sitemap: https://unevent.ro/sitemap.xml
+

@@ -27,31 +27,84 @@ export const revalidate = 3600; // ISR: revalidate every hour
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
-  params: { listingType: string; city: string; type: string };
+  params: Promise<{ listingType: string; city: string; type: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
-  const listingLabel = getListingTypeLabel(params.listingType);
-  const cityLabel = getCityLabel(params.city);
-  const typeLabel = getTypeLabel(params.listingType, params.type);
+  const { listingType, city, type } = await params;
+  const searchFilters = await searchParams;
+  const page = Number(searchFilters?.page ?? 1);
+
+  const listingLabel = getListingTypeLabel(listingType);
+  const cityLabel = getCityLabel(city);
+  const typeLabel = getTypeLabel(listingType, type);
+
+  const baseUrl = `https://unevent.ro/${listingType}/oras/${city}/${type}`;
+  const title = `Top ${listingLabel} de ${typeLabel} ${cityLabel}${
+    page > 1 ? ` – Pagina ${page}` : ""
+  } | UN:EVENT`;
+  const description = `Descoperă cele mai bune ${listingLabel.toLowerCase()} de ${typeLabel.toLowerCase()} din ${cityLabel}.`;
+
+  // Smart Canonical Logic for City + Type pages
+  const filterParams = ['priceMin', 'priceMax', 'capacityMin', 'facilities', 
+                        'facilitiesMode', 'lat', 'lng', 'radius', 'ratingMin', 'limit'];
+  
+  const hasFilters = Object.keys(searchFilters || {}).some(
+    key => filterParams.includes(key) && searchFilters[key]
+  );
+
+  const canonicalUrl = hasFilters 
+    ? baseUrl 
+    : page > 1 
+      ? `${baseUrl}?page=${page}` 
+      : baseUrl;
+
+  const shouldIndex = !hasFilters;
 
   return {
-    title: `Top ${listingLabel} de ${typeLabel} ${cityLabel} | UN:EVENT`,
-    description: `Descoperă cele mai bune ${listingLabel.toLowerCase()} de ${typeLabel.toLowerCase()} din ${cityLabel}.`,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    robots: {
+      index: shouldIndex,
+      follow: true,
+      googleBot: {
+        index: shouldIndex,
+        follow: true,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: baseUrl,
+      siteName: "UN:EVENT",
+      type: "website",
+      locale: "ro_RO",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
-export default function CityTypeArchivePage({
+export default async function CityTypeArchivePage({
   params,
 }: {
-  params: { listingType: string; city: string; type: string };
+  params: Promise<{ listingType: string; city: string; type: string }>;
 }) {
-  if (!listingTypes.includes(params.listingType as any)) {
+  const { listingType, city, type } = await params;
+  if (!listingTypes.includes(listingType as any)) {
     notFound();
   }
 
-  const listingLabel = getListingTypeLabel(params.listingType);
-  const cityLabel = getCityLabel(params.city);
-  const typeLabel = getTypeLabel(params.listingType, params.type);
+  const listingLabel = getListingTypeLabel(listingType);
+  const cityLabel = getCityLabel(city);
+  const typeLabel = getTypeLabel(listingType, type);
 
   return (
     <div className="min-h-screen">
@@ -68,7 +121,7 @@ export default function CityTypeArchivePage({
               <li>/</li>
               <li>
                 <a
-                  href={`/${params.listingType}`}
+                  href={`/${listingType}`}
                   className="hover:text-foreground"
                 >
                   {listingLabel}
@@ -77,7 +130,7 @@ export default function CityTypeArchivePage({
               <li>/</li>
               <li>
                 <a
-                  href={`/${params.listingType}/oras/${params.city}`}
+                  href={`/${listingType}/oras/${city}`}
                   className="hover:text-foreground"
                 >
                   {cityLabel}
@@ -99,10 +152,10 @@ export default function CityTypeArchivePage({
                 listări.
               </p>
             </div>
-            <AddListingButton listingType={params.listingType as any} />
+            <AddListingButton listingType={listingType as any} />
           </div>
 
-          <ArchiveFilter listingType={params.listingType as any} />
+          <ArchiveFilter listingType={listingType as any} />
         </div>
       </div>
     </div>
