@@ -10,7 +10,6 @@ import { ListingDescription } from "@/components/listing/shared/ListingDescripti
 import { ListingVideos } from "@/components/listing/shared/ListingVideos";
 import { ListingMap } from "@/components/listing/shared/ListingMap";
 import { ListingProviderCard } from "@/components/listing/shared/ListingProviderCard";
-import { ListingReviews } from "@/components/listing/shared/ListingReviews";
 import { buildJsonLd } from "@/components/listing/shared/jsonld";
 import type {
   EventListing,
@@ -32,8 +31,44 @@ import { fetchListing } from "@/lib/api/listings";
 import { LocationFacilities } from "@/components/listing/location/LocationFacilities";
 import { LocationCapacity } from "@/components/listing/location/LocationCapacity";
 import { ServiceOfferTags } from "@/components/listing/service/ServiceOfferTags";
-import { ListingRecommendations } from "@/components/listing/shared/ListingRecommendations";
 import { ListingType as SuitableForType } from "@/types/payload-types";
+import nextDynamic from "next/dynamic";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const ListingReviews = nextDynamic(
+  () =>
+    import("@/components/listing/shared/ListingReviews").then(
+      (mod) => mod.ListingReviews,
+    ),
+  {
+    loading: () => (
+      <div className="glass-card p-4 sm:p-6 space-y-6">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    ),
+  },
+);
+
+const ListingRecommendations = nextDynamic(
+  () =>
+    import("@/components/listing/shared/ListingRecommendations").then(
+      (mod) => mod.ListingRecommendations,
+    ),
+  {
+    loading: () => (
+      <div className="container mx-auto px-4 py-6">
+        <Skeleton className="h-10 w-64 mb-6" />
+        <div className="flex gap-4">
+          <Skeleton className="h-96 w-full" />
+          <Skeleton className="h-96 w-full" />
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </div>
+    ),
+  },
+);
 // import { RecommendedListings } from "@/components/home/carousels/RecommendedLocations";
 
 import { fetchHubSnapshot } from "@/lib/api/hub";
@@ -193,73 +228,134 @@ export default async function DetailPage({
               listing={listing as Listing}
             />
 
-            <ListingReviews
-              type={listingType as ListingType}
-              listingId={listing?.id ?? null}
-              listingRating={listing?.rating ?? null}
-              listingReviewCount={listing?.reviewCount ?? null}
-              hasReviewedByViewer={listing?.hasReviewedByViewer ?? false}
-            />
+            <Suspense
+              fallback={
+                <div className="glass-card p-4 sm:p-6 space-y-6">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-32 w-full" />
+                </div>
+              }
+            >
+              <ListingReviews
+                type={listingType as ListingType}
+                listingId={listing?.id ?? null}
+                listingRating={listing?.rating ?? null}
+                listingReviewCount={listing?.reviewCount ?? null}
+                hasReviewedByViewer={listing?.hasReviewedByViewer ?? false}
+              />
+            </Suspense>
           </div>
           {listingType === "evenimente" && (
-            <ListingRecommendations
-              typeRecommendations={"evenimente" as ListingType}
-              city={city as City}
-              suitableFor={
-                (listing as Location | Service)?.suitableFor as (
-                  | number
-                  | SuitableForType
-                )[]
+            <Suspense
+              fallback={
+                <div className="container mx-auto px-4 py-6">
+                  <Skeleton className="h-10 w-64 mb-6" />
+                  <div className="flex gap-4">
+                    <Skeleton className="h-96 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                  </div>
+                </div>
               }
-              label="Explorează alte evenimente in aceeasi zona"
-              listingId={listing?.id}
-            />
+            >
+              <ListingRecommendations
+                typeRecommendations={"evenimente" as ListingType}
+                city={city as City}
+                suitableFor={
+                  (listing as Location | Service)?.suitableFor as (
+                    | number
+                    | SuitableForType
+                  )[]
+                }
+                label="Explorează alte evenimente in aceeasi zona"
+                listingId={listing?.id}
+              />
+            </Suspense>
           )}
 
           {["servicii"].includes(listingType) && (
-            <ListingRecommendations
-              typeRecommendations={"locatii" as ListingType}
-              city={city as City}
-              suitableFor={
-                (listing as Location | Service)?.suitableFor as (
-                  | number
-                  | SuitableForType
-                )[]
+            <Suspense
+              fallback={
+                <div className="container mx-auto px-4 py-6">
+                  <Skeleton className="h-10 w-64 mb-6" />
+                  <div className="flex gap-4">
+                    <Skeleton className="h-96 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                  </div>
+                </div>
               }
-              label="Locații recomandate"
-              subLabel="Pentru evenimentul tău"
-            />
+            >
+              <ListingRecommendations
+                typeRecommendations={"locatii" as ListingType}
+                city={city as City}
+                suitableFor={
+                  (listing as Location | Service)?.suitableFor as (
+                    | number
+                    | SuitableForType
+                  )[]
+                }
+                label="Locații recomandate"
+                subLabel="Pentru evenimentul tău"
+              />
+            </Suspense>
           )}
 
           {listingType === "locatii" && (
-            <ListingRecommendations
-              typeRecommendations={"servicii" as ListingType}
-              city={city as City}
-              suitableFor={
-                (listing as Location | Service)?.suitableFor as (
-                  | number
-                  | SuitableForType
-                )[]
+            <Suspense
+              fallback={
+                <div className="container mx-auto px-4 py-6">
+                  <Skeleton className="h-10 w-64 mb-6" />
+                  <div className="flex gap-4">
+                    <Skeleton className="h-96 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                  </div>
+                </div>
               }
-              label="Servicii recomandate"
-              subLabel="Pentru evenimentul tău"
-            />
+            >
+              <ListingRecommendations
+                typeRecommendations={"servicii" as ListingType}
+                city={city as City}
+                suitableFor={
+                  (listing as Location | Service)?.suitableFor as (
+                    | number
+                    | SuitableForType
+                  )[]
+                }
+                label="Servicii recomandate"
+                subLabel="Pentru evenimentul tău"
+              />
+            </Suspense>
           )}
 
           {listingType !== "evenimente" && (
-            <ListingRecommendations
-              typeRecommendations={listingType as ListingType}
-              city={city as City}
-              suitableFor={
-                (listing as Location | Service)?.suitableFor as (
-                  | number
-                  | SuitableForType
-                )[]
+            <Suspense
+              fallback={
+                <div className="container mx-auto px-4 py-6">
+                  <Skeleton className="h-10 w-64 mb-6" />
+                  <div className="flex gap-4">
+                    <Skeleton className="h-96 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                  </div>
+                </div>
               }
-              label={`${listingType.charAt(0).toUpperCase() + listingType.slice(1)} similare`}
-              subLabel="Pentru evenimentul tău"
-              listingId={listing?.id}
-            />
+            >
+              <ListingRecommendations
+                typeRecommendations={listingType as ListingType}
+                city={city as City}
+                suitableFor={
+                  (listing as Location | Service)?.suitableFor as (
+                    | number
+                    | SuitableForType
+                  )[]
+                }
+                label={`${listingType.charAt(0).toUpperCase() + listingType.slice(1)} similare`}
+                subLabel="Pentru evenimentul tău"
+                listingId={listing?.id}
+              />
+            </Suspense>
           )}
         </div>
       </div>

@@ -30,8 +30,6 @@ function extractYouTubeVideoId(url: string | null | undefined): string | null {
 }
 
 export function ListingVideos({ youtubeLinks }: ListingVideosProps) {
-  console.log(youtubeLinks, "youtubeLinks");
-
   if (youtubeLinks?.length === 0) return null;
 
   return (

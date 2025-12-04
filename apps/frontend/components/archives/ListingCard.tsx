@@ -22,8 +22,9 @@ import { useToast } from "@/hooks/use-toast";
 import FavoriteButton from "../common/FavoriteButton";
 import { MdVerified } from "react-icons/md";
 import type { ListingCardData } from "@/lib/normalizers/hub";
-import { useImpression } from "../metrics/useImpression";
+// import { useImpression } from "../metrics/useImpression";
 import { getListingTypeSlug } from "@/lib/getListingType";
+import ListingCardImpressionsLayer from "./ListingCardImpressionsLayer";
 
 export function ListingCard({
   id,
@@ -46,7 +47,6 @@ export function ListingCard({
 }: ListingCardData) {
   const { indoor } = capacity || {};
   const kind = getListingTypeSlug(listingType);
-  const elementRef = useImpression({ listingId: id, kind });
 
   const renderTierBadge = () => {
     switch (tier) {
@@ -83,8 +83,9 @@ export function ListingCard({
     }
   };
   return (
-    <div ref={elementRef}>
-      <Card className="glass-card overflow-hidden h-full flex flex-col">
+    <Card className="glass-card overflow-hidden h-full flex flex-col">
+      <ListingCardImpressionsLayer listingId={id} kind={kind} />
+
       <CardHeader className="p-0 relative">
         <div className="relative h-48 w-full">
           <Image
@@ -174,6 +175,5 @@ export function ListingCard({
         </Button>
       </CardFooter>
     </Card>
-    </div>
   );
 }
