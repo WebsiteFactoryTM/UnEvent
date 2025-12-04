@@ -22,6 +22,8 @@ import { useToast } from "@/hooks/use-toast";
 import FavoriteButton from "../common/FavoriteButton";
 import { MdVerified } from "react-icons/md";
 import type { ListingCardData } from "@/lib/normalizers/hub";
+import { useImpression } from "../metrics/useImpression";
+import { getListingTypeSlug } from "@/lib/getListingType";
 
 export function ListingCard({
   id,
@@ -43,6 +45,8 @@ export function ListingCard({
   tier,
 }: ListingCardData) {
   const { indoor } = capacity || {};
+  const kind = getListingTypeSlug(listingType);
+  const elementRef = useImpression({ listingId: id, kind });
 
   const renderTierBadge = () => {
     switch (tier) {
@@ -79,7 +83,8 @@ export function ListingCard({
     }
   };
   return (
-    <Card className="glass-card overflow-hidden h-full flex flex-col">
+    <div ref={elementRef}>
+      <Card className="glass-card overflow-hidden h-full flex flex-col">
       <CardHeader className="p-0 relative">
         <div className="relative h-48 w-full">
           <Image
@@ -169,5 +174,6 @@ export function ListingCard({
         </Button>
       </CardFooter>
     </Card>
+    </div>
   );
 }

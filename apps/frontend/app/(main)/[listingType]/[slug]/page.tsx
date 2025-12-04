@@ -38,6 +38,7 @@ import { ListingType as SuitableForType } from "@/types/payload-types";
 
 import { fetchHubSnapshot } from "@/lib/api/hub";
 import { draftMode } from "next/headers";
+import { ListingViewTracker } from "@/components/metrics/ListingViewTracker";
 
 // Use auto to support both ISR and tag-based revalidation
 export const dynamic = "auto";
@@ -118,6 +119,7 @@ export default async function DetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <ListingViewTracker listingId={listing.id} kind={listingTypeUrl} />
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6 space-y-8">
           <ListingBreadcrumbs

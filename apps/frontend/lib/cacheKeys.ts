@@ -130,3 +130,12 @@ export const citiesKeys = {
   list: (filters: Record<string, unknown>) =>
     [...citiesKeys.all, "list", stableKey(filters)] as const,
 };
+
+/**
+ * 📊 Metrics
+ */
+export const metricsKeys = {
+  all: ["metrics"] as const,
+  listing: (kind: string, id: number | string) =>
+    [...metricsKeys.all, kind, String(id)] as const,
+};
