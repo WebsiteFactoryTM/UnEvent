@@ -175,22 +175,38 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
           },
         })
       } else {
-        // Create new record
-        await payload.create({
-          collection: 'metrics-daily',
-          data: {
-            target: {
-              relationTo: data.kind as 'locations' | 'events' | 'services',
-              value: Number(data.listingId),
+        // Validate that target listing exists before creating metrics_daily record
+        // This prevents foreign key constraint violations for hard-deleted listings
+        try {
+          await payload.findByID({
+            collection: data.kind as 'locations' | 'events' | 'services',
+            id: Number(data.listingId),
+            depth: 0,
+          })
+
+          // Create new record only if listing exists
+          await payload.create({
+            collection: 'metrics-daily',
+            data: {
+              target: {
+                relationTo: data.kind as 'locations' | 'events' | 'services',
+                value: Number(data.listingId),
+              },
+              kind: data.kind as 'locations' | 'events' | 'services',
+              date: data.date,
+              impressions: data.impressions,
+              views: data.views,
+              favorites: data.favorites,
+              bookings: data.bookings,
             },
-            kind: data.kind as 'locations' | 'events' | 'services',
-            date: data.date,
-            impressions: data.impressions,
-            views: data.views,
-            favorites: data.favorites,
-            bookings: data.bookings,
-          },
-        })
+          })
+        } catch (error) {
+          // Listing doesn't exist (hard-deleted or invalid ID), skip creating metrics
+          console.warn(
+            `[Feed] Skipping metrics_daily creation for non-existent ${data.kind} ID ${data.listingId} (date: ${data.date})`,
+          )
+          // Continue processing other counters
+        }
       }
     }
 
