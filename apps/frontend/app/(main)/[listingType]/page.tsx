@@ -15,6 +15,8 @@ import { type ListingCardData } from "@/lib/normalizers/hub";
 import { ListingType } from "@/types/listings";
 import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
 import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
+import { CityTypeahead } from "@/components/hub/CityTypeahead";
+import { CityChips } from "@/components/hub/CityChips";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -173,11 +175,8 @@ export default async function ListingTypePage({
 
             {/* City typeahead */}
             <section className="space-y-4">
-              <h2 className="sr-only">Caută după oraș</h2>
-              {/* <CityTypeahead
-                listingType={listingType as any}
-                cities={typeaheadCities}
-              /> */}
+              <h2 className="sr-only">Caută după oraș și tip</h2>
+
               <ArchiveFilter
                 listingType={listingType as any}
                 defaultIsOpen={true}
@@ -186,11 +185,10 @@ export default async function ListingTypePage({
 
             {/* Occasion/type chips */}
             <section className="space-y-4">
-              <h2 className="sr-only">Tipuri populare</h2>
-              <OccasionChips
+              <h2 className="sr-only">Orase populare</h2>
+              <CityChips
                 listingType={listingType as any}
-                options={options}
-                cities={typeaheadCities}
+                options={typeaheadCities}
               />
             </section>
 
