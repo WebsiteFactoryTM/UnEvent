@@ -4,13 +4,18 @@ import { enqueueNotification, type EmailEventType } from '@/utils/notificationsQ
 import { Profile, User } from '@/payload-types'
 
 /**
- * Send role-specific welcome emails after user verifies their email
+ * Send role-specific welcome emails after user verifies their email OR when new roles are added
+ *
+ * Triggers:
+ * 1. When user verifies their email (transitions from unverified to verified)
+ * 2. When a verified user adds new roles to their profile
  *
  * Logic:
  * - Every user is a "client" by default
  * - If user has ONLY "client" role → send user.welcome.client
  * - If user has any other role besides client → send welcome email(s) for those roles ONLY
  * - Multiple roles = multiple welcome emails (e.g., both host and organizer)
+ * - When new roles are added after verification, only send emails for the newly added roles
  */
 export const newUserWelcomeEmail: CollectionAfterChangeHook = async ({
   doc,
@@ -18,7 +23,7 @@ export const newUserWelcomeEmail: CollectionAfterChangeHook = async ({
   operation,
   req,
 }) => {
-  // Only trigger on update (when verification happens)
+  // Only trigger on update (when verification happens or roles change)
   if (operation !== 'update') {
     return
   }
@@ -29,14 +34,21 @@ export const newUserWelcomeEmail: CollectionAfterChangeHook = async ({
   // Check if user was just verified (changed from false/null to true)
   const wasVerified = previousUser?._verified === true
   const isNowVerified = user._verified === true
+  const justVerified = isNowVerified && !wasVerified
 
-  if (!isNowVerified || wasVerified) {
-    // User is not verified, or was already verified before this update
+  // Check if roles were added (for already verified users)
+  const previousRoles = new Set(previousUser?.roles || [])
+  const currentRoles = new Set(user.roles || [])
+  const newlyAddedRoles = [...currentRoles].filter((role) => !previousRoles.has(role))
+
+  // Only proceed if user just got verified OR new roles were added (and user is verified)
+  if (!justVerified && (newlyAddedRoles.length === 0 || !isNowVerified)) {
+    // User is not verified, or was already verified and no new roles were added
     return
   }
 
   try {
-    // User just got verified, send welcome email(s) based on their profile roles
+    // Fetch profile to get userType roles
     const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
 
     if (!profileId) {
@@ -46,7 +58,6 @@ export const newUserWelcomeEmail: CollectionAfterChangeHook = async ({
       return
     }
 
-    // Fetch profile to get userType roles
     let profile: Profile
     try {
       profile = await req.payload.findByID({
@@ -83,17 +94,28 @@ export const newUserWelcomeEmail: CollectionAfterChangeHook = async ({
       return
     }
 
-    // Get user types from profile
-    const userTypes = profile.userType || []
-
     // Determine which welcome emails to send
-    // Logic: if user has roles other than "client", exclude "client" from the list
-    const hasNonClientRoles = userTypes.some((type) => type !== 'client')
-    const rolesToNotify = hasNonClientRoles
-      ? userTypes.filter((type) => type !== 'client')
-      : userTypes.includes('client')
-        ? ['client']
-        : []
+    let rolesToNotify: string[] = []
+
+    if (justVerified) {
+      // User just got verified - send emails for all current roles (following existing logic)
+      const userTypes = profile.userType || []
+      const hasNonClientRoles = userTypes.some((type) => type !== 'client')
+      rolesToNotify = hasNonClientRoles
+        ? userTypes.filter((type) => type !== 'client')
+        : userTypes.includes('client')
+          ? ['client']
+          : []
+    } else {
+      // User is already verified but added new roles - send emails only for newly added roles
+      // Filter out 'client' if user has other roles, and filter out 'admin' (not a welcome email type)
+      const userTypes = profile.userType || []
+      const hasNonClientRoles = userTypes.some((type) => type !== 'client')
+      const newRolesToNotify = newlyAddedRoles.filter(
+        (role) => role !== 'admin' && (role !== 'client' || !hasNonClientRoles),
+      )
+      rolesToNotify = newRolesToNotify
+    }
 
     if (rolesToNotify.length === 0) {
       req.payload.logger.warn(
@@ -185,8 +207,11 @@ export const newUserWelcomeEmail: CollectionAfterChangeHook = async ({
     // Wait for all emails to be enqueued
     await Promise.all(emailPromises)
 
+    const triggerReason = justVerified
+      ? 'email verification'
+      : `new roles added: ${newlyAddedRoles.join(', ')}`
     req.payload.logger.info(
-      `[newUserWelcomeEmail] Processed welcome emails for user ${user.id} with roles: ${rolesToNotify.join(', ')}`,
+      `[newUserWelcomeEmail] Processed welcome emails for user ${user.id} (trigger: ${triggerReason}) with roles: ${rolesToNotify.join(', ')}`,
     )
   } catch (error) {
     // Don't throw - email failure shouldn't break user verification

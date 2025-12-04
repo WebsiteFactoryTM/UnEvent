@@ -41,14 +41,11 @@ export function AdminListingReportEmail({
         O listare de tip <strong>{listingTypeLabel}</strong> a fost raportată.
       </Text>
       <Section style={infoBox}>
-        <Text style={infoLabel}>Listare:</Text>
-        <Text style={infoValue}>{listingTitle}</Text>
-        <Text style={infoLabel}>Tip:</Text>
-        <Text style={infoValue}>{listingTypeLabel}</Text>
-        <Text style={infoLabel}>ID:</Text>
-        <Text style={infoValue}>{listingId}</Text>
-        <Text style={infoLabel}>URL:</Text>
-        <Text style={infoValue}>
+        <Text style={infoLabel}>Titlu: {listingTitle}</Text>
+        <Text style={infoLabel}>Tip: {listingTypeLabel}</Text>
+        <Text style={infoLabel}>ID: {listingId}</Text>
+        <Text style={infoLabel}>
+          URL:{" "}
           <a href={listingUrl} style={link}>
             {listingUrl}
           </a>
@@ -57,17 +54,11 @@ export function AdminListingReportEmail({
       <Section style={infoBox}>
         <Text style={infoLabel}>Raportat de:</Text>
         <Text style={infoValue}>{reportingUserName}</Text>
-        <Text style={infoLabel}>Email:</Text>
-        <Text style={infoValue}>{reportingUserEmail}</Text>
-        <Text style={infoLabel}>ID utilizator:</Text>
-        <Text style={infoValue}>{reportingUserId}</Text>
-        <Text style={infoLabel}>Motiv:</Text>
-        <Text style={infoValue}>{reportReason}</Text>
+        <Text style={infoLabel}>Email: {reportingUserEmail}</Text>
+        <Text style={infoLabel}>ID utilizator: {reportingUserId}</Text>
+        <Text style={infoLabel}>Motiv: {reportReason}</Text>
         {reportDetails && (
-          <>
-            <Text style={infoLabel}>Detalii:</Text>
-            <Text style={infoValue}>{reportDetails}</Text>
-          </>
+          <Text style={infoLabel}>Detalii: {reportDetails}</Text>
         )}
       </Section>
       {listingUrl && (
