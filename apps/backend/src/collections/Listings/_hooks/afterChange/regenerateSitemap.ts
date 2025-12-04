@@ -8,7 +8,6 @@ export const regenerateSitemap: CollectionAfterChangeHook = async ({
   doc,
   operation,
   collection,
-  req,
 }) => {
   try {
     // Only regenerate for published and approved listings
@@ -24,8 +23,7 @@ export const regenerateSitemap: CollectionAfterChangeHook = async ({
       return doc
     }
 
-    const frontendUrl =
-      process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'https://unevent.ro'
+    const frontendUrl = process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'https://unevent.ro'
     const revalidateSecret = process.env.REVALIDATE_SECRET || process.env.SVC_TOKEN
 
     if (!revalidateSecret) {
@@ -77,4 +75,3 @@ export const regenerateSitemap: CollectionAfterChangeHook = async ({
 
   return doc
 }
-
