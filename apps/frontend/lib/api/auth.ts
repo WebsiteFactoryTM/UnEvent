@@ -200,6 +200,7 @@ export async function changePassword(
     throw new Error("NEXT_PUBLIC_API_URL is not configured");
   }
 
+  let accessToken = null;
   // First verify current password by attempting login
   try {
     const verifyResponse = await fetch(`${apiBase}/api/users/login`, {
@@ -223,6 +224,8 @@ export async function changePassword(
         "Parola curentă este incorectă.";
       throw new Error(errorMessage);
     }
+    const data = await verifyResponse.json();
+    accessToken = data.token;
   } catch (error) {
     if (error instanceof Error) {
       throw error;
@@ -235,6 +238,7 @@ export async function changePassword(
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     },
     credentials: "include", // Include cookies for authentication
     body: JSON.stringify({
