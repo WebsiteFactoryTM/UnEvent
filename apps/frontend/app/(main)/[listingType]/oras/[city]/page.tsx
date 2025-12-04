@@ -32,7 +32,8 @@ export async function generateMetadata({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { listingType, city } = await params;
-  const page = Number((await searchParams)?.page ?? 1);
+  const searchFilters = await searchParams;
+  const page = Number(searchFilters?.page ?? 1);
 
   const listingLabel = getListingTypeLabel(listingType);
   const cityLabel = getCityLabel(city);
@@ -43,16 +44,48 @@ export async function generateMetadata({
   } | UN:EVENT`;
   const description = `Descoperă cele mai bune ${listingLabel.toLowerCase()} din ${cityLabel}. Compară locații, servicii și evenimente verificate.`;
 
+  // Smart Canonical Logic
+  // Filter params (these indicate filtered results, not unique pages)
+  const filterParams = ['priceMin', 'priceMax', 'capacityMin', 'facilities', 
+                        'facilitiesMode', 'lat', 'lng', 'radius', 'ratingMin', 
+                        'type', 'suitableFor', 'limit'];
+  
+  // Check if any filter params exist (excluding 'page')
+  const hasFilters = Object.keys(searchFilters || {}).some(
+    key => filterParams.includes(key) && searchFilters[key]
+  );
+
+  // Canonical URL logic:
+  // - If filters applied → point to clean URL (no params)
+  // - If only page param → self-canonical with page (page 2 is unique content)
+  // - If no params → self-canonical
+  const canonicalUrl = hasFilters 
+    ? baseUrl // Clean URL without any params
+    : page > 1 
+      ? `${baseUrl}?page=${page}` // Self-canonical with page number
+      : baseUrl; // Clean URL
+
+  // Robots meta: noindex filtered pages to prevent duplicate content
+  const shouldIndex = !hasFilters;
+
   return {
     title,
     description,
     alternates: {
-      canonical: baseUrl,
+      canonical: canonicalUrl,
+    },
+    robots: {
+      index: shouldIndex,
+      follow: true,
+      googleBot: {
+        index: shouldIndex,
+        follow: true,
+      },
     },
     openGraph: {
       title,
       description,
-      url: baseUrl,
+      url: baseUrl, // OG always uses clean URL
       siteName: "UN:EVENT",
       type: "website",
       locale: "ro_RO",
