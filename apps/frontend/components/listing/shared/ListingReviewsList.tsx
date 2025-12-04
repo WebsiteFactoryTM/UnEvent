@@ -41,9 +41,6 @@ export default function ListingReviewsList({
         .toUpperCase()
         .slice(0, 2);
 
-    console.log(avatar, "avatar");
-    console.log(user, "avatar");
-
     return (
       <div
         key={`review-${review.id}`}

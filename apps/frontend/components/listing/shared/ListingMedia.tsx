@@ -4,7 +4,7 @@ import type { ListingType } from "@/types/listings";
 import { useState } from "react";
 import Image from "next/image";
 import { Media } from "@/types/payload-types";
-import { FaXmark, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
 
 export function ListingMedia({
   type,
@@ -37,16 +37,6 @@ export function ListingMedia({
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
     setLightboxOpen(true);
-  };
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex(
-      (prev) => (prev - 1 + allImages.length) % allImages.length,
-    );
   };
 
   if (allImages.length === 0) return null;
@@ -94,46 +84,14 @@ export function ListingMedia({
       </div>
 
       {/* Lightbox */}
-      {lightboxOpen && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
-          <button
-            onClick={() => setLightboxOpen(false)}
-            className="absolute top-4 right-4 p-2 z-50 text-white hover:bg-white/10 rounded-full transition-colors"
-            aria-label="Închide"
-          >
-            <FaXmark className="w-6 h-6" />
-          </button>
-
-          <button
-            onClick={prevImage}
-            className="absolute left-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors"
-            aria-label="Imagine anterioară"
-          >
-            <FaChevronLeft className="w-6 h-6" />
-          </button>
-
-          <div className="relative w-full h-full max-w-6xl max-h-[90vh] mx-4">
-            <Image
-              src={allImages[currentImageIndex].url || "/placeholder.svg"}
-              alt={allImages[currentImageIndex].alt || title}
-              fill
-              className="object-contain"
-            />
-          </div>
-
-          <button
-            onClick={nextImage}
-            className="absolute right-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors"
-            aria-label="Imagine următoare"
-          >
-            <FaChevronRight className="w-6 h-6" />
-          </button>
-
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm">
-            {currentImageIndex + 1} / {allImages.length}
-          </div>
-        </div>
-      )}
+      <ImageLightbox
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        images={allImages}
+        initialIndex={currentImageIndex}
+        onIndexChange={setCurrentImageIndex}
+        title={title}
+      />
     </>
   );
 }
