@@ -168,13 +168,10 @@ export function UserMenu() {
         <DropdownMenuSeparator className="bg-white/10" />
 
         <DropdownMenuItem asChild>
-          <Link
-            href="/cont/mesaje"
-            className="flex items-center gap-2 cursor-pointer"
-          >
+          <div className="flex items-center gap-2 cursor-pointer">
             <FaEnvelope className="h-4 w-4" />
-            Mesaje
-          </Link>
+            Mesaje (în curând)
+          </div>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>

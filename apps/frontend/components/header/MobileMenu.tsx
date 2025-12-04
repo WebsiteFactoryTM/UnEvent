@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +28,6 @@ import { signOut, useSession } from "next-auth/react";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
 
   const { data: session, status } = useSession({ required: false });
   const user = session?.user;
@@ -39,9 +37,9 @@ export function MobileMenu() {
       callbackUrl: "/auth/autentificare",
     });
   };
-  const handleNavigation = (href: string) => {
+
+  const handleLinkClick = () => {
     setOpen(false);
-    router.push(href);
   };
 
   const initials = user?.name
@@ -89,10 +87,12 @@ export function MobileMenu() {
               style={{ animationDelay: "0.1s" }}
             >
               <Button
-                onClick={() => handleNavigation("/auth/autentificare")}
+                asChild
                 className="w-full bg-white/10 hover:bg-white/20 text-foreground border border-border/50 backdrop-blur-sm shadow-glow-sm"
               >
-                Autentificare
+                <Link href="/auth/autentificare" onClick={handleLinkClick}>
+                  Autentificare
+                </Link>
               </Button>
             </div>
           )}
@@ -125,111 +125,120 @@ export function MobileMenu() {
           <Separator className="bg-border/30 mb-4" />
 
           <nav className="flex flex-col gap-1 mb-4">
-            <button
-              onClick={() => handleNavigation("/locatii")}
+            <Link
+              href="/locatii"
+              onClick={handleLinkClick}
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
               style={{ animationDelay: "0.2s" }}
             >
               <FaLocationDot className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
               <span>Locații</span>
-            </button>
-            <button
-              onClick={() => handleNavigation("/servicii")}
+            </Link>
+            <Link
+              href="/servicii"
+              onClick={handleLinkClick}
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
               style={{ animationDelay: "0.25s" }}
             >
               <FaBriefcase className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
               <span>Servicii</span>
-            </button>
-            <button
-              onClick={() => handleNavigation("/evenimente")}
+            </Link>
+            <Link
+              href="/evenimente"
+              onClick={handleLinkClick}
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
               style={{ animationDelay: "0.3s" }}
             >
               <FaCalendarDays className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
               <span>Evenimente</span>
-            </button>
+            </Link>
           </nav>
 
           {user && (
             <>
               <Separator className="bg-border/30 mb-4" />
               <nav className="flex flex-col gap-1 flex-1">
-                <button
-                  onClick={() => handleNavigation("/cont/profil")}
+                <Link
+                  href="/cont/profil"
+                  onClick={handleLinkClick}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
                   style={{ animationDelay: "0.35s" }}
                 >
                   <FaUser className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>Profil & Verificare</span>
-                </button>
+                </Link>
 
-                <button
-                  onClick={() => handleNavigation("/cont/roluri")}
+                <Link
+                  href="/cont/roluri"
+                  onClick={handleLinkClick}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
                   style={{ animationDelay: "0.4s" }}
                 >
                   <FaUserShield className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>Roluri & Permisiuni</span>
-                </button>
+                </Link>
 
-                <button
-                  onClick={() => handleNavigation("/cont/securitate")}
+                <Link
+                  href="/cont/securitate"
+                  onClick={handleLinkClick}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
                   style={{ animationDelay: "0.45s" }}
                 >
                   <FaLock className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>Securitate</span>
-                </button>
+                </Link>
 
                 <Separator className="bg-border/30 my-2" />
 
-                <button
-                  onClick={() => handleNavigation("/cont/locatiile-mele")}
+                <Link
+                  href="/cont/locatiile-mele"
+                  onClick={handleLinkClick}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
                   style={{ animationDelay: "0.5s" }}
                 >
                   <FaLocationDot className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>Locațiile Mele</span>
-                </button>
+                </Link>
 
-                <button
-                  onClick={() => handleNavigation("/cont/serviciile-mele")}
+                <Link
+                  href="/cont/serviciile-mele"
+                  onClick={handleLinkClick}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
                   style={{ animationDelay: "0.55s" }}
                 >
                   <FaBriefcase className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>Serviciile Mele</span>
-                </button>
+                </Link>
 
-                <button
-                  onClick={() => handleNavigation("/cont/evenimentele-mele")}
+                <Link
+                  href="/cont/evenimentele-mele"
+                  onClick={handleLinkClick}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
                   style={{ animationDelay: "0.6s" }}
                 >
                   <FaCalendarDays className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>Evenimentele Mele</span>
-                </button>
+                </Link>
 
                 <Separator className="bg-border/30 my-2" />
 
-                <button
-                  onClick={() => handleNavigation("/cont/mesaje")}
+                <div
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
                   style={{ animationDelay: "0.65s" }}
                 >
                   <FaEnvelope className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  <span>Mesaje</span>
-                </button>
+                  <span>Mesaje (în curând)</span>
+                </div>
 
-                <button
-                  onClick={() => handleNavigation("/cont/favorite")}
+                <Link
+                  href="/cont/favorite"
+                  onClick={handleLinkClick}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/10 hover:shadow-glow-sm transition-all duration-300 text-left group animate-fade-in-up"
                   style={{ animationDelay: "0.7s" }}
                 >
                   <FaHeart className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>Favorite</span>
-                </button>
+                </Link>
 
                 <Separator className="bg-border/30 my-4" />
 
