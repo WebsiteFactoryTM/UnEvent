@@ -9,6 +9,8 @@ import {
   formatDate,
 } from "@/lib/ui/accountListingsUtils";
 import Link from "next/link";
+import { ListingMetrics } from "./ListingMetrics";
+import { getListingTypeSlug } from "@/lib/getListingType";
 
 const DesktopListingView = ({
   listings,
@@ -37,7 +39,7 @@ const DesktopListingView = ({
               Data creării
             </th>
             <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
-              Vizualizări
+              Metrici
             </th>
             <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
               Status
@@ -74,9 +76,10 @@ const DesktopListingView = ({
                 </div>
               </td>
               <td className="py-4 px-4">
-                <div className="text-sm text-foreground font-medium">
-                  {listing.views?.toLocaleString() || 0}
-                </div>
+                <ListingMetrics
+                  listingId={listing.id}
+                  kind={getListingTypeSlug(listingType)}
+                />
               </td>
               <td className="py-4 px-4">
                 <span

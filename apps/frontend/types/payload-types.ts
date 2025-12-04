@@ -170,6 +170,8 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  _verified?: boolean | null;
+  _verificationToken?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -882,7 +884,7 @@ export interface Favorite {
   createdAt: string;
 }
 /**
- * Raw daily counters for views, favorites, and bookings
+ * Raw daily counters for impressions, views, favorites, messages, participations, bookings
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "metrics-daily".
@@ -925,6 +927,18 @@ export interface MetricsDaily {
    * Number of bookings made on this date
    */
   bookings?: number | null;
+  /**
+   * Number of times the listing was shown in feeds/search on this date
+   */
+  impressions?: number | null;
+  /**
+   * Number of new message threads started from this listing on this date
+   */
+  messages?: number | null;
+  /**
+   * Number of participations (e.g. clicked "Participă") on this date
+   */
+  participations?: number | null;
 }
 /**
  * Precomputed rolling windows and aggregated metrics per listing
@@ -962,6 +976,22 @@ export interface Aggregate {
    * Total views in last 30 days
    */
   views30d?: number | null;
+  /**
+   * Total views (all time)
+   */
+  views?: number | null;
+  /**
+   * Total impressions in last 7 days
+   */
+  impressions7d?: number | null;
+  /**
+   * Total impressions in last 30 days
+   */
+  impressions30d?: number | null;
+  /**
+   * Total impressions (all time)
+   */
+  impressions?: number | null;
   /**
    * Total bookings in last 7 days
    */
@@ -1339,6 +1369,8 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  _verified?: T;
+  _verificationToken?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -1797,6 +1829,9 @@ export interface MetricsDailySelect<T extends boolean = true> {
   views?: T;
   favorites?: T;
   bookings?: T;
+  impressions?: T;
+  messages?: T;
+  participations?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1807,6 +1842,10 @@ export interface AggregatesSelect<T extends boolean = true> {
   kind?: T;
   views7d?: T;
   views30d?: T;
+  views?: T;
+  impressions7d?: T;
+  impressions30d?: T;
+  impressions?: T;
   bookings7d?: T;
   bookings30d?: T;
   favorites?: T;

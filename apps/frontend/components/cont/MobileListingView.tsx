@@ -17,6 +17,8 @@ import {
 import { Button } from "../ui/button";
 import { Listing, ListingType } from "@/types/listings";
 import Link from "next/link";
+import { ListingMetrics } from "./ListingMetrics";
+import { getListingTypeSlug } from "@/lib/getListingType";
 
 const MobileListingView = ({
   listings,
@@ -61,17 +63,17 @@ const MobileListingView = ({
                 {getCityName(listing.city)}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <FaChartLine className="h-4 w-4 text-muted-foreground" />
-              <span className="text-foreground font-medium">
-                {listing.views?.toLocaleString() || 0}
-              </span>
-            </div>
             <div className="flex items-center gap-2 text-sm col-span-2">
               <FaCalendarDays className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">
                 {formatDate(listing.createdAt)}
               </span>
+            </div>
+            <div className="col-span-2 pt-2 border-t border-border/30">
+              <ListingMetrics
+                listingId={listing.id}
+                kind={getListingTypeSlug(listingType)}
+              />
             </div>
           </div>
 
