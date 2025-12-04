@@ -56,6 +56,14 @@ import {
   UserWelcomeProviderEmail,
   type UserWelcomeProviderEmailProps,
 } from "./UserWelcomeProviderEmail.js";
+import {
+  AdminListingReportEmail,
+  type AdminListingReportEmailProps,
+} from "./AdminListingReportEmail.js";
+import {
+  AdminProfileReportEmail,
+  type AdminProfileReportEmailProps,
+} from "./AdminProfileReportEmail.js";
 
 /**
  * All logical email event types used across the app.
@@ -94,7 +102,9 @@ export type EmailEventType =
   | "admin.report.new"
   | "admin.password.changed"
   | "admin.verification.request"
-  | "admin.digest.daily";
+  | "admin.digest.daily"
+  | "admin.listing.report"
+  | "admin.profile.report";
 
 export interface EmailTemplateConfig<Payload = unknown> {
   type: EmailEventType;
@@ -104,6 +114,71 @@ export interface EmailTemplateConfig<Payload = unknown> {
   getTextFallback?: (payload: Payload) => string | undefined;
   render: (payload: Payload) => ReactElement;
   tags?: Record<string, string>;
+}
+
+/**
+ * Parse and validate ADMIN_EMAILS environment variable.
+ * Returns an array of valid email addresses, or a default fallback.
+ */
+function getAdminEmails(context?: string): string[] {
+  const adminEmails = process.env.ADMIN_EMAILS;
+
+  if (!adminEmails) {
+    return ["contact@unevent.ro"];
+  }
+
+  // Split by comma and trim whitespace
+  let emails = adminEmails
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean)
+    .filter((e) => e.length > 0);
+
+  // Validate each email format
+  const validEmails: string[] = [];
+  for (let i = 0; i < emails.length; i++) {
+    const email = emails[i];
+
+    if (!email || typeof email !== "string") {
+      console.error(
+        `[EmailRegistry] Invalid email type at index ${i}${context ? ` (${context})` : ""}:`,
+        email,
+      );
+      continue;
+    }
+
+    if (!email.includes("@")) {
+      console.error(
+        `[EmailRegistry] Email missing @ at index ${i}${context ? ` (${context})` : ""}:`,
+        email,
+      );
+      continue;
+    }
+
+    // Basic email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      console.error(
+        `[EmailRegistry] Invalid email format at index ${i}${context ? ` (${context})` : ""}:`,
+        email,
+      );
+      continue;
+    }
+
+    validEmails.push(email);
+  }
+
+  emails = validEmails;
+
+  // Validate we have at least one email
+  if (emails.length === 0) {
+    console.warn(
+      `[EmailRegistry] ADMIN_EMAILS parsed to empty array after validation${context ? ` (${context})` : ""}, using default`,
+    );
+    return ["contact@unevent.ro"];
+  }
+
+  return emails;
 }
 
 // Payload shapes expected by current worker jobs
@@ -226,6 +301,35 @@ export interface AdminUserNewPayload {
   dashboard_url?: string;
 }
 
+export interface AdminListingReportPayload {
+  reporting_user_id: string;
+  reporting_user_email: string;
+  reporting_user_name: string;
+  entity_id: string;
+  entity_title: string;
+  entity_url: string;
+  listing_type: string;
+  listing_slug?: string;
+  report_reason: string;
+  report_reason_code: string;
+  report_details?: string;
+  dashboard_url?: string;
+}
+
+export interface AdminProfileReportPayload {
+  reporting_user_id: string;
+  reporting_user_email: string;
+  reporting_user_name: string;
+  entity_id: string;
+  entity_title: string;
+  entity_url: string;
+  profile_slug?: string;
+  report_reason: string;
+  report_reason_code: string;
+  report_details?: string;
+  dashboard_url?: string;
+}
+
 /**
  * Registry of email templates that the worker can send.
  * Only event types present here are actually wired to real templates.
@@ -333,63 +437,7 @@ export const EMAIL_TEMPLATES: Partial<
   "admin.listing.pending": {
     type: "admin.listing.pending",
     getRecipients: (p: AdminListingPendingPayload) => {
-      const adminEmails = process.env.ADMIN_EMAILS;
-
-      if (adminEmails) {
-        // Split by comma and trim whitespace
-        let emails = adminEmails
-          .split(",")
-          .map((e) => e.trim())
-          .filter(Boolean)
-          .filter((e) => e.length > 0);
-
-        // Validate each email format
-        const validEmails: string[] = [];
-        for (let i = 0; i < emails.length; i++) {
-          const email = emails[i];
-
-          if (!email || typeof email !== "string") {
-            console.error(
-              `[EmailRegistry] Invalid email type at index ${i}:`,
-              email,
-            );
-            continue;
-          }
-
-          if (!email.includes("@")) {
-            console.error(
-              `[EmailRegistry] Email missing @ at index ${i}:`,
-              email,
-            );
-            continue;
-          }
-
-          // Basic email format check
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(email)) {
-            console.error(
-              `[EmailRegistry] Invalid email format at index ${i}:`,
-              email,
-            );
-            continue;
-          }
-
-          validEmails.push(email);
-        }
-
-        emails = validEmails;
-
-        // Validate we have at least one email
-        if (emails.length === 0) {
-          console.warn(
-            `[EmailRegistry] ADMIN_EMAILS parsed to empty array after validation, using default`,
-          );
-          return ["contact@unevent.ro"];
-        }
-
-        return emails;
-      }
-      return ["contact@unevent.ro"];
+      return getAdminEmails("admin.listing.pending");
     },
     getSubject: (p) =>
       `📋 Listare nouă așteaptă aprobare: „${p.listing_title}”`,
@@ -411,53 +459,7 @@ export const EMAIL_TEMPLATES: Partial<
   "admin.review.pending": {
     type: "admin.review.pending",
     getRecipients: (p: AdminReviewPendingPayload) => {
-      const adminEmails = process.env.ADMIN_EMAILS;
-      console.log(
-        `[EmailRegistry] admin.review.pending - ADMIN_EMAILS env var:`,
-        {
-          raw: adminEmails,
-          type: typeof adminEmails,
-          length: adminEmails?.length,
-        },
-      );
-
-      if (adminEmails) {
-        // Split by comma and trim whitespace
-        let emails = adminEmails
-          .split(",")
-          .map((e) => e.trim())
-          .filter(Boolean)
-          .filter((e) => e.length > 0);
-
-        // Validate each email format
-        const validEmails: string[] = [];
-        for (const email of emails) {
-          if (
-            typeof email === "string" &&
-            email.includes("@") &&
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-          ) {
-            validEmails.push(email);
-          } else {
-            console.error(
-              `[EmailRegistry] Invalid email format in admin.review.pending:`,
-              email,
-            );
-          }
-        }
-
-        emails = validEmails;
-
-        if (emails.length === 0) {
-          console.warn(
-            `[EmailRegistry] ADMIN_EMAILS parsed to empty array, using default`,
-          );
-          return ["contact@unevent.ro"];
-        }
-
-        return emails;
-      }
-      return ["contact@unevent.ro"];
+      return getAdminEmails("admin.review.pending");
     },
     getSubject: (p) =>
       `⭐ Recenzie nouă așteaptă aprobare pentru „${p.listing_title}"`,
@@ -546,45 +548,7 @@ export const EMAIL_TEMPLATES: Partial<
   "admin.user.new": {
     type: "admin.user.new",
     getRecipients: (p: AdminUserNewPayload) => {
-      const adminEmails = process.env.ADMIN_EMAILS;
-
-      if (adminEmails) {
-        // Split by comma and trim whitespace
-        let emails = adminEmails
-          .split(",")
-          .map((e) => e.trim())
-          .filter(Boolean)
-          .filter((e) => e.length > 0);
-
-        // Validate each email format
-        const validEmails: string[] = [];
-        for (const email of emails) {
-          if (
-            typeof email === "string" &&
-            email.includes("@") &&
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-          ) {
-            validEmails.push(email);
-          } else {
-            console.error(
-              `[EmailRegistry] Invalid email format in admin.user.new:`,
-              email,
-            );
-          }
-        }
-
-        emails = validEmails;
-
-        if (emails.length === 0) {
-          console.warn(
-            `[EmailRegistry] ADMIN_EMAILS parsed to empty array, using default`,
-          );
-          return ["contact@unevent.ro"];
-        }
-
-        return emails;
-      }
-      return ["contact@unevent.ro"];
+      return getAdminEmails("admin.user.new");
     },
     getSubject: (p) => `👤 Utilizator nou înregistrat: ${p.user_email}`,
     getPreheader: () => "Un nou utilizator s-a înregistrat pe platformă.",
@@ -599,5 +563,54 @@ export const EMAIL_TEMPLATES: Partial<
         dashboardUrl: p.dashboard_url,
       } satisfies AdminUserNewEmailProps),
     tags: { category: "admin", template: "admin.user.new" },
+  },
+
+  "admin.listing.report": {
+    type: "admin.listing.report",
+    getRecipients: (p: AdminListingReportPayload) => {
+      return getAdminEmails("admin.listing.report");
+    },
+    getSubject: (p) => `🚩 Raport nou pentru listarea „${p.entity_title}”`,
+    getPreheader: () => "O listare a fost raportată și necesită revizuire.",
+    getTextFallback: (p) =>
+      `O listare a fost raportată.\n\nListare: ${p.entity_title}\nTip: ${p.listing_type}\nID: ${p.entity_id}\nURL: ${p.entity_url}\n\nRaportat de: ${p.reporting_user_name} (${p.reporting_user_email})\nMotiv: ${p.report_reason}${p.report_details ? `\nDetalii: ${p.report_details}` : ""}`,
+    render: (p) =>
+      AdminListingReportEmail({
+        listingTitle: p.entity_title,
+        listingType: p.listing_type,
+        listingId: p.entity_id,
+        listingUrl: p.entity_url,
+        reportingUserName: p.reporting_user_name,
+        reportingUserEmail: p.reporting_user_email,
+        reportingUserId: p.reporting_user_id,
+        reportReason: p.report_reason,
+        reportDetails: p.report_details,
+        dashboardUrl: p.dashboard_url,
+      } satisfies AdminListingReportEmailProps),
+    tags: { category: "admin", template: "admin.listing.report" },
+  },
+
+  "admin.profile.report": {
+    type: "admin.profile.report",
+    getRecipients: (p: AdminProfileReportPayload) => {
+      return getAdminEmails("admin.profile.report");
+    },
+    getSubject: (p) => `🚩 Raport nou pentru profilul „${p.entity_title}”`,
+    getPreheader: () => "Un profil a fost raportat și necesită revizuire.",
+    getTextFallback: (p) =>
+      `Un profil a fost raportat.\n\nProfil: ${p.entity_title}\nID: ${p.entity_id}\nURL: ${p.entity_url}\n\nRaportat de: ${p.reporting_user_name} (${p.reporting_user_email})\nMotiv: ${p.report_reason}${p.report_details ? `\nDetalii: ${p.report_details}` : ""}`,
+    render: (p) =>
+      AdminProfileReportEmail({
+        profileTitle: p.entity_title,
+        profileId: p.entity_id,
+        profileUrl: p.entity_url,
+        reportingUserName: p.reporting_user_name,
+        reportingUserEmail: p.reporting_user_email,
+        reportingUserId: p.reporting_user_id,
+        reportReason: p.report_reason,
+        reportDetails: p.report_details,
+        dashboardUrl: p.dashboard_url,
+      } satisfies AdminProfileReportEmailProps),
+    tags: { category: "admin", template: "admin.profile.report" },
   },
 };
