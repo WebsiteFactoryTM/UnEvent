@@ -153,11 +153,11 @@ export const newUserWelcomeEmail: CollectionAfterChangeHook = async ({
       // Determine dashboard URL based on role
       let dashboardUrl = frontendUrl
       if (userType === 'host') {
-        dashboardUrl = `${frontendUrl}/cont/locatii-mele`
+        dashboardUrl = `${frontendUrl}/cont/locatiile-mele`
       } else if (userType === 'organizer') {
-        dashboardUrl = `${frontendUrl}/cont/evenimente-mele`
+        dashboardUrl = `${frontendUrl}/cont/evenimentele-mele`
       } else if (userType === 'provider') {
-        dashboardUrl = `${frontendUrl}/cont/servicii-mele`
+        dashboardUrl = `${frontendUrl}/cont/serviciile-mele`
       }
 
       try {

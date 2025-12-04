@@ -9,9 +9,9 @@ export function collectionToPageSlug(collection: string) {
 
 export function collectionToAccountPageSlug(collection: string) {
   const collectionToPageSlug: Record<string, string> = {
-    events: 'evenimente-mele',
-    locations: 'locatii-mele',
-    services: 'servicii-mele',
+    events: 'evenimentele-mele',
+    locations: 'locatiile-mele',
+    services: 'serviciile-mele',
   }
   return collectionToPageSlug[collection]
 }

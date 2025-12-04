@@ -138,13 +138,67 @@ Once issue is resolved, remember to:
 2. Remove or comment out console.log statements
 3. Redeploy
 
+## Current Issue: Middleware Can't Read Token
+
+If you see:
+```
+[JWT Callback] New user login: { hasToken: true }
+[Middleware] hasToken: false, tokenKeys: []
+```
+
+This means login succeeds but middleware can't read the session cookie.
+
+### Check 1: What cookies exist?
+
+Look for this log:
+```
+[Middleware] All cookies: { cookieNames: [...], hasSessionToken: true/false }
+```
+
+**If `cookieNames` is empty or missing session token:**
+- Cookie is not being set at all
+- Check NEXTAUTH_URL matches exactly (including https://)
+- Check NEXTAUTH_SECRET is set
+
+**If `cookieNames` includes the session token:**
+- Cookie exists but middleware can't decode it
+- Check NEXTAUTH_SECRET is the same everywhere
+- Try clearing cookies and logging in again
+
+### Check 2: Session Callback Logs
+
+After login, you should see:
+```
+[Session Callback] Creating session: { hasAccessToken: true }
+[Session Callback] Session created successfully
+```
+
+**If you don't see session callback logs after login:**
+- The JWT cookie is not being created
+- Login might be failing silently
+- Check browser network tab for `/api/auth/session` calls
+
+**If you see "Invalidating session" logs:**
+- Token has no accessToken or is expired
+- Check JWT callback is setting `token.accessToken = user.token`
+
+### Quick Fix: Try Setting NEXTAUTH_URL_INTERNAL
+
+Add to your environment variables:
+```bash
+NEXTAUTH_URL_INTERNAL="https://unevent.ro"
+```
+
+This helps NextAuth resolve the correct URL in serverless environments.
+
 ## Still Not Working?
 
 Share the output from:
-1. Server startup logs (environment check)
-2. Login attempt logs
-3. Middleware logs when accessing /cont
-4. Browser cookies screenshot
+1. Server startup logs (environment check) ✅
+2. Login attempt logs ✅
+3. **NEW: Middleware cookie logs** (cookieNames, hasSessionToken)
+4. **NEW: Session callback logs** (after login)
+5. Browser cookies screenshot (DevTools → Application → Cookies)
 
 This will help diagnose the exact issue.
 

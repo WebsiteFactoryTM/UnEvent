@@ -156,9 +156,9 @@ export const notifyListingModeration: CollectionAfterChangeHook = async ({
       }
     } else if (currentStatus === 'rejected') {
       const accountListingType = collectionToAccountPageSlug(collection.slug) as
-        | 'evenimente-mele'
-        | 'locatii-mele'
-        | 'servicii-mele'
+        | 'evenimentele-mele'
+        | 'locatiile-mele'
+        | 'serviciile-mele'
       const accountListingUrl = `${frontendUrl}/cont/${accountListingType}/${doc.id}/editeaza`
       const result = await enqueueNotification('listing.rejected', {
         first_name: firstName,
