@@ -59,7 +59,6 @@ export const socialLinks: SocialLink[] = [
   },
   {
     name: "YouTube",
-
     icon: FaYoutube,
     ariaLabel: "Urmărește-ne pe YouTube",
   },
