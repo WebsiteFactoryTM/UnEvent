@@ -13,6 +13,24 @@ const PAYLOAD_TOKEN_COOKIE = "payload-token";
 const isProduction =
   process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
 
+// Validate critical environment variables
+if (!process.env.NEXTAUTH_SECRET) {
+  console.error("❌ NEXTAUTH_SECRET is not set!");
+}
+if (!process.env.NEXTAUTH_URL) {
+  console.warn("⚠️  NEXTAUTH_URL is not set - may cause issues in production");
+}
+console.log("[Auth Config] Environment check:", {
+  isProduction,
+  hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
+  hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
+  nextAuthUrl: process.env.NEXTAUTH_URL,
+  hasApiUrl: !!(process.env.API_URL || process.env.NEXT_PUBLIC_API_URL),
+  apiUrl: process.env.API_URL || process.env.NEXT_PUBLIC_API_URL,
+  hasCookieDomain: !!process.env.COOKIE_DOMAIN,
+  cookieDomain: process.env.COOKIE_DOMAIN,
+});
+
 // --- add near other consts ---
 const SHARED_PARENT_COOKIE_DOMAIN = process.env.COOKIE_DOMAIN?.trim(); // e.g. ".unevent.app" in prod only
 const CAN_SHARE_COOKIE = Boolean(
@@ -153,7 +171,7 @@ async function refreshPayloadToken(
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: true, // Enable debug logging in production temporarily
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -233,6 +251,13 @@ export const authOptions: NextAuthOptions = {
       const DAY = 24 * 60 * 60;
 
       if (user) {
+        console.log("[JWT Callback] New user login:", {
+          userId: user.id,
+          email: user.email,
+          hasToken: !!user.token,
+          rememberMe: user.rememberMe,
+        });
+
         const absCap = user.rememberMe ? TOKEN_LIFETIME_DAYS * DAY : 1 * DAY;
         token.absExp = Math.floor(Date.now() / 1000) + absCap;
         token.accessToken = user.token;
@@ -314,6 +339,7 @@ export const authOptions: NextAuthOptions = {
 
       const now = Math.floor(Date.now() / 1000);
       if (token.absExp && now >= token.absExp) {
+        console.log("[JWT Callback] Session max age exceeded");
         // Notify Payload to logout before clearing session
         if (token.accessToken) {
           await notifyPayloadLogout(token.accessToken);
@@ -338,10 +364,16 @@ export const authOptions: NextAuthOptions = {
 
       if (!token.accessToken) {
         // If the user was never logged in, don't emit an error.
-        if (!token.iat && !token.email) return token;
+        if (!token.iat && !token.email) {
+          console.log(
+            "[JWT Callback] No accessToken but user never logged in, allowing",
+          );
+          return token;
+        }
         // User was logged in but lost accessToken - logout from Payload if we had one
         // Note: We don't have accessToken here, so we can't notify Payload
         // but we should still clear the session
+        console.log("[JWT Callback] Lost accessToken, clearing session");
         await deletePayloadCookie();
         return { ...token, error: "RefreshAccessTokenError", exp: 0 };
       }
