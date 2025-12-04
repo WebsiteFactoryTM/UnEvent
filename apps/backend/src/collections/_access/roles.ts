@@ -33,18 +33,27 @@ export const publicReadOwnerOrAdminWrite: Access = ({ req }) => {
 }
 
 // Approved listings are public; draft listings only visible to their owner (or admins)
+// Excludes soft-deleted listings (deletedAt is not null)
 export const approvedOrOwnDraft: Access = ({ req }) => {
   const user = req.user
 
   if (user?.roles?.includes('admin')) return true
 
-  const conditions: Where[] = [{ moderationStatus: { equals: 'approved' } }]
+  const conditions: Where[] = [
+    {
+      and: [{ moderationStatus: { equals: 'approved' } }, { deletedAt: { exists: false } }],
+    },
+  ]
 
   if (user) {
     const profileId = typeof user.profile === 'number' ? user.profile : user.profile?.id
     if (profileId) {
       conditions.push({
-        and: [{ moderationStatus: { in: ['draft', 'pending'] } }, { owner: { equals: profileId } }],
+        and: [
+          { moderationStatus: { in: ['draft', 'pending'] } },
+          { owner: { equals: profileId } },
+          { deletedAt: { exists: false } },
+        ],
       })
     }
   }

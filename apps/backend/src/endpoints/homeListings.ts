@@ -152,9 +152,11 @@ function getExtraListings(
     tier?: { in: Array<string> }
     moderationStatus: { equals: 'approved' }
     id: { not_in: Array<number> }
+    deletedAt?: { exists: false }
   } = {
     moderationStatus: { equals: 'approved' },
     id: { not_in: exclude },
+    deletedAt: { exists: false }, // Exclude soft-deleted listings
   }
   if (type !== 'new') {
     where.tier = { in: ['recommended', 'sponsored'] }

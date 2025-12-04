@@ -14,7 +14,8 @@ export function toIDs(
 
 export function isPublic(doc: Location | Service | Event) {
   const approvedOK = doc?.moderationStatus ? doc.moderationStatus === 'approved' : true
-  return approvedOK
+  const notDeleted = !doc?.deletedAt
+  return approvedOK && notDeleted
 }
 
 /**
