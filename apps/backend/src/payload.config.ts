@@ -49,6 +49,7 @@ import { migrations } from './migrations'
 import { logSchedulerConfig } from './utils/schedulerConfig'
 
 import { getTaxonomies } from './endpoints/taxonomies'
+import { reportHandler } from './endpoints/reportEndpoint'
 import * as Sentry from '@sentry/nextjs'
 import { sentryPlugin } from '@payloadcms/plugin-sentry'
 import pg from 'pg'
@@ -154,6 +155,11 @@ export default buildConfig({
       path: '/update-listing-type-counters',
       method: 'post',
       handler: testListingTypeCountersHandler,
+    },
+    {
+      path: '/report',
+      method: 'post',
+      handler: reportHandler,
     },
   ],
   collections: [

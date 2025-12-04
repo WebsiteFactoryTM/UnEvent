@@ -261,6 +261,8 @@ export type EmailEventType =
   | 'admin.password.changed'
   | 'admin.verification.request'
   | 'admin.digest.daily'
+  | 'admin.listing.report'
+  | 'admin.profile.report'
 
 /**
  * Enqueue an email notification job to the worker
