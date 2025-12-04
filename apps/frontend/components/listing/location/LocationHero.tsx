@@ -114,6 +114,7 @@ export function LocationHero({ location }: LocationHeroProps) {
         id={location.id}
         isFavoritedByViewer={location.isFavoritedByViewer ?? false}
         listingType="locatii"
+        phone={contact?.phone ?? undefined}
       />
 
       {/* Contact details */}

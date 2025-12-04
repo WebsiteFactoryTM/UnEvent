@@ -111,6 +111,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
           id={service.id}
           isFavoritedByViewer={service.isFavoritedByViewer ?? false}
           listingType="servicii"
+          phone={service.contact?.phone ?? undefined}
         />
 
         {/* Contact Info */}

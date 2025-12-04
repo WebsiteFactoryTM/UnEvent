@@ -37,6 +37,7 @@ interface ListingActionsProps {
   description: string;
   listingType: ListingType;
   ticketUrl?: string;
+  phone?: string;
 }
 
 export function ListingActions({
@@ -46,6 +47,7 @@ export function ListingActions({
   isFavoritedByViewer,
   listingType,
   ticketUrl,
+  phone,
 }: ListingActionsProps) {
   const { isFavorited, toggleAsync } = useFavorites({
     listingType: listingType as ListingType,
@@ -115,6 +117,30 @@ export function ListingActions({
   const handleParticipate = () => {
     setIsParticipating(!isParticipating);
     console.log("[v0] Participate in event:", id);
+  };
+
+  const handleContact = () => {
+    if (phone) {
+      // Format phone number for WhatsApp (remove spaces and non-digit characters except +)
+      let cleanPhone = phone.replace(/\s+/g, "").replace(/[^\d+]/g, "");
+
+      // Handle Romanian phone numbers: convert 0xxx to +40xxx
+      if (cleanPhone.startsWith("0")) {
+        cleanPhone = "+40" + cleanPhone.substring(1);
+      } else if (cleanPhone.startsWith("40") && !cleanPhone.startsWith("+40")) {
+        cleanPhone = "+" + cleanPhone;
+      } else if (!cleanPhone.startsWith("+")) {
+        cleanPhone = "+" + cleanPhone;
+      }
+
+      // Remove + for WhatsApp URL (wa.me expects digits only)
+      const whatsappPhone = cleanPhone.replace(/\+/g, "");
+      const currentUrl = window.location.href;
+      // WhatsApp automatically detects URLs and makes them clickable (no HTML tags needed)
+      const message = `Bună! Am văzut listarea "${title}" pe UN:EVENT și aș dori să discut mai multe detalii.\n\nLink: ${currentUrl}`;
+      const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
@@ -209,36 +235,49 @@ export function ListingActions({
         </div>
       )}
       {listingType !== "evenimente" && (
-        <Sheet>
-          <SheetTrigger asChild>
+        <>
+          {phone ? (
             <Button
               size="sm"
               className="gap-2 col-span-3 sm:col-span-1 sm:ml-auto"
+              onClick={handleContact}
             >
               <FaEnvelope className="h-4 w-4" />
               Trimite mesaj
             </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Mesagerie directă</SheetTitle>
-              <SheetDescription>
-                Trimite un mesaj direct proprietarului acestei locații.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="space-y-4 mt-6">
-              <div>
-                <Label htmlFor="message">Mesajul tău</Label>
-                <Textarea
-                  id="message"
-                  placeholder="Scrie mesajul tău aici..."
-                  className="mt-2 min-h-[200px]"
-                />
-              </div>
-              <Button className="w-full">Trimite mesaj</Button>
-            </div>
-          </SheetContent>
-        </Sheet>
+          ) : (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  size="sm"
+                  className="gap-2 col-span-3 sm:col-span-1 sm:ml-auto"
+                >
+                  <FaEnvelope className="h-4 w-4" />
+                  Trimite mesaj
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Mesagerie directă</SheetTitle>
+                  <SheetDescription>
+                    Trimite un mesaj direct proprietarului acestei locații.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="space-y-4 mt-6">
+                  <div>
+                    <Label htmlFor="message">Mesajul tău</Label>
+                    <Textarea
+                      id="message"
+                      placeholder="Scrie mesajul tău aici..."
+                      className="mt-2 min-h-[200px]"
+                    />
+                  </div>
+                  <Button className="w-full">Trimite mesaj</Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          )}
+        </>
       )}
     </div>
   );
