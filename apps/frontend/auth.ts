@@ -411,8 +411,19 @@ export const authOptions: NextAuthOptions = {
       const now = Math.floor(Date.now() / 1000);
       const isExpired = token.exp && token.exp <= now;
 
+      console.log("[Session Callback] Creating session:", {
+        hasToken: !!token,
+        hasAccessToken: !!token.accessToken,
+        tokenError: token.error,
+        isExpired,
+        userId: token.id,
+      });
+
       // If there's an error, no accessToken, or token is expired, invalidate the session
       if (token.error || !token.accessToken || isExpired) {
+        console.log("[Session Callback] Invalidating session:", {
+          reason: token.error || (isExpired ? "expired" : "no accessToken"),
+        });
         // Return an invalid session structure - NextAuth will treat this as unauthenticated
         // Setting expires to past date ensures NextAuth recognizes it as expired
         return {
@@ -443,26 +454,33 @@ export const authOptions: NextAuthOptions = {
         session.expires = new Date(token.exp * 1000).toISOString();
       }
 
+      console.log("[Session Callback] Session created successfully for user:", {
+        userId: session.user.id,
+        hasAccessToken: !!session.accessToken,
+      });
+
       return session;
     },
   },
 
-  // Use cookies configuration for better Vercel compatibility
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: CAN_SHARE_COOKIE ? ("none" as const) : ("lax" as const),
-        path: "/",
-        secure:
-          process.env.NODE_ENV === "production" || process.env.VERCEL === "1",
-        ...(CAN_SHARE_COOKIE && SHARED_PARENT_COOKIE_DOMAIN
-          ? { domain: SHARED_PARENT_COOKIE_DOMAIN }
-          : {}),
-      },
-    },
-  },
+  // Only override cookies if we need cross-domain sharing
+  // Otherwise, let NextAuth use its defaults which handle __Secure- prefix automatically
+  ...(CAN_SHARE_COOKIE && SHARED_PARENT_COOKIE_DOMAIN
+    ? {
+        cookies: {
+          sessionToken: {
+            name: `${isProduction ? "__Secure-" : ""}next-auth.session-token`,
+            options: {
+              httpOnly: true,
+              sameSite: "none" as const,
+              path: "/",
+              secure: true,
+              domain: SHARED_PARENT_COOKIE_DOMAIN,
+            },
+          },
+        },
+      }
+    : {}), // Let NextAuth use defaults - it will automatically use __Secure- prefix in production
 
   pages: {
     signIn: "/auth/autentificare",
