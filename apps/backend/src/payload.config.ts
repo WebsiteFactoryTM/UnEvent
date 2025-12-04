@@ -31,7 +31,7 @@ import { MetricsDaily } from './collections/Feed/MetricsDaily'
 import { Reviews } from './collections/Reviews'
 import { Verifications } from './collections/Verifications'
 
-import { incrementView } from './endpoints/recordViews'
+import { recordView, recordImpression } from './endpoints/metrics'
 import { initFeedSchedulers } from './schedulers/feed'
 import { HomeConfig } from './collections/HomeConfig'
 import { homeHandler } from './endpoints/homeListings'
@@ -127,11 +127,6 @@ export default buildConfig({
       handler: homeHandler,
     },
     {
-      path: '/increment-view',
-      method: 'post',
-      handler: incrementView,
-    },
-    {
       path: '/hub',
       method: 'get',
       handler: hubHandler,
@@ -160,6 +155,16 @@ export default buildConfig({
       path: '/report',
       method: 'post',
       handler: reportHandler,
+    },
+    {
+      path: '/metrics/view',
+      method: 'post',
+      handler: recordView,
+    },
+    {
+      path: '/metrics/impression',
+      method: 'post',
+      handler: recordImpression,
     },
   ],
   collections: [

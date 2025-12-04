@@ -5,9 +5,10 @@ export const MetricsDaily: CollectionConfig = {
   slug: 'metrics-daily',
   admin: {
     useAsTitle: 'date',
-    defaultColumns: ['target', 'kind', 'date', 'views', 'bookings'],
+    defaultColumns: ['target', 'kind', 'date', 'impressions', 'views', 'bookings'],
     group: 'Analytics',
-    description: 'Raw daily counters for views, favorites, and bookings',
+    description:
+      'Raw daily counters for impressions, views, favorites, messages, participations, bookings',
   },
   versions: false,
   timestamps: false,
@@ -81,6 +82,33 @@ export const MetricsDaily: CollectionConfig = {
       defaultValue: 0,
       admin: {
         description: 'Number of bookings made on this date',
+      },
+    },
+    {
+      name: 'impressions',
+      type: 'number',
+      min: 0,
+      defaultValue: 0,
+      admin: {
+        description: 'Number of times the listing was shown in feeds/search on this date',
+      },
+    },
+    {
+      name: 'messages',
+      type: 'number',
+      min: 0,
+      defaultValue: 0,
+      admin: {
+        description: 'Number of new message threads started from this listing on this date',
+      },
+    },
+    {
+      name: 'participations',
+      type: 'number',
+      min: 0,
+      defaultValue: 0,
+      admin: {
+        description: 'Number of participations (e.g. clicked "Participă") on this date',
       },
     },
   ],

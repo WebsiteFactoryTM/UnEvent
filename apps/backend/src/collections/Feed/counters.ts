@@ -10,7 +10,7 @@ import type { Payload } from 'payload'
 function counterKey(
   kind: 'locations' | 'events' | 'services',
   listingId: string,
-  metric: 'views' | 'favorites' | 'bookings',
+  metric: 'impressions' | 'views' | 'favorites' | 'bookings',
   date: string, // YYYY-MM-DD
 ): string {
   return `feed:counters:${kind}:${listingId}:${metric}:${date}`
@@ -66,6 +66,23 @@ export async function bumpBooking(
 }
 
 /**
+ * Increment an impression counter for a listing
+ * Sets 7-day expiry to auto-cleanup old counters
+ */
+export async function bumpImpression(
+  kind: 'locations' | 'events' | 'services',
+  listingId: string,
+  ts: Date = new Date(),
+): Promise<void> {
+  const redis = getRedis()
+  const date = ts.toISOString().slice(0, 10) // YYYY-MM-DD
+  const key = counterKey(kind, listingId, 'impressions', date)
+
+  await redis.incr(key)
+  await redis.expire(key, 7 * 24 * 60 * 60) // 7 days TTL
+}
+
+/**
  * Flush all Redis counters to the metrics_daily collection
  * This should run periodically (e.g., every 1-5 minutes)
  */
@@ -93,6 +110,7 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
         kind: string
         listingId: string
         date: string
+        impressions: number
         views: number
         favorites: number
         bookings: number
@@ -113,6 +131,7 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
           kind,
           listingId,
           date,
+          impressions: 0,
           views: 0,
           favorites: 0,
           bookings: 0,
@@ -120,18 +139,23 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
       }
 
       const group = aggregated.get(groupKey)!
-      if (metric === 'views') group.views += count
+      if (metric === 'impressions') group.impressions += count
+      else if (metric === 'views') group.views += count
       else if (metric === 'favorites') group.favorites += count
       else if (metric === 'bookings') group.bookings += count
     }
 
     // Upsert into metrics_daily collection (Payload API way)
     for (const [, data] of aggregated) {
-      // Check if record exists
+      // Check if record exists - match by relationship field + date
       const existing = await payload.find({
         collection: 'metrics-daily',
         where: {
-          and: [{ target: { equals: data.listingId } }, { date: { equals: new Date(data.date) } }],
+          and: [
+            { 'target.value': { equals: Number(data.listingId) } },
+            { 'target.relationTo': { equals: data.kind } },
+            { date: { equals: data.date } },
+          ],
         },
         limit: 1,
         depth: 0,
@@ -144,6 +168,7 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
           collection: 'metrics-daily',
           id: current.id,
           data: {
+            impressions: (current.impressions || 0) + data.impressions,
             views: (current.views || 0) + data.views,
             favorites: (current.favorites || 0) + data.favorites,
             bookings: (current.bookings || 0) + data.bookings,
@@ -160,6 +185,7 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
             },
             kind: data.kind as 'locations' | 'events' | 'services',
             date: data.date,
+            impressions: data.impressions,
             views: data.views,
             favorites: data.favorites,
             bookings: data.bookings,
