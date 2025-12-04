@@ -98,12 +98,18 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   const payloadAuthHeader = `Bearer ${token}`;
 
   try {
+    // Perform soft delete by setting deletedAt timestamp
+    // This preserves the listing for 6 months before cleanup scheduler hard deletes it
     const res = await fetch(`${payloadUrl}/api/${type}/${id}`, {
-      method: "DELETE",
+      method: "PATCH",
       headers: {
         Authorization: payloadAuthHeader,
+        "Content-Type": "application/json",
         "x-tenant": "unevent",
       },
+      body: JSON.stringify({
+        deletedAt: new Date().toISOString(),
+      }),
     });
 
     const responseData = await res.json().catch(() => ({}));

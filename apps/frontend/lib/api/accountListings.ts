@@ -62,8 +62,9 @@ export const getUserListings = async (
     throw new Error("Access token is required");
   }
   try {
+    // Filter out soft-deleted listings (deletedAt is null or doesn't exist)
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[owner][equals]=${profileId}&depth=1`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[owner][equals]=${profileId}&where[deletedAt][exists]=false&depth=1`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

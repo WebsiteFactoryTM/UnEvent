@@ -35,11 +35,12 @@ const ListingView = ({
   const profileId = session?.user?.profile as number | undefined;
 
   // Call hooks unconditionally, but only fetch when we have credentials
-  const { listings, isLoading, error } = useListingsManager({
-    type,
-    profileId,
-    accessToken,
-  });
+  const { listings, isLoading, error, deleteListing, isDeleting } =
+    useListingsManager({
+      type,
+      profileId,
+      accessToken,
+    });
 
   if (status === "loading") {
     return <Skeleton className="h-10 w-full" />;
@@ -71,11 +72,15 @@ const ListingView = ({
         listings={listings}
         listingType={type}
         listingTypePath={listingPath}
+        onDelete={deleteListing}
+        isDeleting={isDeleting}
       />
       <DesktopListingView
         listings={listings}
         listingType={type}
         listingTypePath={listingPath}
+        onDelete={deleteListing}
+        isDeleting={isDeleting}
       />
 
       {listings.length === 0 && (
