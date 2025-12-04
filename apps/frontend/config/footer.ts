@@ -16,20 +16,20 @@ import {
   FaFileLines,
   FaShield,
   FaCookie,
-} from "react-icons/fa6"
-import type { IconType } from "react-icons"
+} from "react-icons/fa6";
+import type { IconType } from "react-icons";
 
 export interface SocialLink {
-  name: string
-  href: string
-  icon: IconType
-  ariaLabel: string
+  name: string;
+  href?: string;
+  icon: IconType;
+  ariaLabel: string;
 }
 
 export interface FooterLink {
-  label: string
-  href: string
-  icon: IconType
+  label: string;
+  href?: string;
+  icon: IconType;
 }
 
 export const socialLinks: SocialLink[] = [
@@ -59,17 +59,17 @@ export const socialLinks: SocialLink[] = [
   },
   {
     name: "YouTube",
-    href: "#",
+
     icon: FaYoutube,
     ariaLabel: "Urmărește-ne pe YouTube",
   },
   {
     name: "LinkedIn",
-    href: "#",
+    href: "https://www.linkedin.com/company/un-event",
     icon: FaLinkedin,
     ariaLabel: "Urmărește-ne pe LinkedIn",
   },
-]
+];
 
 export const contactLinks: FooterLink[] = [
   {
@@ -84,10 +84,10 @@ export const contactLinks: FooterLink[] = [
   },
   {
     label: "Timișoara, România",
-    href: "#",
+
     icon: FaLocationDot,
   },
-]
+];
 
 export const utileLinks: FooterLink[] = [
   {
@@ -117,10 +117,10 @@ export const utileLinks: FooterLink[] = [
   },
   {
     label: "Promovare (în curând)",
-    href: "#",
+
     icon: FaCrown,
   },
-]
+];
 
 export const termeniLinks: FooterLink[] = [
   {
@@ -138,4 +138,4 @@ export const termeniLinks: FooterLink[] = [
     href: "/politica-cookie",
     icon: FaCookie,
   },
-]
+];
