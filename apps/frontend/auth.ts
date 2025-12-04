@@ -14,8 +14,10 @@ const isProduction =
   process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
 
 // --- add near other consts ---
-const SHARED_PARENT_COOKIE_DOMAIN = process.env.COOKIE_DOMAIN; // e.g. ".unevent.app" in prod only
-const CAN_SHARE_COOKIE = Boolean(SHARED_PARENT_COOKIE_DOMAIN);
+const SHARED_PARENT_COOKIE_DOMAIN = process.env.COOKIE_DOMAIN?.trim(); // e.g. ".unevent.app" in prod only
+const CAN_SHARE_COOKIE = Boolean(
+  SHARED_PARENT_COOKIE_DOMAIN && SHARED_PARENT_COOKIE_DOMAIN.length > 0,
+);
 
 // tighten cookie attrs for when you actually use them in prod
 function cookieAttrs(rememberMe?: boolean) {
@@ -25,7 +27,9 @@ function cookieAttrs(rememberMe?: boolean) {
     sameSite: CAN_SHARE_COOKIE ? ("none" as const) : ("lax" as const),
     path: "/",
     maxAge: getCookieMaxAge(rememberMe),
-    ...(CAN_SHARE_COOKIE ? { domain: SHARED_PARENT_COOKIE_DOMAIN! } : {}),
+    ...(CAN_SHARE_COOKIE && SHARED_PARENT_COOKIE_DOMAIN
+      ? { domain: SHARED_PARENT_COOKIE_DOMAIN }
+      : {}),
   };
 }
 
@@ -421,7 +425,9 @@ export const authOptions: NextAuthOptions = {
         path: "/",
         secure:
           process.env.NODE_ENV === "production" || process.env.VERCEL === "1",
-        ...(CAN_SHARE_COOKIE ? { domain: SHARED_PARENT_COOKIE_DOMAIN! } : {}),
+        ...(CAN_SHARE_COOKIE && SHARED_PARENT_COOKIE_DOMAIN
+          ? { domain: SHARED_PARENT_COOKIE_DOMAIN }
+          : {}),
       },
     },
   },
