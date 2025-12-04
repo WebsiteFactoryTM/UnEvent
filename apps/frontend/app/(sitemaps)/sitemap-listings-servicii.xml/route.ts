@@ -3,7 +3,6 @@
  * Includes all approved service detail pages
  */
 
-export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // 1 hour
 
 async function fetchApprovedServices() {

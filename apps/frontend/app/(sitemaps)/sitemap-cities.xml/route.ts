@@ -3,7 +3,6 @@
  * Includes all city hub pages for each listing type
  */
 
-export const dynamic = 'force-dynamic';
 export const revalidate = 21600; // 6 hours
 
 async function fetchCities() {
