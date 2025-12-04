@@ -80,9 +80,36 @@ export async function aggregateDaily(payload: Payload): Promise<void> {
           depth: 0,
         })
 
-        // Sum up views and bookings
+        // Get ALL metrics for all-time aggregation
+        const metricsAll = await payload.find({
+          collection: 'metrics-daily',
+          where: {
+            and: [{ target: { equals: polyRef(kind, listingId) } }, { kind: { equals: kind } }],
+          },
+          limit: 10000, // High limit for all-time data
+          depth: 0,
+        })
+
+        // Sum up views (7d, 30d, and all-time)
         const views7d = metrics7d.docs.reduce((sum, m: MetricsDaily) => sum + (m.views || 0), 0)
         const views30d = metrics30d.docs.reduce((sum, m: MetricsDaily) => sum + (m.views || 0), 0)
+        const views = metricsAll.docs.reduce((sum, m: MetricsDaily) => sum + (m.views || 0), 0)
+
+        // Sum up impressions (7d, 30d, and all-time)
+        const impressions7d = metrics7d.docs.reduce(
+          (sum, m: MetricsDaily) => sum + (m.impressions || 0),
+          0,
+        )
+        const impressions30d = metrics30d.docs.reduce(
+          (sum, m: MetricsDaily) => sum + (m.impressions || 0),
+          0,
+        )
+        const impressions = metricsAll.docs.reduce(
+          (sum, m: MetricsDaily) => sum + (m.impressions || 0),
+          0,
+        )
+
+        // Sum up bookings (7d and 30d)
         const bookings7d = metrics7d.docs.reduce(
           (sum, m: MetricsDaily) => sum + (m.bookings || 0),
           0,
@@ -92,15 +119,27 @@ export async function aggregateDaily(payload: Payload): Promise<void> {
           0,
         )
 
-        // Get favorites count from the listing itself
+        // Get favorites count from MetricsDaily (all-time sum)
+        const favoritesFromMetrics = metricsAll.docs.reduce(
+          (sum, m: MetricsDaily) => sum + (m.favorites || 0),
+          0,
+        )
+
+        // Also get favorites count from the listing itself (for backward compatibility)
         const listing: Listing = await payload.findByID({
           collection: kind,
           id: listingId,
           depth: 0,
         })
 
-        const favorites = listing?.favoritesCount || 0
-        const safeFavorites = typeof favorites === 'number' && isFinite(favorites) ? favorites : 0
+        const favoritesFromListing = listing?.favoritesCount || 0
+        const safeFavoritesFromListing =
+          typeof favoritesFromListing === 'number' && isFinite(favoritesFromListing)
+            ? favoritesFromListing
+            : 0
+
+        // Use the maximum of both sources (in case one is more up-to-date)
+        const favorites = Math.max(favoritesFromMetrics, safeFavoritesFromListing)
 
         // Get review stats from reviews collection
         const reviews = await payload.find({
@@ -150,9 +189,13 @@ export async function aggregateDaily(payload: Payload): Promise<void> {
               kind,
               views7d,
               views30d,
+              views,
+              impressions7d,
+              impressions30d,
+              impressions,
               bookings7d,
               bookings30d,
-              favorites: safeFavorites,
+              favorites,
               reviewsCount,
               avgRating,
               bayesRating: bayesRating_,
@@ -166,9 +209,13 @@ export async function aggregateDaily(payload: Payload): Promise<void> {
               kind,
               views7d,
               views30d,
+              views,
+              impressions7d,
+              impressions30d,
+              impressions,
               bookings7d,
               bookings30d,
-              favorites: safeFavorites,
+              favorites,
               reviewsCount,
               avgRating,
               bayesRating: bayesRating_,

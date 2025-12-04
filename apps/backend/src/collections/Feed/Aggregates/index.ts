@@ -61,6 +61,42 @@ export const Aggregates: CollectionConfig = {
       },
     },
     {
+      name: 'views',
+      type: 'number',
+      min: 0,
+      defaultValue: 0,
+      admin: {
+        description: 'Total views (all time)',
+      },
+    },
+    {
+      name: 'impressions7d',
+      type: 'number',
+      min: 0,
+      defaultValue: 0,
+      admin: {
+        description: 'Total impressions in last 7 days',
+      },
+    },
+    {
+      name: 'impressions30d',
+      type: 'number',
+      min: 0,
+      defaultValue: 0,
+      admin: {
+        description: 'Total impressions in last 30 days',
+      },
+    },
+    {
+      name: 'impressions',
+      type: 'number',
+      min: 0,
+      defaultValue: 0,
+      admin: {
+        description: 'Total impressions (all time)',
+      },
+    },
+    {
       name: 'bookings7d',
       type: 'number',
       min: 0,
