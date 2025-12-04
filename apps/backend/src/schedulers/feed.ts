@@ -15,12 +15,17 @@ export const initFeedSchedulers = async (payload: Payload) => {
   // await rankSegments(payload)
 
   // Stagger the cron jobs to prevent overlap and reduce load
-  // Flush Redis counters to metrics_daily every 10 minutes (configurable via SCHEDULER_FEED_FLUSH_INTERVAL_MINUTES)
-  const flushInterval = getSchedulerInterval('feed_flush', 10, {
+  // Flush Redis counters to metrics_daily once per day at midnight UTC
+  // Note: For high-traffic sites, you may want to flush more frequently (e.g., every few hours)
+  // to manage Redis memory, but the metrics_daily records are still daily aggregates
+  const flushInterval = getSchedulerInterval('feed_flush', 1440, {
     envVarName: 'SCHEDULER_FEED_FLUSH_INTERVAL_MINUTES',
   })
-  const flushCron = minutesToCron(flushInterval, 0)
-  console.log(`[Feed] flushCountersToDaily scheduled: ${flushCron} (${flushInterval}min interval)`)
+  // Run at 00:00 UTC daily (or use minutesToCron if interval is < 1440 for dev/testing)
+  const flushCron = flushInterval >= 1440 ? '0 0 * * *' : minutesToCron(flushInterval, 0)
+  console.log(
+    `[Feed] flushCountersToDaily scheduled: ${flushCron} (${flushInterval >= 1440 ? 'daily at midnight UTC' : `${flushInterval}min interval (dev/testing)`})`,
+  )
   cron.schedule(flushCron, async () => {
     const start = Date.now()
     try {
