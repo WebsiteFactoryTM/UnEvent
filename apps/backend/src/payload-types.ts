@@ -417,6 +417,10 @@ export interface Event {
   isFavoritedByViewer?: boolean | null;
   hasReviewedByViewer?: boolean | null;
   /**
+   * Timestamp when listing was soft deleted
+   */
+  deletedAt?: string | null;
+  /**
    * Type of event
    */
   type: (number | ListingType)[];
@@ -656,6 +660,10 @@ export interface Location {
   isFavoritedByViewer?: boolean | null;
   hasReviewedByViewer?: boolean | null;
   /**
+   * Timestamp when listing was soft deleted
+   */
+  deletedAt?: string | null;
+  /**
    * Type of location
    */
   type: (number | ListingType)[];
@@ -822,6 +830,10 @@ export interface Service {
     | null;
   isFavoritedByViewer?: boolean | null;
   hasReviewedByViewer?: boolean | null;
+  /**
+   * Timestamp when listing was soft deleted
+   */
+  deletedAt?: string | null;
   /**
    * Type of service
    */
@@ -1579,6 +1591,7 @@ export interface EventsSelect<T extends boolean = true> {
       };
   isFavoritedByViewer?: T;
   hasReviewedByViewer?: T;
+  deletedAt?: T;
   type?: T;
   eventStatus?: T;
   startDate?: T;
@@ -1676,6 +1689,7 @@ export interface LocationsSelect<T extends boolean = true> {
       };
   isFavoritedByViewer?: T;
   hasReviewedByViewer?: T;
+  deletedAt?: T;
   type?: T;
   suitableFor?: T;
   capacity?:
@@ -1770,6 +1784,7 @@ export interface ServicesSelect<T extends boolean = true> {
       };
   isFavoritedByViewer?: T;
   hasReviewedByViewer?: T;
+  deletedAt?: T;
   type?: T;
   suitableFor?: T;
   pricing?:

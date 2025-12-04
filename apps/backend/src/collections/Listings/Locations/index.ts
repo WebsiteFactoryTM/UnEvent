@@ -10,6 +10,7 @@ import { notifyListingModeration } from '../_hooks/afterChange/notifyListingMode
 import { notifyAdminNewListing } from '../_hooks/afterChange/notifyAdminNewListing'
 import { regenerateSitemap } from '../_hooks/afterChange/regenerateSitemap'
 import { queueHubSnapshotAfterDelete } from '../_hooks/afterDelete/queueHubSnapshot'
+import { preventHardDelete } from '../_hooks/beforeDelete/preventHardDelete'
 
 export const Locations: CollectionConfig = {
   slug: 'locations',
@@ -34,6 +35,7 @@ export const Locations: CollectionConfig = {
   },
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
+    beforeDelete: [preventHardDelete],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
     afterChange: [
       markListingMediaPermanent,

@@ -45,6 +45,7 @@ import { ListingType } from './payload-types'
 import { registerSyncListingTypeCountersScheduler } from './schedulers/syncListingTypeCounters'
 import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters'
 import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia'
+import { registerCleanupDeletedListingsScheduler } from './schedulers/cleanupDeletedListings'
 import { migrations } from './migrations'
 import { logSchedulerConfig } from './utils/schedulerConfig'
 
@@ -397,6 +398,7 @@ export default buildConfig({
       registerSyncListingTypeCountersScheduler(payload)
       registerSyncCityCountersScheduler(payload)
       registerCleanupTempMediaScheduler(payload)
+      registerCleanupDeletedListingsScheduler(payload)
 
       console.log('[Payload] ✅ All schedulers initialized')
     } else {

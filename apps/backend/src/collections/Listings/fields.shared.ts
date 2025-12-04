@@ -190,4 +190,14 @@ export const sharedListingFields: Field[] = [
     defaultValue: false,
     admin: { readOnly: true },
   },
+  {
+    name: 'deletedAt',
+    type: 'date',
+    index: true,
+    admin: {
+      position: 'sidebar',
+      description: 'Timestamp when listing was soft deleted',
+      readOnly: true,
+    },
+  },
 ]

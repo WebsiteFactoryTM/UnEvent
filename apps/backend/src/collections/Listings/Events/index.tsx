@@ -10,6 +10,7 @@ import { notifyListingModeration } from '../_hooks/afterChange/notifyListingMode
 import { notifyAdminNewListing } from '../_hooks/afterChange/notifyAdminNewListing'
 import { regenerateSitemap } from '../_hooks/afterChange/regenerateSitemap'
 import { queueHubSnapshotAfterDelete } from '../_hooks/afterDelete/queueHubSnapshot'
+import { preventHardDelete } from '../_hooks/beforeDelete/preventHardDelete'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -37,6 +38,7 @@ export const Events: CollectionConfig = {
   // Individual indexes are set on fields that support them
   hooks: {
     beforeChange: [autoSlug, attachOwner, setDefaultStatus],
+    beforeDelete: [preventHardDelete],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
     afterChange: [
       markListingMediaPermanent,
