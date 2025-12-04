@@ -49,6 +49,17 @@ export function Sidebar() {
 
           const isActive = pathname.includes(item.href);
 
+          if (item.label === "Mesaje") {
+            return (
+              <div
+                key={item.href}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all cursor-pointer text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+              >
+                <Icon className="w-5 h-5" />
+                <span className="font-medium">{item.label} (în curând)</span>
+              </div>
+            );
+          }
           return (
             <Link
               key={item.href}
