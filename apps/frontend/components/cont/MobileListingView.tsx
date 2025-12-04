@@ -61,7 +61,6 @@ const MobileListingView = ({
           isDeleting={isDeleting}
         />
       )}
-      return (
       <div className="md:hidden space-y-4">
         {listings.map((listing) => (
           <div
