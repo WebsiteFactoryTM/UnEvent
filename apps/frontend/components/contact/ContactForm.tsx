@@ -1,34 +1,48 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 const contactSchema = z.object({
-  fullName: z.string().min(2, "Numele trebuie să conțină cel puțin 2 caractere"),
-  phone: z.string().min(10, "Numărul de telefon trebuie să conțină cel puțin 10 cifre"),
+  fullName: z
+    .string()
+    .min(2, "Numele trebuie să conțină cel puțin 2 caractere"),
+  phone: z
+    .string()
+    .min(10, "Numărul de telefon trebuie să conțină cel puțin 10 cifre"),
   email: z.string().email("Adresa de email nu este validă"),
   subject: z.string().min(1, "Te rugăm să selectezi un subiect"),
-  message: z.string().min(10, "Mesajul trebuie să conțină cel puțin 10 caractere"),
+  message: z
+    .string()
+    .min(10, "Mesajul trebuie să conțină cel puțin 10 caractere"),
   privacyConsent: z.boolean().refine((val) => val === true, {
     message: "Trebuie să accepți politica de confidențialitate",
   }),
-})
+});
 
-type ContactFormData = z.infer<typeof contactSchema>
+type ContactFormData = z.infer<typeof contactSchema>;
 
 export function ContactForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { toast } = useToast()
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+  const { executeRecaptcha, isReady: isRecaptchaReady } = useRecaptcha();
 
   const {
     register,
@@ -42,26 +56,77 @@ export function ContactForm() {
     defaultValues: {
       privacyConsent: false,
     },
-  })
+  });
 
-  const privacyConsent = watch("privacyConsent")
+  const privacyConsent = watch("privacyConsent");
 
   const onSubmit = async (data: ContactFormData) => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      // Get reCAPTCHA token
+      const recaptchaToken = await executeRecaptcha("contact_form");
 
-    console.log("[v0] Contact form submitted:", data)
+      if (!recaptchaToken) {
+        toast({
+          title: "Eroare de verificare",
+          description: "Nu am putut verifica cererile. Te rugăm să reîncerci.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
-    toast({
-      title: "Mesaj trimis cu succes!",
-      description: "Îți vom răspunde în cel mai scurt timp posibil.",
-    })
+      // Get backend URL from environment or use default
+      const backendUrl =
+        process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4000";
 
-    reset()
-    setIsSubmitting(false)
-  }
+      // Submit form to backend
+      const response = await fetch(`${backendUrl}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: data.fullName,
+          email: data.email,
+          phone: data.phone,
+          subject: data.subject,
+          message: data.message,
+          recaptchaToken,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        toast({
+          title: "Eroare la trimiterea mesajului",
+          description:
+            result.error || "A apărut o eroare. Te rugăm să reîncerci.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      toast({
+        title: "Mesaj trimis cu succes!",
+        description: "Îți vom răspunde în cel mai scurt timp posibil.",
+      });
+
+      reset();
+    } catch (error) {
+      console.error("[ContactForm] Error submitting form:", error);
+      toast({
+        title: "Eroare la trimiterea mesajului",
+        description: "A apărut o eroare de conexiune. Te rugăm să reîncerci.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -77,7 +142,9 @@ export function ContactForm() {
           {...register("fullName")}
           className={errors.fullName ? "border-destructive" : ""}
         />
-        {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
+        {errors.fullName && (
+          <p className="text-sm text-destructive">{errors.fullName.message}</p>
+        )}
       </div>
 
       {/* Phone */}
@@ -92,7 +159,9 @@ export function ContactForm() {
           {...register("phone")}
           className={errors.phone ? "border-destructive" : ""}
         />
-        {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
+        {errors.phone && (
+          <p className="text-sm text-destructive">{errors.phone.message}</p>
+        )}
       </div>
 
       {/* Email */}
@@ -107,7 +176,9 @@ export function ContactForm() {
           {...register("email")}
           className={errors.email ? "border-destructive" : ""}
         />
-        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-sm text-destructive">{errors.email.message}</p>
+        )}
       </div>
 
       {/* Subject */}
@@ -115,8 +186,15 @@ export function ContactForm() {
         <Label htmlFor="subject">
           Subiect <span className="text-destructive">*</span>
         </Label>
-        <Select onValueChange={(value) => setValue("subject", value, { shouldValidate: true })}>
-          <SelectTrigger id="subject" className={errors.subject ? "border-destructive" : ""}>
+        <Select
+          onValueChange={(value) =>
+            setValue("subject", value, { shouldValidate: true })
+          }
+        >
+          <SelectTrigger
+            id="subject"
+            className={errors.subject ? "border-destructive" : ""}
+          >
             <SelectValue placeholder="Selectează un subiect" />
           </SelectTrigger>
           <SelectContent>
@@ -125,7 +203,9 @@ export function ContactForm() {
             <SelectItem value="listing">Raportare listare/profil</SelectItem>
           </SelectContent>
         </Select>
-        {errors.subject && <p className="text-sm text-destructive">{errors.subject.message}</p>}
+        {errors.subject && (
+          <p className="text-sm text-destructive">{errors.subject.message}</p>
+        )}
       </div>
 
       {/* Message */}
@@ -140,7 +220,9 @@ export function ContactForm() {
           {...register("message")}
           className={errors.message ? "border-destructive" : ""}
         />
-        {errors.message && <p className="text-sm text-destructive">{errors.message.message}</p>}
+        {errors.message && (
+          <p className="text-sm text-destructive">{errors.message.message}</p>
+        )}
       </div>
 
       {/* Privacy Consent */}
@@ -156,21 +238,39 @@ export function ContactForm() {
             }
             className={errors.privacyConsent ? "border-destructive" : ""}
           />
-          <Label htmlFor="privacyConsent" className="cursor-pointer text-sm leading-relaxed">
+          <Label
+            htmlFor="privacyConsent"
+            className="cursor-pointer text-sm leading-relaxed"
+          >
             Sunt de acord cu{" "}
-            <Link href="/politica-de-confidentialitate" className="text-primary underline-offset-4 hover:underline">
+            <Link
+              href="/politica-de-confidentialitate"
+              className="text-primary underline-offset-4 hover:underline"
+            >
               Politica de confidențialitate
             </Link>{" "}
             a UN:EVENT <span className="text-destructive">*</span>
           </Label>
         </div>
-        {errors.privacyConsent && <p className="text-sm text-destructive">{errors.privacyConsent.message}</p>}
+        {errors.privacyConsent && (
+          <p className="text-sm text-destructive">
+            {errors.privacyConsent.message}
+          </p>
+        )}
       </div>
 
       {/* Submit Button */}
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Se trimite..." : "Trimite"}
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isSubmitting || !isRecaptchaReady}
+      >
+        {isSubmitting
+          ? "Se trimite..."
+          : !isRecaptchaReady
+            ? "Se încarcă..."
+            : "Trimite"}
       </Button>
     </form>
-  )
+  );
 }

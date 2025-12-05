@@ -1,24 +1,30 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import Image from "next/image"
-import { FaHouse, FaPhone, FaEnvelope, FaLocationDot } from "react-icons/fa6"
-import { ContactForm } from "@/components/contact/ContactForm"
-import { SocialLinks } from "@/components/footer/SocialLinks"
-import { ScrollToTop } from "@/components/ScrollToTop"
+import type { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
+import { FaHouse, FaPhone, FaEnvelope, FaLocationDot } from "react-icons/fa6";
+import { ContactForm } from "@/components/contact/ContactForm";
+import { SocialLinks } from "@/components/footer/SocialLinks";
+import { ScrollToTop } from "@/components/ScrollToTop";
+import { RecaptchaScript } from "@/components/RecaptchaScript";
 
 export const metadata: Metadata = {
   title: "Contactează-ne | UN:EVENT",
-  description: "Suntem aici să te ajutăm. Trimite-ne un mesaj și îți vom răspunde în cel mai scurt timp.",
-}
+  description:
+    "Suntem aici să te ajutăm. Trimite-ne un mesaj și îți vom răspunde în cel mai scurt timp.",
+};
 
 export default function ContactPage() {
   return (
     <>
+      <RecaptchaScript />
       <ScrollToTop />
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumbs */}
         <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-          <Link href="/" className="inline-flex items-center gap-1 transition-colors hover:text-foreground">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+          >
             <FaHouse className="h-4 w-4" />
           </Link>
           <span>›</span>
@@ -27,9 +33,12 @@ export default function ContactPage() {
 
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">Contactează-ne</h1>
+          <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+            Contactează-ne
+          </h1>
           <p className="mx-auto max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Suntem aici să te ajutăm. Trimite-ne un mesaj și îți vom răspunde în cel mai scurt timp.
+            Suntem aici să te ajutăm. Trimite-ne un mesaj și îți vom răspunde în
+            cel mai scurt timp.
           </p>
         </div>
 
@@ -65,7 +74,9 @@ export default function ContactPage() {
 
             {/* Contact Information */}
             <div>
-              <h2 className="mb-4 text-lg font-semibold">Informații de contact</h2>
+              <h2 className="mb-4 text-lg font-semibold">
+                Informații de contact
+              </h2>
               <div className="space-y-4">
                 {/* Phone */}
                 <a
@@ -76,7 +87,9 @@ export default function ContactPage() {
                     <FaPhone className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-foreground">Telefon</p>
+                    <p className="text-sm font-medium text-foreground">
+                      Telefon
+                    </p>
                     <p className="text-sm">+40 728 567 830</p>
                   </div>
                 </a>
@@ -101,7 +114,9 @@ export default function ContactPage() {
                     <FaLocationDot className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-foreground">Locație</p>
+                    <p className="text-sm font-medium text-foreground">
+                      Locație
+                    </p>
                     <p className="text-sm">Timișoara</p>
                   </div>
                 </div>
@@ -117,5 +132,5 @@ export default function ContactPage() {
         </div>
       </div>
     </>
-  )
+  );
 }
