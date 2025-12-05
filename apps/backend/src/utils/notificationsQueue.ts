@@ -263,6 +263,7 @@ export type EmailEventType =
   | 'admin.digest.daily'
   | 'admin.listing.report'
   | 'admin.profile.report'
+  | 'admin.contact'
 
 /**
  * Enqueue an email notification job to the worker

@@ -1,0 +1,153 @@
+import type { PayloadHandler, PayloadRequest } from 'payload'
+import { enqueueNotification } from '@/utils/notificationsQueue'
+import * as Sentry from '@sentry/nextjs'
+
+interface RecaptchaResponse {
+  success: boolean
+  score: number
+  action: string
+  challenge_ts: string
+  hostname: string
+  'error-codes'?: string[]
+}
+
+export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 })
+  }
+
+  try {
+    const body = (await req.json?.()) ?? req.body
+    const { fullName, email, phone, subject, message, recaptchaToken } = body as {
+      fullName: string
+      email: string
+      phone: string
+      subject: string
+      message: string
+      recaptchaToken: string
+    }
+
+    // Validate required fields
+    if (!fullName || !email || !phone || !subject || !message) {
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Validate reCAPTCHA token
+    if (!recaptchaToken) {
+      return new Response(JSON.stringify({ error: 'reCAPTCHA token is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
+    if (!recaptchaSecretKey) {
+      console.error('[ContactEndpoint] RECAPTCHA_SECRET_KEY not configured')
+      Sentry.captureMessage('RECAPTCHA_SECRET_KEY not configured', 'error')
+      // Don't expose internal error to client
+      return new Response(JSON.stringify({ error: 'Contact form configuration error' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Verify reCAPTCHA token with Google
+    const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify'
+    const verificationResponse = await fetch(verificationUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `secret=${recaptchaSecretKey}&response=${recaptchaToken}`,
+    })
+
+    const recaptchaResult = (await verificationResponse.json()) as RecaptchaResponse
+
+    if (!recaptchaResult.success) {
+      console.warn(
+        '[ContactEndpoint] reCAPTCHA verification failed:',
+        recaptchaResult['error-codes'],
+      )
+      return new Response(
+        JSON.stringify({ error: 'reCAPTCHA verification failed. Please try again.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      )
+    }
+
+    // Check reCAPTCHA score (v3 returns a score from 0.0 to 1.0)
+    const minScore = 0.5
+    if (recaptchaResult.score < minScore) {
+      console.warn(
+        `[ContactEndpoint] reCAPTCHA score too low: ${recaptchaResult.score} (min: ${minScore})`,
+      )
+      Sentry.captureMessage(
+        `Contact form submission rejected: low reCAPTCHA score ${recaptchaResult.score}`,
+        'warning',
+      )
+      return new Response(
+        JSON.stringify({
+          error: 'Submission rejected. Please try again later.',
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      )
+    }
+
+    console.log(
+      `[ContactEndpoint] ✅ reCAPTCHA verified successfully (score: ${recaptchaResult.score})`,
+    )
+
+    // Sanitize input (basic sanitization - remove any HTML/script tags)
+    const sanitize = (str: string) => str.replace(/<[^>]*>/g, '').trim()
+
+    const emailPayload = {
+      sender_name: sanitize(fullName),
+      sender_email: sanitize(email),
+      sender_phone: sanitize(phone),
+      subject: sanitize(subject),
+      message: sanitize(message),
+      submitted_at: new Date().toISOString(),
+    }
+
+    // Enqueue email notification
+    const result = await enqueueNotification('admin.contact', emailPayload)
+
+    if (result.id) {
+      console.log(`[ContactEndpoint] ✅ Enqueued admin.contact notification (job: ${result.id})`)
+    } else {
+      console.warn('[ContactEndpoint] ⚠️ Notification enqueued but no job ID returned')
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: 'Contact form submitted successfully',
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : 'Unknown error'
+    console.error('[ContactEndpoint] Error processing contact form:', errMsg)
+
+    // Report to Sentry with context
+    if (error instanceof Error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('endpoint', 'contact')
+        scope.setContext('request', {
+          method: 'POST',
+        })
+        Sentry.captureException(error)
+      })
+    }
+
+    return new Response(JSON.stringify({ error: 'Failed to submit contact form' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}
