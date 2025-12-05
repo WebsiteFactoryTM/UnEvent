@@ -6,9 +6,12 @@ import { Separator } from "@/components/ui/separator";
 import { FooterColumn } from "./FooterColumn";
 import { SocialLinks } from "./SocialLinks";
 import { contactLinks, utileLinks, termeniLinks } from "@/config/footer";
+import { useConsent } from "@/app/providers/consent";
+import { Cookie } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { resetConsent } = useConsent();
 
   return (
     <footer className="bg-black text-white">
@@ -119,6 +122,15 @@ export function Footer() {
                   </li>
                 );
               })}
+              <li>
+                <button
+                  onClick={resetConsent}
+                  className="inline-flex items-center gap-2 text-white/80 transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-black"
+                >
+                  <Cookie className="h-4 w-4 shrink-0" />
+                  <span>Setări Cookie</span>
+                </button>
+              </li>
             </ul>
 
             {/* ANPC Banners */}
