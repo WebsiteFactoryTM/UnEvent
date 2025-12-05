@@ -47,7 +47,6 @@ export function useRecaptcha(): UseRecaptchaReturn {
         if (window.grecaptcha?.enterprise) {
           window.grecaptcha.enterprise.ready(() => {
             setIsReady(true);
-            console.log("[useRecaptcha] ✅ reCAPTCHA Enterprise ready");
           });
           return true;
         }
@@ -56,7 +55,6 @@ export function useRecaptcha(): UseRecaptchaReturn {
         if (window.grecaptcha?.ready) {
           window.grecaptcha.ready(() => {
             setIsReady(true);
-            console.log("[useRecaptcha] ✅ reCAPTCHA v3 ready");
           });
           return true;
         }
@@ -112,23 +110,13 @@ export function useRecaptcha(): UseRecaptchaReturn {
       try {
         let token: string;
 
-        console.log("[useRecaptcha] Executing reCAPTCHA:", {
-          action,
-          siteKey,
-          isEnterprise,
-          hasEnterpriseAPI: !!window.grecaptcha?.enterprise,
-          hasRegularAPI: !!window.grecaptcha?.execute,
-        });
-
         if (isEnterprise && window.grecaptcha.enterprise) {
           // Use Enterprise API
-          console.log("[useRecaptcha] Using Enterprise API");
           token = await window.grecaptcha.enterprise.execute(siteKey, {
             action,
           });
         } else if (!isEnterprise && window.grecaptcha.execute) {
           // Use regular v3 API
-          console.log("[useRecaptcha] Using regular v3 API");
           token = await window.grecaptcha.execute(siteKey, {
             action,
           });
@@ -136,11 +124,6 @@ export function useRecaptcha(): UseRecaptchaReturn {
           console.error("[useRecaptcha] reCAPTCHA API not available");
           return null;
         }
-
-        console.log("[useRecaptcha] ✅ Token received:", {
-          tokenLength: token.length,
-          tokenPreview: token.substring(0, 50) + "...",
-        });
 
         return token;
       } catch (error) {

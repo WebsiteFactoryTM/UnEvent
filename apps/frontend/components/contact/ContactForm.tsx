@@ -41,6 +41,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
   const { executeRecaptcha, isReady: isRecaptchaReady } = useRecaptcha();
 
@@ -64,13 +65,10 @@ export function ContactForm() {
     setIsSubmitting(true);
 
     try {
-      console.log("[ContactForm] Starting form submission");
-
       // Get reCAPTCHA token
       const recaptchaToken = await executeRecaptcha("contact_form");
 
       if (!recaptchaToken) {
-        console.error("[ContactForm] No reCAPTCHA token received");
         toast({
           title: "Eroare de verificare",
           description: "Nu am putut verifica cererile. Te rugăm să reîncerci.",
@@ -80,13 +78,9 @@ export function ContactForm() {
         return;
       }
 
-      console.log("[ContactForm] reCAPTCHA token obtained, sending to backend");
-
       // Get backend URL from environment or use default
       const backendUrl =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
-      console.log("[ContactForm] Backend URL:", backendUrl);
 
       // Submit form to backend
       const response = await fetch(`${backendUrl}/api/contact`, {
@@ -104,14 +98,9 @@ export function ContactForm() {
         }),
       });
 
-      console.log("[ContactForm] Backend response status:", response.status);
-
       const result = await response.json();
 
-      console.log("[ContactForm] Backend response:", result);
-
       if (!response.ok) {
-        console.error("[ContactForm] Backend returned error:", result);
         toast({
           title: "Eroare la trimiterea mesajului",
           description:
@@ -122,11 +111,13 @@ export function ContactForm() {
         return;
       }
 
-      console.log("[ContactForm] ✅ Form submitted successfully");
+      // Show success state
+      setIsSuccess(true);
 
       toast({
         title: "Mesaj trimis cu succes!",
         description: "Îți vom răspunde în cel mai scurt timp posibil.",
+        variant: "default",
       });
 
       reset();
@@ -141,6 +132,45 @@ export function ContactForm() {
       setIsSubmitting(false);
     }
   };
+
+  // Show success message if form submitted successfully
+  if (isSuccess) {
+    return (
+      <div className="space-y-6 text-center">
+        <div className="rounded-lg bg-green-50 p-8 dark:bg-green-900/20">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
+            <svg
+              className="h-8 w-8 text-green-600 dark:text-green-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <h3 className="mb-2 text-xl font-semibold text-green-900 dark:text-green-100">
+            Mulțumim pentru mesaj!
+          </h3>
+          <p className="mb-4 text-green-700 dark:text-green-300">
+            Mesajul tău a fost trimis cu succes. Îți vom răspunde în cel mai
+            scurt timp posibil.
+          </p>
+          <Button
+            onClick={() => setIsSuccess(false)}
+            variant="outline"
+            className="border-green-600 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/30"
+          >
+            Trimite un alt mesaj
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
