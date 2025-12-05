@@ -64,7 +64,7 @@ export const ConsentTrackingProvider = ({
   // Debug logging for production troubleshooting
   useEffect(() => {
     if (typeof window === "undefined") return;
-    
+
     console.log("[Tracking] Consent state:", {
       hasConsented,
       consent,
@@ -73,8 +73,12 @@ export const ConsentTrackingProvider = ({
       analyticsConsent: isServiceConsented("analytics"),
       gaMeasurementId: gaMeasurementId ? "SET" : "NOT_SET",
       fbPixelId: fbPixelId ? "SET" : "NOT_SET",
-      willLoadGA: hasConsented && isServiceConsented("analytics") && !!gaMeasurementId,
-      willLoadFB: hasConsented && (isServiceConsented("social") || isServiceConsented("tracking")) && !!fbPixelId,
+      willLoadGA:
+        hasConsented && isServiceConsented("analytics") && !!gaMeasurementId,
+      willLoadFB:
+        hasConsented &&
+        (isServiceConsented("social") || isServiceConsented("tracking")) &&
+        !!fbPixelId,
     });
   }, [hasConsented, consent, gaMeasurementId, fbPixelId]);
 
