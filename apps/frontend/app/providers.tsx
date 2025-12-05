@@ -45,8 +45,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
           disableTransitionOnChange
         >
           <AllConsentProviders>
-            {children}
-            <Toaster />
+          {children}
+          <Toaster />
           </AllConsentProviders>
         </ThemeProvider>
       </QueryClientProvider>

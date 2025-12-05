@@ -100,6 +100,38 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         type: "1st party",
         storageType: "cookie",
       },
+      {
+        name: "unevent_session_id",
+        provider: "UN:EVENT",
+        purpose: "Identificator unic sesiune utilizator pentru analytics",
+        duration: "Persistent",
+        type: "1st party",
+        storageType: "localStorage",
+      },
+      {
+        name: "nextauth.message",
+        provider: "NextAuth.js",
+        purpose: "Comunicare între taburi pentru sincronizare sesiune",
+        duration: "Sesiune",
+        type: "1st party",
+        storageType: "localStorage",
+      },
+      {
+        name: "lng",
+        provider: "UN:EVENT",
+        purpose: "Preferință limbă interfață utilizator",
+        duration: "Persistent",
+        type: "1st party",
+        storageType: "localStorage",
+      },
+      {
+        name: "homeLastChecked",
+        provider: "UN:EVENT",
+        purpose: "Timestamp ultima verificare pagină principală (cache)",
+        duration: "Persistent",
+        type: "1st party",
+        storageType: "localStorage",
+      },
     ],
   },
   analytics: {
@@ -251,7 +283,12 @@ export function CookieDetectionTable() {
     for (const category of Object.values(COOKIE_DEFINITIONS)) {
       for (const cookie of category.cookies) {
         const pattern = cookie.pattern || cookie.name;
-        if (cookieName.includes(pattern) || pattern.includes(cookieName)) {
+        // Match both ways: exact match or pattern is contained in name
+        if (
+          cookieName === pattern ||
+          cookieName.includes(pattern) ||
+          pattern.includes(cookieName)
+        ) {
           return true;
         }
       }
@@ -259,13 +296,22 @@ export function CookieDetectionTable() {
     return false;
   };
 
-  // Check if a cookie is active
+  // Check if a cookie is active - improved matching
   const isCookieActive = (cookieDef: CookieDefinition): boolean => {
     const pattern = cookieDef.pattern || cookieDef.name;
 
     // Check cookies
     if (cookieDef.storageType !== "localStorage") {
-      const found = activeCookies.some((name) => name.includes(pattern));
+      const found = activeCookies.some((name) => {
+        // Exact match
+        if (name === pattern) return true;
+        // Pattern matches (for wildcards like _ga_*)
+        if (name.includes(pattern)) return true;
+        // Handle __Secure- prefix (production NextAuth cookies)
+        if (name.includes(pattern.replace(/^__Secure-/, ""))) return true;
+        if (pattern.includes(name)) return true;
+        return false;
+      });
       if (found) return true;
     }
 
@@ -274,7 +320,10 @@ export function CookieDetectionTable() {
       cookieDef.storageType === "localStorage" ||
       cookieDef.storageType === "both"
     ) {
-      const found = activeLocalStorage.some((key) => key.includes(pattern));
+      const found = activeLocalStorage.some((key) => {
+        // Exact match or contains pattern
+        return key === pattern || key.includes(pattern) || pattern.includes(key);
+      });
       if (found) return true;
     }
 

@@ -20,16 +20,6 @@ if (!process.env.NEXTAUTH_SECRET) {
 if (!process.env.NEXTAUTH_URL) {
   console.warn("⚠️  NEXTAUTH_URL is not set - may cause issues in production");
 }
-console.log("[Auth Config] Environment check:", {
-  isProduction,
-  hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
-  hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
-  nextAuthUrl: process.env.NEXTAUTH_URL,
-  hasApiUrl: !!(process.env.API_URL || process.env.NEXT_PUBLIC_API_URL),
-  apiUrl: process.env.API_URL || process.env.NEXT_PUBLIC_API_URL,
-  hasCookieDomain: !!process.env.COOKIE_DOMAIN,
-  cookieDomain: process.env.COOKIE_DOMAIN,
-});
 
 // --- add near other consts ---
 const SHARED_PARENT_COOKIE_DOMAIN = process.env.COOKIE_DOMAIN?.trim(); // e.g. ".unevent.app" in prod only
@@ -411,19 +401,8 @@ export const authOptions: NextAuthOptions = {
       const now = Math.floor(Date.now() / 1000);
       const isExpired = token.exp && token.exp <= now;
 
-      console.log("[Session Callback] Creating session:", {
-        hasToken: !!token,
-        hasAccessToken: !!token.accessToken,
-        tokenError: token.error,
-        isExpired,
-        userId: token.id,
-      });
-
       // If there's an error, no accessToken, or token is expired, invalidate the session
       if (token.error || !token.accessToken || isExpired) {
-        console.log("[Session Callback] Invalidating session:", {
-          reason: token.error || (isExpired ? "expired" : "no accessToken"),
-        });
         // Return an invalid session structure - NextAuth will treat this as unauthenticated
         // Setting expires to past date ensures NextAuth recognizes it as expired
         return {
@@ -453,11 +432,6 @@ export const authOptions: NextAuthOptions = {
         // optional: expose remaining lifetime (for debugging / renewal)
         session.expires = new Date(token.exp * 1000).toISOString();
       }
-
-      console.log("[Session Callback] Session created successfully for user:", {
-        userId: session.user.id,
-        hasAccessToken: !!session.accessToken,
-      });
 
       return session;
     },

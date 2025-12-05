@@ -8,19 +8,6 @@ export default withAuth(
     const token = req.nextauth.token;
     const { pathname } = req.nextUrl;
 
-    // Debug: Log all cookies
-    const cookies = req.cookies.getAll();
-    console.log("[Middleware] All cookies:", {
-      pathname,
-      cookieCount: cookies.length,
-      cookieNames: cookies.map((c) => c.name),
-      hasSessionToken: cookies.some(
-        (c) =>
-          c.name === "next-auth.session-token" ||
-          c.name === "__Secure-next-auth.session-token",
-      ),
-    });
-
     // If already authenticated, prevent visiting auth pages
     if (pathname.startsWith("/auth") && token && !token.error) {
       return NextResponse.redirect(new URL("/", req.url));
@@ -51,15 +38,6 @@ export default withAuth(
         if (!isProtected) {
           return true; // Public routes are always allowed
         }
-
-        // Debug logging in production
-        console.log("[Middleware] Protected route access attempt:", {
-          pathname,
-          hasToken: !!token,
-          hasAccessToken: !!token?.accessToken,
-          tokenError: token?.error,
-          tokenKeys: token ? Object.keys(token) : [],
-        });
 
         // If no token at all, definitely not authorized
         if (!token) {
