@@ -116,9 +116,11 @@ export interface Config {
   };
   globals: {
     homeListings: HomeListing;
+    settings: Setting;
   };
   globalsSelect: {
     homeListings: HomeListingsSelect<false> | HomeListingsSelect<true>;
+    settings: SettingsSelect<false> | SettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -2044,6 +2046,26 @@ export interface HomeListing {
   createdAt?: string | null;
 }
 /**
+ * Settings for the application
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  name?: string | null;
+  /**
+   * Enable or disable background schedulers. Falls back to ENABLE_JOBS environment variable if not set. Requires restart to take effect.
+   */
+  enableJobs?: boolean | null;
+  /**
+   * Override the scheduler environment multiplier. Falls back to SCHEDULER_ENV or NODE_ENV if not set. Requires restart to take effect.
+   */
+  schedulerEnvironment?: ('dev' | 'staging' | 'production') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homeListings_select".
  */
@@ -2051,6 +2073,18 @@ export interface HomeListingsSelect<T extends boolean = true> {
   featuredLocations?: T;
   topServices?: T;
   upcomingEvents?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  name?: T;
+  enableJobs?: T;
+  schedulerEnvironment?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

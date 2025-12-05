@@ -34,6 +34,7 @@ import { Verifications } from './collections/Verifications'
 import { recordView, recordImpression } from './endpoints/metrics'
 import { initFeedSchedulers } from './schedulers/feed'
 import { HomeConfig } from './collections/HomeConfig'
+import { Settings } from './collections/Settings'
 import { homeHandler } from './endpoints/homeListings'
 import { HubSnapshots } from './collections/HubSnapshot'
 import { registerBuildHubSnapshotScheduler } from './schedulers/buildHubSnapshot'
@@ -47,7 +48,7 @@ import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters
 import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia'
 import { registerCleanupDeletedListingsScheduler } from './schedulers/cleanupDeletedListings'
 import { migrations } from './migrations'
-import { logSchedulerConfig } from './utils/schedulerConfig'
+import { logSchedulerConfig, setSchedulerEnvironment } from './utils/schedulerConfig'
 
 import { getTaxonomies } from './endpoints/taxonomies'
 import { reportHandler } from './endpoints/reportEndpoint'
@@ -188,7 +189,7 @@ export default buildConfig({
     Reviews,
     HubSnapshots,
   ],
-  globals: [HomeConfig],
+  globals: [HomeConfig, Settings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -390,7 +391,33 @@ export default buildConfig({
     }),
   ],
   onInit: async (payload) => {
-    if (process.env.ENABLE_JOBS === 'true') {
+    // Try to read from Settings global, fallback to ENV
+    let enableJobs = process.env.ENABLE_JOBS === 'true'
+    let settingsSource = 'ENV'
+
+    try {
+      const settings = await payload.findGlobal({ slug: 'settings' })
+      if (settings?.enableJobs !== undefined && settings.enableJobs !== null) {
+        enableJobs = settings.enableJobs
+        settingsSource = 'Settings Global'
+      }
+
+      // Set scheduler environment from Settings if available
+      if (
+        settings?.schedulerEnvironment &&
+        ['dev', 'staging', 'production'].includes(settings.schedulerEnvironment)
+      ) {
+        setSchedulerEnvironment(settings.schedulerEnvironment as 'dev' | 'staging' | 'production')
+      }
+    } catch (_error) {
+      console.warn('[Payload] Could not load Settings global, using ENV fallback')
+    }
+
+    console.log(
+      `[Payload] Jobs control: ${enableJobs ? 'enabled' : 'disabled'} (source: ${settingsSource})`,
+    )
+
+    if (enableJobs) {
       console.log('[Payload] Initializing schedulers...')
       logSchedulerConfig()
 
@@ -404,7 +431,7 @@ export default buildConfig({
 
       console.log('[Payload] ✅ All schedulers initialized')
     } else {
-      console.log('[Payload] Schedulers disabled (ENABLE_JOBS != true)')
+      console.log('[Payload] Schedulers disabled')
     }
   },
 })
