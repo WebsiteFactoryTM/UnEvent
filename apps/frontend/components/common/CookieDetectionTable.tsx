@@ -120,9 +120,9 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         name: "lng",
         provider: "UN:EVENT",
         purpose: "Preferință limbă interfață utilizator",
-        duration: "Persistent",
+        duration: "6-12 luni",
         type: "1st party",
-        storageType: "localStorage",
+        storageType: "cookie",
       },
       {
         name: "homeLastChecked",
@@ -238,7 +238,12 @@ export function CookieDetectionTable() {
       if (typeof window === "undefined") return;
 
       // Get all cookies from document.cookie with values
-      const cookies = document.cookie.split(";").map((c) => c.trim());
+      const cookieString = document.cookie;
+      console.log("[Cookie Detection] Raw document.cookie:", cookieString);
+
+      const cookies = cookieString.split(";").map((c) => c.trim());
+      console.log("[Cookie Detection] Split cookies:", cookies);
+
       const cookieData: DetectedCookie[] = cookies
         .filter((c) => c.length > 0)
         .map((c) => {
@@ -247,6 +252,8 @@ export function CookieDetectionTable() {
           const isKnown = isKnownCookie(name.trim());
           return { name: name.trim(), value: value || "", isKnown };
         });
+
+      console.log("[Cookie Detection] Processed cookie data:", cookieData);
 
       const cookieNames = cookieData.map((c) => c.name);
       setActiveCookies(cookieNames);
@@ -264,8 +271,9 @@ export function CookieDetectionTable() {
             localStorageData.push({ key, value: value || "" });
           }
         }
+        console.log("[Cookie Detection] localStorage items:", localStorageData);
       } catch (e) {
-        // localStorage access denied
+        console.error("[Cookie Detection] localStorage access denied:", e);
       }
       setActiveLocalStorage(localStorageKeys);
       setAllDetectedLocalStorage(localStorageData);
