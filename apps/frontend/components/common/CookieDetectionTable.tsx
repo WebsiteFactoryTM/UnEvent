@@ -247,10 +247,8 @@ export function CookieDetectionTable() {
 
       // Get all cookies from document.cookie with values
       const cookieString = document.cookie;
-      console.log("[Cookie Detection] Raw document.cookie:", cookieString);
 
       const cookies = cookieString.split(";").map((c) => c.trim());
-      console.log("[Cookie Detection] Split cookies:", cookies);
 
       const cookieData: DetectedCookie[] = cookies
         .filter((c) => c.length > 0)
@@ -260,8 +258,6 @@ export function CookieDetectionTable() {
           const isKnown = isKnownCookie(name.trim());
           return { name: name.trim(), value: value || "", isKnown };
         });
-
-      console.log("[Cookie Detection] Processed cookie data:", cookieData);
 
       const cookieNames = cookieData.map((c) => c.name);
       setActiveCookies(cookieNames);
@@ -279,7 +275,6 @@ export function CookieDetectionTable() {
             localStorageData.push({ key, value: value || "" });
           }
         }
-        console.log("[Cookie Detection] localStorage items:", localStorageData);
       } catch (e) {
         console.error("[Cookie Detection] localStorage access denied:", e);
       }
@@ -396,7 +391,7 @@ export function CookieDetectionTable() {
                         {cookie.httpOnly ? (
                           <Lock
                             className="h-4 w-4 text-blue-500"
-                            title="Cookie HttpOnly - nu poate fi detectat de JavaScript (securitate)"
+                            name="Cookie HttpOnly - nu poate fi detectat de JavaScript (securitate)"
                           />
                         ) : isActive ? (
                           <Check className="h-4 w-4 text-green-500" />
@@ -452,20 +447,20 @@ export function CookieDetectionTable() {
         </p>
         <div className="space-y-2 text-xs text-muted-foreground">
           <div className="flex items-start gap-2">
-            <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+            <Check className="h-3 w-3 text-green-500 mt-0.5 shrink-0" />
             <span>
               <strong>Activ</strong> - Cookie-ul este detectat în browserul dvs.
             </span>
           </div>
           <div className="flex items-start gap-2">
-            <X className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <X className="h-3 w-3 text-muted-foreground mt-0.5 shrink-0" />
             <span>
               <strong>Inactiv</strong> - Cookie-ul nu este prezent (fie nu este
               activat, fie nu ați dat consimțământ pentru categoria respectivă)
             </span>
           </div>
           <div className="flex items-start gap-2">
-            <Lock className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
+            <Lock className="h-3 w-3 text-blue-500 mt-0.5 shrink-0" />
             <span>
               <strong>HttpOnly (Securizat)</strong> - Cookie-ul nu poate fi
               detectat de JavaScript pentru protecție împotriva atacurilor XSS.
