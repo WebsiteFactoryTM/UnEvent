@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider, useSession } from "next-auth/react";
 import { getQueryClient } from "@/lib/react-query";
 import * as Sentry from "@sentry/nextjs";
+import { AllConsentProviders } from "@/app/providers/consent";
 
 function SentryUserContext() {
   const { data: session } = useSession();
@@ -43,8 +44,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
+          <AllConsentProviders>
+            {children}
+            <Toaster />
+          </AllConsentProviders>
         </ThemeProvider>
       </QueryClientProvider>
     </SessionProvider>

@@ -5,7 +5,7 @@ import { Providers } from "@/app/providers";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
 import { FloatingContactButton } from "@/components/common/FloatingContactButton";
-import { TrackingScripts } from "@/components/common/TrackingScripts";
+import { CookieBanner } from "@/components/common/CookieBanner";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -165,13 +165,13 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${manrope.variable} font-sans antialiased`}>
-        <TrackingScripts />
         <Providers>
           <Header />
           <main className="pt-16">{children}</main>
 
           <Footer />
           <FloatingContactButton />
+          <CookieBanner />
         </Providers>
         <Analytics />
         <SpeedInsights />
