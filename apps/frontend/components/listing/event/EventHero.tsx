@@ -138,6 +138,10 @@ export default function EventHero({ event }: EventHeroProps) {
         description={event?.description ?? ""}
         isFavoritedByViewer={event?.isFavoritedByViewer ?? false}
         ticketUrl={event?.ticketUrl ?? undefined}
+        slug={event?.slug || ""}
+        ownerId={
+          typeof event?.owner === "object" ? event?.owner?.id : event?.owner
+        }
       />
       {event.socialLinks &&
         Object.values(event.socialLinks).some(

@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useTracking } from "@/hooks/useTracking";
 import { ListingType } from "@/types/listings";
 import { useState } from "react";
 import { ReportDialog } from "@/components/common/ReportDialog";
@@ -32,6 +33,8 @@ interface ListingActionsProps {
   listingType: ListingType;
   ticketUrl?: string;
   phone?: string;
+  slug?: string;
+  ownerId?: string | number;
 }
 
 export function ListingActions({
@@ -42,6 +45,8 @@ export function ListingActions({
   listingType,
   ticketUrl,
   phone,
+  slug,
+  ownerId,
 }: ListingActionsProps) {
   const { isFavorited, toggleAsync } = useFavorites({
     listingType: listingType as ListingType,
@@ -49,11 +54,30 @@ export function ListingActions({
     initialIsFavorited: isFavoritedByViewer,
   });
   const { toast } = useToast();
+  const { trackEvent } = useTracking();
   const [isParticipating, setIsParticipating] = useState(false);
 
   const handleFavorite = async () => {
     try {
       const result = await toggleAsync();
+
+      // Track add/remove from favorites
+      if (result.isFavorite) {
+        trackEvent("addToFavorites", undefined, {
+          listing_id: id,
+          listing_type: listingType,
+          listing_slug: slug,
+          owner_id: ownerId,
+        });
+      } else {
+        trackEvent("removeFromFavorites", undefined, {
+          listing_id: id,
+          listing_type: listingType,
+          listing_slug: slug,
+          owner_id: ownerId,
+        });
+      }
+
       toast({
         title: result.isFavorite
           ? "Adăugat la favorite"
@@ -111,6 +135,15 @@ export function ListingActions({
 
   const handleContact = () => {
     if (phone) {
+      // Track contact action
+      trackEvent("contactClick", undefined, {
+        contact_method: "message",
+        listing_id: id,
+        listing_type: listingType,
+        listing_slug: slug,
+        owner_id: ownerId,
+      });
+
       // Format phone number for WhatsApp (remove spaces and non-digit characters except +)
       let cleanPhone = phone.replace(/\s+/g, "").replace(/[^\d+]/g, "");
 

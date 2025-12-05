@@ -112,6 +112,12 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
           isFavoritedByViewer={service.isFavoritedByViewer ?? false}
           listingType="servicii"
           phone={service.contact?.phone ?? undefined}
+          slug={service.slug || ""}
+          ownerId={
+            typeof service.owner === "object"
+              ? service.owner?.id
+              : service.owner
+          }
         />
 
         {/* Contact Info */}

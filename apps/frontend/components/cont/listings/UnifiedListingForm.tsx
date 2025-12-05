@@ -28,6 +28,7 @@ import {
 } from "@/lib/transforms/listingFormTransform";
 import { useListingsManager } from "@/lib/react-query/accountListings.queries";
 import { useToast } from "@/hooks/use-toast";
+import { useTracking } from "@/hooks/useTracking";
 import type { Location, Event, Service } from "@/types/payload-types";
 import type { ListingType } from "@/types/listings";
 
@@ -61,6 +62,7 @@ export function UnifiedListingForm({
     existingListing?.id,
   );
   const { toast } = useToast();
+  const { trackEvent } = useTracking();
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -265,6 +267,29 @@ export function UnifiedListingForm({
               ? "Serviciul"
               : "Evenimentul"
         } a fost trimis spre aprobare.`,
+      });
+
+      // Track listing submission
+      const listingTypeMap = {
+        location: "locatii",
+        service: "servicii",
+        event: "evenimente",
+      } as const;
+
+      trackEvent("addListing", undefined, {
+        listing_id: result.id,
+        listing_type: listingTypeMap[listingType],
+        listing_slug: result.slug,
+        city_name:
+          typeof result.city === "object" ? result.city?.name : undefined,
+        city_id:
+          typeof result.city === "object" ? result.city?.id : result.city,
+        value: submissionData.pricing?.enabled
+          ? submissionData.pricing?.amount || 0
+          : 0,
+        currency: submissionData.pricing?.enabled
+          ? submissionData.pricing?.currency || "RON"
+          : "RON",
       });
 
       if (onSuccess) {

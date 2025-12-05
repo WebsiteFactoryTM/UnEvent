@@ -115,6 +115,12 @@ export function LocationHero({ location }: LocationHeroProps) {
         isFavoritedByViewer={location.isFavoritedByViewer ?? false}
         listingType="locatii"
         phone={contact?.phone ?? undefined}
+        slug={location.slug || ""}
+        ownerId={
+          typeof location.owner === "object"
+            ? location.owner?.id
+            : location.owner
+        }
       />
 
       {/* Contact details */}

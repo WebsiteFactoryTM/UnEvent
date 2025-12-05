@@ -4,18 +4,24 @@ import { Button } from "../ui/button";
 import { FaHeart } from "react-icons/fa6";
 import { useToast } from "@/hooks/use-toast";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useTracking } from "@/hooks/useTracking";
 import { ListingType } from "@/types/listings";
 
 const FavoriteButton = ({
   listingType,
   listingId,
   initialIsFavorited,
+  listingSlug,
+  ownerId,
 }: {
   listingType: ListingType;
   listingId: number;
   initialIsFavorited?: boolean;
+  listingSlug?: string;
+  ownerId?: string | number;
 }) => {
   const { toast } = useToast();
+  const { trackEvent } = useTracking();
   const { toggleAsync, isFavorited, isLoading, isToggling } = useFavorites({
     listingType,
     listingId,
@@ -25,6 +31,24 @@ const FavoriteButton = ({
   const handleFavorite = async () => {
     try {
       const result = await toggleAsync();
+
+      // Track add/remove from favorites
+      if (result.isFavorite) {
+        trackEvent("addToFavorites", undefined, {
+          listing_id: listingId,
+          listing_type: listingType,
+          listing_slug: listingSlug,
+          owner_id: ownerId,
+        });
+      } else {
+        trackEvent("removeFromFavorites", undefined, {
+          listing_id: listingId,
+          listing_type: listingType,
+          listing_slug: listingSlug,
+          owner_id: ownerId,
+        });
+      }
+
       toast({
         title: result.isFavorite
           ? "Adăugat la favorite"

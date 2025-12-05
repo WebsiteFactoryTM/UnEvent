@@ -15,6 +15,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle2 } from "lucide-react";
+import { useTracking } from "@/app/providers/consent/TrackingEventsProvider";
 
 const signUpSchema = z.object({
   email: z
@@ -70,6 +71,7 @@ const roleOptions = [
 
 export function SignUpForm() {
   const { toast } = useToast();
+  const { trackEvent } = useTracking();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -120,6 +122,12 @@ export function SignUpForm() {
       // Store email for success message
       setUserEmail(data.email);
       setIsSuccess(true);
+
+      // Track successful sign up
+      trackEvent("lead", undefined, {
+        selected_roles: data.roles,
+        registration_method: "email",
+      });
 
       toast({
         title: "Cont creat cu succes!",

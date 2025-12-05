@@ -57,8 +57,6 @@ export function ArchiveFilter({
     // popularFallback: true,
   });
 
-  console.log(eventTypes);
-
   // Helper function to handle city changes with geo filter updates
   const handleCityChange = useCallback(
     (citySlug: string) => {
