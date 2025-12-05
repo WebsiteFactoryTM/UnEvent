@@ -30,15 +30,27 @@ export function FilterTabs() {
         </TabsList>
 
         <TabsContent value="locatii" className="space-y-4">
-          <ArchiveFilter listingType="locatii" defaultIsOpen={true} />
+          <ArchiveFilter
+            listingType="locatii"
+            defaultIsOpen={true}
+            showCategoriesOnly
+          />
         </TabsContent>
 
         <TabsContent value="servicii" className="space-y-4">
-          <ArchiveFilter listingType="servicii" defaultIsOpen={true} />
+          <ArchiveFilter
+            listingType="servicii"
+            defaultIsOpen={true}
+            showCategoriesOnly
+          />
         </TabsContent>
 
         <TabsContent value="evenimente" className="space-y-4">
-          <ArchiveFilter listingType="evenimente" defaultIsOpen={true} />
+          <ArchiveFilter
+            listingType="evenimente"
+            defaultIsOpen={true}
+            showCategoriesOnly
+          />
         </TabsContent>
       </Tabs>
     </div>

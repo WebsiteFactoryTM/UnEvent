@@ -17,11 +17,42 @@ import type {
 
 type Listing = Location | Event | Service
 
+/**
+ * Create a GeoJSON polygon representing a circle
+ * Used for geo queries that need to avoid ORDER BY (which conflicts with DISTINCT)
+ */
+function createCirclePolygon(lng: number, lat: number, radiusMeters: number, points = 32) {
+  const coords: number[][] = []
+  const earthRadius = 6371000 // Earth's radius in meters
+
+  for (let i = 0; i <= points; i++) {
+    const angle = (i * 360) / points
+    const rad = (angle * Math.PI) / 180
+
+    // Calculate offset in degrees
+    const latOffset = (radiusMeters / earthRadius) * (180 / Math.PI)
+    const lngOffset =
+      (radiusMeters / (earthRadius * Math.cos((lat * Math.PI) / 180))) * (180 / Math.PI)
+
+    const pointLat = lat + latOffset * Math.sin(rad)
+    const pointLng = lng + lngOffset * Math.cos(rad)
+
+    coords.push([pointLng, pointLat])
+  }
+
+  return {
+    type: 'Polygon',
+    coordinates: [coords],
+  }
+}
+
 // Query schema validation
 const FeedQuerySchema = z.object({
   entity: z.enum(['locations', 'events', 'services']),
   city: z.string().min(1).optional(), // Optional - browse all cities
+  typeCategory: z.string().min(1).optional(), // Optional - filter by type category slug
   type: z.string().min(1).optional(), // Optional - browse all types
+  suitableForCategory: z.string().min(1).optional(), // Optional - filter by suitableFor category slug
   suitableFor: z.string().min(1).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(24),
@@ -83,7 +114,9 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     const query: FeedQuery = FeedQuerySchema.parse({
       entity: req.query.entity,
       city: req.query.city,
+      typeCategory: req.query.typeCategory,
       type: req.query.type,
+      suitableForCategory: req.query.suitableForCategory,
       suitableFor: req.query.suitableFor,
       page: req.query.page,
       limit: req.query.limit,
@@ -103,7 +136,7 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
 
     // Create segment key for ranking (optional filters)
     const segmentKey = query.city && query.type ? `${query.city}|${query.type}` : null
-    const pinnedLimit = 3 // Reserve first 3 slots for sponsored
+    const pinnedLimit = 6 // Reserve first 6 slots for sponsored + recommended
     const today = new Date().toISOString().slice(0, 10)
 
     // Step 1: Build entity filters (facets)
@@ -118,8 +151,13 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     // When geo params are present, use geo filter (allows panning outside city boundaries)
     // Otherwise, use city filter
     // Note: 'near' adds ORDER BY distance which conflicts with DISTINCT when relationship joins exist
-    // So we only use 'near' when there are no relationship filters (type, suitableFor, etc.)
-    const hasRelationshipFilters = !!(query.type || query.suitableFor)
+    // So we only use 'near' when there are no relationship filters (type, suitableFor, typeCategory, suitableForCategory, etc.)
+    const hasRelationshipFilters = !!(
+      query.type ||
+      query.suitableFor ||
+      query.typeCategory ||
+      query.suitableForCategory
+    )
 
     if (query.lat && query.lng && !hasRelationshipFilters) {
       // Use 'near' only when no relationship filters (avoids DISTINCT conflict)
@@ -129,14 +167,22 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
         geo: { near: [query.lng, query.lat, radius] },
       })
     } else if (query.lat && query.lng && hasRelationshipFilters) {
-      // When relationship filters exist, fall back to city filter to avoid DISTINCT conflict
-      // TODO: Implement custom PostGIS query that doesn't add ORDER BY
-
-      if (query.city) {
-        whereEntity.and?.push({ 'city.slug': { equals: query.city } })
-      }
+      // When relationship filters exist, use 'intersects' with a circular polygon instead of 'near'
+      // This filters by distance without adding ORDER BY, avoiding DISTINCT conflict
+      // Note: Results won't be sorted by distance, but will be filtered by distance
+      const radius = query.radius || 10000 // Default 10km if not provided
+      const circle = createCirclePolygon(query.lng, query.lat, radius)
+      whereEntity.and?.push({
+        geo: { intersects: circle },
+      })
     } else if (query.city) {
       whereEntity.and?.push({ 'city.slug': { equals: query.city } })
+    }
+
+    // Add optional category filter for type (filters by type.categorySlug)
+    if (query.typeCategory) {
+      const categorySlugs = query.typeCategory.split(',').map((s) => s.trim())
+      whereEntity.and?.push({ 'type.categorySlug': { in: categorySlugs } })
     }
 
     // Add optional type filter (can be hasMany relationship)
@@ -145,6 +191,13 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       const typeSlugs = query.type.split(',').map((s) => s.trim())
       whereEntity.and?.push({ 'type.slug': { in: typeSlugs } })
     }
+
+    // Add optional category filter for suitableFor (filters by suitableFor.categorySlug)
+    if (query.entity !== 'events' && query.suitableForCategory) {
+      const categorySlugs = query.suitableForCategory.split(',').map((s) => s.trim())
+      whereEntity.and?.push({ 'suitableFor.categorySlug': { in: categorySlugs } })
+    }
+
     if (query.entity !== 'events' && query.suitableFor) {
       const suitableForSlugs = query.suitableFor.split(',').map((s) => s.trim())
       whereEntity.and?.push({
@@ -342,11 +395,24 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       depth: 1,
     })
 
-    // Extract sponsored and apply daily rotation
-    const pinnedSponsored = pinnedDocs.docs
+    // Sort docs to match the ranked order (SQL IN doesn't preserve order)
+    const pinnedDocsMap = new Map(pinnedDocs.docs.map((doc: Listing) => [String(doc.id), doc]))
+    const sortedPinnedDocs = pinnedCandidateIds
+      .map((id) => pinnedDocsMap.get(id))
+      .filter((doc): doc is Listing => doc !== undefined)
+
+    // Extract sponsored and recommended listings, apply daily rotation
+    // Prioritize sponsored first, then recommended
+    const sponsoredListings = sortedPinnedDocs
       .filter((l: Listing) => l.tier === 'sponsored')
       .sort((a: Listing, b: Listing) => todayJitter(String(b.id)) - todayJitter(String(a.id)))
-      .slice(0, pinnedLimit)
+
+    const recommendedListings = sortedPinnedDocs
+      .filter((l: Listing) => l.tier === 'recommended')
+      .sort((a: Listing, b: Listing) => todayJitter(String(b.id)) - todayJitter(String(a.id)))
+
+    // Combine: sponsored first, then recommended, up to pinnedLimit
+    const pinnedSponsored = [...sponsoredListings, ...recommendedListings].slice(0, pinnedLimit)
 
     const pinnedIdSet = new Set(pinnedSponsored.map((l: Listing) => String(l.id)))
 
@@ -365,6 +431,12 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
           })
         : { docs: [] }
 
+    // Sort organic docs to match the ranked order (SQL IN doesn't preserve order)
+    const organicDocsMap = new Map(organicDocs.docs.map((doc: Listing) => [String(doc.id), doc]))
+    const sortedOrganicDocs = organicPageIds
+      .map((id) => organicDocsMap.get(id))
+      .filter((doc): doc is Listing => doc !== undefined)
+
     // Step 6: Return response with cache headers
     return new Response(
       JSON.stringify({
@@ -377,7 +449,7 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
           hasMore: start + query.limit < organicIds.length,
         },
         pinnedSponsored: pinnedSponsored.map((listing) => toCardItem(query.entity, listing)),
-        organic: organicDocs.docs.map((listing) => toCardItem(query.entity, listing)),
+        organic: sortedOrganicDocs.map((listing) => toCardItem(query.entity, listing)),
       }),
       {
         status: 200,

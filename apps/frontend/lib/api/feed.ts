@@ -8,7 +8,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const FeedQuerySchema = z.object({
   entity: z.enum(["locations", "events", "services"]),
   city: z.string().min(1).optional(), // Optional - browse all cities
+  typeCategory: z.string().min(1).optional(), // Optional - filter by type category slug
   type: z.string().min(1).optional(), // Optional - browse all types
+  suitableForCategory: z.string().min(1).optional(), // Optional - filter by suitableFor category slug
   suitableFor: z.string().min(1).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(24),

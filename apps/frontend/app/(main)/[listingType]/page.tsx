@@ -180,6 +180,7 @@ export default async function ListingTypePage({
               <ArchiveFilter
                 listingType={listingType as any}
                 defaultIsOpen={true}
+                showCategoriesOnly
               />
             </section>
 
