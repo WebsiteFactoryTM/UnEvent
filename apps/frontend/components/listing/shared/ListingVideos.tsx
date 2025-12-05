@@ -9,6 +9,7 @@ interface ListingVideosProps {
  * - https://www.youtube.com/watch?v=VIDEO_ID
  * - https://youtu.be/VIDEO_ID
  * - https://www.youtube.com/embed/VIDEO_ID
+ * - https://www.youtube.com/shorts/VIDEO_ID
  * - https://m.youtube.com/watch?v=VIDEO_ID
  */
 function extractYouTubeVideoId(url: string | null | undefined): string | null {
@@ -17,6 +18,10 @@ function extractYouTubeVideoId(url: string | null | undefined): string | null {
   // Handle youtu.be short URLs: https://youtu.be/VIDEO_ID
   const youtuBeMatch = url.match(/(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   if (youtuBeMatch) return youtuBeMatch[1];
+
+  // Handle YouTube Shorts: https://youtube.com/shorts/VIDEO_ID or https://www.youtube.com/shorts/VIDEO_ID
+  const shortsMatch = url.match(/(?:shorts\/)([a-zA-Z0-9_-]{11})/);
+  if (shortsMatch) return shortsMatch[1];
 
   // Handle standard watch URLs: https://www.youtube.com/watch?v=VIDEO_ID
   const watchMatch = url.match(/(?:watch\?v=)([a-zA-Z0-9_-]{11})/);
@@ -38,7 +43,6 @@ export function ListingVideos({ youtubeLinks }: ListingVideosProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {youtubeLinks?.slice(0, 4).map(({ id, youtubeLink }, index) => {
           const videoId = extractYouTubeVideoId(youtubeLink);
-          console.log(videoId, "videoId");
           if (!videoId) return null;
 
           return (
