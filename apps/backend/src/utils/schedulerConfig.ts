@@ -19,11 +19,28 @@ const ENV_MULTIPLIERS: Record<SchedulerEnvironment, number> = {
   production: 1,
 }
 
+// Cached scheduler environment from Settings global (set during onInit)
+let cachedSchedulerEnvironment: SchedulerEnvironment | null = null
+
+/**
+ * Set the scheduler environment from Settings global
+ * This should be called during onInit after reading from the Settings global
+ */
+export function setSchedulerEnvironment(env: SchedulerEnvironment): void {
+  cachedSchedulerEnvironment = env
+  console.log(`[SchedulerConfig] Scheduler environment set to: ${env}`)
+}
+
 /**
  * Get the current scheduler environment
- * Checks SCHEDULER_ENV first, then falls back to NODE_ENV
+ * Priority: 1. Cached from Settings global, 2. SCHEDULER_ENV, 3. NODE_ENV
  */
 export function getSchedulerEnvironment(): SchedulerEnvironment {
+  // First check if we have a cached value from Settings global
+  if (cachedSchedulerEnvironment) {
+    return cachedSchedulerEnvironment
+  }
+
   const schedulerEnv = process.env.SCHEDULER_ENV?.toLowerCase()
   if (schedulerEnv === 'dev' || schedulerEnv === 'staging' || schedulerEnv === 'production') {
     return schedulerEnv
