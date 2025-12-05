@@ -322,7 +322,9 @@ export function CookieDetectionTable() {
     ) {
       const found = activeLocalStorage.some((key) => {
         // Exact match or contains pattern
-        return key === pattern || key.includes(pattern) || pattern.includes(key);
+        return (
+          key === pattern || key.includes(pattern) || pattern.includes(key)
+        );
       });
       if (found) return true;
     }
