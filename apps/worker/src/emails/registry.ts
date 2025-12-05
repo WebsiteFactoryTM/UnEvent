@@ -64,6 +64,10 @@ import {
   AdminProfileReportEmail,
   type AdminProfileReportEmailProps,
 } from "./AdminProfileReportEmail.js";
+import {
+  AdminContactEmail,
+  type AdminContactEmailProps,
+} from "./AdminContactEmail.js";
 
 /**
  * All logical email event types used across the app.
@@ -104,7 +108,8 @@ export type EmailEventType =
   | "admin.verification.request"
   | "admin.digest.daily"
   | "admin.listing.report"
-  | "admin.profile.report";
+  | "admin.profile.report"
+  | "admin.contact";
 
 export interface EmailTemplateConfig<Payload = unknown> {
   type: EmailEventType;
@@ -328,6 +333,15 @@ export interface AdminProfileReportPayload {
   report_reason_code: string;
   report_details?: string;
   dashboard_url?: string;
+}
+
+export interface AdminContactPayload {
+  sender_name: string;
+  sender_email: string;
+  sender_phone: string;
+  subject: string;
+  message: string;
+  submitted_at?: string;
 }
 
 /**
@@ -612,5 +626,26 @@ export const EMAIL_TEMPLATES: Partial<
         dashboardUrl: p.dashboard_url,
       } satisfies AdminProfileReportEmailProps),
     tags: { category: "admin", template: "admin.profile.report" },
+  },
+
+  "admin.contact": {
+    type: "admin.contact",
+    getRecipients: (p: AdminContactPayload) => {
+      return getAdminEmails("admin.contact");
+    },
+    getSubject: (p) => `📬 Mesaj nou de contact: ${p.subject}`,
+    getPreheader: (p) => `Mesaj de la ${p.sender_name} (${p.sender_email})`,
+    getTextFallback: (p) =>
+      `Un nou mesaj de contact a fost primit prin formularul de pe site.\n\nNume: ${p.sender_name}\nEmail: ${p.sender_email}\nTelefon: ${p.sender_phone}\nSubiect: ${p.subject}\n\nMesaj:\n${p.message}${p.submitted_at ? `\n\nData trimiterii: ${new Date(p.submitted_at).toLocaleString("ro-RO")}` : ""}`,
+    render: (p) =>
+      AdminContactEmail({
+        senderName: p.sender_name,
+        senderEmail: p.sender_email,
+        senderPhone: p.sender_phone,
+        subject: p.subject,
+        message: p.message,
+        submittedAt: p.submitted_at,
+      } satisfies AdminContactEmailProps),
+    tags: { category: "admin", template: "admin.contact" },
   },
 };
