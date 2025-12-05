@@ -64,10 +64,13 @@ export function ContactForm() {
     setIsSubmitting(true);
 
     try {
+      console.log("[ContactForm] Starting form submission");
+
       // Get reCAPTCHA token
       const recaptchaToken = await executeRecaptcha("contact_form");
 
       if (!recaptchaToken) {
+        console.error("[ContactForm] No reCAPTCHA token received");
         toast({
           title: "Eroare de verificare",
           description: "Nu am putut verifica cererile. Te rugăm să reîncerci.",
@@ -77,9 +80,13 @@ export function ContactForm() {
         return;
       }
 
+      console.log("[ContactForm] reCAPTCHA token obtained, sending to backend");
+
       // Get backend URL from environment or use default
       const backendUrl =
         process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4000";
+
+      console.log("[ContactForm] Backend URL:", backendUrl);
 
       // Submit form to backend
       const response = await fetch(`${backendUrl}/api/contact`, {
@@ -97,9 +104,14 @@ export function ContactForm() {
         }),
       });
 
+      console.log("[ContactForm] Backend response status:", response.status);
+
       const result = await response.json();
 
+      console.log("[ContactForm] Backend response:", result);
+
       if (!response.ok) {
+        console.error("[ContactForm] Backend returned error:", result);
         toast({
           title: "Eroare la trimiterea mesajului",
           description:
@@ -109,6 +121,8 @@ export function ContactForm() {
         setIsSubmitting(false);
         return;
       }
+
+      console.log("[ContactForm] ✅ Form submitted successfully");
 
       toast({
         title: "Mesaj trimis cu succes!",

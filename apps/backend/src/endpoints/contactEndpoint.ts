@@ -69,6 +69,17 @@ export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
     const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
     const isEnterprise = process.env.RECAPTCHA_ENTERPRISE === 'true'
     const projectId = process.env.RECAPTCHA_PROJECT_ID || 'unevent'
+    const siteKey = process.env.RECAPTCHA_SITE_KEY
+
+    console.log('[ContactEndpoint] reCAPTCHA Configuration:', {
+      isEnterprise,
+      projectId,
+      hasSiteKey: !!siteKey,
+      hasSecretKey: !!recaptchaSecretKey,
+      secretKeyPreview: recaptchaSecretKey
+        ? recaptchaSecretKey.substring(0, 10) + '...'
+        : 'not set',
+    })
 
     if (!recaptchaSecretKey) {
       console.error('[ContactEndpoint] RECAPTCHA_SECRET_KEY not configured')
@@ -86,36 +97,58 @@ export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
       // Use Enterprise API
       const verificationUrl = `https://recaptchaenterprise.googleapis.com/v1/projects/${projectId}/assessments?key=${recaptchaSecretKey}`
 
+      const requestBody = {
+        event: {
+          token: recaptchaToken,
+          expectedAction: 'contact_form',
+          siteKey: siteKey,
+        },
+      }
+
+      console.log('[ContactEndpoint] Sending Enterprise API request:', {
+        url: verificationUrl.replace(recaptchaSecretKey, 'API_KEY_HIDDEN'),
+        projectId,
+        expectedAction: 'contact_form',
+        siteKey,
+        tokenPreview: recaptchaToken.substring(0, 50) + '...',
+      })
+
       const verificationResponse = await fetch(verificationUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          event: {
-            token: recaptchaToken,
-            expectedAction: 'contact_form',
-            siteKey: process.env.RECAPTCHA_SITE_KEY,
-          },
-        }),
+        body: JSON.stringify(requestBody),
       })
 
+      console.log('[ContactEndpoint] Enterprise API response status:', verificationResponse.status)
+
+      const responseText = await verificationResponse.text()
+      console.log('[ContactEndpoint] Enterprise API response body:', responseText)
+
       if (!verificationResponse.ok) {
-        console.error(
-          '[ContactEndpoint] Enterprise API error:',
-          verificationResponse.status,
-          await verificationResponse.text(),
-        )
+        console.error('[ContactEndpoint] Enterprise API error:', verificationResponse.status, responseText)
         return new Response(
-          JSON.stringify({ error: 'reCAPTCHA verification failed. Please try again.' }),
+          JSON.stringify({ 
+            error: 'reCAPTCHA verification failed. Please try again.',
+            debug: responseText 
+          }),
           { status: 400, headers: { 'Content-Type': 'application/json' } },
         )
       }
 
-      const result = (await verificationResponse.json()) as RecaptchaEnterpriseResponse
+      const result = JSON.parse(responseText) as RecaptchaEnterpriseResponse
 
       success = result.tokenProperties.valid
       score = result.riskAnalysis.score
+
+      console.log('[ContactEndpoint] Enterprise verification result:', {
+        valid: success,
+        score,
+        invalidReason: result.tokenProperties.invalidReason,
+        action: result.tokenProperties.action,
+        hostname: result.tokenProperties.hostname,
+      })
 
       if (!success) {
         console.warn(
@@ -130,6 +163,12 @@ export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
     } else {
       // Use regular v3 API
       const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify'
+      
+      console.log('[ContactEndpoint] Sending v3 API request:', {
+        url: verificationUrl,
+        tokenPreview: recaptchaToken.substring(0, 50) + '...',
+      })
+
       const verificationResponse = await fetch(verificationUrl, {
         method: 'POST',
         headers: {
@@ -139,6 +178,14 @@ export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
       })
 
       const result = (await verificationResponse.json()) as RecaptchaResponse
+
+      console.log('[ContactEndpoint] v3 API response:', {
+        success: result.success,
+        score: result.score,
+        action: result.action,
+        hostname: result.hostname,
+        errorCodes: result['error-codes'],
+      })
 
       success = result.success
       score = result.score
