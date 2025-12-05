@@ -61,6 +61,23 @@ export const ConsentTrackingProvider = ({
   const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const fbPixelId = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
 
+  // Debug logging for production troubleshooting
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    console.log("[Tracking] Consent state:", {
+      hasConsented,
+      consent,
+      socialConsent: isServiceConsented("social"),
+      trackingConsent: isServiceConsented("tracking"),
+      analyticsConsent: isServiceConsented("analytics"),
+      gaMeasurementId: gaMeasurementId ? "SET" : "NOT_SET",
+      fbPixelId: fbPixelId ? "SET" : "NOT_SET",
+      willLoadGA: hasConsented && isServiceConsented("analytics") && !!gaMeasurementId,
+      willLoadFB: hasConsented && (isServiceConsented("social") || isServiceConsented("tracking")) && !!fbPixelId,
+    });
+  }, [hasConsented, consent, gaMeasurementId, fbPixelId]);
+
   return (
     <>
       {/* Google Analytics - Load if analytics consent is given */}
