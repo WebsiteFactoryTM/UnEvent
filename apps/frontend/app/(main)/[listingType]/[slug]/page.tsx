@@ -72,7 +72,6 @@ const ListingRecommendations = nextDynamic(
 // import { RecommendedListings } from "@/components/home/carousels/RecommendedLocations";
 
 import { fetchHubSnapshot } from "@/lib/api/hub";
-import { draftMode } from "next/headers";
 import { ListingViewTracker } from "@/components/metrics/ListingViewTracker";
 
 // Use auto to support both ISR and tag-based revalidation
@@ -115,7 +114,6 @@ export default async function DetailPage({
   params: Promise<{ listingType: string; slug: string }>;
 }) {
   const { listingType, slug } = await params;
-  const { isEnabled } = await draftMode();
   if (!listingTypes.includes(listingType as any)) notFound();
 
   const listingTypeUrl = getListingTypeSlug(listingType as ListingType);
@@ -127,7 +125,7 @@ export default async function DetailPage({
     listingTypeUrl as "locations" | "events" | "services",
     slug,
     undefined,
-    isEnabled,
+    false, // Always false in production to maintain static generation
   );
 
   if (!listing) {
@@ -135,8 +133,8 @@ export default async function DetailPage({
     notFound();
   }
 
-  // listing exists → check if can be shown
-  if (listing._status !== "published" && !isEnabled) {
+  // listing exists → check if can be shown (only show published in production)
+  if (listing._status !== "published") {
     notFound();
   }
 
