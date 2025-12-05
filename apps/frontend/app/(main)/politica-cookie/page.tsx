@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FaChevronRight, FaHouse } from "react-icons/fa6";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { CookieDetectionTable } from "@/components/common/CookieDetectionTable";
 
 export const metadata: Metadata = {
   title: "Politica de Cookie | UN:EVENT",
@@ -25,7 +26,7 @@ export default function PoliticaCookiePage() {
           </nav>
 
           {/* Main Content */}
-          <article className="glass-card p-4 sm:p-6 lg:p-8 space-y-6 md:space-y-8">
+          <article className="p-4 sm:p-6 lg:p-8 space-y-6 md:space-y-8">
             <header className="space-y-4 border-b border-border pb-6">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
                 Politica de Cookie — UN:EVENT
@@ -201,251 +202,15 @@ export default function PoliticaCookiePage() {
               {/* Section 5 */}
               <section className="space-y-4">
                 <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-                  5) Ce cookie-uri folosim (exemple)
+                  5) Ce cookie-uri folosim
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Lista exactă poate varia în timp și este afișată în bannerul
-                  de consimțământ. Mai jos sunt exemple frecvente folosite de
-                  platforme ca a noastră; unele pot fi active, altele nu. Lista
-                  din banner este întotdeauna autoritativă.
+                  Lista de mai jos afișează cookie-urile detectate în timp real
+                  în browserul dvs. Cookie-urile active sunt marcate cu un
+                  indicator verde.
                 </p>
 
-                {/* 5.1 Strict necesare */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    5.1. Strict necesare
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Nume
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Furnizor
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Scop
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Durată
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Tip
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border">
-                        <tr>
-                          <td className="p-2 sm:p-3">ue_session</td>
-                          <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">
-                            Sesiune login, menținere stare utilizator
-                          </td>
-                          <td className="p-2 sm:p-3">Sesiune</td>
-                          <td className="p-2 sm:p-3">1st party</td>
-                        </tr>
-                        <tr>
-                          <td className="p-2 sm:p-3">ue_csrf</td>
-                          <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">
-                            Protecție CSRF formulare
-                          </td>
-                          <td className="p-2 sm:p-3">Sesiune</td>
-                          <td className="p-2 sm:p-3">1st party</td>
-                        </tr>
-                        <tr>
-                          <td className="p-2 sm:p-3">ue_consent</td>
-                          <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">
-                            Reținere opțiuni consimțământ
-                          </td>
-                          <td className="p-2 sm:p-3">6–12 luni</td>
-                          <td className="p-2 sm:p-3">1st party</td>
-                        </tr>
-                        <tr>
-                          <td className="p-2 sm:p-3">__cf_bm</td>
-                          <td className="p-2 sm:p-3">CDN / securitate</td>
-                          <td className="p-2 sm:p-3">
-                            Anti-bot/anti-abuz, performanță
-                          </td>
-                          <td className="p-2 sm:p-3">Până la 30 min</td>
-                          <td className="p-2 sm:p-3">3rd party</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* 5.2 Preferințe */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    5.2. Preferințe
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Nume
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Furnizor
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Scop
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Durată
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Tip
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border">
-                        <tr>
-                          <td className="p-2 sm:p-3">ue_city</td>
-                          <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">
-                            Reține orașul preferat/detectat
-                          </td>
-                          <td className="p-2 sm:p-3">1–6 luni</td>
-                          <td className="p-2 sm:p-3">1st party</td>
-                        </tr>
-                        <tr>
-                          <td className="p-2 sm:p-3">ue_lang</td>
-                          <td className="p-2 sm:p-3">UN:EVENT</td>
-                          <td className="p-2 sm:p-3">
-                            Reține limba interfeței
-                          </td>
-                          <td className="p-2 sm:p-3">6–12 luni</td>
-                          <td className="p-2 sm:p-3">1st party</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    (pot fi implementate și în localStorage, nu doar ca cookie)
-                  </p>
-                </div>
-
-                {/* 5.3 Statistici/Analitice */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    5.3. Statistici/Analitice
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Nume
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Furnizor
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Scop
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Durată
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Tip
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border">
-                        <tr>
-                          <td className="p-2 sm:p-3">_ga, _ga_*, _gid</td>
-                          <td className="p-2 sm:p-3">Google Analytics</td>
-                          <td className="p-2 sm:p-3">
-                            Măsurare trafic & sesiuni
-                          </td>
-                          <td className="p-2 sm:p-3">24 h – 24 luni</td>
-                          <td className="p-2 sm:p-3">3rd party</td>
-                        </tr>
-                        <tr>
-                          <td className="p-2 sm:p-3">
-                            _hjSessionUser_*, _hjSession_*
-                          </td>
-                          <td className="p-2 sm:p-3">Hotjar</td>
-                          <td className="p-2 sm:p-3">
-                            Analiză UX (hărți, sesiuni)
-                          </td>
-                          <td className="p-2 sm:p-3">24 h – 12 luni</td>
-                          <td className="p-2 sm:p-3">3rd party</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    * utilizat doar dacă este activat în banner.
-                  </p>
-                </div>
-
-                {/* 5.4 Marketing */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    5.4. Marketing
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Nume
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Furnizor
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Scop
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Durată
-                          </th>
-                          <th className="text-left p-2 sm:p-3 font-semibold">
-                            Tip
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border">
-                        <tr>
-                          <td className="p-2 sm:p-3">_fbp, _fbc</td>
-                          <td className="p-2 sm:p-3">Meta (Facebook)</td>
-                          <td className="p-2 sm:p-3">
-                            Remarketing & conversii
-                          </td>
-                          <td className="p-2 sm:p-3">3–24 luni</td>
-                          <td className="p-2 sm:p-3">3rd party</td>
-                        </tr>
-                        <tr>
-                          <td className="p-2 sm:p-3">
-                            _ttp, _tt_enable_cookie
-                          </td>
-                          <td className="p-2 sm:p-3">TikTok</td>
-                          <td className="p-2 sm:p-3">
-                            Remarketing & conversii
-                          </td>
-                          <td className="p-2 sm:p-3">13 luni</td>
-                          <td className="p-2 sm:p-3">3rd party</td>
-                        </tr>
-                        <tr>
-                          <td className="p-2 sm:p-3">_gcl_au</td>
-                          <td className="p-2 sm:p-3">Google Ads</td>
-                          <td className="p-2 sm:p-3">
-                            Conversii & experimentare ads
-                          </td>
-                          <td className="p-2 sm:p-3">3 luni</td>
-                          <td className="p-2 sm:p-3">3rd party</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                <CookieDetectionTable />
               </section>
 
               {/* Section 6 */}
