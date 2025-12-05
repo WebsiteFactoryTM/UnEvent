@@ -100,7 +100,7 @@ export const CookieBanner = () => {
                     href="/politica-cookie"
                     className="underline hover:text-primary"
                   >
-                    Politica Cookie
+                    Politica cookie
                   </Link>
                   .
                 </p>
@@ -238,10 +238,10 @@ export const CookieBanner = () => {
           {/* Dialog Actions */}
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button variant="outline" onClick={handleDecline}>
-              Doar Necesare
+              Doar necesare
             </Button>
             <Button onClick={handleSavePreferences}>
-              Salvează Preferințele
+              Salvează preferințele
             </Button>
           </div>
         </DialogContent>

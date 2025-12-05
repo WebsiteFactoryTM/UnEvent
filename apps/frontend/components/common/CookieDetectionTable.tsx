@@ -28,26 +28,58 @@ interface CookieCategory {
   cookies: CookieDefinition[];
 }
 
-// Embedded cookie definitions
+// Embedded cookie definitions - VERIFIED cookies only
 const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
   necessary: {
     title: "Strict necesare",
     description:
-      "Asigură funcționarea de bază: autentificare, securitate, anti-fraudă, încărcare pagini, gestionare consimțământ.",
+      "Asigură funcționarea de bază: autentificare, securitate, gestionare consimțământ.",
     color: "blue",
     cookies: [
       {
         name: "next-auth.session-token",
-        provider: "UN:EVENT",
-        purpose: "Sesiune login, menținere stare utilizator",
-        duration: "Sesiune",
+        provider: "NextAuth.js",
+        purpose: "Sesiune autentificare utilizator (development)",
+        duration: "30 zile (sau până la logout)",
         type: "1st party",
         storageType: "cookie",
       },
       {
         name: "__Secure-next-auth.session-token",
-        provider: "UN:EVENT",
-        purpose: "Sesiune login securizată (producție)",
+        provider: "NextAuth.js",
+        purpose: "Sesiune autentificare utilizator (production)",
+        duration: "30 zile (sau până la logout)",
+        type: "1st party",
+        storageType: "cookie",
+      },
+      {
+        name: "next-auth.csrf-token",
+        provider: "NextAuth.js",
+        purpose: "Protecție CSRF pentru autentificare (development)",
+        duration: "Sesiune",
+        type: "1st party",
+        storageType: "cookie",
+      },
+      {
+        name: "__Secure-next-auth.csrf-token",
+        provider: "NextAuth.js",
+        purpose: "Protecție CSRF pentru autentificare (production)",
+        duration: "Sesiune",
+        type: "1st party",
+        storageType: "cookie",
+      },
+      {
+        name: "next-auth.callback-url",
+        provider: "NextAuth.js",
+        purpose: "URL redirecționare după autentificare (development)",
+        duration: "Sesiune",
+        type: "1st party",
+        storageType: "cookie",
+      },
+      {
+        name: "__Secure-next-auth.callback-url",
+        provider: "NextAuth.js",
+        purpose: "URL redirecționare după autentificare (production)",
         duration: "Sesiune",
         type: "1st party",
         storageType: "cookie",
@@ -55,57 +87,18 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
       {
         name: "unevent-cookie-consent",
         provider: "UN:EVENT",
-        purpose: "Reținere opțiuni consimțământ",
-        duration: "Persistent",
+        purpose: "Stochează preferințele de consimțământ cookie",
+        duration: "Persistent (până la resetare)",
         type: "1st party",
         storageType: "localStorage",
       },
       {
-        name: "__cf_bm",
-        provider: "Cloudflare",
-        purpose: "Anti-bot/anti-abuz, performanță",
-        duration: "Până la 30 min",
-        type: "3rd party",
-        storageType: "cookie",
-      },
-      {
-        name: "__Secure-next-auth.callback-url",
-        provider: "UN:EVENT",
-        purpose: "URL de redirecționare după autentificare",
-        duration: "Sesiune",
+        name: "payload-token",
+        provider: "Payload CMS",
+        purpose: "Token autentificare backend CMS",
+        duration: "7 zile",
         type: "1st party",
         storageType: "cookie",
-      },
-      {
-        name: "__Secure-next-auth.csrf-token",
-        provider: "UN:EVENT",
-        purpose: "Protecție CSRF pentru formulare",
-        duration: "Sesiune",
-        type: "1st party",
-        storageType: "cookie",
-      },
-    ],
-  },
-  preferences: {
-    title: "Preferințe",
-    description: "Rețin opțiuni precum limbă, oraș, sortări, filtre.",
-    color: "purple",
-    cookies: [
-      {
-        name: "ue_city",
-        provider: "UN:EVENT",
-        purpose: "Reține orașul preferat/detectat",
-        duration: "1–6 luni",
-        type: "1st party",
-        storageType: "both",
-      },
-      {
-        name: "ue_lang",
-        provider: "UN:EVENT",
-        purpose: "Reține limba interfeței",
-        duration: "6–12 luni",
-        type: "1st party",
-        storageType: "both",
       },
     ],
   },
@@ -118,8 +111,8 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
       {
         name: "_ga",
         pattern: "_ga",
-        provider: "Google Analytics",
-        purpose: "Identificare unică utilizator",
+        provider: "Google Analytics 4",
+        purpose: "Identificare unică utilizator pentru analiza traficului",
         duration: "24 luni",
         type: "3rd party",
         storageType: "cookie",
@@ -127,8 +120,8 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
       {
         name: "_ga_*",
         pattern: "_ga_",
-        provider: "Google Analytics",
-        purpose: "Măsurare trafic & sesiuni (property-specific)",
+        provider: "Google Analytics 4",
+        purpose: "Măsurare trafic & sesiuni pentru property specific",
         duration: "24 luni",
         type: "3rd party",
         storageType: "cookie",
@@ -136,9 +129,18 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
       {
         name: "_gid",
         pattern: "_gid",
-        provider: "Google Analytics",
-        purpose: "Identificare sesiune",
+        provider: "Google Analytics 4",
+        purpose: "Identificare sesiune pentru analiza vizitatorilor",
         duration: "24 ore",
+        type: "3rd party",
+        storageType: "cookie",
+      },
+      {
+        name: "_gat",
+        pattern: "_gat",
+        provider: "Google Analytics 4",
+        purpose: "Limitare rată de cereri (throttling)",
+        duration: "1 minut",
         type: "3rd party",
         storageType: "cookie",
       },
@@ -147,14 +149,14 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
   marketing: {
     title: "Marketing",
     description:
-      "Remarketing, măsurarea conversiilor și personalizarea reclamelor (ex.: Meta, TikTok).",
+      "Remarketing, măsurarea conversiilor și personalizarea reclamelor (ex.: Meta).",
     color: "orange",
     cookies: [
       {
         name: "_fbp",
         pattern: "_fbp",
-        provider: "Meta (Facebook)",
-        purpose: "Pixel Facebook - remarketing & conversii",
+        provider: "Meta Pixel (Facebook)",
+        purpose: "Browser ID pentru remarketing și măsurare conversii",
         duration: "3 luni",
         type: "3rd party",
         storageType: "cookie",
@@ -162,17 +164,17 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
       {
         name: "_fbc",
         pattern: "_fbc",
-        provider: "Meta (Facebook)",
-        purpose: "Pixel Facebook - tracking conversii click",
-        duration: "24 luni",
+        provider: "Meta Pixel (Facebook)",
+        purpose: "Click ID pentru tracking conversii din Facebook ads",
+        duration: "7 zile",
         type: "3rd party",
         storageType: "cookie",
       },
       {
         name: "fr",
         pattern: "fr",
-        provider: "Meta (Facebook)",
-        purpose: "Remarketing Facebook",
+        provider: "Meta Pixel (Facebook)",
+        purpose: "Remarketing și targetare ads personalizate",
         duration: "3 luni",
         type: "3rd party",
         storageType: "cookie",
@@ -181,9 +183,21 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
   },
 };
 
+interface DetectedCookie {
+  name: string;
+  value: string;
+  isKnown: boolean;
+}
+
 export function CookieDetectionTable() {
   const [activeCookies, setActiveCookies] = useState<string[]>([]);
   const [activeLocalStorage, setActiveLocalStorage] = useState<string[]>([]);
+  const [allDetectedCookies, setAllDetectedCookies] = useState<
+    DetectedCookie[]
+  >([]);
+  const [allDetectedLocalStorage, setAllDetectedLocalStorage] = useState<
+    { key: string; value: string }[]
+  >([]);
   const { consent } = useConsent();
 
   // Detect cookies from browser
@@ -191,22 +205,38 @@ export function CookieDetectionTable() {
     const detectCookies = () => {
       if (typeof window === "undefined") return;
 
-      // Get all cookies from document.cookie
+      // Get all cookies from document.cookie with values
       const cookies = document.cookie.split(";").map((c) => c.trim());
-      const cookieNames = cookies.map((c) => c.split("=")[0]);
+      const cookieData: DetectedCookie[] = cookies
+        .filter((c) => c.length > 0)
+        .map((c) => {
+          const [name, ...valueParts] = c.split("=");
+          const value = valueParts.join("=");
+          const isKnown = isKnownCookie(name.trim());
+          return { name: name.trim(), value: value || "", isKnown };
+        });
+
+      const cookieNames = cookieData.map((c) => c.name);
       setActiveCookies(cookieNames);
+      setAllDetectedCookies(cookieData);
 
       // Check localStorage
       const localStorageKeys: string[] = [];
+      const localStorageData: { key: string; value: string }[] = [];
       try {
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key) localStorageKeys.push(key);
+          if (key) {
+            localStorageKeys.push(key);
+            const value = localStorage.getItem(key);
+            localStorageData.push({ key, value: value || "" });
+          }
         }
       } catch (e) {
         // localStorage access denied
       }
       setActiveLocalStorage(localStorageKeys);
+      setAllDetectedLocalStorage(localStorageData);
     };
 
     detectCookies();
@@ -215,6 +245,19 @@ export function CookieDetectionTable() {
     const interval = setInterval(detectCookies, 2000);
     return () => clearInterval(interval);
   }, [consent]);
+
+  // Check if a cookie is in our known definitions
+  const isKnownCookie = (cookieName: string): boolean => {
+    for (const category of Object.values(COOKIE_DEFINITIONS)) {
+      for (const cookie of category.cookies) {
+        const pattern = cookie.pattern || cookie.name;
+        if (cookieName.includes(pattern) || pattern.includes(cookieName)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
 
   // Check if a cookie is active
   const isCookieActive = (cookieDef: CookieDefinition): boolean => {
@@ -316,6 +359,12 @@ export function CookieDetectionTable() {
     );
   };
 
+  // Get unknown cookies (detected but not in definitions)
+  const unknownCookies = allDetectedCookies.filter((c) => !c.isKnown);
+  const unknownLocalStorage = allDetectedLocalStorage.filter(
+    (item) => !isKnownCookie(item.key),
+  );
+
   return (
     <div className="space-y-8">
       <div className="bg-muted/30 border border-border/50 rounded-lg p-4">
@@ -334,7 +383,126 @@ export function CookieDetectionTable() {
         renderCategoryTable(key, category),
       )}
 
+      {/* Debug Section - All Detected Cookies */}
+      {(unknownCookies.length > 0 || unknownLocalStorage.length > 0) && (
+        <div className="space-y-3">
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
+              Cookie-uri detectate nedocumentate
+            </h3>
+            <p className="text-sm text-foreground/80 mb-4">
+              Aceste cookie-uri au fost detectate în browserul dvs. dar nu sunt
+              încă documentate în lista de mai sus. Pot proveni de la terți sau
+              servicii noi adăugate.
+            </p>
+          </div>
+
+          {unknownCookies.length > 0 && (
+            <div className="overflow-x-auto">
+              <h4 className="text-sm font-semibold mb-2">
+                Cookie-uri HTTP ({unknownCookies.length})
+              </h4>
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left p-2 sm:p-3 font-semibold">Nume</th>
+                    <th className="text-left p-2 sm:p-3 font-semibold">
+                      Valoare (preview)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {unknownCookies.map((cookie, index) => (
+                    <tr
+                      key={`unknown-cookie-${index}`}
+                      className="bg-yellow-500/5"
+                    >
+                      <td className="p-2 sm:p-3">
+                        <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                          {cookie.name}
+                        </code>
+                      </td>
+                      <td className="p-2 sm:p-3">
+                        <code className="text-xs text-muted-foreground truncate block max-w-md">
+                          {cookie.value.substring(0, 50)}
+                          {cookie.value.length > 50 ? "..." : ""}
+                        </code>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {unknownLocalStorage.length > 0 && (
+            <div className="overflow-x-auto">
+              <h4 className="text-sm font-semibold mb-2">
+                localStorage ({unknownLocalStorage.length})
+              </h4>
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left p-2 sm:p-3 font-semibold">Key</th>
+                    <th className="text-left p-2 sm:p-3 font-semibold">
+                      Valoare (preview)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {unknownLocalStorage.map((item, index) => (
+                    <tr key={`unknown-ls-${index}`} className="bg-yellow-500/5">
+                      <td className="p-2 sm:p-3">
+                        <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                          {item.key}
+                        </code>
+                      </td>
+                      <td className="p-2 sm:p-3">
+                        <code className="text-xs text-muted-foreground truncate block max-w-md">
+                          {item.value.substring(0, 50)}
+                          {item.value.length > 50 ? "..." : ""}
+                        </code>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Summary Statistics */}
       <div className="bg-muted/30 border border-border/50 rounded-lg p-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-4">
+          <div>
+            <div className="text-2xl font-bold text-foreground">
+              {allDetectedCookies.length}
+            </div>
+            <div className="text-xs text-muted-foreground">Cookie-uri HTTP</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-foreground">
+              {allDetectedLocalStorage.length}
+            </div>
+            <div className="text-xs text-muted-foreground">localStorage</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-green-500">
+              {allDetectedCookies.filter((c) => c.isKnown).length +
+                allDetectedLocalStorage.filter((item) =>
+                  isKnownCookie(item.key),
+                ).length}
+            </div>
+            <div className="text-xs text-muted-foreground">Documentate</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-yellow-500">
+              {unknownCookies.length + unknownLocalStorage.length}
+            </div>
+            <div className="text-xs text-muted-foreground">Nedocumentate</div>
+          </div>
+        </div>
         <p className="text-xs text-muted-foreground">
           <strong>Actualizare automată:</strong> Această listă se actualizează
           automat pentru a reflecta cookie-urile prezente în browserul dvs.
