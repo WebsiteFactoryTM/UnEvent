@@ -5,13 +5,20 @@ import { useCallback, useEffect, useState } from "react";
 declare global {
   interface Window {
     grecaptcha?: {
-      enterprise: {
+      // Enterprise API
+      enterprise?: {
         ready: (callback: () => void) => void;
         execute: (
           siteKey: string,
           options: { action: string },
         ) => Promise<string>;
       };
+      // Regular v3 API
+      ready?: (callback: () => void) => void;
+      execute?: (
+        siteKey: string,
+        options: { action: string },
+      ) => Promise<string>;
     };
   }
 }
@@ -24,6 +31,7 @@ interface UseRecaptchaReturn {
 export function useRecaptcha(): UseRecaptchaReturn {
   const [isReady, setIsReady] = useState(false);
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  const isEnterprise = process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE === "true";
 
   useEffect(() => {
     if (!siteKey) {
@@ -33,38 +41,59 @@ export function useRecaptcha(): UseRecaptchaReturn {
       return;
     }
 
-    // Check if grecaptcha is already loaded
-    if (window.grecaptcha?.enterprise) {
-      window.grecaptcha.enterprise.ready(() => {
-        setIsReady(true);
-      });
-    } else {
-      // Poll for grecaptcha to become available
-      const pollInterval = setInterval(() => {
+    const checkRecaptchaReady = () => {
+      if (isEnterprise) {
+        // Check for Enterprise API
         if (window.grecaptcha?.enterprise) {
-          clearInterval(pollInterval);
           window.grecaptcha.enterprise.ready(() => {
             setIsReady(true);
+            console.log("[useRecaptcha] ✅ reCAPTCHA Enterprise ready");
           });
+          return true;
         }
-      }, 100);
-
-      // Clear interval after 10 seconds and warn if not loaded
-      const timeout = setTimeout(() => {
-        clearInterval(pollInterval);
-        if (!window.grecaptcha?.enterprise) {
-          console.error(
-            "[useRecaptcha] ⚠️ reCAPTCHA failed to load. Make sure localhost is added to allowed domains in Google Cloud Console.",
-          );
+      } else {
+        // Check for regular v3 API
+        if (window.grecaptcha?.ready) {
+          window.grecaptcha.ready(() => {
+            setIsReady(true);
+            console.log("[useRecaptcha] ✅ reCAPTCHA v3 ready");
+          });
+          return true;
         }
-      }, 10000);
+      }
+      return false;
+    };
 
-      return () => {
-        clearInterval(pollInterval);
-        clearTimeout(timeout);
-      };
+    // Check if grecaptcha is already loaded
+    if (checkRecaptchaReady()) {
+      return;
     }
-  }, [siteKey]);
+
+    // Poll for grecaptcha to become available
+    const pollInterval = setInterval(() => {
+      if (checkRecaptchaReady()) {
+        clearInterval(pollInterval);
+      }
+    }, 100);
+
+    // Clear interval after 10 seconds and warn if not loaded
+    const timeout = setTimeout(() => {
+      clearInterval(pollInterval);
+      if (!isReady) {
+        console.error(
+          `[useRecaptcha] ⚠️ reCAPTCHA ${isEnterprise ? "Enterprise" : "v3"} failed to load.`,
+        );
+        console.error(
+          "Troubleshooting: 1) Check if domain is allowed in Google Console 2) Verify NEXT_PUBLIC_RECAPTCHA_ENTERPRISE is set correctly",
+        );
+      }
+    }, 10000);
+
+    return () => {
+      clearInterval(pollInterval);
+      clearTimeout(timeout);
+    };
+  }, [siteKey, isEnterprise, isReady]);
 
   const executeRecaptcha = useCallback(
     async (action: string): Promise<string | null> => {
@@ -75,22 +104,36 @@ export function useRecaptcha(): UseRecaptchaReturn {
         return null;
       }
 
-      if (!isReady || !window.grecaptcha?.enterprise) {
+      if (!isReady || !window.grecaptcha) {
         console.error("[useRecaptcha] reCAPTCHA not ready yet");
         return null;
       }
 
       try {
-        const token = await window.grecaptcha.enterprise.execute(siteKey, {
-          action,
-        });
+        let token: string;
+
+        if (isEnterprise && window.grecaptcha.enterprise) {
+          // Use Enterprise API
+          token = await window.grecaptcha.enterprise.execute(siteKey, {
+            action,
+          });
+        } else if (!isEnterprise && window.grecaptcha.execute) {
+          // Use regular v3 API
+          token = await window.grecaptcha.execute(siteKey, {
+            action,
+          });
+        } else {
+          console.error("[useRecaptcha] reCAPTCHA API not available");
+          return null;
+        }
+
         return token;
       } catch (error) {
         console.error("[useRecaptcha] Failed to execute reCAPTCHA:", error);
         return null;
       }
     },
-    [isReady, siteKey],
+    [isReady, siteKey, isEnterprise],
   );
 
   return { executeRecaptcha, isReady };

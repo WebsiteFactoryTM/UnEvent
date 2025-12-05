@@ -5,8 +5,11 @@
 ### Frontend (apps/frontend/.env.local)
 
 ```bash
-# reCAPTCHA Enterprise Site Key (Public - safe to expose in frontend)
+# reCAPTCHA Site Key (Public - safe to expose in frontend)
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LfXMZ0qAAAAALaNDLO3pe_1qumzR1wS1jwPmEiO
+
+# Set to true for Enterprise, false for regular v3 (default: false)
+NEXT_PUBLIC_RECAPTCHA_ENTERPRISE=false
 
 # Backend API URL
 NEXT_PUBLIC_SERVER_URL=http://localhost:4000
@@ -14,11 +17,24 @@ NEXT_PUBLIC_SERVER_URL=http://localhost:4000
 # NEXT_PUBLIC_SERVER_URL=https://your-backend-domain.com
 ```
 
+**Note:** If you get a 400 error when loading the reCAPTCHA script, your key is likely a regular v3 key, not Enterprise. Set `NEXT_PUBLIC_RECAPTCHA_ENTERPRISE=false`.
+
 ### Backend (apps/backend/.env)
 
 ```bash
-# reCAPTCHA Enterprise Secret Key (Private - NEVER expose in frontend)
-RECAPTCHA_SECRET_KEY=your_secret_key_here
+# reCAPTCHA Secret Key (Private - NEVER expose in frontend)
+# For Enterprise: Use the API Key from Google Cloud Console
+# For regular v3: Use the Secret Key from reCAPTCHA Admin
+RECAPTCHA_SECRET_KEY=your_secret_or_api_key_here
+
+# Set to true if using Enterprise, false for regular v3
+RECAPTCHA_ENTERPRISE=true
+
+# For Enterprise: Your Google Cloud Project ID (default: unevent)
+RECAPTCHA_PROJECT_ID=unevent
+
+# For Enterprise: Your site key (used in API calls)
+RECAPTCHA_SITE_KEY=6LfXMZ0qAAAAALaNDLO3pe_1qumzR1wS1jwPmEiO
 
 # Admin Email Recipients (comma-separated)
 ADMIN_EMAILS=contact@unevent.ro,admin@unevent.ro

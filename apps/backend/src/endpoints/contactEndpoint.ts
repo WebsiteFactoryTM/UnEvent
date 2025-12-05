@@ -2,6 +2,7 @@ import type { PayloadHandler, PayloadRequest } from 'payload'
 import { enqueueNotification } from '@/utils/notificationsQueue'
 import * as Sentry from '@sentry/nextjs'
 
+// Regular v3 response
 interface RecaptchaResponse {
   success: boolean
   score: number
@@ -9,6 +10,28 @@ interface RecaptchaResponse {
   challenge_ts: string
   hostname: string
   'error-codes'?: string[]
+}
+
+// Enterprise response
+interface RecaptchaEnterpriseResponse {
+  tokenProperties: {
+    valid: boolean
+    invalidReason?: string
+    hostname: string
+    action: string
+    createTime: string
+  }
+  riskAnalysis: {
+    score: number
+    reasons: string[]
+  }
+  event: {
+    token: string
+    siteKey: string
+    userAgent: string
+    userIpAddress: string
+    expectedAction: string
+  }
 }
 
 export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
@@ -44,47 +67,97 @@ export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
     }
 
     const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
+    const isEnterprise = process.env.RECAPTCHA_ENTERPRISE === 'true'
+    const projectId = process.env.RECAPTCHA_PROJECT_ID || 'unevent'
+
     if (!recaptchaSecretKey) {
       console.error('[ContactEndpoint] RECAPTCHA_SECRET_KEY not configured')
       Sentry.captureMessage('RECAPTCHA_SECRET_KEY not configured', 'error')
-      // Don't expose internal error to client
       return new Response(JSON.stringify({ error: 'Contact form configuration error' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       })
     }
 
-    // Verify reCAPTCHA token with Google
-    const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify'
-    const verificationResponse = await fetch(verificationUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `secret=${recaptchaSecretKey}&response=${recaptchaToken}`,
-    })
+    let score: number
+    let success: boolean
 
-    const recaptchaResult = (await verificationResponse.json()) as RecaptchaResponse
+    if (isEnterprise) {
+      // Use Enterprise API
+      const verificationUrl = `https://recaptchaenterprise.googleapis.com/v1/projects/${projectId}/assessments?key=${recaptchaSecretKey}`
 
-    if (!recaptchaResult.success) {
-      console.warn(
-        '[ContactEndpoint] reCAPTCHA verification failed:',
-        recaptchaResult['error-codes'],
-      )
-      return new Response(
-        JSON.stringify({ error: 'reCAPTCHA verification failed. Please try again.' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } },
-      )
+      const verificationResponse = await fetch(verificationUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event: {
+            token: recaptchaToken,
+            expectedAction: 'contact_form',
+            siteKey: process.env.RECAPTCHA_SITE_KEY,
+          },
+        }),
+      })
+
+      if (!verificationResponse.ok) {
+        console.error(
+          '[ContactEndpoint] Enterprise API error:',
+          verificationResponse.status,
+          await verificationResponse.text(),
+        )
+        return new Response(
+          JSON.stringify({ error: 'reCAPTCHA verification failed. Please try again.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } },
+        )
+      }
+
+      const result = (await verificationResponse.json()) as RecaptchaEnterpriseResponse
+
+      success = result.tokenProperties.valid
+      score = result.riskAnalysis.score
+
+      if (!success) {
+        console.warn(
+          '[ContactEndpoint] Enterprise verification failed:',
+          result.tokenProperties.invalidReason,
+        )
+        return new Response(
+          JSON.stringify({ error: 'reCAPTCHA verification failed. Please try again.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } },
+        )
+      }
+    } else {
+      // Use regular v3 API
+      const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify'
+      const verificationResponse = await fetch(verificationUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `secret=${recaptchaSecretKey}&response=${recaptchaToken}`,
+      })
+
+      const result = (await verificationResponse.json()) as RecaptchaResponse
+
+      success = result.success
+      score = result.score
+
+      if (!success) {
+        console.warn('[ContactEndpoint] v3 verification failed:', result['error-codes'])
+        return new Response(
+          JSON.stringify({ error: 'reCAPTCHA verification failed. Please try again.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } },
+        )
+      }
     }
 
-    // Check reCAPTCHA score (v3 returns a score from 0.0 to 1.0)
+    // Check reCAPTCHA score (both return a score from 0.0 to 1.0)
     const minScore = 0.5
-    if (recaptchaResult.score < minScore) {
-      console.warn(
-        `[ContactEndpoint] reCAPTCHA score too low: ${recaptchaResult.score} (min: ${minScore})`,
-      )
+    if (score < minScore) {
+      console.warn(`[ContactEndpoint] reCAPTCHA score too low: ${score} (min: ${minScore})`)
       Sentry.captureMessage(
-        `Contact form submission rejected: low reCAPTCHA score ${recaptchaResult.score}`,
+        `Contact form submission rejected: low reCAPTCHA score ${score}`,
         'warning',
       )
       return new Response(
@@ -95,9 +168,7 @@ export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
       )
     }
 
-    console.log(
-      `[ContactEndpoint] ✅ reCAPTCHA verified successfully (score: ${recaptchaResult.score})`,
-    )
+    console.log(`[ContactEndpoint] ✅ reCAPTCHA verified successfully (score: ${score})`)
 
     // Sanitize input (basic sanitization - remove any HTML/script tags)
     const sanitize = (str: string) => str.replace(/<[^>]*>/g, '').trim()
