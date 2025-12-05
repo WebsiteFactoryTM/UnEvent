@@ -189,14 +189,15 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
   marketing: {
     title: "Marketing",
     description:
-      "Remarketing, măsurarea conversiilor și personalizarea reclamelor (ex.: Meta).",
+      "Remarketing, măsurarea conversiilor și personalizarea reclamelor (ex.: Meta). Notă: Aceste cookie-uri pot fi blocate de setările de confidențialitate ale browserului (Safari, Firefox, Chrome).",
     color: "orange",
     cookies: [
       {
         name: "_fbp",
         pattern: "_fbp",
         provider: "Meta Pixel (Facebook)",
-        purpose: "Browser ID pentru remarketing și măsurare conversii",
+        purpose:
+          "Browser ID pentru remarketing și măsurare conversii (poate fi blocat de browser)",
         duration: "3 luni",
         type: "3rd party",
         storageType: "cookie",
@@ -205,7 +206,8 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         name: "_fbc",
         pattern: "_fbc",
         provider: "Meta Pixel (Facebook)",
-        purpose: "Click ID pentru tracking conversii din Facebook ads",
+        purpose:
+          "Click ID pentru tracking conversii din Facebook ads (poate fi blocat de browser)",
         duration: "7 zile",
         type: "3rd party",
         storageType: "cookie",
@@ -214,7 +216,8 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         name: "fr",
         pattern: "fr",
         provider: "Meta Pixel (Facebook)",
-        purpose: "Remarketing și targetare ads personalizate",
+        purpose:
+          "Remarketing și targetare ads personalizate (poate fi blocat de browser)",
         duration: "3 luni",
         type: "3rd party",
         storageType: "cookie",
