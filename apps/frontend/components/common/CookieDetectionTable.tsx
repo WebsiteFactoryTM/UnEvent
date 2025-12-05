@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Check, X } from "lucide-react";
+import { Check, X, Lock } from "lucide-react";
 import { useConsent } from "@/app/providers/consent";
 
 /**
@@ -19,6 +19,7 @@ interface CookieDefinition {
   duration: string;
   type: string;
   storageType?: "cookie" | "localStorage" | "both";
+  httpOnly?: boolean; // For cookies that can't be read by JavaScript
 }
 
 interface CookieCategory {
@@ -43,6 +44,7 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         duration: "30 zile (sau până la logout)",
         type: "1st party",
         storageType: "cookie",
+        httpOnly: true,
       },
       {
         name: "__Secure-next-auth.session-token",
@@ -51,6 +53,7 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         duration: "30 zile (sau până la logout)",
         type: "1st party",
         storageType: "cookie",
+        httpOnly: true,
       },
       {
         name: "next-auth.csrf-token",
@@ -59,6 +62,7 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         duration: "Sesiune",
         type: "1st party",
         storageType: "cookie",
+        httpOnly: true,
       },
       {
         name: "__Secure-next-auth.csrf-token",
@@ -67,6 +71,7 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         duration: "Sesiune",
         type: "1st party",
         storageType: "cookie",
+        httpOnly: true,
       },
       {
         name: "next-auth.callback-url",
@@ -75,6 +80,7 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         duration: "Sesiune",
         type: "1st party",
         storageType: "cookie",
+        httpOnly: true,
       },
       {
         name: "__Secure-next-auth.callback-url",
@@ -83,6 +89,7 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         duration: "Sesiune",
         type: "1st party",
         storageType: "cookie",
+        httpOnly: true,
       },
       {
         name: "unevent-cookie-consent",
@@ -99,6 +106,7 @@ const COOKIE_DEFINITIONS: Record<string, CookieCategory> = {
         duration: "7 zile",
         type: "1st party",
         storageType: "cookie",
+        httpOnly: true,
       },
       {
         name: "unevent_session_id",
@@ -375,11 +383,22 @@ export function CookieDetectionTable() {
                 return (
                   <tr
                     key={`${categoryKey}-${index}`}
-                    className={isActive ? "bg-green-500/5" : "opacity-60"}
+                    className={
+                      cookie.httpOnly
+                        ? "bg-blue-500/5"
+                        : isActive
+                          ? "bg-green-500/5"
+                          : "opacity-60"
+                    }
                   >
                     <td className="p-2 sm:p-3">
                       <div className="flex items-center justify-center">
-                        {isActive ? (
+                        {cookie.httpOnly ? (
+                          <Lock
+                            className="h-4 w-4 text-blue-500"
+                            title="Cookie HttpOnly - nu poate fi detectat de JavaScript (securitate)"
+                          />
+                        ) : isActive ? (
                           <Check className="h-4 w-4 text-green-500" />
                         ) : (
                           <X className="h-4 w-4 text-muted-foreground" />
@@ -427,15 +446,34 @@ export function CookieDetectionTable() {
   return (
     <div className="space-y-8">
       <div className="bg-muted/30 border border-border/50 rounded-lg p-4">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground mb-3">
           <strong>Notă:</strong> Tabelele de mai jos afișează cookie-urile
-          detectate în timp real în browserul dvs. Cookie-urile marcate cu{" "}
-          <Check className="inline h-3 w-3 text-green-500" /> sunt active în
-          acest moment. Cookie-urile marcate cu{" "}
-          <X className="inline h-3 w-3 text-muted-foreground" /> nu sunt
-          prezente (fie nu sunt activate, fie nu ați dat consimțământ pentru
-          categoria respectivă).
+          folosite pe site, cu detectare în timp real acolo unde este posibil.
         </p>
+        <div className="space-y-2 text-xs text-muted-foreground">
+          <div className="flex items-start gap-2">
+            <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+            <span>
+              <strong>Activ</strong> - Cookie-ul este detectat în browserul dvs.
+            </span>
+          </div>
+          <div className="flex items-start gap-2">
+            <X className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <span>
+              <strong>Inactiv</strong> - Cookie-ul nu este prezent (fie nu este
+              activat, fie nu ați dat consimțământ pentru categoria respectivă)
+            </span>
+          </div>
+          <div className="flex items-start gap-2">
+            <Lock className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
+            <span>
+              <strong>HttpOnly (Securizat)</strong> - Cookie-ul nu poate fi
+              detectat de JavaScript pentru protecție împotriva atacurilor XSS.
+              Aceste cookie-uri sunt prezente când sunteți autentificat, dar nu
+              pot fi verificate din motive de securitate.
+            </span>
+          </div>
+        </div>
       </div>
 
       {Object.entries(COOKIE_DEFINITIONS).map(([key, category]) =>
