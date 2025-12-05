@@ -127,11 +127,15 @@ export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
       console.log('[ContactEndpoint] Enterprise API response body:', responseText)
 
       if (!verificationResponse.ok) {
-        console.error('[ContactEndpoint] Enterprise API error:', verificationResponse.status, responseText)
+        console.error(
+          '[ContactEndpoint] Enterprise API error:',
+          verificationResponse.status,
+          responseText,
+        )
         return new Response(
-          JSON.stringify({ 
+          JSON.stringify({
             error: 'reCAPTCHA verification failed. Please try again.',
-            debug: responseText 
+            debug: responseText,
           }),
           { status: 400, headers: { 'Content-Type': 'application/json' } },
         )
@@ -163,7 +167,7 @@ export const contactHandler: PayloadHandler = async (req: PayloadRequest) => {
     } else {
       // Use regular v3 API
       const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify'
-      
+
       console.log('[ContactEndpoint] Sending v3 API request:', {
         url: verificationUrl,
         tokenPreview: recaptchaToken.substring(0, 50) + '...',
