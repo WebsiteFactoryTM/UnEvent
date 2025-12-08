@@ -203,7 +203,7 @@ export function SignUpForm() {
           </Link>
           <Link href="/" className="flex-1">
             <Button variant="secondary" className="w-full">
-              Înapoi la pagina principală
+              Pagina principală
             </Button>
           </Link>
         </div>

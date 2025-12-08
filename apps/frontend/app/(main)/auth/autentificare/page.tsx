@@ -28,7 +28,7 @@ export default async function LoginPage() {
               <Button variant="default">Accesează contul meu</Button>
             </Link>
             <Link href="/">
-              <Button variant="secondary">Înapoi la pagina principală</Button>
+              <Button variant="secondary">Pagina principală</Button>
             </Link>
           </div>
         </div>

@@ -128,7 +128,7 @@ export default function ConfirmEmailPage() {
                 <Button variant="default">Autentifică-te</Button>
               </Link>
               <Link href="/">
-                <Button variant="secondary">Înapoi la pagina principală</Button>
+                <Button variant="secondary">Pagina principală</Button>
               </Link>
             </div>
           </div>

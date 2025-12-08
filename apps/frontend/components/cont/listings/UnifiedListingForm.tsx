@@ -110,7 +110,7 @@ export function UnifiedListingForm({
   const methods = useForm<UnifiedListingFormData>({
     resolver: zodResolver(unifiedListingSchema) as any,
     defaultValues: defaultValues as any,
-    mode: "onChange",
+    mode: "onTouched",
   });
 
   const {
@@ -130,6 +130,7 @@ export function UnifiedListingForm({
       e.preventDefault();
       e.stopPropagation();
     }
+
     if (!isLastTab) {
       setActiveTab(tabs[currentTabIndex + 1].value);
       window.scrollTo({ top: 100, behavior: "smooth" });
@@ -517,7 +518,7 @@ export function UnifiedListingForm({
                     className="gap-1 sm:gap-2 text-sm h-9"
                   >
                     <span className="hidden sm:inline">Următorul</span>
-                    <span className="sm:hidden">Next</span>
+                    <span className="sm:hidden">Următorul</span>
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 )}

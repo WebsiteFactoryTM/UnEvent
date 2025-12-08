@@ -76,10 +76,6 @@ export function AddressTab() {
     return null;
   }, [citiesData, selectedCity]);
 
-  const handleManualPinToggle = (checked: boolean) => {
-    setValue("geo.manualPin", checked, { shouldValidate: true });
-  };
-
   const onSelectCity = (cityId: string) => {
     setValue("city", parseInt(cityId), { shouldValidate: true });
     const selectedCity = citiesData?.find(
