@@ -12,6 +12,7 @@ import { ListingActions } from "../shared/ListingActions";
 
 import SocialMedia from "../shared/SocialMedia";
 import PriceDisplay from "../shared/PriceDisplay";
+import { ExpandableTagsList } from "../shared/ExpandableTagsList";
 
 interface LocationHeroProps {
   location: LocationListing;
@@ -20,12 +21,13 @@ interface LocationHeroProps {
 export function LocationHero({ location }: LocationHeroProps) {
   const cityName =
     typeof location?.city === "object" ? location?.city?.name : "România";
-  const locationType =
+
+  const locationTypes =
     Array.isArray(location?.type) && location?.type?.length > 0
-      ? typeof location.type[0] === "object"
-        ? location?.type[0]?.title
-        : "Locație"
-      : "Locație";
+      ? location?.type
+          .map((t) => (typeof t === "object" ? t.title : ""))
+          .filter(Boolean)
+      : ["Locație"];
 
   const contact = location?.contact;
   const socialLinks = location?.socialLinks;
@@ -36,8 +38,7 @@ export function LocationHero({ location }: LocationHeroProps) {
       ? location.suitableFor
           .map((t) => (typeof t === "object" ? t.title : ""))
           .filter(Boolean)
-          .join(", ")
-      : "";
+      : [];
 
   return (
     <div className="glass-card p-4 sm:p-6 space-y-6">
@@ -93,18 +94,24 @@ export function LocationHero({ location }: LocationHeroProps) {
               Capacitate: {location.capacity.indoor} persoane
             </span>
           ) : null}
-          <span className="text-muted-foreground">{locationType}</span>
           {location.pricing ? (
             <PriceDisplay listingType="locatii" pricing={location.pricing} />
           ) : null}
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-        {suitableFor && (
-          <div>
-            <span className="text-muted-foreground">Destinat pentru: </span>
-            <span className="font-medium">{suitableFor}</span>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+        <ExpandableTagsList
+          items={locationTypes}
+          limit={5}
+          label="Tip locație:"
+        />
+        {suitableFor.length > 0 && (
+          <ExpandableTagsList
+            limit={5}
+            items={suitableFor}
+            label="Destinat pentru:"
+            className="col-span-1"
+          />
         )}
       </div>
       {/* Actions */}

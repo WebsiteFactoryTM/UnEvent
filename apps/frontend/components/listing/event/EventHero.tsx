@@ -4,6 +4,7 @@ import type { EventListing } from "@/types/listings";
 import { ListingActions } from "../shared/ListingActions";
 import SocialMedia from "../shared/SocialMedia";
 import PriceDisplay from "../shared/PriceDisplay";
+import { ExpandableTagsList } from "../shared/ExpandableTagsList";
 
 interface EventHeroProps {
   event: EventListing;
@@ -13,12 +14,13 @@ export default function EventHero({ event }: EventHeroProps) {
   const cityName =
     typeof event?.city === "object" ? event?.city?.name : "România";
   const address = event?.address;
-  const eventType =
+
+  const eventTypes =
     Array.isArray(event?.type) && event?.type?.length > 0
-      ? typeof event?.type[0] === "object"
-        ? event?.type[0]?.title
-        : "Eveniment"
-      : "Eveniment";
+      ? event?.type
+          .map((t) => (typeof t === "object" ? t.title : ""))
+          .filter(Boolean)
+      : ["Eveniment"];
 
   const formatDate = (date: string) => {
     const newDate = new Date(date).toLocaleDateString("ro-RO", {
@@ -88,7 +90,7 @@ export default function EventHero({ event }: EventHeroProps) {
               </a>
             </div>
           ) : null}
-          <span className="text-muted-foreground">{eventType}</span>
+          <ExpandableTagsList items={eventTypes} label="Tip eveniment:" />
         </div>
       </div>
 

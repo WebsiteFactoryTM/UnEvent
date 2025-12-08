@@ -4,6 +4,7 @@ import type { Profile } from "@/types/payload-types";
 import { ListingActions } from "../shared/ListingActions";
 import SocialMedia from "../shared/SocialMedia";
 import PriceDisplay from "../shared/PriceDisplay";
+import { ExpandableTagsList } from "../shared/ExpandableTagsList";
 
 interface ServiceHeroProps {
   service: ServiceListing;
@@ -22,16 +23,14 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
       ? service.type
           .map((t) => (typeof t === "object" ? t.title : ""))
           .filter(Boolean)
-          .join(", ")
-      : "";
+      : [];
 
   const suitableFor =
     service.suitableFor && service.suitableFor.length > 0
       ? service.suitableFor
           .map((t) => (typeof t === "object" ? t.title : ""))
           .filter(Boolean)
-          .join(", ")
-      : "";
+      : [];
 
   return (
     <div className="glass-card p-6 md:p-8 space-y-6">
@@ -87,17 +86,19 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
 
         {/* Essential Info */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          {suitableFor && (
-            <div>
-              <span className="text-muted-foreground">Destinat pentru: </span>
-              <span className="font-medium">{suitableFor}</span>
-            </div>
+          {serviceCategories.length > 0 && (
+            <ExpandableTagsList
+              items={serviceCategories}
+              label="Servicii oferite:"
+              className="col-span-1"
+            />
           )}
-          {serviceCategories && (
-            <div>
-              <span className="text-muted-foreground">Categorie: </span>
-              <span className="font-medium">{serviceCategories}</span>
-            </div>
+          {suitableFor.length > 0 && (
+            <ExpandableTagsList
+              items={suitableFor}
+              label="Destinat pentru:"
+              className="col-span-1"
+            />
           )}
           {service.pricing ? (
             <PriceDisplay listingType="servicii" pricing={service.pricing} />
