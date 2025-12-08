@@ -75,23 +75,69 @@ export const fetchListing = async (
       return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
     }
 
-    // Runtime: Use BFF route for edge caching
+    // Runtime: Use BFF route for edge caching (but skip for draft mode)
+    // Draft mode requires authentication, and server-to-server requests don't forward cookies/session
+    // So for draft mode, we go directly to Payload with the accessToken
+    if (isDraftMode) {
+      // Skip BFF for draft mode - go directly to Payload
+      if (!process.env.NEXT_PUBLIC_API_URL) {
+        return {
+          data: null,
+          error: new Error("NEXT_PUBLIC_API_URL not configured"),
+        };
+      }
+
+      const headers: Record<string, string> = {};
+      if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`,
+        {
+          headers: Object.keys(headers).length > 0 ? headers : undefined,
+          cache: "no-store",
+          next: { revalidate: 0 },
+        },
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response
+          .text()
+          .catch(() => `HTTP ${response.status}`);
+        console.error(`Payload API error (${response.status}):`, errorMessage);
+        return {
+          data: null,
+          error: new Error(
+            `Failed to fetch listing from Payload: ${errorMessage}`,
+          ),
+        };
+      }
+
+      const data = await response.json();
+      const doc = data?.docs?.[0];
+
+      if (!doc) {
+        return { data: null, error: new Error("Listing not found") };
+      }
+
+      return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
+    }
+
+    // Non-draft mode: Use BFF route for edge caching
     const baseUrl =
       process.env.NEXT_PUBLIC_FRONTEND_URL ||
       (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000");
 
-    // Use BFF route, add draft parameter if in draft mode
-    const draftParam = isDraftMode ? "?draft=1" : "";
-    const bffUrl = `${baseUrl}/api/public/listings/${listingType}/${encodeURIComponent(slug)}${draftParam}`;
+    const bffUrl = `${baseUrl}/api/public/listings/${listingType}/${encodeURIComponent(slug)}`;
 
     try {
       const response = await fetch(bffUrl, {
         // Server-side fetch: let the BFF route handle caching/revalidation
         // Don't override with revalidate here - it prevents tag-based invalidation
-        next: isDraftMode ? { revalidate: 0 } : undefined,
-        cache: isDraftMode ? "no-store" : "default",
+        cache: "default",
       });
 
       if (!response.ok) {

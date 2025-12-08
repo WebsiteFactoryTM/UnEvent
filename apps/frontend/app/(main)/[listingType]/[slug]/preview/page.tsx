@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
 import { listingTypes } from "@/config/archives";
 import { prettifySlug } from "@/lib/slug";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
 import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
 import { ListingMedia } from "@/components/listing/shared/ListingMedia";
@@ -91,14 +93,25 @@ export default async function PreviewPage({
 
   // Preview mode requires draft mode to be enabled
   if (!isEnabled) {
-    return new Response("Draft mode is not enabled. Access forbidden.", {
-      status: 403,
-    });
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold">Acces interzis</h1>
+          <p className="text-muted-foreground">
+            Modul de previzualizare nu este activat.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (!listingTypes.includes(listingType as any)) notFound();
 
   const listingTypeUrl = getListingTypeSlug(listingType as ListingType);
+
+  // Get session to pass access token for fetching draft content
+  const session = await getServerSession(authOptions);
+  const accessToken = session?.accessToken;
 
   const {
     data: listing,
@@ -106,7 +119,7 @@ export default async function PreviewPage({
   }: { data: Listing | null; error: Error | null } = await fetchListing(
     listingTypeUrl as "locations" | "events" | "services",
     slug,
-    undefined,
+    accessToken, // Pass the access token
     true, // Enable draft mode to fetch unpublished content
   );
 

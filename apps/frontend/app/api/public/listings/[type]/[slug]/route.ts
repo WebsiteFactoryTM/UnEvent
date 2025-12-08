@@ -1,7 +1,5 @@
 import { tag } from "@unevent/shared";
 import { fetchWithRetry } from "@/lib/server/fetcher";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
 
 /**
  * BFF (Backend for Frontend) route for fetching listings with edge caching
@@ -12,7 +10,7 @@ import { NextRequest } from "next/server";
  * - fetchCache = "default-cache": Enables fetch caching with tag support
  * - Tags: listingSlug, collection type, city - cleared when listing updates
  *
- * Note: "force-static" would prevent tag-based revalidation from working properly
+ * Note: Draft mode is handled directly by fetchListing(), which skips this BFF route
  */
 export const dynamic = "auto";
 export const revalidate = 300;
@@ -23,32 +21,19 @@ type Params = {
   params: Promise<{ type: "events" | "locations" | "services"; slug: string }>;
 };
 
-export async function GET(req: NextRequest, { params }: Params) {
+export async function GET(_req: Request, { params }: Params) {
   const { type, slug } = await params;
-  const url = req.nextUrl;
-
-  const isDraft = url.searchParams.get("draft") === "1";
 
   const payloadUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
   if (!payloadUrl) {
     return new Response("PAYLOAD_INTERNAL_URL not configured", { status: 500 });
   }
 
-  // For draft mode, get token from cookies; otherwise use service token
-  let authHeader: string;
-  if (isDraft) {
-    const cookieStore = await cookies();
-    const payloadToken = cookieStore.get("payload-token")?.value;
-    if (!payloadToken) {
-      return new Response("Unauthorized", { status: 401 });
-    }
-    authHeader = `Bearer ${payloadToken}`;
-  } else {
-    if (!process.env.SVC_TOKEN) {
-      return new Response("SVC_TOKEN not configured", { status: 500 });
-    }
-    authHeader = `users API-Key ${process.env.SVC_TOKEN}`;
+  if (!process.env.SVC_TOKEN) {
+    return new Response("SVC_TOKEN not configured", { status: 500 });
   }
+
+  const authHeader = `users API-Key ${process.env.SVC_TOKEN}`;
 
   // Use query parameter approach (Payload v3 supports this)
   const apiUrl = `${payloadUrl}/api/${type}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`;
@@ -62,15 +47,13 @@ export async function GET(req: NextRequest, { params }: Params) {
           Authorization: authHeader,
         },
         // Use default cache + tags to enable tag-based revalidation
-        cache: isDraft ? "no-store" : "default",
-        next: isDraft
-          ? { revalidate: 0 }
-          : {
-              tags: [tag.listingSlug(slug), tag.collection(type)],
-              revalidate: 300, // Fallback: revalidate every 5 min if tags don't trigger
-            },
+        cache: "default",
+        next: {
+          tags: [tag.listingSlug(slug), tag.collection(type)],
+          revalidate: 300, // Fallback: revalidate every 5 min if tags don't trigger
+        },
       },
-      { timeoutMs: 2000, retries: isDraft ? 0 : 1 },
+      { timeoutMs: 2000, retries: 1 },
     );
 
     if (!res.ok) {
@@ -94,17 +77,8 @@ export async function GET(req: NextRequest, { params }: Params) {
     return new Response(JSON.stringify(doc), {
       headers: {
         "Content-Type": "application/json",
-        // Draft mode: no cache; otherwise: cache with tags
-        ...(isDraft
-          ? { "Cache-Control": "no-store" }
-          : {
-              // TEMPORARY: Disabled CDN cache for testing revalidation
-              // Root cause: CF_API_TOKEN/CF_ZONE_ID not configured, so CDN never purges
-              // TODO: Re-enable when Cloudflare CDN purging is configured
-              "Cache-Control":
-                "public, s-maxage=300, stale-while-revalidate=600",
-              "Surrogate-Key": `${tag.listingSlug(slug)} ${tag.collection(type)} ${tag.tenant("unevent")}${citySlug}`,
-            }),
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+        "Surrogate-Key": `${tag.listingSlug(slug)} ${tag.collection(type)} ${tag.tenant("unevent")}${citySlug}`,
       },
     });
   } catch (error) {
