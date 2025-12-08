@@ -9,5 +9,5 @@ export default function ListingCardImpressionsLayer({
   kind: "locations" | "events" | "services";
 }) {
   const elementRef = useImpression({ listingId, kind });
-  return <div ref={elementRef} className="h-full" />;
+  return <div ref={elementRef} />;
 }

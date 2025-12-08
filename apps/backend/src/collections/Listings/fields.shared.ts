@@ -63,7 +63,7 @@ export const sharedListingFields: Field[] = [
   {
     name: 'rejectionReason',
     type: 'textarea',
-    admin: { condition: (data) => data?.moderationStatus === 'rejected' },
+    admin: { condition: (data) => data?.moderationStatus === 'rejected', position: 'sidebar' },
   },
   { name: 'featuredImage', type: 'upload', relationTo: 'media', required: false },
   { name: 'gallery', type: 'upload', relationTo: 'media', hasMany: true },

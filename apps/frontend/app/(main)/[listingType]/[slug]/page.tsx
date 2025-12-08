@@ -134,7 +134,10 @@ export default async function DetailPage({
   }
 
   // listing exists → check if can be shown (only show published in production)
-  if (listing._status !== "published") {
+  if (
+    listing._status !== "published" ||
+    ["rejected", "pending", "draft"].includes(listing.moderationStatus as any)
+  ) {
     notFound();
   }
 
