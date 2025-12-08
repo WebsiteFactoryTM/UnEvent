@@ -1,8 +1,5 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type ListingType = "locatii" | "servicii" | "evenimente";
 
@@ -17,35 +14,19 @@ export function CityChips({
   options,
   defaultCity,
 }: CityChipsProps) {
-  const router = useRouter();
-  const lastCity = useMemo(() => {
-    if (defaultCity) return defaultCity;
-    try {
-      return window.localStorage.getItem("lastCity") || undefined;
-    } catch {
-      return undefined;
-    }
-  }, [defaultCity]);
-
-  const go = (city: string) => {
-    router.push(`/${listingType}/oras/${city}`);
-  };
-
   return (
     <div className="flex flex-wrap gap-2">
       {options.map((opt) => (
-        <Button
-          key={opt.slug}
-          variant="outline"
-          className="rounded-full"
-          aria-label={`Vezi orașul ${opt.label}`}
-          onClick={() => {
-            const city = lastCity;
-            if (city) return go(city);
-          }}
-        >
-          {opt.label}
-        </Button>
+        <Link href={`/${listingType}/oras/${opt.slug}`}>
+          <Button
+            key={opt.slug}
+            variant="outline"
+            className="rounded-full"
+            aria-label={`Vezi orașul ${opt.label}`}
+          >
+            {opt.label}
+          </Button>
+        </Link>
       ))}
     </div>
   );

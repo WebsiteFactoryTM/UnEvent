@@ -66,7 +66,7 @@ export function ListingCard({
             variant="secondary"
             className="text-xs bg-yellow-500/90 backdrop-blur-sm"
           >
-            Sponsorizat
+            Partener
           </Badge>
         );
       case "recommended":

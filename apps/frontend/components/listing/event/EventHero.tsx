@@ -61,7 +61,7 @@ export default function EventHero({ event }: EventHeroProps) {
             )}
             {event?.tier === "sponsored" && (
               <Badge className="bg-yellow-500/90 backdrop-blur-sm">
-                Sponsorizat
+                Partener
               </Badge>
             )}
           </div>

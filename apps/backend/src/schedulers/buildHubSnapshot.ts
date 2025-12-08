@@ -27,8 +27,11 @@ export async function buildHubSnapshot(
   // 0) Top 6 cities (dynamic, fallback to static list)
   const citiesRes = await payload.find({
     collection: 'cities',
-    sort: ['-usageCount', '-updatedAt'],
+    sort: ['-usageCount'],
     depth: 0,
+    where: {
+      featured: { equals: true },
+    },
     limit: 100,
   })
   const typeaheadCities =

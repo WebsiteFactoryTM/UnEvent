@@ -53,7 +53,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
               )}
               {service.tier === "sponsored" && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-                  Sponsorizat
+                  Partener
                 </span>
               )}
             </div>

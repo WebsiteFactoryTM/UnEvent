@@ -61,7 +61,7 @@ export function LocationHero({ location }: LocationHeroProps) {
             )}
             {location.tier === "sponsored" && (
               <Badge className="bg-yellow-500/90 backdrop-blur-sm">
-                Sponsorizat
+                Partener
               </Badge>
             )}
           </div>
