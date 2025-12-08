@@ -16,6 +16,7 @@ import { getEnvironmentDescription } from "./config/workerSettings.js";
 if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
+    enabled: process.env.NODE_ENV === "production",
     environment:
       process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || "development",
     tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
@@ -120,7 +121,6 @@ async function main() {
     const maintenanceWorker = createMaintenanceProcessor();
 
     console.log("[Worker] Processors initialized");
-
 
     // Register schedulers (these create recurring jobs)
     console.log("[Worker] Registering schedulers...");
