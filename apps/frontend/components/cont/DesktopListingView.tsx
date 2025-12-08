@@ -123,10 +123,12 @@ const DesktopListingView = ({
                 </td>
                 <td className="py-4 px-4">
                   <div className="flex items-center justify-end gap-2">
-                    {listing.status === "draft" ? (
+                    {listing.status === "draft" ||
+                    listing.moderationStatus === "pending" ||
+                    listing.moderationStatus === "rejected" ? (
                       <Link
                         href={`/api/preview?url=${encodeURIComponent(
-                          `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${listingType}/${listing.slug}`,
+                          `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${listingType}/${listing.slug}/preview`,
                         )}&secret=${process.env.NEXT_PUBLIC_DRAFT_SECRET}`}
                         target="_blank"
                       >

@@ -110,17 +110,35 @@ const MobileListingView = ({
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2 pt-2">
-              <Link href={`/${listingType}/${listing.slug}/`} target="_blank">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  // onClick={() => handleView(listing)}
-                  className="flex-1 gap-2 text-xs"
+              {listing.status === "draft" ||
+              listing.moderationStatus === "pending" ? (
+                <Link
+                  href={`/api/preview?url=${encodeURIComponent(
+                    `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${listingType}/${listing.slug}/preview`,
+                  )}&secret=${process.env.NEXT_PUBLIC_DRAFT_SECRET}`}
+                  target="_blank"
                 >
-                  <FaEye className="h-3 w-3" />
-                  Vezi
-                </Button>
-              </Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 gap-2 text-xs"
+                  >
+                    <FaEye className="h-3 w-3" />
+                    Previzualizare
+                  </Button>
+                </Link>
+              ) : (
+                <Link href={`/${listingType}/${listing.slug}/`} target="_blank">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 gap-2 text-xs"
+                  >
+                    <FaEye className="h-3 w-3" />
+                    Vezi
+                  </Button>
+                </Link>
+              )}
               <Link href={`${listingTypePath}/${listing.id}/editeaza`}>
                 <Button
                   variant="outline"
