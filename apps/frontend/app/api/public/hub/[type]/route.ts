@@ -3,8 +3,8 @@ import { generateETag } from "@/lib/server/etag";
 import { fetchWithRetry } from "@/lib/server/fetcher";
 import * as Sentry from "@sentry/nextjs";
 
-// Use auto to allow both static generation and tag-based revalidation
-export const dynamic = "auto";
+// Force dynamic rendering since we check request headers for ETag caching
+export const dynamic = "force-dynamic";
 export const dynamicParams = false;
 export const revalidate = 900;
 export const fetchCache = "default-cache";
