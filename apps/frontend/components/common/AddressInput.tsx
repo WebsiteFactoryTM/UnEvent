@@ -19,6 +19,7 @@ interface AddressInputProps {
   onChange: (address: string) => void;
   onCoordinatesChange?: (lat: number, lng: number) => void;
   onLocationInfoChange?: (city: string, county: string) => void;
+  selectedCityName?: string | null;
   placeholder?: string;
   label?: string;
   className?: string;
@@ -33,6 +34,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
   onChange,
   onCoordinatesChange,
   onLocationInfoChange,
+  selectedCityName,
   placeholder = "Introduceți adresa completă...",
   label = "Adresa",
   className,
@@ -50,7 +52,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
 
   // Debounced geocoding function
   const debouncedGeocode = useRef(
-    debounce(async (address: string) => {
+    debounce(async (address: string, cityName?: string | null) => {
       if (!address || address.trim().length < 5) {
         setGeocodingResult(null);
         setGeocodingError(null);
@@ -62,7 +64,16 @@ export const AddressInput: React.FC<AddressInputProps> = ({
       setGeocodingError(null);
 
       try {
-        const result = await geocodeAddress(address);
+        // Append city name if provided and not already in address
+        let searchAddress = address.trim();
+        if (
+          cityName &&
+          !address.toLowerCase().includes(cityName.toLowerCase())
+        ) {
+          searchAddress = `${address.trim()}, ${cityName}`;
+        }
+
+        const result = await geocodeAddress(searchAddress);
 
         if ("error" in result) {
           setGeocodingError(result.message);
@@ -96,16 +107,16 @@ export const AddressInput: React.FC<AddressInputProps> = ({
     }, 800),
   ).current;
 
-  // Trigger geocoding when address changes
+  // Trigger geocoding when address or city changes
   useEffect(() => {
     if (value && value.trim().length >= 5) {
-      debouncedGeocode(value);
+      debouncedGeocode(value, selectedCityName);
     } else {
       setGeocodingResult(null);
       setGeocodingError(null);
       setHasGeocoded(false);
     }
-  }, [value, debouncedGeocode]);
+  }, [value, selectedCityName, debouncedGeocode]);
 
   // Extract city and county from address components
   const extractLocationInfo = (

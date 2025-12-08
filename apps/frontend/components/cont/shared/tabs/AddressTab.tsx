@@ -76,6 +76,11 @@ export function AddressTab() {
     return null;
   }, [citiesData, selectedCity]);
 
+  const selectedCityName = useMemo(() => {
+    const city = citiesData?.find((c) => c.id === selectedCity);
+    return city?.name || null;
+  }, [citiesData, selectedCity]);
+
   const onSelectCity = (cityId: string) => {
     setValue("city", parseInt(cityId), { shouldValidate: true });
     const selectedCity = citiesData?.find(
@@ -99,7 +104,7 @@ export function AddressTab() {
     if (selectedCityData) {
       return { lat: selectedCityData.lat, lng: selectedCityData.lng };
     }
-    return { lat: 45.7494, lng: 21.2272 }; // Default to Timisoara
+    return { lat: 45.56, lng: 25 }; // Default to Timisoara
   }, [geoCoords, selectedCityData]);
 
   return (
@@ -135,6 +140,7 @@ export function AddressTab() {
         <AddressInput
           label="Adresă completă"
           value={addressValue || ""}
+          selectedCityName={selectedCityName}
           onChange={(addr) =>
             setValue("address", addr, { shouldValidate: true })
           }
@@ -143,12 +149,12 @@ export function AddressTab() {
             setValue("geo.lon", lng, { shouldValidate: true });
           }}
           onLocationInfoChange={(cityName) => {
-            // Optionally infer city by name when found in current list
+            // Auto-update city if found in list and no city currently selected
             const cityMatch = citiesData?.find(
               (c) =>
                 (c.name || "").toLowerCase() === (cityName || "").toLowerCase(),
             );
-            if (cityMatch) {
+            if (cityMatch && !selectedCity) {
               const idNum = parseInt(cityMatch.id as unknown as string, 10);
               if (!Number.isNaN(idNum)) {
                 setValue("city", idNum, { shouldValidate: true });
@@ -172,7 +178,7 @@ export function AddressTab() {
             onClick={handleMapClick}
             markers={markers}
             center={mapCenter}
-            zoom={13}
+            zoom={selectedCity ? 13 : 7}
             initialCenter={mapCenter}
             initialZoom={13}
           />

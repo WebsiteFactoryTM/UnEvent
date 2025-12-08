@@ -485,8 +485,8 @@ export function defaultListingFormValues(
     city: undefined,
     address: "",
     geo: {
-      lat: 45.7489,
-      lng: 21.2087,
+      lat: 45.56,
+      lng: 25,
       manualPin: false,
     },
     gallery: [],
