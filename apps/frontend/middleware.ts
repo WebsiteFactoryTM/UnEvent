@@ -39,51 +39,40 @@ export default withAuth(
           return true; // Public routes are always allowed
         }
 
-        // If no token at all, definitely not authorized
+        // No token = not authorized
         if (!token) {
-          console.log("[Middleware] BLOCKED: No token found");
           return false;
         }
 
-        // If token has accessToken, allow through (even if there's an error)
-        // The error might be from a failed refresh attempt, but we still have
-        // a valid token to use
-        if (token.accessToken) {
-          console.log("[Middleware] ALLOWED: Has accessToken");
-          return true;
+        // Check for definitive errors
+        if (
+          token.error === "SessionMaxAgeExceeded" ||
+          token.error === "TokenExpired" ||
+          token.error === "RefreshAccessTokenError"
+        ) {
+          return false;
         }
 
-        // No accessToken - check if it's a definitive expiration
-        // Only block if it's truly expired (SessionMaxAgeExceeded or TokenExpired)
-        if (token.error) {
-          const isDefinitiveError =
-            token.error === "SessionMaxAgeExceeded" ||
-            token.error === "TokenExpired";
-
-          // Block only if definitively expired
-          if (isDefinitiveError) {
-            console.log(
-              "[Middleware] BLOCKED: Definitive error -",
-              token.error,
-            );
-            return false;
-          }
-
-          // Other errors (like RefreshAccessTokenError) might be temporary
-          // Allow through and let page component handle it
-          console.log(
-            "[Middleware] ALLOWED: Temporary error, allowing through -",
-            token.error,
-          );
-          return true;
+        // Check if token is expired
+        const now = Math.floor(Date.now() / 1000);
+        if (
+          token.accessTokenExpires &&
+          (token.accessTokenExpires as number) <= now
+        ) {
+          return false;
         }
 
-        // Token exists but no accessToken and no error
-        // This shouldn't happen normally, but allow through to be safe
-        // Page component will handle validation
-        console.log(
-          "[Middleware] ALLOWED: Token exists without accessToken, allowing through",
-        );
+        // Check absolute expiration
+        if (token.absExp && now >= (token.absExp as number)) {
+          return false;
+        }
+
+        // Must have valid accessToken
+        if (!token.accessToken) {
+          return false;
+        }
+
+        // All checks passed
         return true;
       },
     },

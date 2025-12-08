@@ -4,8 +4,26 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { cookies } from "next/headers";
 import { decodeJwt } from "jose";
 import { withRefreshLock } from "./lib/auth/refresh-lock";
+import * as Sentry from "@sentry/nextjs";
+
+// This user is locked due to having too many failed login attempts.
+//The email or password provided is incorrect.
 
 const TOKEN_REFRESH_BUFFER_SECONDS = 60 * 5; // 5 minutes
+const REFRESH_COOLDOWN = 60; // seconds
+
+const ERROR_MESSAGES: Record<string, string> = {
+  SessionMaxAgeExceeded:
+    "Sesiunea a expirat. Te rugăm să te autentifici din nou.",
+  TokenExpired: "Tokenul a expirat. Te rugăm să te autentifici din nou.",
+  RefreshAccessTokenError:
+    "Nu s-a putut reîmprospăta sesiunea. Te rugăm să te autentifici din nou.",
+  SessionExpired: "Sesiunea a expirat.",
+  "This user is locked due to having too many failed login attempts.":
+    "Acest cont este blocat temporar din cauza prea multor încercări eșuate. Te rugăm să încerci mai târziu.",
+  "The email or password provided is incorrect.":
+    "Email-ul sau parola sunt incorecte.",
+};
 
 const DAY_IN_SECONDS = 24 * 60 * 60;
 const EXTENDED_LIFETIME_SECONDS = 7 * DAY_IN_SECONDS;
@@ -147,6 +165,13 @@ async function refreshPayloadToken(
         "Failed to update payload-token cookie during refresh:",
         err,
       );
+      Sentry.captureException(err, {
+        tags: { type: "payload_cookie_update_failure" },
+        extra: {
+          rememberMe: token.rememberMe,
+          canShareCookie: CAN_SHARE_COOKIE,
+        },
+      });
     }
   }
 
@@ -154,7 +179,10 @@ async function refreshPayloadToken(
     ...token,
     accessToken: nextAccessToken,
     iat: Math.floor(Date.now() / 1000),
-    exp: nextExp, // 👈 align NextAuth token expiry with server exp
+    // 👈 align internal expiry with server exp
+    accessTokenExpires: nextExp,
+    // 👈 also sync standard exp
+    exp: nextExp,
     error: undefined,
   };
 }
@@ -192,7 +220,11 @@ export const authOptions: NextAuthOptions = {
               .map((err: any) => err.message)
               .join(", ");
 
-            throw new Error(errMsgs);
+            const translatedError =
+              ERROR_MESSAGES[errMsgs] ||
+              errMsgs ||
+              "A apărut o eroare necunoscută.";
+            throw new Error(translatedError);
           }
 
           const data = await res.json();
@@ -241,8 +273,12 @@ export const authOptions: NextAuthOptions = {
       const DAY = 24 * 60 * 60;
 
       if (user) {
-        const absCap = user.rememberMe ? TOKEN_LIFETIME_DAYS * DAY : 1 * DAY;
-        token.absExp = Math.floor(Date.now() / 1000) + absCap;
+        // Calculate max session duration based on remember me
+        const tokenLifetime = user.rememberMe
+          ? TOKEN_LIFETIME_DAYS * DAY
+          : 1 * DAY;
+        const now = Math.floor(Date.now() / 1000);
+
         token.accessToken = user.token;
         token.email = user.email;
         token.id = user.id;
@@ -250,18 +286,24 @@ export const authOptions: NextAuthOptions = {
         token.name = user.displayName;
         token.avatar = user.avatarURL;
         token.rememberMe = user.rememberMe;
-
-        // If your login returns exp, use it; else decode
-        const firstExp =
-          typeof user.exp === "number"
-            ? user.exp
-            : computeEffectiveExpiration(user.token, user.rememberMe);
-
-        token.iat = Math.floor(Date.now() / 1000);
-        token.exp = firstExp;
-
         token.profileId =
           typeof user.profile === "number" ? user.profile : user.profile?.id;
+
+        // Decode token to get actual expiration from Payload
+        // We use the earlier of: Payload token exp OR our max session time
+        const payloadExp =
+          typeof user.exp === "number"
+            ? user.exp
+            : decodeTokenExpiration(user.token);
+
+        token.iat = Math.floor(Date.now() / 1000);
+        // Consolidate expiration: min(payload_exp, max_session_lifetime)
+        token.accessTokenExpires = payloadExp
+          ? Math.min(payloadExp, now + tokenLifetime)
+          : now + tokenLifetime;
+
+        // Sync standard exp claim for good measure, but rely on accessTokenExpires
+        token.exp = token.accessTokenExpires as number;
 
         if (user.token) {
           // in prod this will set a real cookie; in testing it's a no-op
@@ -321,57 +363,65 @@ export const authOptions: NextAuthOptions = {
       }
 
       const now = Math.floor(Date.now() / 1000);
-      if (token.absExp && now >= token.absExp) {
-        // Notify Payload to logout before clearing session
-        if (token.accessToken) {
-          await notifyPayloadLogout(token.accessToken);
-        }
-        await deletePayloadCookie();
-        return {
-          ...token,
-          accessToken: undefined,
-          error: "SessionMaxAgeExceeded",
-          exp: 0,
-        };
-      }
 
-      const currentExp =
-        token.exp ||
-        (token.accessToken
-          ? computeEffectiveExpiration(token.accessToken, token.rememberMe)
-          : undefined);
-      if (currentExp) {
-        token.exp = currentExp;
-      }
-
+      // Handle definitive logout (no accessToken)
       if (!token.accessToken) {
         // If the user was never logged in, don't emit an error.
         if (!token.iat && !token.email) {
           return token;
         }
         // User was logged in but lost accessToken - logout from Payload if we had one
-        // Note: We don't have accessToken here, so we can't notify Payload
-        // but we should still clear the session
         await deletePayloadCookie();
         return { ...token, error: "RefreshAccessTokenError", exp: 0 };
       }
 
-      const needsRefresh =
-        !token.exp || token.exp - TOKEN_REFRESH_BUFFER_SECONDS <= now;
+      // Check for expiration
+      if (
+        token.accessTokenExpires &&
+        (token.accessTokenExpires as number) <= now
+      ) {
+        // Token expired - notify Payload to logout before clearing session
+        await notifyPayloadLogout(token.accessToken);
+        await deletePayloadCookie();
+        return {
+          ...token,
+          accessToken: undefined,
+          error: "TokenExpired",
+          exp: 0,
+        };
+      }
 
-      if (needsRefresh && token.accessToken) {
+      // Check if token needs refresh
+      const needsRefresh =
+        !token.accessTokenExpires ||
+        (token.accessTokenExpires as number) - TOKEN_REFRESH_BUFFER_SECONDS <=
+          now;
+
+      // Check refresh cooldown
+      const lastRefresh = (token.lastRefresh as number) || 0;
+      const canRefresh = now - lastRefresh >= REFRESH_COOLDOWN;
+
+      if (needsRefresh && token.accessToken && canRefresh) {
         const lockKey = String(token.id ?? token.email ?? "anon");
         try {
-          return await withRefreshLock(lockKey, () =>
+          const refreshed = await withRefreshLock(lockKey, () =>
             refreshPayloadToken(token),
           );
+          return { ...refreshed, lastRefresh: now };
         } catch (e) {
-          // after the inner catch where refresh failed:
-          if (token.exp && token.exp <= now) {
-            // Token expired - notify Payload to logout before clearing session
-            if (token.accessToken) {
-              await notifyPayloadLogout(token.accessToken);
-            }
+          console.error("Token refresh failed:", e);
+
+          Sentry.captureException(e, {
+            tags: { type: "token_refresh_failure" },
+            user: { id: token.id, email: token.email || undefined },
+          });
+
+          // If token IS expired and refresh failed, we must return error
+          if (
+            token.accessTokenExpires &&
+            (token.accessTokenExpires as number) <= now
+          ) {
+            await notifyPayloadLogout(token.accessToken);
             await deletePayloadCookie();
             return {
               ...token,
@@ -380,6 +430,12 @@ export const authOptions: NextAuthOptions = {
               exp: 0,
             };
           }
+          // Return token with error flag but keep accessToken if valid
+          // This allows transient errors to be retried
+          return {
+            ...token,
+            error: "RefreshAccessTokenError",
+          };
         }
       }
       return token;
@@ -387,23 +443,15 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }: { session: Session; token: JWT }) {
       const now = Math.floor(Date.now() / 1000);
-      const isExpired = token.exp && token.exp <= now;
+      const isExpired =
+        token.accessTokenExpires && (token.accessTokenExpires as number) <= now;
 
-      // If there's an error, no accessToken, or token is expired, invalidate the session
+      // If there's an error, no accessToken, or token is expired, throw error
+      // This forces NextAuth to invalidate the session
       if (token.error || !token.accessToken || isExpired) {
-        // Return an invalid session structure - NextAuth will treat this as unauthenticated
-        // Setting expires to past date ensures NextAuth recognizes it as expired
-        return {
-          ...session,
-          user: {
-            id: "",
-            email: null as any,
-            name: null as any,
-          },
-          accessToken: undefined,
-          expires: new Date(0).toISOString(), // Past date to force expiration
-          error: token.error || "SessionExpired",
-        };
+        const errorCode = (token.error as string) || "SessionExpired";
+        const errorMessage = ERROR_MESSAGES[errorCode] || errorCode;
+        throw new Error(errorMessage);
       }
 
       session.user = {
@@ -416,9 +464,11 @@ export const authOptions: NextAuthOptions = {
       };
       session.accessToken = token.accessToken;
 
-      if (token.exp) {
+      if (token.accessTokenExpires) {
         // optional: expose remaining lifetime (for debugging / renewal)
-        session.expires = new Date(token.exp * 1000).toISOString();
+        session.expires = new Date(
+          (token.accessTokenExpires as number) * 1000,
+        ).toISOString();
       }
 
       return session;

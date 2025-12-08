@@ -35,7 +35,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <SessionProvider refetchInterval={60} refetchOnWindowFocus>
+    <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus>
       <SentryUserContext />
       <QueryClientProvider client={queryClient}>
         <ThemeProvider
@@ -45,8 +45,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
           disableTransitionOnChange
         >
           <AllConsentProviders>
-          {children}
-          <Toaster />
+            {children}
+            <Toaster />
           </AllConsentProviders>
         </ThemeProvider>
       </QueryClientProvider>
