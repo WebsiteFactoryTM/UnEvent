@@ -20,7 +20,7 @@ export const Events: CollectionConfig = {
     group: 'Listings',
     preview: (doc) => {
       return `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/api/preview?url=${encodeURIComponent(
-        `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/evenimente/${doc.slug}`,
+        `${process.env.PAYLOAD_PUBLIC_FRONTEND_URL}/evenimente/${doc.slug}/preview`,
       )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
     },
   },
