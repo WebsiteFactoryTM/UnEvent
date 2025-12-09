@@ -167,7 +167,7 @@ const CityArchive = ({
 
   // Extract coordinates from city data
   const cityCoordinates = cityData?.geo
-    ? { lat: cityData.geo[0], lng: cityData.geo[1] }
+    ? { lat: cityData.geo[1], lng: cityData.geo[0] }
     : null;
 
   // Read viewMode from URL params, default to "grid"
