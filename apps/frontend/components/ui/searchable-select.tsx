@@ -3,22 +3,14 @@
 import * as React from "react";
 import { FaCheck, FaChevronDown } from "react-icons/fa6";
 import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverAnchor,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import * as PopoverRadix from "@radix-ui/react-popover";
+
+import { useMemo } from "react";
 
 // Add this utility function
 function normalizeText(text: string): string {
@@ -72,165 +64,222 @@ export function SearchableSelect({
   error,
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false);
-  const [inputFocused, setInputFocused] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-
-  // Detect if we're on a mobile device
-  const isMobile = React.useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return (
-      /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
-      (window.matchMedia && window.matchMedia("(max-width: 768px)").matches)
-    );
-  }, []);
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
     onSearchChange?.(normalizeText(value)); // Normalize before storing
   };
-  const handleInputFocus = () => {
-    setInputFocused(true);
+
+  const handleSelect = (optionValue: string) => {
+    // Toggle: deselect if already selected
+    onValueChange?.(optionValue === value ? "" : optionValue);
+    setOpen(false);
+    setSearchQuery("");
   };
-  const handleInputBlur = () => {
-    // Don't reset on blur if popover is still open - user might be selecting
-    // This allows keyboard to stay open while navigating
+
+  const selectedOption = options.find((option) => option.value === value);
+  const selectedLabel = selectedOption?.label || "";
+
+  // Memoized filtered options for performance
+  const filteredOptions = useMemo(() => {
+    if (!searchQuery) return options;
+    const normalized = normalizeText(searchQuery);
+    return options.filter((opt) =>
+      normalizeText(opt.label).includes(normalized),
+    );
+  }, [options, searchQuery]);
+
+  // const triggerRef = React.useRef<HTMLInputElement>(null);
+  // const isClosing = React.useRef(false);
+
+  const handleChevronClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (open) {
+      // isClosing.current = true;
+      setOpen(false);
+      // setTimeout(() => {
+      //   isClosing.current = false;
+      // }, 150);
+    } else {
+      setOpen(true);
+    }
   };
-  // Reset input focus state when popover closes
+
+  // Reset search when popover closes
   React.useEffect(() => {
     if (!open) {
-      setInputFocused(false);
+      handleSearchChange("");
     }
   }, [open]);
 
-  const selectedOption = options.find((option) => option.value === value);
   return (
     <div className="w-full">
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            id={id}
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className={cn(
-              "w-full justify-between",
-              error && "border-red-500 focus-visible:ring-red-500",
-              className,
-            )}
-          >
-            <span className="truncate">
-              {selectedOption ? selectedOption.label : placeholder}
-            </span>
-            <FaChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          className="w-full p-0"
-          align="start"
-          onOpenAutoFocus={(e) => {
-            // Prevent auto-focus on mobile to avoid keyboard popup
-            if (isMobile) {
-              e.preventDefault();
-            }
-          }}
-        >
-          <Command
-            filter={(value, search) => {
-              const normalizedValue = normalizeText(value);
-              const normalizedSearch = normalizeText(search);
+        <PopoverAnchor asChild>
+          <div className="relative w-full">
+            {/* <PopoverTrigger asChild> */}
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchValue || searchQuery || ""}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={() => {
+                // if (!isClosing.current) {
+                //   setOpen(true);
+                // }
+                setOpen(true);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && filteredOptions.length > 0) {
+                  e.preventDefault();
+                  handleSelect(filteredOptions[0].value);
+                } else if (e.key === "Escape") {
+                  e.preventDefault();
+                  setOpen(false);
+                }
+              }}
+              placeholder={selectedLabel || placeholder}
+              className={cn(
+                "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-8 text-sm ring-offset-background",
+                "placeholder:text-muted-foreground",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                error && "border-red-500 focus-visible:ring-red-500",
+                className,
+              )}
+              aria-expanded={open}
+              aria-haspopup="listbox"
+              role="combobox"
+            />
 
-              if (normalizedValue.includes(normalizedSearch)) {
-                return 1; // Match
-              }
-              return 0; // No match
+            {/* </PopoverTrigger> */}
+            <button
+              type="button"
+              onClick={handleChevronClick}
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 cursor-pointer"
+              aria-label={open ? "Close dropdown" : "Open dropdown"}
+            >
+              <FaChevronDown
+                className={cn(
+                  "h-4 w-4 opacity-50 transition-transform hover:opacity-70",
+                  open && "rotate-180",
+                )}
+              />
+            </button>
+          </div>
+        </PopoverAnchor>
+        <PopoverRadix.Portal>
+          <PopoverContent
+            className={cn(
+              "z-50 bg-card border border-border rounded-md shadow-lg",
+              "w-[var(--radix-popover-trigger-width)]",
+            )}
+            sideOffset={4}
+            align="start"
+            onOpenAutoFocus={(e) => {
+              e.preventDefault();
+            }}
+            onInteractOutside={(e) => {
+              // Don't close if clicking the trigger input
+              // if (e.target === inputRef?.current) {
+              e.preventDefault();
+              setOpen(false);
+              // }
             }}
           >
-            <CommandInput
-              ref={inputRef}
-              placeholder={searchPlaceholder}
-              value={searchValue}
-              onValueChange={handleSearchChange}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
-              inputMode={isMobile && !inputFocused ? "none" : "text"}
-              autoFocus={!isMobile}
-            />
-            <CommandList>
-              <CommandEmpty>{emptyText}</CommandEmpty>
-              {(() => {
-                const getGroup = (opt: SearchableSelectOption) =>
-                  (groupBy ? groupBy(opt) : opt.group) || "";
-                const hasGroups =
-                  groupEnabled && options.some((o) => getGroup(o));
-                if (!hasGroups) {
-                  return (
-                    <CommandGroup>
-                      {options.map((option) => (
-                        <CommandItem
-                          key={option.value}
-                          value={filterByLabel ? option.label : option.value}
-                          onSelect={() => {
-                            onValueChange?.(
-                              option.value === value ? "" : option.value,
-                            );
-                            setOpen(false);
-                          }}
-                        >
-                          <FaCheck
+            <div className="flex flex-col max-h-[300px] overflow-y-auto">
+              {filteredOptions.length === 0 ? (
+                <div className="py-6 text-center text-sm text-muted-foreground">
+                  {emptyText}
+                </div>
+              ) : (
+                (() => {
+                  const getGroup = (opt: SearchableSelectOption) =>
+                    (groupBy ? groupBy(opt) : opt.group) || "";
+                  const hasGroups =
+                    groupEnabled && options.some((o) => getGroup(o));
+                  if (!hasGroups) {
+                    return (
+                      <div className="p-1">
+                        {filteredOptions.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => handleSelect(option.value)}
                             className={cn(
-                              "mr-2 h-4 w-4",
-                              value === option.value
-                                ? "opacity-100"
-                                : "opacity-0",
+                              "flex w-full items-center px-2 py-1.5 text-sm rounded-sm cursor-pointer select-none",
+                              "hover:bg-accent hover:text-accent-foreground",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                             )}
-                          />
-                          {option.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
+                          >
+                            <FaCheck
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                value === option.value
+                                  ? "opacity-100"
+                                  : "opacity-0",
+                              )}
+                            />
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  }
+                  const groupsMap = new Map<string, SearchableSelectOption[]>();
+                  for (const opt of filteredOptions) {
+                    const key = getGroup(opt) || "Altele";
+                    if (!groupsMap.has(key)) groupsMap.set(key, []);
+                    groupsMap.get(key)!.push(opt);
+                  }
+                  const groups = Array.from(groupsMap.entries()).sort((a, b) =>
+                    a[0].localeCompare(b[0]),
                   );
-                }
-                const groupsMap = new Map<string, SearchableSelectOption[]>();
-                for (const opt of options) {
-                  const key = getGroup(opt) || "Altele";
-                  if (!groupsMap.has(key)) groupsMap.set(key, []);
-                  groupsMap.get(key)!.push(opt);
-                }
-                const groups = Array.from(groupsMap.entries()).sort((a, b) =>
-                  a[0].localeCompare(b[0]),
-                );
-                return groups.map(([groupLabel, opts]) => (
-                  <CommandGroup key={groupLabel} heading={groupLabel}>
-                    {opts
-                      .slice()
-                      .sort((a, b) => a.label.localeCompare(b.label))
-                      .map((option) => (
-                        <CommandItem
-                          key={option.value}
-                          value={filterByLabel ? option.label : option.value}
-                          onSelect={() => {
-                            onValueChange?.(
-                              option.value === value ? "" : option.value,
-                            );
-                            setOpen(false);
-                          }}
-                        >
-                          <FaCheck
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              value === option.value
-                                ? "opacity-100"
-                                : "opacity-0",
-                            )}
-                          />
-                          {option.label}
-                        </CommandItem>
+                  return (
+                    <div className="p-1">
+                      {groups.map(([groupLabel, opts]) => (
+                        <div key={groupLabel} className="mb-2">
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                            {groupLabel}
+                          </div>
+                          {opts
+                            .slice()
+                            .sort((a, b) => a.label.localeCompare(b.label))
+                            .map((option) => (
+                              <button
+                                key={option.value}
+                                type="button"
+                                onClick={() => handleSelect(option.value)}
+                                className={cn(
+                                  "flex w-full items-center px-2 py-1.5 text-sm rounded-sm cursor-pointer select-none ml-2",
+                                  "hover:bg-accent hover:text-accent-foreground",
+                                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                                )}
+                              >
+                                <FaCheck
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    value === option.value
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {option.label}
+                              </button>
+                            ))}
+                        </div>
                       ))}
-                  </CommandGroup>
-                ));
-              })()}
-            </CommandList>
-          </Command>
-        </PopoverContent>
+                    </div>
+                  );
+                })()
+              )}
+            </div>
+          </PopoverContent>
+        </PopoverRadix.Portal>
       </Popover>
       {error && (
         <p className="mt-1 text-sm text-red-600" role="alert">
