@@ -6,6 +6,7 @@ import { ListingType } from "@/types/listings";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter } from "next/navigation";
 import { fetchFeed } from "@/lib/api/feed";
+import { useCityBySlug } from "@/lib/react-query/cities.queries";
 import { feedKeys } from "@/lib/cacheKeys";
 import React, { useMemo, useState, useEffect } from "react";
 import { getListingTypeSlug } from "@/lib/getListingType";
@@ -161,6 +162,14 @@ const CityArchive = ({
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // Fetch city data for coordinates
+  const { data: cityData } = useCityBySlug(city || "", !!city);
+
+  // Extract coordinates from city data
+  const cityCoordinates = cityData?.geo
+    ? { lat: cityData.geo[0], lng: cityData.geo[1] }
+    : null;
+
   // Read viewMode from URL params, default to "grid"
   const urlViewMode = searchParams.get("view") as "grid" | "map" | null;
   const [viewMode, setViewMode] = useState<"grid" | "map">(
@@ -263,34 +272,6 @@ const CityArchive = ({
     );
   }
 
-  if (!combinedListings.length) {
-    return (
-      <div className="space-y-4">
-        <div className="flex justify-end gap-2">
-          <Button
-            variant={viewMode === "grid" ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleViewModeChange("grid")}
-          >
-            <LayoutGrid className="h-4 w-4 mr-2" />
-            Grid
-          </Button>
-          <Button
-            variant={viewMode === "map" ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleViewModeChange("map")}
-          >
-            <Map className="h-4 w-4 mr-2" />
-            Hartă
-          </Button>
-        </div>
-        <p className="text-center text-muted-foreground py-12">
-          Nicio listare găsită.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
       {/* View Toggle */}
@@ -317,12 +298,18 @@ const CityArchive = ({
       {viewMode === "grid" && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {combinedListings.map((item: CardItem) => (
-              <ListingCard
-                key={item.slug}
-                {...cardItemToListingCardData(item, entity)}
-              />
-            ))}
+            {combinedListings.length > 0 ? (
+              combinedListings.map((item: CardItem) => (
+                <ListingCard
+                  key={item.slug}
+                  {...cardItemToListingCardData(item, entity)}
+                />
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-muted-foreground py-12">
+                Nicio listare găsită.
+              </div>
+            )}
           </div>
 
           <div className="flex justify-center gap-4">
@@ -350,6 +337,7 @@ const CityArchive = ({
           listingType={entity}
           listings={mapListings}
           isLoading={isLoading}
+          cityCoordinates={cityCoordinates || undefined}
         />
       )}
     </div>

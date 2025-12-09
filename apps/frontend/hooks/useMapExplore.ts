@@ -26,6 +26,7 @@ interface UseMapExploreOptions {
     imageUrl?: string;
   }>;
   isLoading?: boolean;
+  cityCoordinates?: { lat: number; lng: number };
 }
 
 /**
@@ -54,6 +55,7 @@ export function useMapExplore({
   listingType,
   listings = [],
   isLoading = false,
+  cityCoordinates,
 }: UseMapExploreOptions) {
   const mapRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
@@ -64,15 +66,19 @@ export function useMapExplore({
   const lastAppliedLng = useRef<number | null>(null);
   const lastAppliedRadius = useRef<number | null>(null);
 
-  // Get initial center/zoom from URL params or defaults
+  // Get initial center/zoom from URL params, city coordinates, or defaults
   const initialCenter = useMemo(() => {
     const lat = searchParams.get("mapCenterLat");
     const lng = searchParams.get("mapCenterLng");
     if (lat && lng) {
       return { lat: parseFloat(lat), lng: parseFloat(lng) };
     }
+    // Use city coordinates if available (when viewing a specific city)
+    if (cityCoordinates) {
+      return cityCoordinates;
+    }
     return { lat: 45.7494, lng: 21.2272 }; // Default to Timisoara
-  }, [searchParams]);
+  }, [searchParams, cityCoordinates]);
 
   const initialZoom = useMemo(() => {
     const zoom = searchParams.get("mapZoom");

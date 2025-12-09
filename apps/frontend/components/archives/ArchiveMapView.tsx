@@ -17,12 +17,14 @@ interface ArchiveMapViewProps {
   listingType: ListingType;
   listings: ArchiveMapViewListing[];
   isLoading?: boolean;
+  cityCoordinates?: { lat: number; lng: number };
 }
 
 export function ArchiveMapView({
   listingType,
   listings,
   isLoading = false,
+  cityCoordinates,
 }: ArchiveMapViewProps) {
   // Convert listingType to the format expected by useMapExplore
   const mapListingType = useMemo(() => {
@@ -45,6 +47,7 @@ export function ArchiveMapView({
     listingType: mapListingType,
     listings,
     isLoading,
+    cityCoordinates,
   });
 
   return (
