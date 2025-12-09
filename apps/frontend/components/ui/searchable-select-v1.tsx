@@ -273,9 +273,15 @@ export function SearchableSelectV1({
               id={id}
               ref={inputRef}
               type="text"
-              readOnly={isMobile && !inputFocused}
               value={open ? effectiveSearch : selectedLabel}
-              onFocus={() => {
+              onFocus={(e) => {
+                // Prevent keyboard on mobile initially
+                if (isMobile && !inputFocused) {
+                  e.preventDefault();
+                  setOpen(true);
+                  handleInputFocus();
+                  return;
+                }
                 setOpen(true);
                 handleInputFocus();
               }}
