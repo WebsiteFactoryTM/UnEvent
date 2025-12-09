@@ -57,10 +57,11 @@ function buildPayloadParams({
   params.set("select[county]", "true");
   params.set("select[slug]", "true");
   params.set("select[geo]", "true");
-  params.set("select[usageCount]", "true");
+  params.set("select[featured]", "true");
 
   if (!search && popularFallback) {
-    params.set("sort", "-usageCount");
+    params.set("where[featured][equals]", "true");
+    params.set("sort", "name");
     params.set("limit", String(limit));
     if (verifiedOnly) params.set("where[verified][equals]", "true");
     return params;

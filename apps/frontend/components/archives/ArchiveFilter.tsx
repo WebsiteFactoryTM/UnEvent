@@ -82,6 +82,7 @@ export function ArchiveFilter({
   const { eventTypes, locationTypes, serviceTypes } = data || {};
   const [citySearch, setCitySearch] = useState("");
   const debouncedCitySearch = useDebounce(citySearch, 300);
+
   const { data: citiesData, isLoading: isCitiesLoading } = useCities({
     search: debouncedCitySearch,
     limit: 20,
