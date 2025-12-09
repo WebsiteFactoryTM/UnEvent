@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { AnimatedBubbles } from "@/components/ui/animated-bubbles"
-import { FilterTabs } from "@/components/home/FilterTabs"
+import { AnimatedBubbles } from "@/components/ui/animated-bubbles";
+import { FilterTabs } from "@/components/home/FilterTabs";
 
 export function Hero() {
   return (
@@ -15,18 +15,19 @@ export function Hero() {
           </h1>
 
           <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto animate-fade-in-up [animation-delay:100ms]">
-            Caută ce faci azi sau în weekend, rezervă spații pentru petreceri, nunți, workshop-uri și contactează rapid
-            prestatori verificați (DJ, trupe, foto-video, catering, organizatori). Descoperă, compară și rezervă în
-            câteva clicuri, în toată România.
+            Caută ce faci azi sau în weekend, rezervă spații pentru petreceri,
+            nunți, workshop-uri și contactează rapid prestatori verificați (DJ,
+            trupe, foto-video, catering, organizatori). Descoperă, compară și
+            rezervă în câteva clicuri, în toată România.
           </p>
         </div>
 
         <div className="w-full max-w-5xl animate-fade-in-up [animation-delay:200ms]">
-          <div className="backdrop-blur-xl bg-card/50 border border-border rounded-2xl p-4 md:p-6 lg:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 max-h-[60vh] md:max-h-none overflow-y-auto">
+          <div className="backdrop-blur-xl bg-card/50 border border-border rounded-2xl p-4 md:p-6 lg:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 ">
             <FilterTabs />
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
