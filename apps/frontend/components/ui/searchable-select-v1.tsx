@@ -178,7 +178,7 @@ export function SearchableSelectV1({
       className={cn(
         variant === "chip"
           ? cn(
-              "inline-flex items-center justify-center rounded-full px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm font-medium transition-colors cursor-pointer select-none",
+              "inline-flex items-center justify-center rounded-full px-2 py-2 text-xs sm:px-3 sm:py-2 sm:text-sm font-medium transition-colors cursor-pointer select-none",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               value === option.value
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
@@ -273,6 +273,7 @@ export function SearchableSelectV1({
               id={id}
               ref={inputRef}
               type="text"
+              readOnly={isMobile && !inputFocused}
               value={open ? effectiveSearch : selectedLabel}
               onFocus={() => {
                 setOpen(true);
@@ -283,7 +284,6 @@ export function SearchableSelectV1({
                 if (!open) setOpen(true);
                 handleSearchChange(e.target.value);
               }}
-              inputMode={isMobile && !inputFocused ? "none" : "text"}
               onKeyDown={handleKeyDown}
               placeholder={selectedLabel || placeholder}
               className={cn(
