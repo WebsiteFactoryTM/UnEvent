@@ -65,7 +65,11 @@ const FeedQuerySchema = z.object({
   capacityMax: z.coerce.number().optional(),
   lat: z.coerce.number().optional(),
   lng: z.coerce.number().optional(),
-  radius: z.coerce.number().max(100000).default(10000).optional(),
+  radius: z.coerce
+    .number()
+    .transform((val) => Math.min(val, 100000)) // Clamp to max 100km
+    .default(40000)
+    .optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 })
@@ -160,21 +164,53 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     )
 
     if (query.lat && query.lng && !hasRelationshipFilters) {
-      // Use 'near' only when no relationship filters (avoids DISTINCT conflict)
-      // PayloadCMS geo near expects [lng, lat, radius] format (GeoJSON standard)
-      const radius = query.radius || 10000 // Default 10km if not provided
-      whereEntity.and?.push({
-        geo: { near: [query.lng, query.lat, radius] },
-      })
+      // When both city and geo params are present, combine them:
+      // Show listings that are either in the city OR within the geo radius
+      // This allows map view to show city listings initially while still allowing geo search when panning
+      if (query.city) {
+        // When city is specified, use polygon intersection to avoid ORDER BY conflicts
+        // This combines city filtering with geo filtering without sorting issues
+        const radius = query.radius || 40000
+        const circle = createCirclePolygon(query.lng, query.lat, radius)
+        whereEntity.and?.push({
+          or: [
+            { 'city.slug': { equals: query.city } }, // All listings in the city
+            {
+              and: [
+                { geo: { exists: true } }, // Only listings with geo coordinates
+                { geo: { intersects: circle } }, // Listings within geo radius
+              ],
+            },
+          ],
+        })
+      } else {
+        // Pure geo filtering when no city specified
+        whereEntity.and?.push({
+          geo: { near: [query.lng, query.lat, query.radius || 40000] },
+        })
+      }
     } else if (query.lat && query.lng && hasRelationshipFilters) {
       // When relationship filters exist, use 'intersects' with a circular polygon instead of 'near'
       // This filters by distance without adding ORDER BY, avoiding DISTINCT conflict
       // Note: Results won't be sorted by distance, but will be filtered by distance
-      const radius = query.radius || 10000 // Default 10km if not provided
-      const circle = createCirclePolygon(query.lng, query.lat, radius)
-      whereEntity.and?.push({
-        geo: { intersects: circle },
-      })
+      const radius = query.radius || 40000 // Default 40km if not provided
+      if (query.city) {
+        whereEntity.and?.push({
+          or: [
+            { 'city.slug': { equals: query.city } },
+            {
+              and: [
+                { geo: { exists: true } },
+                { geo: { intersects: createCirclePolygon(query.lng, query.lat, radius) } },
+              ],
+            },
+          ],
+        })
+      } else {
+        whereEntity.and?.push({
+          geo: { intersects: createCirclePolygon(query.lng, query.lat, radius) },
+        })
+      }
     } else if (query.city) {
       whereEntity.and?.push({ 'city.slug': { equals: query.city } })
     }

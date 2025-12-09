@@ -23,7 +23,11 @@ const FeedQuerySchema = z.object({
   capacityMax: z.coerce.number().optional(),
   lat: z.coerce.number().optional(),
   lng: z.coerce.number().optional(),
-  radius: z.coerce.number().max(100000).default(10000).optional(),
+  radius: z.coerce
+    .number()
+    .transform((val) => Math.min(val, 100000)) // Clamp to max 100km
+    .default(40000)
+    .optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 });
@@ -101,7 +105,9 @@ export async function fetchFeed(filters: Partial<FeedQuery>) {
       return [];
     }
 
-    return res.json();
+    const data = await res.json();
+
+    return data;
   } catch (err) {
     console.error("Error fetching feed:", err);
     return [];
