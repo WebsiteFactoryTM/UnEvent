@@ -17,7 +17,7 @@ export function CityChips({
   return (
     <div className="flex flex-wrap gap-2">
       {options.map((opt) => (
-        <Link href={`/${listingType}/oras/${opt.slug}`}>
+        <Link href={`/${listingType}/oras/${opt.slug}`} key={opt.slug}>
           <Button
             key={opt.slug}
             variant="outline"

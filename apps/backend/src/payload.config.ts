@@ -53,6 +53,7 @@ import { logSchedulerConfig, setSchedulerEnvironment } from './utils/schedulerCo
 import { getTaxonomies } from './endpoints/taxonomies'
 import { reportHandler } from './endpoints/reportEndpoint'
 import { contactHandler } from './endpoints/contactEndpoint'
+import { fixCities } from './endpoints/fixCities'
 import * as Sentry from '@sentry/nextjs'
 import { sentryPlugin } from '@payloadcms/plugin-sentry'
 import pg from 'pg'
@@ -165,6 +166,11 @@ export default buildConfig({
       path: '/contact',
       method: 'post',
       handler: contactHandler,
+    },
+    {
+      path: '/fix-cities',
+      method: 'get',
+      handler: fixCities,
     },
     {
       path: '/metrics/view',
