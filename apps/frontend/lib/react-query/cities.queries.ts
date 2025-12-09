@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCities, UseCitiesProps } from "../api/cities";
+import { getCities, getCityBySlug, UseCitiesProps } from "../api/cities";
 import { citiesKeys } from "../cacheKeys";
 
 export interface City {
@@ -62,5 +62,15 @@ export function useCities({
     enabled: enabled && (!!search || popularFallback),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
+  });
+}
+
+export function useCityBySlug(slug: string, enabled = true) {
+  return useQuery({
+    queryKey: citiesKeys.detail(slug),
+    queryFn: () => getCityBySlug(slug),
+    enabled: enabled && !!slug,
+    staleTime: 1000 * 60 * 60, // 1 hour - city coordinates don't change often
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 }

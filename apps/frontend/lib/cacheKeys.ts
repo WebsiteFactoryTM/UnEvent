@@ -129,6 +129,7 @@ export const citiesKeys = {
   all: ["cities"] as const,
   list: (filters: Record<string, unknown>) =>
     [...citiesKeys.all, "list", stableKey(filters)] as const,
+  detail: (slug: string) => [...citiesKeys.all, "detail", slug] as const,
 };
 
 /**

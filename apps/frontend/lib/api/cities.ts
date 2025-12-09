@@ -86,6 +86,40 @@ function isBuildTime() {
   );
 }
 
+export async function getCityBySlug(slug: string): Promise<City | null> {
+  try {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      console.warn("NEXT_PUBLIC_API_URL is not set; returning null");
+      return null;
+    }
+
+    const url = new URL("/api/cities", process.env.NEXT_PUBLIC_API_URL);
+    url.searchParams.set("where[slug][equals]", slug);
+    url.searchParams.set("limit", "1");
+
+    const res = await fetch(url.toString(), {
+      headers: { Accept: "application/json" },
+      // Cache for 1 hour since city coordinates don't change often
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) {
+      console.warn("City fetch failed:", res.status, await res.text());
+      return null;
+    }
+
+    const data = (await res.json()) as { docs?: City[] };
+    if (!data.docs || data.docs.length === 0) {
+      return null;
+    }
+
+    return data.docs[0];
+  } catch (error) {
+    console.error("Error fetching city by slug:", error);
+    return null;
+  }
+}
+
 export async function getCities({
   search,
   limit = 20,
