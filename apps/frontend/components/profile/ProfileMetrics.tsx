@@ -43,12 +43,6 @@ export function ProfileMetrics({ profile }: ProfileMetricsProps) {
           </Badge>
         )}
 
-        {/* Response time (mock) */}
-        <Badge variant="outline" className="gap-1.5">
-          <FaClock className="h-3 w-3" />
-          Răspunde în ~2h
-        </Badge>
-
         {/* Online status */}
         <Badge variant="outline" className="gap-1.5">
           <FaCircle

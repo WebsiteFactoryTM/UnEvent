@@ -98,28 +98,34 @@ export function MobileMenu() {
           )}
 
           {user && (
-            <div
-              className="flex items-center gap-3 mb-6 p-3 rounded-lg bg-white/5 border border-border/30 backdrop-blur-sm animate-fade-in-up"
-              style={{ animationDelay: "0.1s" }}
+            <Link
+              href="/cont/profil"
+              onClick={handleLinkClick}
+              prefetch={false}
             >
-              <Avatar className="h-12 w-12 border border-border/50 shadow-glow-sm">
-                <AvatarImage
-                  src={user.avatar || undefined}
-                  alt={user.name || user.email || ""}
-                />
-                <AvatarFallback className="bg-white/10 text-foreground">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate text-foreground">
-                  {user.name || user.email || ""}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {user.email || ""}
-                </p>
+              <div
+                className="flex items-center gap-3 mb-6 p-3 rounded-lg bg-white/5 border border-border/30 backdrop-blur-sm animate-fade-in-up"
+                style={{ animationDelay: "0.1s" }}
+              >
+                <Avatar className="h-12 w-12 border border-border/50 shadow-glow-sm">
+                  <AvatarImage
+                    src={user.avatar || undefined}
+                    alt={user.name || user.email || ""}
+                  />
+                  <AvatarFallback className="bg-white/10 text-foreground">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate text-foreground">
+                    {user.name || user.email || ""}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {user.email || ""}
+                  </p>
+                </div>
               </div>
-            </div>
+            </Link>
           )}
 
           <Separator className="bg-border/30 mb-4" />

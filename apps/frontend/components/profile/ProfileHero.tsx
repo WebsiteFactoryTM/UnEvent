@@ -1,8 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { FaStar, FaCircleCheck } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
+import {
+  FaStar,
+  FaCircleCheck,
+  FaChevronDown,
+  FaChevronUp,
+} from "react-icons/fa6";
 import type { User, Profile } from "@/types/payload-types";
 
 type ProfileWithUser = Profile & { user?: number | User };
@@ -11,7 +18,18 @@ interface ProfileHeroProps {
   profile: ProfileWithUser;
 }
 
+// Utility function to trim text to specified number of words
+function trimToWords(text: string, maxWords: number = 100): string {
+  const words = text.split(/\s+/);
+  if (words.length <= maxWords) {
+    return text;
+  }
+  return words.slice(0, maxWords).join(" ") + "...";
+}
+
 export function ProfileHero({ profile }: ProfileHeroProps) {
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
+
   const isVerified = profile.verifiedStatus === "approved";
   const memberSince = profile.memberSince
     ? new Date(profile.memberSince).toLocaleDateString("ro-RO", {
@@ -85,9 +103,34 @@ export function ProfileHero({ profile }: ProfileHeroProps) {
 
           {/* Bio */}
           {profile.bio && (
-            <p className="text-muted-foreground leading-relaxed">
-              {profile.bio}
-            </p>
+            <div className="space-y-3 max-w-full">
+              <div className="relative overflow-hidden">
+                <p className="text-muted-foreground leading-relaxed break-all max-w-full">
+                  {profile.bio.split(/\s+/).length > 50 && !isBioExpanded
+                    ? trimToWords(profile.bio, 50)
+                    : profile.bio}
+                </p>
+                {profile.bio.split(/\s+/).length > 50 && (
+                  <div className="mt-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsBioExpanded(!isBioExpanded)}
+                      className="h-auto p-0 text-primary hover:text-primary/80 transition-colors"
+                    >
+                      <span className="text-sm font-medium mr-2">
+                        {isBioExpanded ? "Arată mai puțin" : "Arată mai mult"}
+                      </span>
+                      {isBioExpanded ? (
+                        <FaChevronUp className="h-4 w-4" />
+                      ) : (
+                        <FaChevronDown className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </div>

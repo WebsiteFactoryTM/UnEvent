@@ -7,6 +7,7 @@ import { updateUserAvatar } from './hooks/afterChange/updateUserAvatar'
 import { updateUserDisplayName } from './hooks/afterChange/updateUserDisplayName'
 import { markAvatarPermanent } from './hooks/afterChange/markAvatarPermanent'
 import { ensureUniqueSlug } from './hooks/ensureUniqueSlug'
+import { afterChange } from '@/hooks/afterChange'
 
 export const Profiles: CollectionConfig = {
   slug: 'profiles',
@@ -30,7 +31,13 @@ export const Profiles: CollectionConfig = {
   },
   hooks: {
     beforeChange: [updateMemberSince],
-    afterChange: [updateUserRoles, updateUserAvatar, updateUserDisplayName, markAvatarPermanent],
+    afterChange: [
+      updateUserRoles,
+      updateUserAvatar,
+      updateUserDisplayName,
+      markAvatarPermanent,
+      afterChange,
+    ],
     afterOperation: [linkProfileToUserAfterChange],
   },
   timestamps: true,

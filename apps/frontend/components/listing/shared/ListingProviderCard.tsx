@@ -11,6 +11,16 @@ import { Button } from "@/components/ui/button";
 import type { Profile, Media } from "@/types/payload-types";
 import type { ListingType, Listing } from "@/types/listings";
 import { getRolesLabel } from "@/lib/getRolesLabel";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+// Utility function to trim text to 100 words
+function trimToWords(text: string, maxWords: number = 100): string {
+  const words = text.split(/\s+/);
+  if (words.length <= maxWords) {
+    return text;
+  }
+  return words.slice(0, maxWords).join(" ") + "...";
+}
 
 export function ListingProviderCard({
   type,
@@ -28,7 +38,7 @@ export function ListingProviderCard({
     owner.avatar && typeof owner.avatar === "object"
       ? (owner.avatar as Media)
       : null;
-  const isVerified = owner.verified?.status === "approved";
+  const isVerified = owner.verifiedStatus === "approved";
 
   const rolesLabel = getRolesLabel(
     owner?.userType?.filter((role) => role !== "client") || ["client"],
@@ -40,19 +50,15 @@ export function ListingProviderCard({
 
       <div className="flex flex-col sm:flex-row gap-6">
         {/* Avatar */}
-        {avatar && (
-          <div className="shrink-0">
-            <div className="relative w-24 h-24 rounded-full overflow-hidden">
-              <Image
-                src={avatar.url || ""}
-                alt={avatar.alt}
-                fill
-                className="object-cover"
-                sizes="96px"
-              />
-            </div>
-          </div>
-        )}
+        <Avatar className="h-24 w-24 md:h-32 md:w-32 ring-4 ring-primary/20">
+          <AvatarImage
+            src={avatar?.url || ""}
+            alt={`Owner avatar: ${owner.displayName || owner.name}`}
+          />
+          <AvatarFallback className="text-2xl md:text-3xl">
+            {(owner.displayName || owner.name).charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
 
         {/* Provider Info */}
         <div className="flex-1 space-y-4">
@@ -80,7 +86,20 @@ export function ListingProviderCard({
           </div>
 
           {owner.bio && (
-            <p className="text-muted-foreground text-sm">{owner.bio}</p>
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-sm">
+                {trimToWords(owner.bio, 50)}
+              </p>
+              {owner.bio.split(/\s+/).length > 100 && (
+                <Link
+                  href={`/profil/${owner.slug}`}
+                  className="text-sm text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
+                >
+                  Vezi mai mult
+                  <span className="text-xs">→</span>
+                </Link>
+              )}
+            </div>
           )}
 
           {/* Contact & Social */}
