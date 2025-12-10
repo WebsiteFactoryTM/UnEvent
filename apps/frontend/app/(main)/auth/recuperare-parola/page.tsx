@@ -15,6 +15,7 @@ import { Mail, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { forgotPassword } from "@/lib/api/auth";
+import { RecaptchaScript } from "@/components/RecaptchaScript";
 
 const forgotPasswordSchema = z.object({
   email: z
@@ -78,6 +79,7 @@ export default function ForgotPasswordPage() {
         title="Verifică-ți email-ul"
         subtitle="Link-ul de resetare a fost trimis"
       >
+        <RecaptchaScript />
         <div className="space-y-6 text-center">
           <Mail className="mx-auto h-16 w-16 text-primary" />
           <h2 className="text-2xl font-bold text-foreground">

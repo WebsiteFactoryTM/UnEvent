@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { RecaptchaScript } from "@/components/RecaptchaScript";
 
 export const metadata: Metadata = {
   title: "Autentificare | UN:EVENT",
@@ -52,6 +53,7 @@ export default async function LoginPage() {
         </p>
       }
     >
+      <RecaptchaScript />
       <LoginForm />
     </AuthCard>
   );

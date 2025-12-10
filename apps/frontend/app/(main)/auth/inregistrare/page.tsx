@@ -1,12 +1,14 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { AuthCard } from "@/components/auth/auth-card"
-import { SignUpForm } from "@/components/auth/sign-up-form"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { AuthCard } from "@/components/auth/auth-card";
+import { SignUpForm } from "@/components/auth/sign-up-form";
+import { RecaptchaScript } from "@/components/RecaptchaScript";
 
 export const metadata: Metadata = {
   title: "Înregistrare | UN:EVENT",
-  description: "Creează un cont nou pe UN:EVENT - platforma ta pentru evenimente memorabile.",
-}
+  description:
+    "Creează un cont nou pe UN:EVENT - platforma ta pentru evenimente memorabile.",
+};
 
 export default function SignUpPage() {
   return (
@@ -25,7 +27,8 @@ export default function SignUpPage() {
         </p>
       }
     >
+      <RecaptchaScript />
       <SignUpForm />
     </AuthCard>
-  )
+  );
 }
