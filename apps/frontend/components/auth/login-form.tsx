@@ -16,6 +16,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { signIn } from "next-auth/react";
 import * as Sentry from "@sentry/nextjs";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 const loginSchema = z.object({
   email: z
@@ -33,6 +34,7 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
+  const { executeRecaptcha, isReady: isRecaptchaReady } = useRecaptcha();
   const {
     register,
     handleSubmit,
@@ -66,6 +68,18 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsPending(true);
+
+    const recaptchaToken = await executeRecaptcha("login");
+
+    if (!recaptchaToken) {
+      toast({
+        title: "Eroare de verificare",
+        description: "Nu am putut verifica cererile. Te rugăm să reîncerci.",
+        variant: "destructive",
+      });
+      setIsPending(false);
+      return;
+    }
     try {
       const res = await signIn("credentials", {
         email: data.email,
@@ -180,7 +194,13 @@ export function LoginForm() {
         </a>
       </div>
 
-      <SubmitButton isLoading={isPending}>Autentificare</SubmitButton>
+      <SubmitButton isLoading={isPending} disabled={!isRecaptchaReady}>
+        {isPending
+          ? "Se autentifică..."
+          : !isRecaptchaReady
+            ? "Se încarcă..."
+            : "Autentifică"}
+      </SubmitButton>
     </form>
   );
 }

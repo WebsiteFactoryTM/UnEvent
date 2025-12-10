@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle2 } from "lucide-react";
 import { useTracking } from "@/app/providers/consent/TrackingEventsProvider";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 const signUpSchema = z.object({
   email: z
@@ -76,6 +77,7 @@ export function SignUpForm() {
   const [error, setError] = useState<Error | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
+  const { executeRecaptcha, isReady: isRecaptchaReady } = useRecaptcha();
 
   const {
     register,
@@ -116,8 +118,20 @@ export function SignUpForm() {
     setError(null);
 
     try {
+      const recaptchaToken = await executeRecaptcha("signup");
+
+      if (!recaptchaToken) {
+        toast({
+          title: "Eroare de verificare",
+          description: "Nu am putut verifica cererile. Te rugăm să reîncerci.",
+          variant: "destructive",
+        });
+        setIsPending(false);
+        return;
+      }
+
       // Create the user account
-      await signUp(data);
+      await signUp({ ...data });
 
       // Store email for success message
       setUserEmail(data.email);
@@ -366,7 +380,13 @@ export function SignUpForm() {
         )}
       </div>
 
-      <SubmitButton isLoading={isPending}>Creează cont</SubmitButton>
+      <SubmitButton isLoading={isPending} disabled={!isRecaptchaReady}>
+        {isPending
+          ? "Se creează cont..."
+          : !isRecaptchaReady
+            ? "Se încarcă..."
+            : "Creează cont"}
+      </SubmitButton>
     </form>
   );
 }
