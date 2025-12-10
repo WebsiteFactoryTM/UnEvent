@@ -22,6 +22,8 @@ import {
   FaChevronUp,
   FaFilter,
 } from "react-icons/fa6";
+import { RiResetLeftFill } from "react-icons/ri";
+
 import { useFilters } from "@/hooks/useFilters";
 import { fetchTaxonomies } from "@/lib/api/taxonomies";
 import { useQuery } from "@tanstack/react-query";
@@ -69,10 +71,17 @@ export function ArchiveFilter({
 
   const [isOpen, setIsOpen] = useState(defaultIsOpen);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const { filters, setFilter, setFilters, applyFilters, errors, setErrors } =
-    useFilters({
-      listingType,
-    });
+  const {
+    filters,
+    setFilter,
+    setFilters,
+    applyFilters,
+    errors,
+    setErrors,
+    resetFilters,
+  } = useFilters({
+    listingType,
+  });
   const { data } = useQuery({
     queryKey: ["taxonomies"],
     queryFn: () => fetchTaxonomies({ fullList: true }),
@@ -363,15 +372,24 @@ export function ArchiveFilter({
                 </>
               ) : null}
 
-              <Button
-                className="w-full glow-on-hover"
-                onClick={() => {
-                  applyFilters();
-                }}
-              >
-                <FaMagnifyingGlass className="mr-2 h-4 w-4" />
-                Caută locații
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={resetFilters}
+                  className="glow-on-hover"
+                >
+                  <RiResetLeftFill className="h-5 w-5 font-bold" />
+                </Button>
+                <Button
+                  className="glow-on-hover flex-1"
+                  onClick={() => {
+                    applyFilters();
+                  }}
+                >
+                  <FaMagnifyingGlass className="mr-2 h-4 w-4" />
+                  Caută {listingType}
+                </Button>
+              </div>
             </div>
           )}
 
@@ -491,15 +509,24 @@ export function ArchiveFilter({
                 </div>
               </div>
 
-              <Button
-                className="w-full glow-on-hover"
-                onClick={() => {
-                  applyFilters();
-                }}
-              >
-                <FaMagnifyingGlass className="mr-2 h-4 w-4" />
-                Caută servicii
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={resetFilters}
+                  className="glow-on-hover"
+                >
+                  <RiResetLeftFill className="h-5 w-5 font-bold" />
+                </Button>
+                <Button
+                  className="glow-on-hover flex-1"
+                  onClick={() => {
+                    applyFilters();
+                  }}
+                >
+                  <FaMagnifyingGlass className="mr-2 h-4 w-4" />
+                  Caută {listingType}
+                </Button>
+              </div>
             </div>
           )}
 
@@ -615,15 +642,24 @@ export function ArchiveFilter({
                 </div>
               </div>
 
-              <Button
-                className="w-full glow-on-hover"
-                onClick={() => {
-                  applyFilters();
-                }}
-              >
-                <FaMagnifyingGlass className="mr-2 h-4 w-4" />
-                Caută {listingType}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={resetFilters}
+                  className="glow-on-hover"
+                >
+                  <RiResetLeftFill className="h-5 w-5 font-bold" />
+                </Button>
+                <Button
+                  className="glow-on-hover flex-1"
+                  onClick={() => {
+                    applyFilters();
+                  }}
+                >
+                  <FaMagnifyingGlass className="mr-2 h-4 w-4" />
+                  Caută {listingType}
+                </Button>
+              </div>
             </div>
           )}
         </div>
