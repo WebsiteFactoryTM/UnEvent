@@ -77,6 +77,20 @@ export const sharedListingFields: Field[] = [
   },
   { name: 'verification', type: 'relationship', relationTo: 'verifications' },
   {
+    name: 'claimStatus',
+    type: 'select',
+    options: [
+      { label: 'Claimed', value: 'claimed' },
+      { label: 'Unclaimed', value: 'unclaimed' },
+    ],
+    defaultValue: 'claimed',
+    index: true,
+    admin: {
+      position: 'sidebar',
+      description: 'Mark as unclaimed if listing can be claimed by business owners',
+    },
+  },
+  {
     name: 'views',
     type: 'number',
     defaultValue: 0,
