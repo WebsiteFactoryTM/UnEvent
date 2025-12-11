@@ -11,6 +11,7 @@ import { fetchHomeListings } from "@/lib/api/home";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/react-query";
 import HomeCarousel from "@/components/home/carousels/HomeCarousel";
+import { XMasPromoBannerTop } from "@/components/home/XMasPromoBanner";
 
 export const metadata: Metadata = {
   title: "Locații de nuntă, săli evenimente, DJ & catering | UN:EVENT",

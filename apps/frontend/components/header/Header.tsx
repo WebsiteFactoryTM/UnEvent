@@ -5,7 +5,12 @@ import { NavLink } from "./NavLink";
 import { UserMenu } from "./UserMenu";
 import { MobileMenu } from "./MobileMenu";
 import { ThemeToggle } from "./ThemeToggle";
-import { FaLocationDot, FaCakeCandles, FaCalendarDays } from "react-icons/fa6";
+import {
+  FaLocationDot,
+  FaCakeCandles,
+  FaCalendarDays,
+  FaGift,
+} from "react-icons/fa6";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 
@@ -37,6 +42,13 @@ export function Header() {
             <NavLink href="/evenimente" icon={FaCalendarDays}>
               Evenimente
             </NavLink>
+            <Link
+              href="/promotie-de-craciun"
+              className="flex items-center gap-2 px-4 text-red-500 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-red-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+            >
+              <FaGift className="h-4 w-4" />
+              Promoție
+            </Link>
           </nav>
 
           {/* Right Group */}
