@@ -9,6 +9,7 @@ import { CookieBanner } from "@/components/common/CookieBanner";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { RecaptchaScript } from "@/components/RecaptchaScript";
 
 const manrope = Manrope({
   subsets: ["latin", "latin-ext"], // Include Romanian characters
@@ -167,6 +168,7 @@ export default async function RootLayout({
       <body className={`${manrope.variable} font-sans antialiased`}>
         <Providers>
           <Header />
+          <RecaptchaScript />
           <main className="pt-16">{children}</main>
 
           <Footer />

@@ -5,7 +5,6 @@ import { FaHouse, FaPhone, FaEnvelope, FaLocationDot } from "react-icons/fa6";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { SocialLinks } from "@/components/footer/SocialLinks";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { RecaptchaScript } from "@/components/RecaptchaScript";
 
 export const metadata: Metadata = {
   title: "Contactează-ne | UN:EVENT",
@@ -16,7 +15,6 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <RecaptchaScript />
       <ScrollToTop />
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumbs */}

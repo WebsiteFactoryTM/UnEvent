@@ -492,3 +492,7 @@
   color: hsl(var(--destructive));
   font-weight: 600;
 }
+
+.grecaptcha-badge {
+  display: none !important;
+}

@@ -16,7 +16,6 @@ import { FaCircleExclamation } from "react-icons/fa6";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { resetPassword } from "@/lib/api/auth";
-import { RecaptchaScript } from "@/components/RecaptchaScript";
 
 const resetPasswordSchema = z
   .object({
@@ -169,7 +168,6 @@ export default function ResetPasswordPage() {
       title="Resetează parola"
       subtitle="Creează o parolă nouă pentru contul tău"
     >
-      <RecaptchaScript />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {error && (
           <Alert variant="destructive">
