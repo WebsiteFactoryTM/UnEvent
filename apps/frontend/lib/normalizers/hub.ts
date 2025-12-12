@@ -26,6 +26,7 @@ export type ListingCardData = {
   participants?: number;
   initialIsFavorited?: boolean;
   tier?: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
+  claimStatus?: "claimed" | "unclaimed" | null;
 };
 
 function getTypeLabelFromRelation(
@@ -75,6 +76,7 @@ export function normalizeLocation(listing: Location): ListingCardData {
     priceRange: undefined,
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
     tier: listing.tier,
+    claimStatus: listing.claimStatus || undefined,
   };
 }
 
@@ -98,6 +100,7 @@ export function normalizeService(listing: Service): ListingCardData {
     priceRange: undefined,
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
     tier: listing.tier,
+    claimStatus: listing.claimStatus || undefined,
   };
 }
 
@@ -122,6 +125,7 @@ export function normalizeEvent(listing: Event): ListingCardData {
     participants: listing.participants ?? undefined,
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
     tier: listing.tier,
+    claimStatus: listing.claimStatus || undefined,
   };
 }
 

@@ -13,7 +13,6 @@ export const createProfileAfterUserCreate: CollectionAfterChangeHook = async ({
     const user = doc as unknown as User
 
     // Log once so we can verify hook is running after commit
-    req.payload.logger.info(`[createProfileAfterUserCreate] creating profile for user ${user.id}`)
 
     const userType = Array.from(
       new Set(user.roles.map((role) => (role === 'admin' ? 'client' : role))),

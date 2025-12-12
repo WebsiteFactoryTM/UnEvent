@@ -13,3 +13,17 @@ export const getListingTypeSlug = (
     | "events"
     | "services";
 };
+
+/**
+ * Convert backend collection slug to frontend listing type slug
+ */
+export const getFrontendListingTypeSlug = (
+  backendSlug: "locations" | "events" | "services",
+): ListingType => {
+  const mapping = {
+    locations: "locatii" as ListingType,
+    events: "evenimente" as ListingType,
+    services: "servicii" as ListingType,
+  };
+  return mapping[backendSlug];
+};

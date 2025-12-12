@@ -14,6 +14,10 @@ export const revalidate = async (args: { tags: string[]; payload: Payload }): Pr
   }
 
   try {
+    // Add timeout to prevent hanging (10 seconds)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000)
+
     const res = await fetch(process.env.NEXT_PRIV_REVALIDATE_URL, {
       method: 'POST',
       headers: {
@@ -21,7 +25,10 @@ export const revalidate = async (args: { tags: string[]; payload: Payload }): Pr
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ tags }),
+      signal: controller.signal,
     })
+
+    clearTimeout(timeoutId)
 
     if (res.ok) {
       payload.logger.info(`Revalidated ${tags.length} tag(s): ${tags.join(', ')}`)
@@ -30,6 +37,10 @@ export const revalidate = async (args: { tags: string[]; payload: Payload }): Pr
       payload.logger.error(`Error revalidating tags: ${res.status} ${text}`)
     }
   } catch (err: unknown) {
-    payload.logger.error(`Error hitting revalidate route: ${err}`)
+    if (err instanceof Error && err.name === 'AbortError') {
+      payload.logger.warn(`Revalidation timeout after 10s for tags: ${tags.join(', ')}`)
+    } else {
+      payload.logger.error(`Error hitting revalidate route: ${err}`)
+    }
   }
 }
