@@ -29,7 +29,9 @@ const FavoriteButton = ({
     initialIsFavorited: initialIsFavorited ?? false,
   });
 
-  const handleFavorite = async () => {
+  const handleFavorite = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     try {
       const result = await toggleAsync();
 
@@ -93,7 +95,7 @@ const FavoriteButton = ({
     <Button
       size="icon"
       variant="ghost"
-      className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover:bg-background/90"
+      className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover:bg-background/90 z-50"
       onClick={handleFavorite}
       disabled={isLoading || isToggling}
     >

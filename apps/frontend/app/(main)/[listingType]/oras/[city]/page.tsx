@@ -39,29 +39,40 @@ export async function generateMetadata({
   const cityLabel = getCityLabel(city);
 
   const baseUrl = `https://unevent.ro/${listingType}/oras/${city}`;
-  const title = `Top ${listingLabel} ${cityLabel}${
+  const title = `${listingLabel} Evenimente ${cityLabel}: Săli & Spații de Închiriat${
     page > 1 ? ` – Pagina ${page}` : ""
   } | UN:EVENT`;
-  const description = `Descoperă cele mai bune ${listingLabel.toLowerCase()} din ${cityLabel}. Compară locații, servicii și evenimente verificate.`;
+  const description = `Descoperă top ${listingLabel.toLowerCase()} din ${cityLabel}. De la săli de nuntă elegante la spații corporate și outdoor. Vezi capacitatea, compară prețuri și rezervă pe UN:EVENT.`;
 
   // Smart Canonical Logic
   // Filter params (these indicate filtered results, not unique pages)
-  const filterParams = ['priceMin', 'priceMax', 'capacityMin', 'facilities', 
-                        'facilitiesMode', 'lat', 'lng', 'radius', 'ratingMin', 
-                        'type', 'suitableFor', 'limit'];
-  
+  const filterParams = [
+    "priceMin",
+    "priceMax",
+    "capacityMin",
+    "facilities",
+    "facilitiesMode",
+    "lat",
+    "lng",
+    "radius",
+    "ratingMin",
+    "type",
+    "suitableFor",
+    "limit",
+  ];
+
   // Check if any filter params exist (excluding 'page')
   const hasFilters = Object.keys(searchFilters || {}).some(
-    key => filterParams.includes(key) && searchFilters[key]
+    (key) => filterParams.includes(key) && searchFilters[key],
   );
 
   // Canonical URL logic:
   // - If filters applied → point to clean URL (no params)
   // - If only page param → self-canonical with page (page 2 is unique content)
   // - If no params → self-canonical
-  const canonicalUrl = hasFilters 
+  const canonicalUrl = hasFilters
     ? baseUrl // Clean URL without any params
-    : page > 1 
+    : page > 1
       ? `${baseUrl}?page=${page}` // Self-canonical with page number
       : baseUrl; // Clean URL
 

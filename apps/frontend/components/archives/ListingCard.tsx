@@ -85,105 +85,109 @@ export function ListingCard({
     }
   };
   return (
-    <Card className="glass-card overflow-hidden h-full flex flex-col">
-      <ListingCardImpressionsLayer listingId={id} kind={kind} />
+    <Link href={`/${listingType}/${slug}`}>
+      <Card className="glass-card overflow-hidden h-full flex flex-col">
+        <ListingCardImpressionsLayer listingId={id} kind={kind} />
 
-      <CardHeader className="p-0 relative">
-        <div className="relative h-48 w-full">
-          <Image
-            src={image.url || "/placeholder.svg"}
-            alt={image.alt}
-            fill
-            className="object-cover"
-          />
-          {verified && (
-            <MdVerified className="absolute top-2 left-2 text-neutral-200 h-8 w-8" />
-          )}
-          {claimStatus === "unclaimed" && (
-            <div className="absolute top-2 right-2">
-              <UnclaimedBadge />
-            </div>
-          )}
-          <FavoriteButton
-            listingType={listingType}
-            listingId={id}
-            initialIsFavorited={initialIsFavorited}
-          />
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex-1 p-4 space-y-3">
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="font-semibold text-lg line-clamp-2">{title}</h3>
-          <div className="flex gap-2 shrink-0">
-            {claimStatus === "unclaimed" && <UnclaimedBadge />}
-            {tier && tier !== "standard" ? renderTierBadge() : null}
+        <CardHeader className="p-0 relative">
+          <div className="relative h-48 w-full">
+            <Image
+              src={image.url || "/placeholder.svg"}
+              alt={image.alt}
+              fill
+              className="object-cover"
+            />
+            {verified && (
+              <MdVerified className="absolute top-2 left-2 text-neutral-200 h-8 w-8" />
+            )}
+            {claimStatus === "unclaimed" && (
+              <div className="absolute top-2 right-2">
+                <UnclaimedBadge />
+              </div>
+            )}
+            <FavoriteButton
+              listingType={listingType}
+              listingId={id}
+              initialIsFavorited={initialIsFavorited}
+            />
           </div>
-        </div>
-        <p className="text-sm text-muted-foreground line-clamp-3">
-          {description}
-        </p>
+        </CardHeader>
 
-        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <FaLocationDot className="h-4 w-4" />
-            <span>{city}</span>
+        <CardContent className="flex-1 p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="font-semibold text-lg line-clamp-2">{title}</h3>
+            <div className="flex gap-2 shrink-0">
+              {claimStatus === "unclaimed" && <UnclaimedBadge />}
+              {tier && tier !== "standard" ? renderTierBadge() : null}
+            </div>
           </div>
+          <p className="text-sm text-muted-foreground line-clamp-3">
+            {description}
+          </p>
 
-          {indoor && (
+          <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
-              <FaUsers className="h-4 w-4" />
-              <span>{indoor} persoane</span>
+              <FaLocationDot className="h-4 w-4" />
+              <span>{city}</span>
             </div>
-          )}
 
-          {participants && (
-            <div className="flex items-center gap-1">
-              <FaUsers className="h-4 w-4" />
-              <span>{participants} participanți</span>
-            </div>
-          )}
+            {indoor && (
+              <div className="flex items-center gap-1">
+                <FaUsers className="h-4 w-4" />
+                <span>{indoor} persoane</span>
+              </div>
+            )}
 
-          {date && (
-            <div className="flex items-center gap-1">
-              <FaCalendar className="h-4 w-4" />
-              <span>{new Date(date).toLocaleDateString("ro-RO")}</span>
-            </div>
-          )}
+            {participants && (
+              <div className="flex items-center gap-1">
+                <FaUsers className="h-4 w-4" />
+                <span>{participants} participanți</span>
+              </div>
+            )}
 
-          {/* <div className="flex items-center gap-1">
+            {date && (
+              <div className="flex items-center gap-1">
+                <FaCalendar className="h-4 w-4" />
+                <span>{new Date(date).toLocaleDateString("ro-RO")}</span>
+              </div>
+            )}
+
+            {/* <div className="flex items-center gap-1">
             <FaEye className="h-4 w-4" />
             <span>{views.toLocaleString("ro-RO")}</span>
           </div> */}
-        </div>
-        <div className="flex gap-2">
-          {type.split(",").map((t) => (
-            <Badge variant="secondary" key={t}>
-              {t}
-            </Badge>
-          ))}
-        </div>
-
-        {priceRange && (
-          <p className="text-sm font-semibold text-foreground">{priceRange}</p>
-        )}
-
-        {rating && rating.average && rating.count ? (
-          <div className="flex items-center gap-1 text-sm">
-            <FaStar className="h-4 w-4 text-yellow-500" />
-            <span className="font-semibold">{rating?.average}</span>
-            <span className="text-muted-foreground">
-              · {rating?.count} recenzii
-            </span>
           </div>
-        ) : null}
-      </CardContent>
+          <div className="flex gap-2">
+            {type.split(",").map((t) => (
+              <Badge variant="secondary" key={t}>
+                {t}
+              </Badge>
+            ))}
+          </div>
 
-      <CardFooter className="p-4 pt-0">
-        <Button asChild className="w-full glow-on-hover">
-          <Link href={`/${listingType}/${slug}`}>Vezi detalii</Link>
-        </Button>
-      </CardFooter>
-    </Card>
+          {priceRange && (
+            <p className="text-sm font-semibold text-foreground">
+              {priceRange}
+            </p>
+          )}
+
+          {rating && rating.average && rating.count ? (
+            <div className="flex items-center gap-1 text-sm">
+              <FaStar className="h-4 w-4 text-yellow-500" />
+              <span className="font-semibold">{rating?.average}</span>
+              <span className="text-muted-foreground">
+                · {rating?.count} recenzii
+              </span>
+            </div>
+          ) : null}
+        </CardContent>
+
+        <CardFooter className="p-4 pt-0">
+          <Button className="w-full glow-on-hover" aria-label="Vezi detalii">
+            Vezi detalii
+          </Button>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 }

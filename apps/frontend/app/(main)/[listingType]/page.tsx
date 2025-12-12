@@ -42,14 +42,19 @@ const toCard = (
 });
 
 const titles: Record<string, string> = {
-  locatii: "Locații pentru evenimente în România | UN:EVENT",
-  servicii: "Servicii pentru evenimente în România | UN:EVENT",
-  evenimente: "Evenimente în România | UN:EVENT",
+  locatii: "Locații Evenimente România - Săli & Spații de Închiriat | UN:EVENT",
+  servicii:
+    "Servicii Evenimente România - Furnizori & Profesioniști | UN:EVENT",
+  evenimente:
+    "Calendar Evenimente România: Concerte, Festivaluri, Party | UN:EVENT",
 };
 const descriptions: Record<string, string> = {
-  locatii: "Descoperă locații verificate pentru evenimente în toată România.",
-  servicii: "Găsește servicii pentru evenimente — verificate și recenzate.",
-  evenimente: "Evenimente în toată România — descoperă ce urmează.",
+  locatii:
+    "Platforma completă pentru locații de evenimente din România. Găsește mii de săli de nuntă, spații corporate și locații inedite. Compară și rezervă pe UN:EVENT.",
+  servicii:
+    "Conectează-te cu cei mai buni furnizori din România. De la fotografi și videografi, la DJ, formații și catering. Vezi portofolii și cere oferte pe UN:EVENT.",
+  evenimente:
+    "Descoperă ce se întâmplă în România! Ghidul tău complet de evenimente: festivaluri, concerte, teatru și petreceri. Cumpără bilete simplu prin UN:EVENT.",
 };
 
 export async function generateStaticParams() {
