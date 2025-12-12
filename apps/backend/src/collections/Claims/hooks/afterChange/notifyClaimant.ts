@@ -26,16 +26,37 @@ export const notifyClaimant: CollectionAfterChangeHook = async ({
   }
 
   try {
-    // Get listing info
-    const listingId = typeof doc.listing === 'number' ? doc.listing : doc.listing?.id
-    const listingTitle =
-      typeof doc.listing === 'object' && doc.listing !== null
-        ? (doc.listing as Location | Event | Service).title
-        : `Listing ID: ${listingId}`
+    // Get listing info - fetch listing to get title and slug
+    const listingId =
+      typeof doc.listing === 'object' && doc.listing !== null && 'value' in doc.listing
+        ? (doc.listing as { relationTo: string; value: number }).value
+        : typeof doc.listing === 'number'
+          ? doc.listing
+          : null
 
-    const listingType = doc.listingType
+    let listingTitle = 'Unknown Listing'
+    let listingSlug: string | number | undefined = listingId
+    const listingType = doc.listingType as 'locations' | 'events' | 'services'
+
+    if (listingId && listingType) {
+      try {
+        const listing = await req.payload.findByID({
+          collection: listingType,
+          id: typeof listingId === 'number' ? listingId : Number(listingId),
+        })
+        listingTitle = listing?.title || 'Unknown Listing'
+        listingSlug = listing?.slug || listingId
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        req.payload.logger.warn(
+          `[notifyClaimant] Could not fetch listing ${listingId}: ${errorMessage}`,
+        )
+        listingTitle = `Listing ID: ${listingId}`
+      }
+    }
+
     const frontendUrl = process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
-    const listingUrl = `${frontendUrl}/${listingType}/${typeof doc.listing === 'object' && doc.listing !== null ? (doc.listing as Location | Event | Service).slug : listingId}`
+    const listingUrl = `${frontendUrl}/${listingType}/${listingSlug}`
 
     if (currentStatus === 'approved') {
       // Notify claimant of approval
