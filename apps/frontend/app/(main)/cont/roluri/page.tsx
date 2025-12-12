@@ -8,6 +8,7 @@ import { useState } from "react";
 import { changeRole } from "@/lib/api/roles";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 const ALL_ROLES = [
   {
@@ -56,7 +57,18 @@ export default function RoluriPage() {
     if (!accessToken) {
       toast({
         title: "Eroare",
-        description: "Nu ești autentificat.",
+        description: (
+          <>
+            Nu ești autentificat.{" "}
+            <Link
+              href="/auth/autentificare"
+              className="underline font-semibold hover:text-primary"
+            >
+              Loghează-te acum
+            </Link>
+            .
+          </>
+        ),
         variant: "destructive",
       });
       return;
