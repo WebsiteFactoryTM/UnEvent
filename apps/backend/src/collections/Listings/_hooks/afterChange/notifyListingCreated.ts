@@ -2,6 +2,23 @@ import type { CollectionAfterChangeHook } from 'payload'
 import { enqueueNotification } from '@/utils/notificationsQueue'
 
 /**
+ * Convert backend collection slug to frontend listing type slug
+ */
+const getFrontendListingTypeSlug = (
+  backendSlug: 'locations' | 'events' | 'services',
+): 'locatii' | 'evenimente' | 'servicii' => {
+  const mapping: Record<
+    'locations' | 'events' | 'services',
+    'locatii' | 'evenimente' | 'servicii'
+  > = {
+    locations: 'locatii',
+    events: 'evenimente',
+    services: 'servicii',
+  }
+  return mapping[backendSlug]
+}
+
+/**
  * Send claim invitation email when UnEvent creates an unclaimed listing with contact email
  */
 export const notifyListingCreated: CollectionAfterChangeHook = async ({
@@ -25,10 +42,11 @@ export const notifyListingCreated: CollectionAfterChangeHook = async ({
     const listingTitle = doc.title
     const listingSlug = doc.slug
     const listingType = collection.slug as 'locations' | 'events' | 'services'
+    const frontendListingType = getFrontendListingTypeSlug(listingType)
     const contactEmail = doc.contact.email
 
     const frontendUrl = process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
-    const claimUrl = `${frontendUrl}/claim?listingId=${listingId}&listingType=${listingType}`
+    const claimUrl = `${frontendUrl}/revendica?listingId=${listingId}&listingType=${frontendListingType}`
 
     // Note: We don't create a claim record here - that will be created when user clicks the link
     // The email will include a link that leads to the claim form

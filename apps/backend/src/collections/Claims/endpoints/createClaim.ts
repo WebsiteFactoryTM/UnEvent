@@ -27,19 +27,23 @@ export const createClaim: PayloadHandler = async (req: PayloadRequest) => {
       })
     }
 
-    // Check for existing pending claims
-    const existingClaims = await req.payload.find({
+    // Check for existing pending claims for this listing (from any user)
+    // Use polymorphic relationship format to query directly by listing ID
+    const listingPendingClaims = await req.payload.find({
       collection: 'claims',
       where: {
         and: [
           {
-            listingType: {
-              equals: parsed.listingType,
+            listing: {
+              equals: {
+                relationTo: parsed.listingType,
+                value: parsed.listingId,
+              },
             },
           },
           {
-            claimantEmail: {
-              equals: parsed.claimantEmail,
+            listingType: {
+              equals: parsed.listingType,
             },
           },
           {
@@ -53,21 +57,26 @@ export const createClaim: PayloadHandler = async (req: PayloadRequest) => {
       depth: 0,
     })
 
-    // Filter by listing ID in memory
-    const matchingClaims = existingClaims.docs?.filter((claim) => {
-      const claimListingId =
-        typeof claim.listing === 'object' && claim.listing !== null
-          ? (claim.listing as { relationTo: string; value: number }).value
-          : typeof claim.listing === 'number'
-            ? claim.listing
-            : null
-      return claimListingId === parsed.listingId
-    })
+    // Check if there's already a pending claim for this listing from any user
+    if (listingPendingClaims.docs.length > 0) {
+      // Check if it's from the same email (duplicate)
+      const sameEmailClaim = listingPendingClaims.docs.find(
+        (claim) => claim.claimantEmail === parsed.claimantEmail,
+      )
 
-    if (matchingClaims && matchingClaims.length > 0) {
+      if (sameEmailClaim) {
+        return new Response(
+          JSON.stringify({
+            error: 'A pending claim already exists for this listing and email',
+          }),
+          { status: 409, headers: { 'Content-Type': 'application/json' } },
+        )
+      }
+
+      // Different user already has a pending claim
       return new Response(
         JSON.stringify({
-          error: 'A pending claim already exists for this listing and email',
+          error: 'This listing is already being claimed by someone else. Please try again later.',
         }),
         { status: 409, headers: { 'Content-Type': 'application/json' } },
       )
