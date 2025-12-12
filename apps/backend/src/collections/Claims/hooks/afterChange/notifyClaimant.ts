@@ -69,7 +69,6 @@ export const notifyClaimant: CollectionAfterChangeHook = async ({
         listing_url: listingUrl,
         claim_id: String(doc.id),
       })
-
     } else if (currentStatus === 'rejected') {
       // Notify claimant of rejection
       await enqueueNotification('claim.rejected', {
