@@ -132,8 +132,9 @@ curl http://localhost:3000/api/claims/1
 ## Step 4: Associate Claim with Profile (After Signup)
 
 **First, login or create a user account:**
+
 ```bash
-# Login
+# Login and get token
 curl -X POST http://localhost:4000/api/users/login \
   -H "Content-Type: application/json" \
   -d '{
@@ -142,12 +143,30 @@ curl -X POST http://localhost:4000/api/users/login \
   }'
 ```
 
-**Associate claim with profile:**
+**Login Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": 123,
+    "email": "claimant@example.com",
+    "profile": 456,
+    ...
+  }
+}
+```
+
+**Extract the token from the response and use it to associate the claim:**
+
 ```bash
-curl -X PATCH http://localhost:3000/api/claims/token/550e8400-e29b-41d4-a716-446655440000 \
+# Replace YOUR_TOKEN_HERE with the token from login response
+# Replace CLAIM_TOKEN with the actual claim token from Step 2
+curl -X PATCH http://localhost:3000/api/claims/token/CLAIM_TOKEN \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
+
+**Note:** The PATCH request does NOT require a body - it automatically associates the authenticated user's profile with the claim.
 
 **Response:**
 ```json
@@ -155,10 +174,31 @@ curl -X PATCH http://localhost:3000/api/claims/token/550e8400-e29b-41d4-a716-446
   "success": true,
   "claim": {
     "id": 1,
-    "claimantProfile": 123,
+    "claimantProfile": 456,
+    "claimToken": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "pending",
     ...
   }
 }
+```
+
+**Example with actual values:**
+```bash
+# 1. Login first
+LOGIN_RESPONSE=$(curl -s -X POST http://localhost:4000/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "claimant@example.com",
+    "password": "password123"
+  }')
+
+# 2. Extract token (requires jq: brew install jq)
+TOKEN=$(echo $LOGIN_RESPONSE | jq -r '.token')
+
+# 3. Associate claim with profile
+curl -X PATCH http://localhost:3000/api/claims/token/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 ## Step 5: Approve Claim (As Admin)
