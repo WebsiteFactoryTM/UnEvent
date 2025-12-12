@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -16,33 +18,53 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Require authentication
-  const authHeader = req.headers.get("authorization");
-  if (!authHeader) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Require authentication - try server-side session first, then Authorization header
+  const session = await getServerSession(authOptions);
+  let payloadAuthHeader: string | undefined;
+  let profileId: number | undefined;
+
+  // Try to get profile ID from session first
+  if (session?.user?.profile) {
+    profileId =
+      typeof session.user.profile === "number"
+        ? session.user.profile
+        : (session.user.profile as any)?.id;
+
+    if (session?.accessToken) {
+      payloadAuthHeader = `Bearer ${session.accessToken}`;
+    }
   }
 
-  const token = authHeader.replace(/^(Bearer|JWT)\s+/i, "");
-  const payloadAuthHeader = `Bearer ${token}`;
-
-  try {
-    // Get user profile
-    const userRes = await fetch(`${payloadUrl}/api/users/me`, {
-      headers: {
-        Authorization: payloadAuthHeader,
-        "x-tenant": "unevent",
-      },
-    });
-
-    if (!userRes.ok) {
+  // Fallback to Authorization header if session doesn't have profile
+  if (!profileId || !payloadAuthHeader) {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const token = authHeader.replace(/^(Bearer|JWT)\s+/i, "");
+    payloadAuthHeader = `Bearer ${token}`;
+  }
 
-    const userData = await userRes.json();
-    const profileId =
-      typeof userData.profile === "number"
-        ? userData.profile
-        : userData.profile?.id;
+  try {
+    // Fetch profile ID from API if not in session
+    if (!profileId) {
+      const userRes = await fetch(`${payloadUrl}/api/users/me`, {
+        headers: {
+          Authorization: payloadAuthHeader!,
+          "x-tenant": "unevent",
+        },
+      });
+
+      if (!userRes.ok) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const userData = await userRes.json();
+      // Handle both wrapped and direct user object
+      const user = userData.user || userData;
+      profileId =
+        typeof user.profile === "number" ? user.profile : user.profile?.id;
+    }
 
     if (!profileId) {
       return NextResponse.json(
@@ -91,7 +113,6 @@ export async function GET(req: NextRequest) {
       totalDocs: claimsData.totalDocs || 0,
     });
   } catch (error) {
-    console.error("Error fetching claims:", error);
     return NextResponse.json(
       {
         error:

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -48,7 +50,6 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error fetching claim by token:", error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to fetch claim",
@@ -72,22 +73,17 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     );
   }
 
-  // Require authentication
-  const authHeader = req.headers.get("authorization");
-  if (!authHeader) {
-    console.error("[PATCH /api/claims/token] No Authorization header found");
+  // Require authentication - get session server-side
+  const session = await getServerSession(authOptions);
+
+  if (!session?.accessToken) {
     return NextResponse.json(
-      { error: "Unauthorized - No token provided" },
+      { error: "Unauthorized - Please log in" },
       { status: 401 },
     );
   }
 
-  const jwtToken = authHeader.replace(/^(Bearer|JWT)\s+/i, "");
-  const payloadAuthHeader = `Bearer ${jwtToken}`;
-
-  console.log(
-    "[PATCH /api/claims/token] Auth header present, validating user...",
-  );
+  const payloadAuthHeader = `Bearer ${session.accessToken}`;
 
   try {
     // Get user profile
@@ -100,11 +96,6 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
     if (!userRes.ok) {
       const errorData = await userRes.json().catch(() => ({}));
-      console.error(
-        "[PATCH /api/claims/token] Failed to validate user:",
-        userRes.status,
-        errorData,
-      );
       return NextResponse.json(
         { error: `Unauthorized - ${errorData.message || "Invalid token"}` },
         { status: 401 },
@@ -116,22 +107,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     const userData = userResponse.user || userResponse;
 
     if (!userData || !userData.id) {
-      console.error(
-        "[PATCH /api/claims/token] Invalid user data received:",
-        userResponse,
-      );
       return NextResponse.json(
         { error: "Invalid user data received" },
         { status: 500 },
       );
     }
-
-    console.log("[PATCH /api/claims/token] User validated:", {
-      userId: userData.id,
-      email: userData.email,
-      profile: userData.profile,
-      profileType: typeof userData.profile,
-    });
 
     // Extract profile ID - handle both number and object formats
     const profileId =
@@ -194,14 +174,6 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     }
 
     // Use custom endpoint to associate profile - bypasses access control
-    console.log("[PATCH /api/claims/token] Associating profile:", {
-      claimId: claim.id,
-      claimToken: claim.claimToken,
-      currentProfile: claim.claimantProfile,
-      newProfileId: profileId,
-      userId: userData.id,
-    });
-
     const updateRes = await fetch(
       `${payloadUrl}/api/claims/associate-profile?token=${token}`,
       {
@@ -232,7 +204,6 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       claim: updateResult,
     });
   } catch (error) {
-    console.error("Error associating claim with profile:", error);
     return NextResponse.json(
       {
         error:

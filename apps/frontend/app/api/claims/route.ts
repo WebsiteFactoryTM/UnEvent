@@ -98,16 +98,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Debug logging
-    console.log(
-      "[POST /api/claims] Creating claim - Listing ID:",
-      listingId,
-      "Type:",
-      listingType,
-      "Email:",
-      claimantEmail,
-    );
-
     // Use custom endpoint that handles polymorphic relationship properly
     const createRes = await fetch(`${payloadUrl}/api/claims/create`, {
       method: "POST",
@@ -127,22 +117,12 @@ export async function POST(req: NextRequest) {
 
     const claimResult = await createRes.json();
 
-    // Debug logging
-    console.log("[POST /api/claims] Response status:", createRes.status);
-    console.log(
-      "[POST /api/claims] Response body:",
-      JSON.stringify(claimResult, null, 2),
-    );
-
     if (!createRes.ok) {
       // Check for duplicate claim error
       const errorMessage =
         claimResult.message ||
         claimResult.errors?.[0]?.message ||
         "Failed to create claim";
-
-      console.error("[POST /api/claims] Error creating claim:", errorMessage);
-      console.error("[POST /api/claims] Full error response:", claimResult);
 
       // If it's a validation error that might indicate duplicate, return 409
       if (
@@ -166,7 +146,6 @@ export async function POST(req: NextRequest) {
     // Pass through the backend response directly (it already has the correct structure)
     return NextResponse.json(claimResult);
   } catch (error) {
-    console.error("Error creating claim:", error);
     return NextResponse.json(
       {
         error:

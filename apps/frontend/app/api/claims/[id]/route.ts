@@ -50,7 +50,6 @@ export async function GET(req: NextRequest, { params }: Params) {
       claim,
     });
   } catch (error) {
-    console.error("Error fetching claim:", error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to fetch claim",
