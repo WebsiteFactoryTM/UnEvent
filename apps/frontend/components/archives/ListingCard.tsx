@@ -25,6 +25,7 @@ import type { ListingCardData } from "@/lib/normalizers/hub";
 // import { useImpression } from "../metrics/useImpression";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import ListingCardImpressionsLayer from "./ListingCardImpressionsLayer";
+import { UnclaimedBadge } from "../listing/shared/UnclaimedBadge";
 
 export function ListingCard({
   id,
@@ -44,6 +45,7 @@ export function ListingCard({
   participants,
   initialIsFavorited,
   tier,
+  claimStatus,
 }: ListingCardData) {
   const { indoor } = capacity || {};
   const kind = getListingTypeSlug(listingType);
@@ -97,6 +99,11 @@ export function ListingCard({
           {verified && (
             <MdVerified className="absolute top-2 left-2 text-neutral-200 h-8 w-8" />
           )}
+          {claimStatus === "unclaimed" && (
+            <div className="absolute top-2 right-2">
+              <UnclaimedBadge />
+            </div>
+          )}
           <FavoriteButton
             listingType={listingType}
             listingId={id}
@@ -108,7 +115,10 @@ export function ListingCard({
       <CardContent className="flex-1 p-4 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <h3 className="font-semibold text-lg line-clamp-2">{title}</h3>
-          {tier && tier !== "standard" ? renderTierBadge() : null}
+          <div className="flex gap-2 shrink-0">
+            {claimStatus === "unclaimed" && <UnclaimedBadge />}
+            {tier && tier !== "standard" ? renderTierBadge() : null}
+          </div>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-3">
           {description}

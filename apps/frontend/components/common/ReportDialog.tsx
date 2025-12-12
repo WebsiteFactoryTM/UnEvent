@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { submitReport } from "@/lib/api/reports";
+import Link from "next/link";
 
 const REPORT_REASONS = [
   { value: "bad-language", label: "Limbaj neadecvat" },
@@ -72,7 +73,18 @@ export function ReportDialog({
     if (!accessToken) {
       toast({
         title: "Autentificare necesară",
-        description: "Trebuie să te autentifici pentru a trimite un raport.",
+        description: (
+          <>
+            Trebuie să te autentifici pentru a trimite un raport.{" "}
+            <Link
+              href="/auth/autentificare"
+              className="underline font-semibold hover:text-primary"
+            >
+              Loghează-te acum
+            </Link>
+            .
+          </>
+        ),
         variant: "destructive",
       } as any);
       return;

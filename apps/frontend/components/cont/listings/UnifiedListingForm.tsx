@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodError } from "zod";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, FileText, Send } from "lucide-react";
@@ -148,7 +149,18 @@ export function UnifiedListingForm({
     if (!canSubmit) {
       toast({
         title: "Eroare",
-        description: "Sesiunea a expirat. Te rugăm să te autentifici din nou.",
+        description: (
+          <>
+            Sesiunea a expirat. Te rugăm să{" "}
+            <Link
+              href="/auth/autentificare"
+              className="underline font-semibold hover:text-primary"
+            >
+              te autentifici din nou
+            </Link>
+            .
+          </>
+        ),
         variant: "destructive",
       });
       return;
@@ -199,7 +211,18 @@ export function UnifiedListingForm({
     if (!canSubmit) {
       toast({
         title: "Eroare",
-        description: "Sesiunea a expirat. Te rugăm să te autentifici din nou.",
+        description: (
+          <>
+            Sesiunea a expirat. Te rugăm să{" "}
+            <Link
+              href="/auth/autentificare"
+              className="underline font-semibold hover:text-primary"
+            >
+              te autentifici din nou
+            </Link>
+            .
+          </>
+        ),
         variant: "destructive",
       });
       return;

@@ -3,12 +3,13 @@
 import type React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider, useSession } from "next-auth/react";
 import { getQueryClient } from "@/lib/react-query";
 import * as Sentry from "@sentry/nextjs";
 import { AllConsentProviders } from "@/app/providers/consent";
+import { ClaimTokenHandler } from "@/components/auth/ClaimTokenHandler";
 
 function SentryUserContext() {
   const { data: session } = useSession();
@@ -46,6 +47,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         >
           <AllConsentProviders>
             {children}
+            <Suspense fallback={null}>
+              <ClaimTokenHandler />
+            </Suspense>
             <Toaster />
           </AllConsentProviders>
         </ThemeProvider>

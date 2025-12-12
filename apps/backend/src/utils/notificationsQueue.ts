@@ -243,6 +243,7 @@ export type EmailEventType =
   | 'listing.recommended'
   | 'listing.search-stats'
   | 'listing.view-stats'
+  | 'listing.claim.invitation'
   | 'account.verified'
   | 'account.verification-rejected'
   | 'account.deleted'
@@ -264,6 +265,9 @@ export type EmailEventType =
   | 'admin.listing.report'
   | 'admin.profile.report'
   | 'admin.contact'
+  | 'admin.claim.pending'
+  | 'claim.approved'
+  | 'claim.rejected'
 
 /**
  * Enqueue an email notification job to the worker

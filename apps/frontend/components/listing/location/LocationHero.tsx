@@ -13,6 +13,8 @@ import { ListingActions } from "../shared/ListingActions";
 import SocialMedia from "../shared/SocialMedia";
 import PriceDisplay from "../shared/PriceDisplay";
 import { ExpandableTagsList } from "../shared/ExpandableTagsList";
+import { UnclaimedBadge } from "../shared/UnclaimedBadge";
+import { ClaimListingCTA } from "../shared/ClaimListingCTA";
 
 interface LocationHeroProps {
   location: LocationListing;
@@ -49,6 +51,7 @@ export function LocationHero({ location }: LocationHeroProps) {
             {location.title}
           </h1>
           <div className="flex gap-2 shrink-0">
+            {location.claimStatus === "unclaimed" && <UnclaimedBadge />}
             {location.verifiedStatus === "approved" && (
               <Badge className="bg-green-500/90 backdrop-blur-sm">
                 Verificat
@@ -66,6 +69,17 @@ export function LocationHero({ location }: LocationHeroProps) {
             )}
           </div>
         </div>
+
+        {/* Claim CTA for unclaimed listings */}
+        {location.claimStatus === "unclaimed" && (
+          <div className="pt-2">
+            <ClaimListingCTA
+              listingId={location.id}
+              listingType="locatii"
+              listingSlug={location.slug || undefined}
+            />
+          </div>
+        )}
 
         {/* Rating and meta */}
         <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -138,7 +152,7 @@ export function LocationHero({ location }: LocationHeroProps) {
         <div className="pt-4 border-t border-border space-y-4">
           <h3 className="text-lg font-semibold">Contact</h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-row flex-wrap gap-3">
             {contact?.phone && (
               <Button
                 variant="outline"

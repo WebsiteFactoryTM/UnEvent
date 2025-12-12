@@ -187,9 +187,13 @@ export const afterChange: CollectionAfterChangeHook = async ({
 
   const list = Array.from(tags)
 
-  // 1) Revalidate Next (Vercel edge/data cache)
-  await notifyNext(list, req.payload)
+  // Fire-and-forget: Don't await revalidation/CDN purge to prevent blocking
+  // These operations will complete asynchronously and errors are logged but don't block
+  notifyNext(list, req.payload).catch((err) => {
+    req.payload.logger.error(`[afterChange] Revalidation failed (non-blocking): ${err}`)
+  })
 
-  // 2) Optional: purge CDN (Cloudflare) by tag
-  await purgeCDN(list)
+  purgeCDN(list).catch((err) => {
+    req.payload.logger.error(`[afterChange] CDN purge failed (non-blocking): ${err}`)
+  })
 }

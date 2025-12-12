@@ -15,6 +15,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Profiles } from './collections/Profiles'
 import { Favorites } from './collections/Favorites'
+import { Claims } from './collections/Claims'
 import { ListingTypes } from './collections/ListingTypes'
 import { Cities } from './collections/Cities'
 import { Events, Locations, Services } from './collections/Listings'
@@ -189,6 +190,7 @@ export default buildConfig({
     Profiles,
     Verifications,
     Favorites,
+    Claims,
     ListingTypes,
     Cities,
     Events,

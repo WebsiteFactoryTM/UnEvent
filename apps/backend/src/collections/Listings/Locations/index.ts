@@ -8,6 +8,7 @@ import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
 import { markListingMediaPermanent } from '../_hooks/afterChange/markMediaPermanent'
 import { notifyListingModeration } from '../_hooks/afterChange/notifyListingModeration'
 import { notifyAdminNewListing } from '../_hooks/afterChange/notifyAdminNewListing'
+import { notifyListingCreated } from '../_hooks/afterChange/notifyListingCreated'
 import { regenerateSitemap } from '../_hooks/afterChange/regenerateSitemap'
 import { queueHubSnapshotAfterDelete } from '../_hooks/afterDelete/queueHubSnapshot'
 import { preventHardDelete } from '../_hooks/beforeDelete/preventHardDelete'
@@ -42,6 +43,7 @@ export const Locations: CollectionConfig = {
       revalidateListing,
       notifyListingModeration,
       notifyAdminNewListing,
+      notifyListingCreated,
       regenerateSitemap,
     ],
     afterDelete: [queueHubSnapshotAfterDelete],

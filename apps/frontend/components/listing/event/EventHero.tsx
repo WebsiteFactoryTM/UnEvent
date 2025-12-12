@@ -5,6 +5,8 @@ import { ListingActions } from "../shared/ListingActions";
 import SocialMedia from "../shared/SocialMedia";
 import PriceDisplay from "../shared/PriceDisplay";
 import { ExpandableTagsList } from "../shared/ExpandableTagsList";
+import { UnclaimedBadge } from "../shared/UnclaimedBadge";
+import { ClaimListingCTA } from "../shared/ClaimListingCTA";
 
 interface EventHeroProps {
   event: EventListing;
@@ -49,6 +51,7 @@ export default function EventHero({ event }: EventHeroProps) {
             {event?.title}
           </h1>
           <div className="flex gap-2 shrink-0">
+            {event?.claimStatus === "unclaimed" && <UnclaimedBadge />}
             {event?.verifiedStatus === "approved" && (
               <Badge className="bg-green-500/90 backdrop-blur-sm">
                 Verificat
@@ -66,6 +69,17 @@ export default function EventHero({ event }: EventHeroProps) {
             )}
           </div>
         </div>
+
+        {/* Claim CTA for unclaimed listings */}
+        {event?.claimStatus === "unclaimed" && (
+          <div className="pt-2">
+            <ClaimListingCTA
+              listingId={event.id}
+              listingType="evenimente"
+              listingSlug={event.slug || undefined}
+            />
+          </div>
+        )}
 
         {/* Rating and meta */}
 

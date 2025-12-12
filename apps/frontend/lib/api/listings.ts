@@ -8,6 +8,56 @@ import {
 } from "../transforms/normalizeListing";
 import { tag } from "@unevent/shared";
 
+/**
+ * Fetch a listing by ID (for claim pages)
+ */
+export const fetchListingById = async (
+  listingType: "locations" | "events" | "services",
+  id: number,
+  accessToken?: string,
+): Promise<{ data: Listing | null; error: Error | null }> => {
+  try {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      return {
+        data: null,
+        error: new Error("NEXT_PUBLIC_API_URL not configured"),
+      };
+    }
+
+    const headers: Record<string, string> = {};
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}/${id}?includeReviewState=true`,
+      {
+        headers: Object.keys(headers).length > 0 ? headers : undefined,
+        cache: "no-store", // Always fresh for claim pages
+      },
+    );
+
+    if (!response.ok) {
+      const errorMessage = await response
+        .text()
+        .catch(() => `HTTP ${response.status}`);
+      return {
+        data: null,
+        error: new Error(`Failed to fetch listing: ${errorMessage}`),
+      };
+    }
+
+    const doc = await response.json();
+    return { data: (normalizeListing(doc) as Listing) ?? null, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error:
+        error instanceof Error ? error : new Error("Failed to fetch listing"),
+    };
+  }
+};
+
 export const fetchListing = async (
   listingType: "locations" | "events" | "services",
   slug: string,

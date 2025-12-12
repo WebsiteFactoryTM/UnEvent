@@ -72,6 +72,7 @@ export interface Config {
     profiles: Profile;
     verifications: Verification;
     favorites: Favorite;
+    claims: Claim;
     'listing-types': ListingType;
     cities: City;
     events: Event;
@@ -95,6 +96,7 @@ export interface Config {
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     verifications: VerificationsSelect<false> | VerificationsSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
+    claims: ClaimsSelect<false> | ClaimsSelect<true>;
     'listing-types': ListingTypesSelect<false> | ListingTypesSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
@@ -116,9 +118,11 @@ export interface Config {
   };
   globals: {
     homeListings: HomeListing;
+    settings: Setting;
   };
   globalsSelect: {
     homeListings: HomeListingsSelect<false> | HomeListingsSelect<true>;
+    settings: SettingsSelect<false> | SettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -378,6 +382,10 @@ export interface Event {
   verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
   verification?: (number | null) | Verification;
   /**
+   * Mark as unclaimed if listing can be claimed by business owners
+   */
+  claimStatus?: ('claimed' | 'unclaimed') | null;
+  /**
    * Number of views
    */
   views?: number | null;
@@ -621,6 +629,10 @@ export interface Location {
   verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
   verification?: (number | null) | Verification;
   /**
+   * Mark as unclaimed if listing can be claimed by business owners
+   */
+  claimStatus?: ('claimed' | 'unclaimed') | null;
+  /**
    * Number of views
    */
   views?: number | null;
@@ -792,6 +804,10 @@ export interface Service {
   verifiedStatus?: ('none' | 'pending' | 'approved' | 'rejected') | null;
   verification?: (number | null) | Verification;
   /**
+   * Mark as unclaimed if listing can be claimed by business owners
+   */
+  claimStatus?: ('claimed' | 'unclaimed') | null;
+  /**
    * Number of views
    */
   views?: number | null;
@@ -892,6 +908,75 @@ export interface Favorite {
       };
   kind: 'locations' | 'events' | 'services';
   targetKey: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "claims".
+ */
+export interface Claim {
+  id: number;
+  /**
+   * The listing being claimed
+   */
+  listing:
+    | {
+        relationTo: 'locations';
+        value: number | Location;
+      }
+    | {
+        relationTo: 'events';
+        value: number | Event;
+      }
+    | {
+        relationTo: 'services';
+        value: number | Service;
+      };
+  /**
+   * Type of listing
+   */
+  listingType: 'locations' | 'events' | 'services';
+  /**
+   * Email address of the person claiming the listing
+   */
+  claimantEmail: string;
+  /**
+   * Name of the person claiming the listing
+   */
+  claimantName?: string | null;
+  /**
+   * Phone number of the person claiming the listing
+   */
+  claimantPhone?: string | null;
+  /**
+   * Profile associated with the claim (set after signup/login)
+   */
+  claimantProfile?: (number | null) | Profile;
+  /**
+   * Unique token for linking claims to signup flow
+   */
+  claimToken: string;
+  /**
+   * Status of the claim request
+   */
+  status: 'pending' | 'approved' | 'rejected';
+  /**
+   * Reason for rejection
+   */
+  rejectionReason?: string | null;
+  /**
+   * When the claim was submitted
+   */
+  submittedAt?: string | null;
+  /**
+   * When the claim was reviewed
+   */
+  reviewedAt?: string | null;
+  /**
+   * Admin who reviewed the claim
+   */
+  reviewedBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1270,6 +1355,10 @@ export interface PayloadLockedDocument {
         value: number | Favorite;
       } | null)
     | ({
+        relationTo: 'claims';
+        value: number | Claim;
+      } | null)
+    | ({
         relationTo: 'listing-types';
         value: number | ListingType;
       } | null)
@@ -1500,6 +1589,26 @@ export interface FavoritesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "claims_select".
+ */
+export interface ClaimsSelect<T extends boolean = true> {
+  listing?: T;
+  listingType?: T;
+  claimantEmail?: T;
+  claimantName?: T;
+  claimantPhone?: T;
+  claimantProfile?: T;
+  claimToken?: T;
+  status?: T;
+  rejectionReason?: T;
+  submittedAt?: T;
+  reviewedAt?: T;
+  reviewedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "listing-types_select".
  */
 export interface ListingTypesSelect<T extends boolean = true> {
@@ -1559,6 +1668,7 @@ export interface EventsSelect<T extends boolean = true> {
   gallery?: T;
   verifiedStatus?: T;
   verification?: T;
+  claimStatus?: T;
   views?: T;
   favoritesCount?: T;
   bookingsCount?: T;
@@ -1657,6 +1767,7 @@ export interface LocationsSelect<T extends boolean = true> {
   gallery?: T;
   verifiedStatus?: T;
   verification?: T;
+  claimStatus?: T;
   views?: T;
   favoritesCount?: T;
   bookingsCount?: T;
@@ -1752,6 +1863,7 @@ export interface ServicesSelect<T extends boolean = true> {
   gallery?: T;
   verifiedStatus?: T;
   verification?: T;
+  claimStatus?: T;
   views?: T;
   favoritesCount?: T;
   bookingsCount?: T;
@@ -2044,6 +2156,26 @@ export interface HomeListing {
   createdAt?: string | null;
 }
 /**
+ * Settings for the application
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  name?: string | null;
+  /**
+   * Enable or disable background schedulers. Falls back to ENABLE_JOBS environment variable if not set. Requires restart to take effect.
+   */
+  enableJobs?: boolean | null;
+  /**
+   * Override the scheduler environment multiplier. Falls back to SCHEDULER_ENV or NODE_ENV if not set. Requires restart to take effect.
+   */
+  schedulerEnvironment?: ('dev' | 'staging' | 'production') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homeListings_select".
  */
@@ -2051,6 +2183,18 @@ export interface HomeListingsSelect<T extends boolean = true> {
   featuredLocations?: T;
   topServices?: T;
   upcomingEvents?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  name?: T;
+  enableJobs?: T;
+  schedulerEnvironment?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

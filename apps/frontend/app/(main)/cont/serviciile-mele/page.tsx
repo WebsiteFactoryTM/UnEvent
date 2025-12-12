@@ -9,6 +9,7 @@ import { getUserListings } from "@/lib/api/accountListings";
 import { Listing } from "@/types/listings";
 import RejectedListings from "@/components/cont/RejectedListings";
 import ListingView from "@/components/cont/ListingView";
+import { ClaimsView } from "@/components/cont/ClaimsView";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import Link from "next/link";
 import { hasRequiredRole } from "@/lib/auth/checkRole";
@@ -76,6 +77,9 @@ export default async function ServiciilemePage() {
             <RejectedListings listings={listings} />
           </SectionCard>
         )}
+
+        {/* Claims List */}
+        <ClaimsView listingType="services" frontendListingType="servicii" />
       </HydrationBoundary>
     </div>
   );

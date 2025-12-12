@@ -1,0 +1,93 @@
+import type { CollectionAfterChangeHook } from 'payload'
+import { enqueueNotification } from '@/utils/notificationsQueue'
+import { Event, Location, Service } from '@/payload-types'
+
+/**
+ * Notify claimant when claim is approved or rejected
+ */
+export const notifyClaimant: CollectionAfterChangeHook = async ({
+  doc,
+  previousDoc,
+  operation,
+  req,
+}) => {
+  // Only process on update when status changes
+  if (operation !== 'update') return
+
+  const previousStatus = previousDoc?.status
+  const currentStatus = doc.status
+
+  // Only notify when status changes from pending to approved/rejected
+  if (
+    previousStatus !== 'pending' ||
+    (currentStatus !== 'approved' && currentStatus !== 'rejected')
+  ) {
+    return
+  }
+
+  try {
+    // Get listing info - fetch listing to get title and slug
+    const listingId =
+      typeof doc.listing === 'object' && doc.listing !== null && 'value' in doc.listing
+        ? (doc.listing as { relationTo: string; value: number }).value
+        : typeof doc.listing === 'number'
+          ? doc.listing
+          : null
+
+    let listingTitle = 'Unknown Listing'
+    let listingSlug: string | number | undefined = listingId
+    const listingType = doc.listingType as 'locations' | 'events' | 'services'
+
+    if (listingId && listingType) {
+      try {
+        const listing = await req.payload.findByID({
+          collection: listingType,
+          id: typeof listingId === 'number' ? listingId : Number(listingId),
+        })
+        listingTitle = listing?.title || 'Unknown Listing'
+        listingSlug = listing?.slug || listingId
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        req.payload.logger.warn(
+          `[notifyClaimant] Could not fetch listing ${listingId}: ${errorMessage}`,
+        )
+        listingTitle = `Listing ID: ${listingId}`
+      }
+    }
+
+    const frontendUrl = process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
+    const listingUrl = `${frontendUrl}/${listingType}/${listingSlug}`
+
+    if (currentStatus === 'approved') {
+      // Notify claimant of approval
+      const result = await enqueueNotification('claim.approved', {
+        first_name: doc.claimantName || undefined,
+        userEmail: doc.claimantEmail,
+        listing_title: listingTitle,
+        listing_type: listingType,
+        listing_id: String(listingId),
+        listing_url: listingUrl,
+        claim_id: String(doc.id),
+      })
+    } else if (currentStatus === 'rejected') {
+      // Notify claimant of rejection
+      await enqueueNotification('claim.rejected', {
+        first_name: doc.claimantName || undefined,
+        userEmail: doc.claimantEmail,
+        listing_title: listingTitle,
+        listing_type: listingType,
+        listing_id: String(listingId),
+        reason: doc.rejectionReason || undefined,
+        support_email: process.env.SUPPORT_EMAIL || 'contact@unevent.ro',
+        claim_id: String(doc.id),
+      })
+    }
+  } catch (error) {
+    // Don't throw - email failure shouldn't break claim update
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    req.payload.logger.error(
+      `[notifyClaimant] ❌ Failed to enqueue notification for claim ${doc.id}:`,
+      errorMessage,
+    )
+  }
+}

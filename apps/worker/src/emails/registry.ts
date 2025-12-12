@@ -68,6 +68,22 @@ import {
   AdminContactEmail,
   type AdminContactEmailProps,
 } from "./AdminContactEmail.js";
+import {
+  AdminClaimPendingEmail,
+  type AdminClaimPendingEmailProps,
+} from "./AdminClaimPendingEmail.js";
+import {
+  ClaimApprovedEmail,
+  type ClaimApprovedEmailProps,
+} from "./ClaimApprovedEmail.js";
+import {
+  ClaimRejectedEmail,
+  type ClaimRejectedEmailProps,
+} from "./ClaimRejectedEmail.js";
+import {
+  ListingClaimInvitationEmail,
+  type ListingClaimInvitationEmailProps,
+} from "./ListingClaimInvitationEmail.js";
 
 /**
  * All logical email event types used across the app.
@@ -99,9 +115,13 @@ export type EmailEventType =
   | "event.reminder.24h"
   | "event.participation.reminder"
   | "event.participation.confirmed"
+  | "claim.approved"
+  | "claim.rejected"
+  | "listing.claim.invitation"
   // Admin
   | "admin.listing.pending"
   | "admin.review.pending"
+  | "admin.claim.pending"
   | "admin.user.new"
   | "admin.report.new"
   | "admin.password.changed"
@@ -342,6 +362,47 @@ export interface AdminContactPayload {
   subject: string;
   message: string;
   submitted_at?: string;
+}
+
+export interface ClaimApprovedPayload {
+  first_name?: string;
+  userEmail: string;
+  listing_title: string;
+  listing_type: string;
+  listing_id: string;
+  listing_url?: string;
+  claim_id: string;
+}
+
+export interface ClaimRejectedPayload {
+  first_name?: string;
+  userEmail: string;
+  listing_title: string;
+  listing_type: string;
+  listing_id: string;
+  reason?: string;
+  support_email?: string;
+  claim_id: string;
+}
+
+export interface ListingClaimInvitationPayload {
+  listing_title: string;
+  listing_type: string;
+  listing_id: string;
+  listing_slug?: string;
+  contact_email: string;
+  claim_url: string;
+}
+
+export interface AdminClaimPendingPayload {
+  claim_id: string;
+  claim_token: string;
+  listing_title: string;
+  listing_type: string;
+  listing_id: string;
+  claimant_email: string;
+  claimant_name?: string;
+  dashboard_url?: string;
 }
 
 /**
@@ -647,5 +708,92 @@ export const EMAIL_TEMPLATES: Partial<
         submittedAt: p.submitted_at,
       } satisfies AdminContactEmailProps),
     tags: { category: "admin", template: "admin.contact" },
+  },
+
+  "admin.claim.pending": {
+    type: "admin.claim.pending",
+    getRecipients: (p: AdminClaimPendingPayload) => {
+      return getAdminEmails("admin.claim.pending");
+    },
+    getSubject: (p) => `📋 Cerere de revendicare nouă: „${p.listing_title}”`,
+    getPreheader: () =>
+      "O nouă cerere de revendicare a fost trimisă și așteaptă aprobarea ta.",
+    getTextFallback: (p) =>
+      `O nouă cerere de revendicare pentru „${p.listing_title}” a fost trimisă.\n\nTip: ${p.listing_type}\nSolicitant: ${p.claimant_name || "N/A"} (${p.claimant_email})\nID cerere: ${p.claim_id}\nToken: ${p.claim_token}`,
+    render: (p) =>
+      AdminClaimPendingEmail({
+        claimId: p.claim_id,
+        claimToken: p.claim_token,
+        listingTitle: p.listing_title,
+        listingType: p.listing_type,
+        listingId: p.listing_id,
+        claimantEmail: p.claimant_email,
+        claimantName: p.claimant_name,
+        dashboardUrl: p.dashboard_url,
+      } satisfies AdminClaimPendingEmailProps),
+    tags: { category: "admin", template: "admin.claim.pending" },
+  },
+
+  "claim.approved": {
+    type: "claim.approved",
+    getRecipients: (p: ClaimApprovedPayload) => p.userEmail,
+    getSubject: (p) =>
+      `🎉 Cererea ta de revendicare pentru „${p.listing_title}” a fost aprobată`,
+    getPreheader: () =>
+      "Cererea ta a fost aprobată. Acum ești proprietarul listării.",
+    getTextFallback: (p) =>
+      `Salut${p.first_name ? `, ${p.first_name}` : ""}!\n\nCererea ta de revendicare pentru „${p.listing_title}” a fost aprobată. Acum ești proprietarul ${p.listing_type === "events" ? "evenimentului" : p.listing_type === "locations" ? "locației" : "serviciului"} și poți gestiona listarea din contul tău.`,
+    render: (p) =>
+      ClaimApprovedEmail({
+        firstName: p.first_name ?? "",
+        listingTitle: p.listing_title,
+        listingType: p.listing_type,
+        listingId: p.listing_id,
+        listingUrl: p.listing_url,
+        claimId: p.claim_id,
+      } satisfies ClaimApprovedEmailProps),
+    tags: { category: "user", template: "claim.approved" },
+  },
+
+  "claim.rejected": {
+    type: "claim.rejected",
+    getRecipients: (p: ClaimRejectedPayload) => p.userEmail,
+    getSubject: (p) =>
+      `❌ Cererea ta de revendicare pentru „${p.listing_title}” a fost respinsă`,
+    getPreheader: () =>
+      "Cererea ta a fost respinsă. Vezi motivul și contactează-ne dacă ai întrebări.",
+    getTextFallback: (p) =>
+      `Salut${p.first_name ? `, ${p.first_name}` : ""}!\n\nNe pare rău să te anunțăm că cererea ta de revendicare pentru „${p.listing_title}” a fost respinsă.${p.reason ? `\n\nMotiv: ${p.reason}` : ""}\n\nDacă consideri că această decizie este incorectă sau dacă ai întrebări, te rugăm să ne contactezi la ${p.support_email || "contact@unevent.ro"}.`,
+    render: (p) =>
+      ClaimRejectedEmail({
+        firstName: p.first_name ?? "",
+        listingTitle: p.listing_title,
+        listingType: p.listing_type,
+        listingId: p.listing_id,
+        reason: p.reason,
+        supportEmail: p.support_email,
+        claimId: p.claim_id,
+      } satisfies ClaimRejectedEmailProps),
+    tags: { category: "user", template: "claim.rejected" },
+  },
+
+  "listing.claim.invitation": {
+    type: "listing.claim.invitation",
+    getRecipients: (p: ListingClaimInvitationPayload) => p.contact_email,
+    getSubject: (p) => `🚀 Am listat ${p.listing_title} pe UN:EVENT`,
+    getPreheader: () =>
+      "Echipa noastră a selectat listarea ta. Revendică profilul gratuit în 2 minute.",
+    getTextFallback: (p) =>
+      `Salutare,\n\nÎți scriu pentru că echipa noastră a selectat „${p.listing_title}” drept una dintre ${p.listing_type === "events" ? "evenimentele" : p.listing_type === "locations" ? "locațiile" : "serviciile"} de top pe care le recomandăm pe UN:EVENT.\n\nPe scurt: Nu îți vindem nimic. Ți-am creat deja o prezență gratuită.\n\nRevendică profilul: ${p.claim_url}`,
+    render: (p) =>
+      ListingClaimInvitationEmail({
+        listingTitle: p.listing_title,
+        listingType: p.listing_type,
+        listingId: p.listing_id,
+        listingSlug: p.listing_slug,
+        contactEmail: p.contact_email,
+        claimUrl: p.claim_url,
+      } satisfies ListingClaimInvitationEmailProps),
+    tags: { category: "user", template: "listing.claim.invitation" },
   },
 };
