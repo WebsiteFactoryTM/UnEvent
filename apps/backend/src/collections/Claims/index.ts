@@ -3,6 +3,10 @@ import { isAdmin } from '../_access/roles'
 import { generateClaimToken } from './hooks/beforeChange/generateClaimToken'
 import { setTimestamps } from './hooks/beforeChange/setTimestamps'
 import { preventDuplicateClaim } from './hooks/beforeChange/preventDuplicateClaim'
+import { normalizeListingField } from './hooks/beforeValidate/normalizeListingField'
+import { createClaim } from './endpoints/createClaim'
+import { getClaimByToken } from './endpoints/getClaimByToken'
+import { associateProfile } from './endpoints/associateProfile'
 import { transferOwnership } from './hooks/afterChange/transferOwnership'
 import { notifyAdminNewClaim } from './hooks/afterChange/notifyAdminNewClaim'
 import { notifyClaimant } from './hooks/afterChange/notifyClaimant'
@@ -15,6 +19,23 @@ export const Claims: CollectionConfig = {
     group: 'Listings',
   },
   timestamps: true,
+  endpoints: [
+    {
+      path: '/create',
+      method: 'post',
+      handler: createClaim,
+    },
+    {
+      path: '/by-token',
+      method: 'get',
+      handler: getClaimByToken,
+    },
+    {
+      path: '/associate-profile',
+      method: 'patch',
+      handler: associateProfile,
+    },
+  ],
   access: {
     read: ({ req }) => {
       // Admins can read all claims
@@ -40,6 +61,7 @@ export const Claims: CollectionConfig = {
     delete: ({ req }) => isAdmin({ req }), // Only admins can delete
   },
   hooks: {
+    beforeValidate: [normalizeListingField],
     beforeChange: [preventDuplicateClaim, generateClaimToken, setTimestamps],
     afterChange: [transferOwnership, notifyAdminNewClaim, notifyClaimant],
   },
