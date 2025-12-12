@@ -152,7 +152,7 @@ export function LocationHero({ location }: LocationHeroProps) {
         <div className="pt-4 border-t border-border space-y-4">
           <h3 className="text-lg font-semibold">Contact</h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-row flex-wrap gap-3">
             {contact?.phone && (
               <Button
                 variant="outline"

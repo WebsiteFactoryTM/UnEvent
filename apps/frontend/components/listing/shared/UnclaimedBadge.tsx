@@ -7,7 +7,7 @@ interface UnclaimedBadgeProps {
 export function UnclaimedBadge({ className }: UnclaimedBadgeProps) {
   return (
     <Badge
-      className={`bg-orange-500/90 backdrop-blur-sm text-white ${className || ""}`}
+      className={`bg-foreground backdrop-blur-sm text-background ${className || ""}`}
       variant="secondary"
     >
       Nerevindicat
