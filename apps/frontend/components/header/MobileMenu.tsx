@@ -21,6 +21,7 @@ import {
   FaEnvelope,
   FaHeart,
   FaRightFromBracket,
+  FaGift,
 } from "react-icons/fa6";
 
 import { HamburgerIcon } from "./HamburgerIcon";
@@ -157,6 +158,13 @@ export function MobileMenu() {
             >
               <FaCalendarDays className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
               <span>Evenimente</span>
+            </Link>
+            <Link
+              href="/promotie-de-craciun"
+              className="flex items-center gap-3 px-4 text-red-500 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-red-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+            >
+              <FaGift className="h-5 w-5" />
+              Promoție
             </Link>
           </nav>
 

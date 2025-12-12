@@ -10,6 +10,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { RecaptchaScript } from "@/components/RecaptchaScript";
+import { XMasPromoBannerTop } from "@/components/home/XMasPromoBanner";
 
 const manrope = Manrope({
   subsets: ["latin", "latin-ext"], // Include Romanian characters
@@ -169,6 +170,7 @@ export default async function RootLayout({
         <Providers>
           <Header />
           <RecaptchaScript />
+          <XMasPromoBannerTop />
           <main className="pt-16">{children}</main>
 
           <Footer />
