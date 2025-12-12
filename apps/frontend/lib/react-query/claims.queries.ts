@@ -109,11 +109,30 @@ export function useCreateClaim(options?: {
       }
     },
     onError: (error: Error) => {
+      const errorMessage = error.message.toLowerCase();
+      let description = "A apărut o eroare. Te rugăm să încerci din nou.";
+
+      if (
+        errorMessage.includes("already exists") ||
+        (errorMessage.includes("pending claim") &&
+          errorMessage.includes("email"))
+      ) {
+        description =
+          "Ai trimis deja o cerere de revendicare pentru această listare cu acest email. Cererea ta este în așteptare și vei primi un email când va fi aprobată sau respinsă.";
+      } else if (
+        errorMessage.includes("already being claimed") ||
+        errorMessage.includes("someone else")
+      ) {
+        description =
+          "Această listare este deja în proces de revendicare de către altcineva. Te rugăm să încerci din nou mai târziu sau să contactezi echipa UN:EVENT dacă crezi că ai dreptul la această listare.";
+      } else if (errorMessage.includes("cannot be claimed")) {
+        description =
+          "Această listare nu poate fi revendicată. Poate că a fost deja revendicată sau nu este disponibilă pentru revendicare.";
+      }
+
       toast({
         title: "Eroare",
-        description: error.message.includes("already exists")
-          ? "Ai trimis deja o cerere de revendicare pentru această listare."
-          : "A apărut o eroare. Te rugăm să încerci din nou.",
+        description,
         variant: "destructive",
       });
     },
@@ -200,4 +219,32 @@ export function useUserClaims(
     queryFn: () => getUserClaims(listingType, accessToken!),
     enabled: !!accessToken,
   });
+}
+
+/**
+ * Hook to check if user has an existing claim for a specific listing
+ */
+export function useExistingClaimForListing(
+  listingId: number,
+  listingType: "locations" | "events" | "services",
+) {
+  const { data: session } = useSession();
+  const { data: claims, isLoading } = useUserClaims(listingType);
+
+  const existingClaim =
+    claims?.find((claim) => {
+      const claimListingId =
+        typeof claim.listing === "object" && claim.listing !== null
+          ? (claim.listing as { relationTo: string; value: number }).value
+          : typeof claim.listing === "number"
+            ? claim.listing
+            : null;
+      return claimListingId === listingId && claim.status === "pending";
+    }) || null;
+
+  return {
+    hasExistingClaim: !!existingClaim,
+    existingClaim,
+    isLoading: isLoading || !session?.user,
+  };
 }

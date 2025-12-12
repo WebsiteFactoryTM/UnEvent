@@ -118,25 +118,14 @@ export async function POST(req: NextRequest) {
     const claimResult = await createRes.json();
 
     if (!createRes.ok) {
-      // Check for duplicate claim error
+      // Get error message from backend
       const errorMessage =
+        claimResult.error ||
         claimResult.message ||
         claimResult.errors?.[0]?.message ||
         "Failed to create claim";
 
-      // If it's a validation error that might indicate duplicate, return 409
-      if (
-        errorMessage.toLowerCase().includes("duplicate") ||
-        errorMessage.toLowerCase().includes("already exists")
-      ) {
-        return NextResponse.json(
-          {
-            error: "A pending claim already exists for this listing and email",
-          },
-          { status: 409 },
-        );
-      }
-
+      // Pass through the error message as-is (backend handles specific messages)
       return NextResponse.json(
         { error: errorMessage },
         { status: createRes.status },

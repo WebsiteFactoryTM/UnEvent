@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { fetchListingById } from "@/lib/api/listings";
-import { getListingTypeSlug } from "@/lib/getListingType";
+import {
+  getListingTypeSlug,
+  getFrontendListingTypeSlug,
+} from "@/lib/getListingType";
 import { ClaimForm } from "@/components/listing/shared/ClaimForm";
 import { UnclaimedBadge } from "@/components/listing/shared/UnclaimedBadge";
 import { Badge } from "@/components/ui/badge";
@@ -30,20 +33,25 @@ interface ClaimPageProps {
 export default async function ClaimPage({ searchParams }: ClaimPageProps) {
   const params = await searchParams;
   const listingId = params.listingId ? parseInt(params.listingId, 10) : null;
-  const listingTypeParam = params.listingType as
-    | "locations"
-    | "events"
-    | "services"
-    | undefined;
+  // Accept frontend listing type slugs (locatii, evenimente, servicii)
+  const frontendListingType = params.listingType as ListingType | undefined;
 
   // Validate required params
-  if (!listingId || !listingTypeParam || isNaN(listingId)) {
+  if (
+    !listingId ||
+    !frontendListingType ||
+    isNaN(listingId) ||
+    !["locatii", "evenimente", "servicii"].includes(frontendListingType)
+  ) {
     notFound();
   }
 
+  // Convert frontend slug to backend collection slug for API call
+  const backendListingType = getListingTypeSlug(frontendListingType);
+
   // Fetch listing
   const { data: listing, error } = await fetchListingById(
-    listingTypeParam,
+    backendListingType,
     listingId,
   );
 
@@ -53,18 +61,8 @@ export default async function ClaimPage({ searchParams }: ClaimPageProps) {
 
   // Only allow claiming unclaimed listings
   if (listing.claimStatus !== "unclaimed") {
-    redirect(
-      `/${getListingTypeSlug(listingTypeParam as ListingType)}/${listing.slug}`,
-    );
+    redirect(`/${frontendListingType}/${listing.slug}`);
   }
-
-  // Map backend type to frontend type
-  const frontendListingType: ListingType =
-    listingTypeParam === "locations"
-      ? "locatii"
-      : listingTypeParam === "services"
-        ? "servicii"
-        : "evenimente";
 
   const city =
     typeof listing.city === "object" ? listing.city?.name : "România";
@@ -144,9 +142,7 @@ export default async function ClaimPage({ searchParams }: ClaimPageProps) {
                 </div>
               </div>
 
-              <Link
-                href={`/${getListingTypeSlug(listingTypeParam as ListingType)}/${listing.slug}`}
-              >
+              <Link href={`/${frontendListingType}/${listing.slug}`}>
                 <Button variant="outline" className="w-full">
                   Vezi detalii complete
                 </Button>
@@ -164,9 +160,7 @@ export default async function ClaimPage({ searchParams }: ClaimPageProps) {
               initialEmail={params.email}
               isPageForm={true}
               listingSlug={listing.slug ?? undefined}
-              listingTypeSlug={getListingTypeSlug(
-                listingTypeParam as ListingType,
-              )}
+              listingTypeSlug={frontendListingType}
             />
           </CardContent>
         </Card>

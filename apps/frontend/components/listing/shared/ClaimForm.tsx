@@ -6,11 +6,14 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
-import { useCreateClaim } from "@/lib/react-query/claims.queries";
+import {
+  useCreateClaim,
+  useExistingClaimForListing,
+} from "@/lib/react-query/claims.queries";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, Info } from "lucide-react";
+import { CheckCircle2, Info, AlertCircle } from "lucide-react";
 import type { ListingType } from "@/types/listings";
 import { useState } from "react";
 
@@ -48,6 +51,25 @@ export function ClaimForm({
   const { data: session } = useSession();
   const [isSuccess, setIsSuccess] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+
+  // Map frontend listing type to backend collection slug
+  const listingTypeMap: Record<
+    ListingType,
+    "locations" | "events" | "services"
+  > = {
+    locatii: "locations",
+    servicii: "services",
+    evenimente: "events",
+  };
+
+  const backendListingType = listingTypeMap[listingType];
+
+  // Check if user already has a pending claim for this listing
+  const {
+    hasExistingClaim,
+    existingClaim,
+    isLoading: isLoadingExistingClaim,
+  } = useExistingClaimForListing(listingId, backendListingType);
 
   const createClaimMutation = useCreateClaim({
     onSuccess: async (data) => {
@@ -150,18 +172,6 @@ export function ClaimForm({
     // Store email for redirect logic
     setSubmittedEmail(data.email);
 
-    // Map frontend listing type to backend collection slug
-    const listingTypeMap: Record<
-      ListingType,
-      "locations" | "events" | "services"
-    > = {
-      locatii: "locations",
-      servicii: "services",
-      evenimente: "events",
-    };
-
-    const backendListingType = listingTypeMap[listingType];
-
     createClaimMutation.mutate({
       listingId,
       listingType: backendListingType,
@@ -183,6 +193,24 @@ export function ClaimForm({
           <p className="text-sm">
             Vei primi un email când cererea ta va fi aprobată. Te redirecționăm
             către listare...
+          </p>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Show existing claim message for authenticated users
+  if (session?.user && !isLoadingExistingClaim && hasExistingClaim) {
+    return (
+      <Alert className="border-blue-500/50 bg-blue-500/10">
+        <AlertCircle className="h-4 w-4 text-blue-500" />
+        <AlertDescription className="space-y-2">
+          <p className="font-semibold text-blue-500">
+            Ai deja o cerere de revendicare pentru această listare
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Cererea ta este în așteptare. Vei primi un email când va fi aprobată
+            sau respinsă. Poți verifica statusul cererii tale din contul tău.
           </p>
         </AlertDescription>
       </Alert>
