@@ -77,6 +77,10 @@ export function ListingClaimInvitationEmail({
         <Text style={highlightList}>
           • Primi cereri de ofertă direct de la clienți.
         </Text>
+        <Text style={highlightList}>
+          • Șterge listarea dacă nu dorești să fie publică. (Sau ne poți
+          contacta oricând pentru a o șterge noi.)
+        </Text>
         <Text style={highlightText}>
           Este complet gratuit să îți revendici profilul și să fii listat pe
           UN:EVENT.

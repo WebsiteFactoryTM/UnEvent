@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from "@/hooks/use-toast";
 import {
   Toast,
   ToastClose,
@@ -8,13 +8,19 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from '@/components/ui/toast'
+  type SwipeDirection,
+} from "@/components/ui/toast";
 
-export function Toaster() {
-  const { toasts } = useToast()
+export function Toaster({
+  swipeDirection = "all" as SwipeDirection,
+}: {
+  swipeDirection?: SwipeDirection;
+}) {
+  const { toasts } = useToast();
+  const swipeDir = swipeDirection as SwipeDirection;
 
   return (
-    <ToastProvider>
+    <ToastProvider swipeDirection={swipeDir}>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <Toast key={id} {...props}>
@@ -27,9 +33,9 @@ export function Toaster() {
             {action}
             <ToastClose />
           </Toast>
-        )
+        );
       })}
       <ToastViewport />
     </ToastProvider>
-  )
+  );
 }

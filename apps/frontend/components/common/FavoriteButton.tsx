@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useTracking } from "@/hooks/useTracking";
 import { ListingType } from "@/types/listings";
+import Link from "next/link";
 
 const FavoriteButton = ({
   listingType,
@@ -64,7 +65,18 @@ const FavoriteButton = ({
       if (status === 401 || /unauthorized/i.test(message)) {
         toast({
           title: "Autentificare necesară",
-          description: "Trebuie să te autentifici pentru a adăuga la favorite.",
+          description: (
+            <>
+              Trebuie să te autentifici pentru a adăuga la favorite.{" "}
+              <Link
+                href="/auth/autentificare"
+                className="underline font-semibold hover:text-primary"
+              >
+                Loghează-te acum
+              </Link>
+              .
+            </>
+          ),
           variant: "destructive",
         } as any);
       } else {

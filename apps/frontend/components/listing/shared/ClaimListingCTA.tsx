@@ -19,13 +19,13 @@ export function ClaimListingCTA({
   const getCTAText = () => {
     switch (listingType) {
       case "locatii":
-        return "Ești proprietarul acestei locații?";
+        return "Esti proprietarul? Revendică această locație";
       case "servicii":
-        return "Ești furnizorul acestui serviciu?";
+        return "Esti furnizorul? Revendică acest serviciu";
       case "evenimente":
-        return "Ești organizatorul acestui eveniment?";
+        return "Esti organizatorul? Revendică acest eveniment";
       default:
-        return "Ești proprietarul?";
+        return "Esti proprietarul? Revendică această listare";
     }
   };
 

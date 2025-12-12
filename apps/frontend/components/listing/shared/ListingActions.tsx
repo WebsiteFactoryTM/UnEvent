@@ -23,6 +23,7 @@ import { useTracking } from "@/hooks/useTracking";
 import { ListingType } from "@/types/listings";
 import { useState } from "react";
 import { ReportDialog } from "@/components/common/ReportDialog";
+import Link from "next/link";
 import { getListingTypeSlug } from "@/lib/getListingType";
 
 interface ListingActionsProps {
@@ -93,7 +94,18 @@ export function ListingActions({
       if (status === 401 || /unauthorized/i.test(message)) {
         toast({
           title: "Autentificare necesară",
-          description: "Trebuie să te autentifici pentru a adăuga la favorite.",
+          description: (
+            <>
+              Trebuie să te autentifici pentru a adăuga la favorite.{" "}
+              <Link
+                href="/auth/autentificare"
+                className="underline font-semibold hover:text-primary"
+              >
+                Loghează-te acum
+              </Link>
+              .
+            </>
+          ),
           variant: "destructive",
         } as any);
       } else {
