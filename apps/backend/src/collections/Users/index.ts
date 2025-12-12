@@ -7,6 +7,7 @@ import { deleteProfileUserDelete } from './hooks/deleteProfileAfterUserDelete'
 import { notifyAdminNewUser } from './hooks/afterChange/notifyAdminNewUser'
 import { newUserWelcomeEmail } from './hooks/afterChange/newUserWelcomeEmail'
 import { changeRole } from './endpoints/changeRole'
+import { checkEmailExists } from './endpoints/checkEmailExists'
 import { render } from '@react-email/render'
 import { VerificationEmail } from '@/emails/VerificationEmail'
 import { ResetPasswordEmail } from '@/emails/ResetPasswordEmail'
@@ -147,6 +148,11 @@ export const Users: CollectionConfig = {
       path: '/changeRole',
       method: 'post',
       handler: changeRole,
+    },
+    {
+      path: '/check-email',
+      method: 'get',
+      handler: checkEmailExists,
     },
   ],
 }

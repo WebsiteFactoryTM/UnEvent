@@ -106,14 +106,6 @@ export const createClaim: PayloadHandler = async (req: PayloadRequest) => {
     // Payload.create returns the document directly, but ensure we access it correctly
     const claimDoc = (claim as any).doc || claim
 
-    // Debug logging to see what we got back
-    req.payload.logger.info(
-      `[createClaim] Created claim - Full response: ${JSON.stringify(claim, null, 2)}`,
-    )
-    req.payload.logger.info(
-      `[createClaim] Claim doc - ID: ${claimDoc?.id}, Token: ${claimDoc?.claimToken}, ProfileId: ${profileId}`,
-    )
-
     // Ensure we have the ID - sometimes it might be in a different format
     const claimId = claimDoc?.id || (claim as any)?.id
 
@@ -123,8 +115,6 @@ export const createClaim: PayloadHandler = async (req: PayloadRequest) => {
       claimToken: claimDoc?.claimToken || (claim as any)?.claimToken,
       profileId: profileId ?? null, // Explicitly include null if undefined
     }
-
-    req.payload.logger.info(`[createClaim] Response: ${JSON.stringify(response, null, 2)}`)
 
     return new Response(JSON.stringify(response), {
       status: 201,

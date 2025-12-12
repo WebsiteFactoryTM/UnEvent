@@ -1,6 +1,5 @@
 import type { CollectionAfterChangeHook } from 'payload'
 import { enqueueNotification } from '@/utils/notificationsQueue'
-import { Event, Location, Service } from '@/payload-types'
 
 /**
  * Notify admins when a new claim is submitted
@@ -13,21 +12,44 @@ export const notifyAdminNewClaim: CollectionAfterChangeHook = async ({ doc, oper
 
   try {
     // Get listing info - fetch listing to get title
-    const listingId =
-      typeof doc.listing === 'object' && doc.listing !== null && 'value' in doc.listing
-        ? (doc.listing as { relationTo: string; value: number }).value
-        : typeof doc.listing === 'number'
-          ? doc.listing
-          : null
-
+    // Handle polymorphic relationship: could be { relationTo: 'services', value: 60 } or { relationTo: 'services', value: { id: 60, title: '...', ... } }
+    let listingId: number | null = null
     let listingTitle = 'Unknown Listing'
+
+    if (typeof doc.listing === 'number') {
+      listingId = doc.listing
+    } else if (doc.listing && typeof doc.listing === 'object') {
+      if ('value' in doc.listing) {
+        // Handle polymorphic format: { relationTo: 'services', value: 60 } or { relationTo: 'services', value: { id: 60, title: '...' } }
+        const value = (
+          doc.listing as { relationTo: string; value: number | { id: number; title?: string } }
+        ).value
+        if (typeof value === 'number') {
+          listingId = value
+        } else if (value && typeof value === 'object' && 'id' in value) {
+          listingId = typeof value.id === 'number' ? value.id : Number(value.id)
+          // If listing is already populated with title, use it
+          if ('title' in value && value.title) {
+            listingTitle = value.title
+          }
+        }
+      } else if ('id' in doc.listing) {
+        // Handle populated object: { id: 60, title: '...', ... }
+        listingId = typeof doc.listing.id === 'number' ? doc.listing.id : Number(doc.listing.id)
+        if ('title' in doc.listing && doc.listing.title) {
+          listingTitle = doc.listing.title
+        }
+      }
+    }
+
     const listingType = doc.listingType as 'locations' | 'events' | 'services'
 
-    if (listingId && listingType) {
+    // Only fetch if we don't already have the title and we have a valid listingId
+    if (listingId && listingType && listingTitle === 'Unknown Listing') {
       try {
         const listing = await req.payload.findByID({
           collection: listingType,
-          id: typeof listingId === 'number' ? listingId : Number(listingId),
+          id: listingId,
         })
         listingTitle = listing?.title || 'Unknown Listing'
       } catch (err) {
@@ -54,13 +76,9 @@ export const notifyAdminNewClaim: CollectionAfterChangeHook = async ({ doc, oper
       dashboard_url: dashboardUrl,
     })
 
-    if (result.id) {
-      req.payload.logger.info(
-        `[notifyAdminNewClaim] ✅ Enqueued admin.claim.pending for claim ${doc.id} (job: ${result.id})`,
-      )
-    } else {
+    if (!result.id) {
       req.payload.logger.warn(
-        `[notifyAdminNewClaim] ⚠️ Skipped admin.claim.pending for claim ${doc.id} - Redis unavailable`,
+        `[notifyAdminNewClaim] Skipped admin.claim.pending for claim ${doc.id} - Redis unavailable`,
       )
     }
   } catch (error) {

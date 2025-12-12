@@ -74,10 +74,7 @@ export const preventDuplicateClaim: CollectionBeforeChangeHook = async ({
     if (error instanceof Error && error.message.includes('already exists')) {
       throw error
     }
-    // Log other errors but don't block creation
-    req.payload.logger.warn(
-      `[preventDuplicateClaim] Error checking for duplicates: ${error instanceof Error ? error.message : String(error)}`,
-    )
+    // Don't block creation on other errors
   }
 
   return data

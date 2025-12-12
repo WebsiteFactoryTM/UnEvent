@@ -70,14 +70,9 @@ export const notifyClaimant: CollectionAfterChangeHook = async ({
         claim_id: String(doc.id),
       })
 
-      if (result.id) {
-        req.payload.logger.info(
-          `[notifyClaimant] ✅ Enqueued claim.approved for claim ${doc.id} (job: ${result.id})`,
-        )
-      }
     } else if (currentStatus === 'rejected') {
       // Notify claimant of rejection
-      const result = await enqueueNotification('claim.rejected', {
+      await enqueueNotification('claim.rejected', {
         first_name: doc.claimantName || undefined,
         userEmail: doc.claimantEmail,
         listing_title: listingTitle,
@@ -87,12 +82,6 @@ export const notifyClaimant: CollectionAfterChangeHook = async ({
         support_email: process.env.SUPPORT_EMAIL || 'contact@unevent.ro',
         claim_id: String(doc.id),
       })
-
-      if (result.id) {
-        req.payload.logger.info(
-          `[notifyClaimant] ✅ Enqueued claim.rejected for claim ${doc.id} (job: ${result.id})`,
-        )
-      }
     }
   } catch (error) {
     // Don't throw - email failure shouldn't break claim update

@@ -72,10 +72,7 @@ export const associateProfile: PayloadHandler = async (req: PayloadRequest) => {
     const claimEmail = claim.claimantEmail?.toLowerCase()
 
     if (userEmail && claimEmail && userEmail !== claimEmail) {
-      req.payload.logger.warn(
-        `[associateProfile] Email mismatch - user: ${userEmail}, claim: ${claimEmail}`,
-      )
-      // Don't block, but log for security monitoring
+      // Don't block, but note for security monitoring
     }
 
     // Update claim with profile - use overrideAccess to bypass access control
@@ -87,10 +84,6 @@ export const associateProfile: PayloadHandler = async (req: PayloadRequest) => {
       },
       overrideAccess: true, // Allow this update since we've validated the user
     })
-
-    req.payload.logger.info(
-      `[associateProfile] Associated claim ${claim.id} with profile ${profileId} for user ${req.user.id}`,
-    )
 
     return new Response(
       JSON.stringify({
