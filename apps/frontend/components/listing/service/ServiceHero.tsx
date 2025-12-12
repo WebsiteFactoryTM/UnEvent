@@ -5,6 +5,8 @@ import { ListingActions } from "../shared/ListingActions";
 import SocialMedia from "../shared/SocialMedia";
 import PriceDisplay from "../shared/PriceDisplay";
 import { ExpandableTagsList } from "../shared/ExpandableTagsList";
+import { UnclaimedBadge } from "../shared/UnclaimedBadge";
+import { ClaimListingCTA } from "../shared/ClaimListingCTA";
 
 interface ServiceHeroProps {
   service: ServiceListing;
@@ -41,6 +43,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
             <h1 className="text-2xl md:text-3xl font-bold">{service.title}</h1>
             <div className="flex flex-wrap gap-2">
+              {service.claimStatus === "unclaimed" && <UnclaimedBadge />}
               {isVerified && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
                   Verificat
@@ -58,6 +61,17 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
               )}
             </div>
           </div>
+
+          {/* Claim CTA for unclaimed listings */}
+          {service.claimStatus === "unclaimed" && (
+            <div className="pt-2">
+              <ClaimListingCTA
+                listingId={service.id}
+                listingType="servicii"
+                listingSlug={service.slug}
+              />
+            </div>
+          )}
 
           {/* Rating & Location */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
