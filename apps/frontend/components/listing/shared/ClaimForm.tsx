@@ -77,7 +77,7 @@ export function ClaimForm({
                 setTimeout(() => {
                   router.push(redirectUrl);
                 }, 300); // Small delay to allow dialog to close
-              } else if (isPageForm && listingSlug && listingTypeSlug) {
+              } else if (isPageForm) {
                 // For page form, redirect after delay
                 setTimeout(() => {
                   router.push(redirectUrl);
@@ -98,25 +98,32 @@ export function ClaimForm({
           setTimeout(() => {
             router.push(redirectUrl);
           }, 300);
-        } else if (isPageForm && listingSlug && listingTypeSlug) {
+        } else if (isPageForm) {
           setTimeout(() => {
             router.push(redirectUrl);
           }, 2000);
         }
       } else if (session?.user) {
-        // If authenticated, redirect to listing (both dialog and page form)
-        if (listingSlug && listingTypeSlug) {
+        // If authenticated, redirect to account page for this listing type
+        const listingTypeToAccountPath: Record<ListingType, string> = {
+          locatii: "/cont/locatiile-mele",
+          servicii: "/cont/serviciile-mele",
+          evenimente: "/cont/evenimentele-mele",
+        };
+        const accountPath = listingTypeToAccountPath[listingType];
+
+        if (accountPath) {
           if (onSuccess) {
             onSuccess(); // Close dialog first
           }
           setTimeout(
             () => {
-              router.push(`/${listingTypeSlug}/${listingSlug}`);
+              router.push(accountPath);
             },
             onSuccess ? 300 : 2000,
           ); // Shorter delay for dialog (already closing)
         } else if (onSuccess) {
-          // Fallback: just close dialog if no slug info
+          // Fallback: just close dialog if no account path
           onSuccess();
         }
       } else if (onSuccess) {

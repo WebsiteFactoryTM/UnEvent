@@ -68,7 +68,7 @@ export default function ServiceHero({ service }: ServiceHeroProps) {
               <ClaimListingCTA
                 listingId={service.id}
                 listingType="servicii"
-                listingSlug={service.slug}
+                listingSlug={service.slug || undefined}
               />
             </div>
           )}
