@@ -98,35 +98,41 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Note: Duplicate check removed - Payload will handle validation
-    // We'll catch duplicate errors from Payload response instead
-
-    // Create claim with polymorphic relationship format
-    const claimData: any = {
-      listing: {
-        relationTo: listingType,
-        value: listingId,
-      },
+    // Debug logging
+    console.log(
+      "[POST /api/claims] Creating claim - Listing ID:",
+      listingId,
+      "Type:",
       listingType,
+      "Email:",
       claimantEmail,
-      status: "pending",
-    };
+    );
 
-    if (claimantName) claimData.claimantName = claimantName;
-    if (claimantPhone) claimData.claimantPhone = claimantPhone;
-    if (profileId) claimData.claimantProfile = profileId;
-
-    const createRes = await fetch(`${payloadUrl}/api/claims`, {
+    // Use custom endpoint that handles polymorphic relationship properly
+    const createRes = await fetch(`${payloadUrl}/api/claims/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         ...(payloadAuthHeader ? { Authorization: payloadAuthHeader } : {}),
         "x-tenant": "unevent",
       },
-      body: JSON.stringify(claimData),
+      body: JSON.stringify({
+        listingId,
+        listingType,
+        claimantEmail,
+        claimantName,
+        claimantPhone,
+      }),
     });
 
     const claimResult = await createRes.json();
+
+    // Debug logging
+    console.log("[POST /api/claims] Response status:", createRes.status);
+    console.log(
+      "[POST /api/claims] Response body:",
+      JSON.stringify(claimResult, null, 2),
+    );
 
     if (!createRes.ok) {
       // Check for duplicate claim error
@@ -134,6 +140,9 @@ export async function POST(req: NextRequest) {
         claimResult.message ||
         claimResult.errors?.[0]?.message ||
         "Failed to create claim";
+
+      console.error("[POST /api/claims] Error creating claim:", errorMessage);
+      console.error("[POST /api/claims] Full error response:", claimResult);
 
       // If it's a validation error that might indicate duplicate, return 409
       if (
@@ -154,12 +163,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      claimId: claimResult.id,
-      claimToken: claimResult.claimToken,
-      profileId,
-    });
+    // Pass through the backend response directly (it already has the correct structure)
+    return NextResponse.json(claimResult);
   } catch (error) {
     console.error("Error creating claim:", error);
     return NextResponse.json(
