@@ -258,15 +258,15 @@ export function formToPayload(
       ticketUrl: eventData.ticketUrl || null,
       eventStatus: "upcoming" as const,
       venue: undefined,
-      venueAddressDetails: {
-        venueAddress: "",
-        venueCity: isDraft
-          ? eventData.city && eventData.city > 0
-            ? eventData.city
-            : undefined
-          : eventData.city,
-        venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
-      },
+      ...(isDraft && (!eventData.city || eventData.city <= 0)
+        ? {} // Omit venueAddressDetails entirely for drafts with no valid city
+        : {
+            venueAddressDetails: {
+              venueAddress: "",
+              venueCity: eventData.city && eventData.city > 0 ? eventData.city : null,
+              venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
+            },
+          }),
     } as Partial<Event>;
 
     return cleanPayload(eventPayload) as Partial<Event>;
