@@ -319,20 +319,41 @@ const eventSchemaBase = baseListingSchema.extend({
   endTime: z.string().optional(),
   capacity: z
     .object({
-      total: z
-        .preprocess(
-          (val) =>
-            val === "" || val === null || Number.isNaN(val) ? undefined : val,
-          z.number().optional(),
-        )
-        .optional(),
+      enabled: z.boolean(),
+      total: z.preprocess(
+        (val) =>
+          val === "" || val === null || Number.isNaN(val) ? undefined : val,
+        z
+          .number()
+          .min(1, "Capacitatea trebuie să fie mai mare decât 0")
+          .optional(),
+      ),
       remaining: z.preprocess(
         (val) =>
           val === "" || val === null || Number.isNaN(val) ? undefined : val,
         z.number().optional(),
       ),
     })
-    .optional(),
+    .optional()
+    .default({
+      enabled: false,
+      total: undefined,
+      remaining: undefined,
+    })
+    .superRefine((capacity, ctx) => {
+      // If capacity is disabled, skip all validation
+      if (!capacity?.enabled) return;
+
+      // If capacity is enabled, validate total field
+      if (!capacity.total || capacity.total <= 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "Introduceți o capacitate validă când capacitatea este activată",
+          path: ["total"],
+        });
+      }
+    }),
   ticketUrl: createUserFriendlyUrlSchema("URL invalid").optional(),
 });
 
@@ -562,6 +583,7 @@ export function defaultListingFormValues(
     endDate: "",
     endTime: "",
     capacity: {
+      enabled: false,
       total: undefined,
       remaining: undefined,
     },

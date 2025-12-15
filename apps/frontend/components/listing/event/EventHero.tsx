@@ -125,7 +125,7 @@ export default function EventHero({ event }: EventHeroProps) {
           </div>
         </div>
 
-        {event?.capacity && (
+        {event?.capacity?.total && (
           <div className="flex items-start gap-3">
             <FaUsers className="h-5 w-5 text-muted-foreground mt-0.5" />
             <div>

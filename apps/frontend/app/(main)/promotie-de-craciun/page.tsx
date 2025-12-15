@@ -64,7 +64,7 @@ export default function PromotieDeCraciunPage() {
           </p>
 
           <Button asChild size="lg" className="glow-on-hover mt-4">
-            <Link href="/auth/inregistrare">Listează-ți afacerea</Link>
+            <Link href="/cont/profil">Listează-ți afacerea</Link>
           </Button>
         </div>
       </section>

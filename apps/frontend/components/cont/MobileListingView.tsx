@@ -101,10 +101,12 @@ const MobileListingView = ({
                 </span>
               </div>
               <div className="col-span-2 pt-2 border-t border-border/30">
-                <ListingMetrics
-                  listingId={listing.id}
-                  kind={getListingTypeSlug(listingType)}
-                />
+                {listing.tier === "sponsored" && (
+                  <ListingMetrics
+                    listingId={listing.id}
+                    kind={getListingTypeSlug(listingType)}
+                  />
+                )}
               </div>
             </div>
 

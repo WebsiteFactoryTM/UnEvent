@@ -238,10 +238,15 @@ export function formToPayload(
         : null,
       capacity: eventData.capacity
         ? {
+            enabled: !!eventData.capacity.total,
             total: eventData.capacity.total || null,
             remaining: eventData.capacity.remaining || null,
           }
-        : undefined,
+        : {
+            enabled: false,
+            total: null,
+            remaining: null,
+          },
       ticketUrl: eventData.ticketUrl || null,
       eventStatus: "upcoming" as const,
       venue: undefined,
@@ -440,10 +445,12 @@ export function payloadToForm(
               minute: "2-digit",
             }) // HH:MM in local timezone
           : "",
-      capacity: {
-        total: eventData.capacity?.total || undefined,
-        remaining: eventData.capacity?.remaining || undefined,
-      },
+      capacity: eventData.capacity?.total
+        ? {
+            total: eventData.capacity?.total || undefined,
+            remaining: eventData.capacity?.remaining || undefined,
+          }
+        : undefined,
       ticketUrl: eventData.ticketUrl || "",
     } as Partial<EventFormData>;
   }

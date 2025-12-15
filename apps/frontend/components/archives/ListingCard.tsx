@@ -87,7 +87,9 @@ export function ListingCard({
   return (
     <Link href={`/${listingType}/${slug}`}>
       <Card className="glass-card overflow-hidden h-full flex flex-col">
-        {/* <ListingCardImpressionsLayer listingId={id} kind={kind} /> */}
+        {tier === "sponsored" && (
+          <ListingCardImpressionsLayer listingId={id} kind={kind} />
+        )}
 
         <CardHeader className="p-0 relative">
           <div className="relative h-48 w-full">

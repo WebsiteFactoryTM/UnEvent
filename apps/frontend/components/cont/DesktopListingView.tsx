@@ -70,7 +70,7 @@ const DesktopListingView = ({
                 Data creării
               </th>
               <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
-                Metrici
+                Analitice
               </th>
               <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
                 Status
@@ -106,11 +106,18 @@ const DesktopListingView = ({
                     {formatDate(listing.createdAt)}
                   </div>
                 </td>
+
                 <td className="py-4 px-4">
-                  <ListingMetrics
-                    listingId={listing.id}
-                    kind={getListingTypeSlug(listingType)}
-                  />
+                  {listing.tier !== "sponsored" ? (
+                    <span className="text-sm text-muted-foreground italic">
+                      În curând...
+                    </span>
+                  ) : (
+                    <ListingMetrics
+                      listingId={listing.id}
+                      kind={getListingTypeSlug(listingType)}
+                    />
+                  )}
                 </td>
                 <td className="py-4 px-4">
                   <span

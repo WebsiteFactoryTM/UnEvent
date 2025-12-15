@@ -12,6 +12,7 @@ import {
   FaEnvelope,
   FaHeart,
 } from "react-icons/fa6";
+import { useSession } from "next-auth/react";
 
 const menuItems = [
   { href: "/cont/profil", label: "Profil & Verificare", icon: FaUser },
@@ -38,6 +39,11 @@ const menuItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const isOnlyClient =
+    user?.roles && user?.roles?.length === 1 && user?.roles?.[0] === "client";
 
   return (
     <aside className="hidden lg:flex lg:flex-col lg:fixed lg:left-0 lg:top-16 lg:h-[calc(100vh-4rem)] lg:w-64 lg:border-r lg:border-sidebar-border lg:bg-sidebar/80 lg:backdrop-blur-xl lg:z-10">
@@ -59,6 +65,16 @@ export function Sidebar() {
                 <span className="font-medium">{item.label} (în curând)</span>
               </div>
             );
+          }
+
+          if (isOnlyClient && item.label === "Locațiile mele") {
+            return null;
+          }
+          if (isOnlyClient && item.label === "Serviciile mele") {
+            return null;
+          }
+          if (isOnlyClient && item.label === "Evenimentele mele") {
+            return null;
           }
           return (
             <Link

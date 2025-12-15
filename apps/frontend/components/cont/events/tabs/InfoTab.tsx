@@ -337,6 +337,61 @@ export function InfoTab() {
 
       <Separator />
 
+      {/* Capacity */}
+      <div className="space-y-4">
+        <div className="flex items-center space-x-2">
+          <Controller
+            control={control}
+            name="capacity.enabled"
+            render={({ field }) => (
+              <Checkbox
+                id="capacity-enabled"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+          <Label
+            htmlFor="capacity-enabled"
+            className="cursor-pointer font-medium"
+          >
+            Specifică capacitatea evenimentului (opțional)
+          </Label>
+        </div>
+
+        {watch("capacity.enabled") && (
+          <div className="ml-6 space-y-4 p-4 border rounded-lg bg-muted/30">
+            <div className="space-y-2">
+              <Label htmlFor="capacity-total">
+                Număr maxim de participanți
+              </Label>
+              <Input
+                id="capacity-total"
+                type="number"
+                min="1"
+                placeholder="ex: 100"
+                {...register("capacity.total", { valueAsNumber: true })}
+              />
+              {(errors as Partial<Record<keyof EventFormData, any>>).capacity
+                ?.total && (
+                <p className="text-sm text-destructive">
+                  {
+                    (errors as Partial<Record<keyof EventFormData, any>>)
+                      .capacity?.total?.message
+                  }
+                </p>
+              )}
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Capacitatea va fi afișată pe pagina evenimentului
+            </p>
+          </div>
+        )}
+      </div>
+
+      <Separator />
+
       {/* Ticket URL */}
       <div className="space-y-2">
         <Label htmlFor="ticketUrl">Link pentru cumpărarea biletelor</Label>

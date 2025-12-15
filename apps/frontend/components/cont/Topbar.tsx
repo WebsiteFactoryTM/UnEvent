@@ -21,6 +21,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 const menuItems = [
   { href: "/cont/profil", label: "Profil & Verificare", icon: FaUser },
@@ -50,6 +51,10 @@ export function Topbar() {
   const [open, setOpen] = useState(false);
 
   const currentPage = menuItems.find((item) => item.href === pathname);
+  const { data: session } = useSession();
+  const user = session?.user;
+  const isOnlyClient =
+    user?.roles && user?.roles?.length === 1 && user?.roles?.[0] === "client";
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-xl lg:hidden">
@@ -85,6 +90,15 @@ export function Topbar() {
                   const Icon = item.icon;
                   const isActive = pathname === item.href;
 
+                  if (isOnlyClient && item.label === "Locațiile mele") {
+                    return null;
+                  }
+                  if (isOnlyClient && item.label === "Serviciile mele") {
+                    return null;
+                  }
+                  if (isOnlyClient && item.label === "Evenimentele mele") {
+                    return null;
+                  }
                   return (
                     <Link
                       key={item.href}

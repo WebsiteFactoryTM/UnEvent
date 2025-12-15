@@ -1,5 +1,13 @@
 import { SectionCard } from "@/components/cont/SectionCard";
-import { FaUser, FaCircleCheck, FaUpload } from "react-icons/fa6";
+import {
+  FaUser,
+  FaCircleCheck,
+  FaUpload,
+  FaPlus,
+  FaLocationDot,
+  FaBriefcase,
+  FaCalendarDays,
+} from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +21,12 @@ import { getQueryClient } from "@/lib/react-query";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { profileKeys } from "@/lib/cacheKeys";
 import ProfileHeader from "./ProfileHeader";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default async function ProfilPage() {
   const session = await getServerSession(authOptions);
@@ -36,21 +50,88 @@ export default async function ProfilPage() {
     <HydrationBoundary state={dehydratedState}>
       <SectionCard title="Informații Profil">
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between gap-3">
+          <div className="flex flex-col sm:flex-row justify-between gap-5">
             <ProfileHeader profileId={Number(session.user.profile)} />
-            <Button
-              asChild
-              variant="outline"
-              className="order-first sm:order-last"
-            >
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`/profil/${profileData.slug}`}
+            <div className="flex flex-row gap-2">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="order-first sm:order-last"
               >
-                Vezi profil
-              </Link>
-            </Button>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`/profil/${profileData.slug}`}
+                >
+                  Vezi profil
+                </Link>
+              </Button>
+              {(() => {
+                const hasHostRole = profileData.userType?.includes("host");
+                const hasProviderRole =
+                  profileData.userType?.includes("provider");
+                const hasOrganizerRole =
+                  profileData.userType?.includes("organizer");
+
+                // Don't show button if user only has client role
+                if (!hasHostRole && !hasProviderRole && !hasOrganizerRole) {
+                  return null;
+                }
+
+                const listingOptions = [];
+                if (hasHostRole) {
+                  listingOptions.push({
+                    href: "/cont/locatiile-mele/adauga",
+                    label: "Listează locație",
+                    icon: FaLocationDot,
+                  });
+                }
+                if (hasProviderRole) {
+                  listingOptions.push({
+                    href: "/cont/serviciile-mele/adauga",
+                    label: "Listează serviciu",
+                    icon: FaBriefcase,
+                  });
+                }
+                if (hasOrganizerRole) {
+                  listingOptions.push({
+                    href: "/cont/evenimentele-mele/adauga",
+                    label: "Listează eveniment",
+                    icon: FaCalendarDays,
+                  });
+                }
+
+                return (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="default"
+                        className="order-first sm:order-last"
+                      >
+                        <FaPlus className="h-4 w-4 mr-2" />
+                        Crează listare
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      {listingOptions.map((option) => (
+                        <DropdownMenuItem key={option.href} asChild>
+                          <Link
+                            rel="noopener noreferrer"
+                            href={option.href}
+                            className="flex items-center gap-2 cursor-pointer"
+                          >
+                            <option.icon className="h-4 w-4" />
+                            {option.label}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              })()}
+            </div>
           </div>
 
           <ProfilePersonalDetailsForm profile={profileData} />
