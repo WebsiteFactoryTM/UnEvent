@@ -262,9 +262,13 @@ export async function rankSingle(
         : String(listing.city)
 
     // Resolve type slugs and ids (supports hasMany)
-    const rawTypes = Array.isArray((listing as Listing).type)
-      ? (listing as Listing).type
-      : [(listing as Listing).type]
+    // Handle optional type field (can be null/undefined for drafts)
+    if (!listing.type) {
+      console.warn(`[Feed] rankSingle: ${kind} ${listing.id} has no type; skipping`)
+      return
+    }
+
+    const rawTypes = Array.isArray(listing.type) ? listing.type : [listing.type]
 
     const typeSlugs: string[] = []
     const typeIds: string[] = []
