@@ -224,18 +224,26 @@ export function formToPayload(
           : null,
       },
       allDayEvent: eventData.allDayEvent,
-      startDate: eventData.allDayEvent
-        ? eventData.startDate
-        : eventData.startTime
-          ? `${eventData.startDate}T${eventData.startTime}`
-          : eventData.startDate,
-      endDate: eventData.endDate
-        ? eventData.allDayEvent
-          ? eventData.endDate
-          : eventData.endTime
+      startDate: (() => {
+        if (eventData.allDayEvent) {
+          return eventData.startDate && eventData.startDate.trim() ? eventData.startDate : null;
+        } else {
+          return eventData.startDate && eventData.startTime && eventData.startDate.trim() && eventData.startTime.trim()
+            ? `${eventData.startDate}T${eventData.startTime}`
+            : eventData.startDate && eventData.startDate.trim() ? eventData.startDate : null;
+        }
+      })(),
+      endDate: (() => {
+        if (!eventData.endDate || !eventData.endDate.trim()) return null;
+
+        if (eventData.allDayEvent) {
+          return eventData.endDate;
+        } else {
+          return eventData.endTime && eventData.endTime.trim()
             ? `${eventData.endDate}T${eventData.endTime}`
-            : eventData.endDate
-        : null,
+            : eventData.endDate;
+        }
+      })(),
       capacity: eventData.capacity
         ? {
             enabled: !!eventData.capacity.total,
