@@ -41,11 +41,16 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     const responseData = await res.json();
 
     if (!res.ok) {
-      const errorMessage =
-        responseData.message ||
-        responseData.errors?.[0]?.message ||
-        "Failed to update listing";
-      return new Response(JSON.stringify({ error: errorMessage }), {
+      // Pass through full error response including errors array for field-level errors
+      const errorResponse = {
+        error:
+          responseData.message ||
+          responseData.error ||
+          "Failed to update listing",
+        errors: responseData.errors || [],
+        message: responseData.message,
+      };
+      return new Response(JSON.stringify(errorResponse), {
         status: res.status,
         headers: {
           "Content-Type": "application/json",

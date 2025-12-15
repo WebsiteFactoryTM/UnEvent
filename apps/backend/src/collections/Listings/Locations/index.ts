@@ -55,7 +55,7 @@ export const Locations: CollectionConfig = {
       type: 'relationship',
       relationTo: 'listing-types',
       hasMany: true,
-      required: true,
+      required: false, // Allow optional for drafts
       index: true,
       filterOptions: {
         type: { equals: 'locations' },
@@ -63,6 +63,17 @@ export const Locations: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Type of location',
+      },
+      validate: (value: any, { data }: { data: any }) => {
+        // Require type for non-draft listings
+        if (
+          data?.moderationStatus &&
+          data.moderationStatus !== 'draft' &&
+          (!value || (Array.isArray(value) && value.length === 0))
+        ) {
+          return 'Type is required for published listings'
+        }
+        return true
       },
     },
     {
@@ -73,11 +84,22 @@ export const Locations: CollectionConfig = {
         type: { equals: 'events' },
       },
       hasMany: true,
-      required: true,
+      required: false, // Allow optional for drafts
       index: true,
       admin: {
         position: 'sidebar',
         description: 'Type of event suitable for this location',
+      },
+      validate: (value: any, { data }: { data: any }) => {
+        // Require suitableFor for non-draft listings
+        if (
+          data?.moderationStatus &&
+          data.moderationStatus !== 'draft' &&
+          (!value || (Array.isArray(value) && value.length === 0))
+        ) {
+          return 'Suitable For is required for published listings'
+        }
+        return true
       },
     },
     {
