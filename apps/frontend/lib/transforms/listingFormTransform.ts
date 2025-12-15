@@ -262,7 +262,7 @@ export function formToPayload(
         ? {} // Omit venueAddressDetails entirely for drafts with no valid city
         : {
             venueAddressDetails: {
-              venueAddress: "", // Empty string should work for varchar NOT NULL
+              venueAddress: null, // Explicit null for optional text field
               venueCity:
                 eventData.city && eventData.city > 0 ? eventData.city : null,
               venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
