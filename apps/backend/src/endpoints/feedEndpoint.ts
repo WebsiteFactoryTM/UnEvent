@@ -29,13 +29,15 @@ function createCirclePolygon(lng: number, lat: number, radiusMeters: number, poi
     const angle = (i * 360) / points
     const rad = (angle * Math.PI) / 180
 
-    // Calculate offset in degrees
-    const latOffset = (radiusMeters / earthRadius) * (180 / Math.PI)
+    // Calculate latitude and longitude offsets for each point on the circle
+    const latOffset = (radiusMeters / earthRadius) * (180 / Math.PI) * Math.sin(rad)
     const lngOffset =
-      (radiusMeters / (earthRadius * Math.cos((lat * Math.PI) / 180))) * (180 / Math.PI)
+      (radiusMeters / (earthRadius * Math.cos((lat * Math.PI) / 180))) *
+      (180 / Math.PI) *
+      Math.cos(rad)
 
-    const pointLat = lat + latOffset * Math.sin(rad)
-    const pointLng = lng + lngOffset * Math.cos(rad)
+    const pointLat = lat + latOffset
+    const pointLng = lng + lngOffset
 
     coords.push([pointLng, pointLat])
   }
