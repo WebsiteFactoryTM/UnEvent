@@ -232,18 +232,18 @@ export const Events: CollectionConfig = {
         {
           name: 'venueAddress',
           type: 'text',
-          required: false,
+          required: true,
         },
         {
           name: 'venueCity',
           type: 'relationship',
           relationTo: 'cities',
-          required: false,
+          required: true,
         },
         {
           name: 'venueGeo',
           type: 'point',
-          required: false,
+          required: true,
         },
       ],
     },

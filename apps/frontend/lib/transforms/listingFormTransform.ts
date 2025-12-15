@@ -259,16 +259,17 @@ export function formToPayload(
       eventStatus: "upcoming" as const,
       venue: null,
       venueAddressDetails: {
-        venueAddress: "", // Empty string satisfies NOT NULL varchar constraint
-        venueCity:
-          eventData.city && eventData.city > 0 ? eventData.city : null,
+        venueAddress: "",
+        venueCity: isDraft
+          ? eventData.city && eventData.city > 0
+            ? eventData.city
+            : undefined
+          : eventData.city,
         venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
       },
     } as Partial<Event>;
 
-    console.log("[DEBUG] eventPayload before cleanPayload:", eventPayload);
     const cleanedPayload = cleanPayload(eventPayload);
-    console.log("[DEBUG] eventPayload after cleanPayload:", cleanedPayload);
     return cleanedPayload as Partial<Event>;
   }
 
