@@ -170,11 +170,13 @@ export async function GET(req: NextRequest) {
 
   if (redis) {
     try {
+      // Reduce cache TTL to prevent stale data - cities can be deleted/updated
+      // Use shorter TTL: 1 hour for search results, 6 hours for popular cities
       await redis.set(
         cacheKey,
         JSON.stringify(docs),
         "EX",
-        search ? cacheTTL.sixHours : cacheTTL.oneDay,
+        search ? 3600 : 21600, // 1 hour for search, 6 hours for popular
       );
     } catch (error) {
       console.warn("[cities BFF] Failed to write to Redis:", error);

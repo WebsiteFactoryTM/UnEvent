@@ -35,6 +35,10 @@ function cleanPayload(payload: any): any {
       ) {
         continue; // Omit null array fields
       }
+      // Remove city field if it's 0 (invalid FK reference) - should be undefined instead
+      if (key === "city" && (value === 0 || value === "0")) {
+        continue; // Omit invalid city value
+      }
       const cleanedValue = cleanPayload(value);
       if (cleanedValue !== undefined) {
         cleaned[key] = cleanedValue;
@@ -54,10 +58,29 @@ export function formToPayload(
   formData: UnifiedListingFormData,
 ): Partial<Location | Event | Service> {
   // Base payload fields common to all listing types
+  const isDraft =
+    formData.moderationStatus === "draft" || formData._status === "draft";
   const basePayload = {
     title: formData.title,
     description: formData.description || null,
-    city: formData.city,
+    // For drafts, allow city to be undefined if not selected (0 or falsy)
+    // For non-drafts, city is required by validation
+    // Use undefined instead of null for optional relationship fields to avoid FK constraint violations
+    // cleanPayload will omit undefined values, which is correct for optional fields
+    // Handle both number and string types, and filter out 0, null, undefined, empty string
+    city: (() => {
+      const cityValue = formData.city;
+      // Convert to number if it's a string
+      const cityNum =
+        typeof cityValue === "string" ? parseInt(cityValue, 10) : cityValue;
+
+      // Return undefined if city is 0, null, undefined, NaN, or empty string
+      if (!cityNum || cityNum === 0 || isNaN(cityNum)) {
+        return isDraft ? undefined : cityValue;
+      }
+
+      return cityNum;
+    })(),
     address: formData.address || null,
     geo:
       formData.geo?.lat && formData.geo?.lon
@@ -224,7 +247,11 @@ export function formToPayload(
       venue: undefined,
       venueAddressDetails: {
         venueAddress: "",
-        venueCity: eventData.city,
+        venueCity: isDraft
+          ? eventData.city && eventData.city > 0
+            ? eventData.city
+            : undefined
+          : eventData.city,
         venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
       },
     } as Partial<Event>;
@@ -302,8 +329,8 @@ export function payloadToForm(
           manualPin: false,
         }
       : {
-          lon: 45.7489,
-          lat: 21.2087,
+          lat: 45.7489,
+          lon: 21.2087,
           manualPin: false,
         },
     contact: {

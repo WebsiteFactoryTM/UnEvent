@@ -3,16 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { MapPin, Move } from "lucide-react";
+
 import { useCities } from "@/lib/react-query/cities.queries";
 import type { UnifiedListingFormData } from "@/forms/listing/schema";
 import { SearchableSelect } from "@/components/ui/searchable-select";
@@ -69,8 +60,8 @@ export function AddressTab() {
     if (city && city.geo && Array.isArray(city.geo) && city.geo.length === 2) {
       // Cities store geo as [longitude, latitude] (GeoJSON standard)
       return {
-        lat: city.geo[1], // latitude (second element)
         lng: city.geo[0], // longitude (first element)
+        lat: city.geo[1], // latitude (second element)
       };
     }
     return null;
