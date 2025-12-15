@@ -258,21 +258,12 @@ export function formToPayload(
       ticketUrl: eventData.ticketUrl || null,
       eventStatus: "upcoming" as const,
       venue: null,
-      ...(isDraft && (!eventData.city || eventData.city <= 0)
-        ? (console.log('[DEBUG] Omitting venueAddressDetails for draft with invalid city:', { city: eventData.city, isDraft }), null) // Omit venueAddressDetails entirely for drafts with no valid city
-        : (console.log('[DEBUG] Including venueAddressDetails:', {
-            city: eventData.city,
-            isDraft,
-            venueCity: eventData.city && eventData.city > 0 ? eventData.city : null,
-            venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0]
-          }), {
-            venueAddressDetails: {
-              venueAddress: null, // Explicit null for optional text field
-              venueCity:
-                eventData.city && eventData.city > 0 ? eventData.city : null,
-              venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
-            },
-          })),
+      venueAddressDetails: {
+        venueAddress: undefined, // Undefined so cleanPayload removes it
+        venueCity:
+          eventData.city && eventData.city > 0 ? eventData.city : undefined,
+        venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
+      },
     } as Partial<Event>;
 
     console.log("[DEBUG] eventPayload before cleanPayload:", eventPayload);
