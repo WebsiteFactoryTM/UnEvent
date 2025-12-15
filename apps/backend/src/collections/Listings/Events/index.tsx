@@ -95,8 +95,14 @@ export const Events: CollectionConfig = {
     {
       name: 'startDate',
       type: 'date',
-      required: true,
       index: true,
+      validate: (value: any, { data }: { data: any }) => {
+        // Require startDate for non-draft listings
+        if (data?.moderationStatus && data.moderationStatus !== 'draft' && !value) {
+          return 'Start date is required for published events'
+        }
+        return true
+      },
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
