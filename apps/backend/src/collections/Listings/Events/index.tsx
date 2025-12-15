@@ -58,7 +58,7 @@ export const Events: CollectionConfig = {
       type: 'relationship',
       relationTo: 'listing-types',
       hasMany: true,
-      required: true,
+      required: false, // Allow optional for drafts
       index: true,
       filterOptions: {
         type: { equals: 'events' },
@@ -66,6 +66,18 @@ export const Events: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Type of event',
+      },
+      validate: (value: any, { data }: { data: any }) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        // Require type for non-draft listings
+        if (
+          data?.moderationStatus &&
+          data.moderationStatus !== 'draft' &&
+          (!value || (Array.isArray(value) && value.length === 0))
+        ) {
+          return 'Type is required for published listings'
+        }
+        return true
       },
     },
     {

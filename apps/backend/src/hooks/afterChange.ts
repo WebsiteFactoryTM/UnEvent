@@ -18,6 +18,9 @@ export const afterChange: CollectionAfterChangeHook = async ({
   const tenant = (req as any)?.tenant || 'unevent'
   const tags = new Set<string>([tag.tenant(tenant)])
 
+  // Track if this is a draft listing that shouldn't trigger revalidation
+  let isDraftListing = false
+
   // Taxonomies (listing-types and facilities are taxonomy collections)
   if (collection.slug === 'listing-types' || collection.slug === 'facilities') {
     tags.add(tag.taxonomies())
@@ -75,12 +78,16 @@ export const afterChange: CollectionAfterChangeHook = async ({
     // Revalidate if:
     // 1. Currently approved (show changes)
     // 2. Was approved but now isn't (remove from cache)
-    // 3. Just became approved (add to cache)
+    // 3. Transitioning to pending (draft → pending) - listing submitted for approval
+    // Skip revalidation only for pure draft-to-draft updates (no status change)
+    const statusChanged = previousStatus && previousStatus !== currentStatus
+    // Revalidate when transitioning to pending (any status → pending) - listing submitted for approval
+    const isTransitioningToPending = currentStatus === 'pending' && previousStatus !== 'pending'
     const shouldRevalidate =
-      currentStatus === 'approved' ||
-      previousStatus === 'approved' ||
-      currentStatus === 'draft' ||
-      previousStatus === 'draft'
+      currentStatus === 'approved' || previousStatus === 'approved' || isTransitioningToPending
+
+    // Only skip revalidation if it's a draft that hasn't changed status
+    isDraftListing = !shouldRevalidate && currentStatus === 'draft' && !statusChanged
 
     if (shouldRevalidate) {
       const collectionType = collection.slug as 'events' | 'locations' | 'services'
@@ -108,7 +115,8 @@ export const afterChange: CollectionAfterChangeHook = async ({
 
       const currentlyHubEligible = isHubSnapshotCandidate(doc)
       const previouslyHubEligible = isHubSnapshotCandidate(previousDoc)
-      if (currentlyHubEligible || previouslyHubEligible || currentStatus === 'draft') {
+      // Only schedule hub snapshot for approved listings, not drafts
+      if (currentlyHubEligible || previouslyHubEligible) {
         queueHubSnapshotBuild(req.payload, collectionType, 'listing-change')
       }
     }
@@ -180,6 +188,11 @@ export const afterChange: CollectionAfterChangeHook = async ({
     if (previousDoc?.slug && previousDoc.slug !== doc?.slug) {
       tags.add(tag.profileSlug(previousDoc.slug))
     }
+  }
+
+  // Skip revalidation entirely for draft listings - they don't affect public cache
+  if (isDraftListing) {
+    return
   }
 
   // Home aggregates content; conservative refresh
