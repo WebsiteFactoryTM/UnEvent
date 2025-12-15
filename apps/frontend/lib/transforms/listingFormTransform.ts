@@ -228,7 +228,7 @@ export function formToPayload(
         if (eventData.allDayEvent) {
           return eventData.startDate && eventData.startDate.trim()
             ? eventData.startDate
-            : isDraft ? "" : null;
+            : null; // Send null for missing dates (both drafts and published)
         } else {
           return eventData.startDate &&
             eventData.startTime &&
@@ -237,12 +237,12 @@ export function formToPayload(
             ? `${eventData.startDate}T${eventData.startTime}`
             : eventData.startDate && eventData.startDate.trim()
               ? eventData.startDate
-              : isDraft ? "" : null;
+              : null; // Send null for missing dates (both drafts and published)
         }
       })(),
       endDate: (() => {
         if (!eventData.endDate || !eventData.endDate.trim())
-          return isDraft ? "" : null;
+          return null; // Send null for missing dates (both drafts and published)
 
         if (eventData.allDayEvent) {
           return eventData.endDate;
@@ -445,9 +445,7 @@ export function payloadToForm(
         if (!eventData.startDate) return "";
         try {
           const date = new Date(eventData.startDate);
-          return isNaN(date.getTime())
-            ? ""
-            : date.toLocaleDateString("sv-SE");
+          return isNaN(date.getTime()) ? "" : date.toLocaleDateString("sv-SE");
         } catch {
           return "";
         }
