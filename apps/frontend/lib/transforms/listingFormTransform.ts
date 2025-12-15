@@ -211,7 +211,7 @@ export function formToPayload(
   // Event-specific transformation
   if (formData.listingType === "event") {
     const eventData = formData as EventFormData;
-    console.log('[DEBUG] formToPayload EVENT START:', {
+    console.log("[DEBUG] formToPayload EVENT START:", {
       listingType: eventData.listingType,
       startDate: eventData.startDate,
       startTime: eventData.startTime,
@@ -247,24 +247,24 @@ export function formToPayload(
           result =
             eventData.startDate && eventData.startDate.trim()
               ? eventData.startDate
-              : null;
+              : isDraft ? "" : null; // Send empty string for drafts instead of null
         } else {
           result =
             eventData.startDate &&
             eventData.startTime &&
             eventData.startDate.trim() &&
             eventData.startTime.trim()
-              ? `${eventData.startDate}T${eventData.startTime}`
-              : eventData.startDate && eventData.startDate.trim()
-                ? eventData.startDate
-                : null;
+            ? `${eventData.startDate}T${eventData.startTime}`
+            : eventData.startDate && eventData.startDate.trim()
+              ? eventData.startDate
+              : isDraft ? "" : null; // Send empty string for drafts instead of null
         }
 
         console.log("[DEBUG] formToPayload startDate result:", result);
         return result;
       })(),
       endDate: (() => {
-        if (!eventData.endDate || !eventData.endDate.trim()) return null;
+        if (!eventData.endDate || !eventData.endDate.trim()) return isDraft ? "" : null;
 
         if (eventData.allDayEvent) {
           return eventData.endDate;
@@ -299,7 +299,7 @@ export function formToPayload(
       },
     } as Partial<Event>;
 
-    console.log('[DEBUG] formToPayload EVENT END result:', eventPayload);
+    console.log("[DEBUG] formToPayload EVENT END result:", eventPayload);
     return cleanPayload(eventPayload) as Partial<Event>;
   }
 
@@ -453,7 +453,7 @@ export function payloadToForm(
   // Event-specific transformation
   if (listingType === "event") {
     const eventData = listing as Event;
-    console.log('[DEBUG] payloadToForm EVENT START:', {
+    console.log("[DEBUG] payloadToForm EVENT START:", {
       listingType,
       startDate: eventData.startDate,
       endDate: eventData.endDate,
