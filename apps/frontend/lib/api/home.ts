@@ -16,7 +16,7 @@ export const fetchHomeListings = async () => {
           ? `https://${process.env.VERCEL_URL}`
           : "http://localhost:3000");
 
-      const bffUrl = `${baseUrl}/api/public/home?t=${Date.now()}`;
+      const bffUrl = `${baseUrl}/api/public/home`;
 
       try {
         const res = await fetch(bffUrl, {
@@ -43,7 +43,7 @@ export const fetchHomeListings = async () => {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/home?t=${Date.now()}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/home`,
       {
         headers: { Accept: "application/json" },
         next: { revalidate: 300 },

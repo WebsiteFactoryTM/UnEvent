@@ -4,7 +4,8 @@ import { fetchWithRetry } from "@/lib/server/fetcher";
 import { NextRequest } from "next/server";
 import * as Sentry from "@sentry/nextjs";
 
-export const dynamic = "force-dynamic";
+// Allow Next/Vercel to cache this route. We invalidate via ISR (revalidate) and tags.
+export const dynamic = "force-static";
 export const revalidate = 300; // Reduce to 5 minutes
 export const fetchCache = "default-cache";
 export const preferredRegion = "auto";
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
           "x-tenant": "unevent",
           Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
         },
-        cache: "default",
+        cache: "force-cache",
         next: {
           tags: [tag.homeSnapshot(), tag.home()],
           revalidate: 300, // Fallback: 5 min
@@ -46,7 +47,8 @@ export async function GET(req: NextRequest) {
     const etag = generateETag(body);
     const responseHeaders = new Headers({
       "Content-Type": "application/json",
-      "Cache-Control": "public, s-maxage=900, stale-while-revalidate=900",
+      // Cache at the CDN for 5 minutes; allow 10 minutes of stale while revalidating
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
       "Surrogate-Key": `${tag.homeSnapshot()} ${tag.home()} ${tag.tenant("unevent")}`,
       ETag: etag,
     });

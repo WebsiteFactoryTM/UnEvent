@@ -11,12 +11,11 @@ import {
 import Link from "next/link";
 import { CarouselSkeleton } from "./CarouselSkeleton";
 import { ListingCard } from "@/components/archives/ListingCard";
-import { Location, Service, Event } from "@/types/payload-types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchHomeListings } from "@/lib/api/home";
 import { ListingCardData, normalizeListing } from "@/lib/normalizers/hub";
 import { Listing, ListingType } from "@/types/listings";
-import { useEffect, useRef, useMemo } from "react";
+import { useMemo } from "react";
 
 interface HomeCarouselProps {
   listingType: ListingType;
@@ -34,15 +33,14 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
   category,
   label,
 }) => {
-  const queryClient = useQueryClient();
-  const lastCheckedRef = useRef<number>(Date.now());
-
-  const { data, isLoading, isError, error, refetch } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["listings", "home"],
     queryFn: fetchHomeListings,
-    staleTime: 1000 * 60 * 2, // 2 minutes
-    refetchInterval: 1000 * 60 * 3, // Refetch every 3 minutes to catch updates
-    refetchIntervalInBackground: true,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // keep in cache for 30 minutes
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    retry: 1,
   });
 
   const listings = data?.[category] ?? [];
@@ -53,41 +51,6 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
       normalizeListing(listingType, listing),
     );
   }, [listings, listingType]);
-
-  // Check for server-side updates every 30 seconds
-  useEffect(() => {
-    const checkForUpdates = async () => {
-      try {
-        // Check if home data has been updated server-side
-        const response = await fetch(
-          "/api/public/home-updated?t=" + Date.now(),
-        );
-
-        if (response.ok) {
-          const { lastUpdate } = await response.json();
-          const lastChecked = parseInt(
-            localStorage.getItem("homeLastChecked") || "0",
-          );
-
-          if (lastUpdate > lastChecked) {
-            // Home data was updated server-side, invalidate and refetch
-            console.log(
-              "Home data updated server-side, invalidating React Query",
-            );
-            queryClient.invalidateQueries({
-              queryKey: ["listings", "home"],
-            });
-            localStorage.setItem("homeLastChecked", lastUpdate.toString());
-          }
-        }
-      } catch (error) {
-        // Silently fail - this is just an optimization
-      }
-    };
-
-    const interval = setInterval(checkForUpdates, 30000); // Check every 30 seconds
-    return () => clearInterval(interval);
-  }, [queryClient]);
 
   // 1️⃣ Loading skeleton
   if (isLoading) return <CarouselSkeleton count={3} showAvatar={true} />;
