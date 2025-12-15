@@ -211,6 +211,15 @@ export function formToPayload(
   // Event-specific transformation
   if (formData.listingType === "event") {
     const eventData = formData as EventFormData;
+    console.log('[DEBUG] formToPayload EVENT START:', {
+      listingType: eventData.listingType,
+      startDate: eventData.startDate,
+      startTime: eventData.startTime,
+      endDate: eventData.endDate,
+      endTime: eventData.endTime,
+      allDayEvent: eventData.allDayEvent,
+      moderationStatus: eventData.moderationStatus,
+    });
     const eventPayload = {
       ...basePayload,
       type: eventData.type ?? [],
@@ -225,13 +234,34 @@ export function formToPayload(
       },
       allDayEvent: eventData.allDayEvent,
       startDate: (() => {
+        console.log("[DEBUG] formToPayload startDate:", {
+          allDayEvent: eventData.allDayEvent,
+          startDate: eventData.startDate,
+          startTime: eventData.startTime,
+          startDateTrimmed: eventData.startDate?.trim(),
+          startTimeTrimmed: eventData.startTime?.trim(),
+        });
+
+        let result;
         if (eventData.allDayEvent) {
-          return eventData.startDate && eventData.startDate.trim() ? eventData.startDate : null;
+          result =
+            eventData.startDate && eventData.startDate.trim()
+              ? eventData.startDate
+              : null;
         } else {
-          return eventData.startDate && eventData.startTime && eventData.startDate.trim() && eventData.startTime.trim()
-            ? `${eventData.startDate}T${eventData.startTime}`
-            : eventData.startDate && eventData.startDate.trim() ? eventData.startDate : null;
+          result =
+            eventData.startDate &&
+            eventData.startTime &&
+            eventData.startDate.trim() &&
+            eventData.startTime.trim()
+              ? `${eventData.startDate}T${eventData.startTime}`
+              : eventData.startDate && eventData.startDate.trim()
+                ? eventData.startDate
+                : null;
         }
+
+        console.log("[DEBUG] formToPayload startDate result:", result);
+        return result;
       })(),
       endDate: (() => {
         if (!eventData.endDate || !eventData.endDate.trim()) return null;
@@ -269,6 +299,7 @@ export function formToPayload(
       },
     } as Partial<Event>;
 
+    console.log('[DEBUG] formToPayload EVENT END result:', eventPayload);
     return cleanPayload(eventPayload) as Partial<Event>;
   }
 
@@ -422,6 +453,12 @@ export function payloadToForm(
   // Event-specific transformation
   if (listingType === "event") {
     const eventData = listing as Event;
+    console.log('[DEBUG] payloadToForm EVENT START:', {
+      listingType,
+      startDate: eventData.startDate,
+      endDate: eventData.endDate,
+      allDayEvent: eventData.allDayEvent,
+    });
     return {
       ...baseForm,
       listingType: "event" as const,
@@ -434,11 +471,35 @@ export function payloadToForm(
       },
       allDayEvent: eventData.allDayEvent || false,
       startDate: (() => {
-        if (!eventData.startDate) return "";
+        console.log(
+          "[DEBUG] payloadToForm startDate input:",
+          eventData.startDate,
+        );
+        if (!eventData.startDate) {
+          console.log(
+            "[DEBUG] payloadToForm startDate: no input, returning empty",
+          );
+          return "";
+        }
         try {
           const date = new Date(eventData.startDate);
-          return isNaN(date.getTime()) ? "" : date.toLocaleDateString("sv-SE");
-        } catch {
+          const result = isNaN(date.getTime())
+            ? ""
+            : date.toLocaleDateString("sv-SE");
+          console.log(
+            "[DEBUG] payloadToForm startDate result:",
+            result,
+            "from:",
+            eventData.startDate,
+          );
+          return result;
+        } catch (error) {
+          console.log(
+            "[DEBUG] payloadToForm startDate error:",
+            error,
+            "for input:",
+            eventData.startDate,
+          );
           return "";
         }
       })(),
@@ -457,11 +518,32 @@ export function payloadToForm(
         }
       })(),
       endDate: (() => {
-        if (!eventData.endDate) return "";
+        console.log("[DEBUG] payloadToForm endDate input:", eventData.endDate);
+        if (!eventData.endDate) {
+          console.log(
+            "[DEBUG] payloadToForm endDate: no input, returning empty",
+          );
+          return "";
+        }
         try {
           const date = new Date(eventData.endDate);
-          return isNaN(date.getTime()) ? "" : date.toLocaleDateString("sv-SE");
-        } catch {
+          const result = isNaN(date.getTime())
+            ? ""
+            : date.toLocaleDateString("sv-SE");
+          console.log(
+            "[DEBUG] payloadToForm endDate result:",
+            result,
+            "from:",
+            eventData.endDate,
+          );
+          return result;
+        } catch (error) {
+          console.log(
+            "[DEBUG] payloadToForm endDate error:",
+            error,
+            "for input:",
+            eventData.endDate,
+          );
           return "";
         }
       })(),
