@@ -24,8 +24,8 @@ export async function getPopularCities(limit: number = 10): Promise<City[]> {
     url.searchParams.set("limit", String(limit));
 
     const res = await fetch(url.toString(), {
-      // Cache per Next.js App Router rules; revalidate daily
-      next: { revalidate: 86400 },
+      // Reduced cache time to avoid stale city data
+      next: { revalidate: 3600 }, // 1 hour instead of 24 hours
       headers: { Accept: "application/json" },
     });
 

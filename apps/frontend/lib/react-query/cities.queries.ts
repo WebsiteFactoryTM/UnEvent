@@ -61,8 +61,8 @@ export function useCities({
       return getCities({ search, limit, verifiedOnly, popularFallback });
     },
     enabled: enabled && (!!search || popularFallback),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
+    staleTime: 1000 * 60 * 2, // Reduced to 2 minutes to avoid stale city data
+    gcTime: 1000 * 60 * 15, // Reduced to 15 minutes
   });
 }
 

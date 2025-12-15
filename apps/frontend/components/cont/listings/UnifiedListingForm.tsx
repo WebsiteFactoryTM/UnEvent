@@ -62,6 +62,8 @@ export function UnifiedListingForm({
   const [savedListingId, setSavedListingId] = useState<number | undefined>(
     existingListing?.id,
   );
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSavedTab, setLastSavedTab] = useState<string | null>(null);
   const { toast } = useToast();
   const { trackEvent } = useTracking();
   const { data: session } = useSession();
@@ -116,7 +118,7 @@ export function UnifiedListingForm({
 
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     setError,
     clearErrors,
     trigger,
@@ -126,14 +128,27 @@ export function UnifiedListingForm({
   const isFirstTab = currentTabIndex === 0;
   const isLastTab = currentTabIndex === tabs.length - 1;
 
-  const handleNext = (e?: React.MouseEvent | React.KeyboardEvent) => {
+  const handleNext = async (e?: React.MouseEvent | React.KeyboardEvent) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
 
     if (!isLastTab) {
-      setActiveTab(tabs[currentTabIndex + 1].value);
+      const nextTab = tabs[currentTabIndex + 1].value;
+
+      // Auto-save draft before changing tabs if:
+      // 1. We haven't saved this tab yet AND
+      // 2. Form has been modified (isDirty) OR we haven't saved anything yet (no savedListingId)
+      if (
+        lastSavedTab !== activeTab &&
+        !isAutoSaving &&
+        (isDirty || !savedListingId)
+      ) {
+        await handleSaveDraft(true); // silent save
+      }
+
+      setActiveTab(nextTab);
       window.scrollTo({ top: 100, behavior: "smooth" });
     }
   };
@@ -145,27 +160,35 @@ export function UnifiedListingForm({
     }
   };
 
-  const handleSaveDraft = async () => {
-    if (!canSubmit) {
-      toast({
-        title: "Eroare",
-        description: (
-          <>
-            Sesiunea a expirat. Te rugăm să{" "}
-            <Link
-              href="/auth/autentificare"
-              className="underline font-semibold hover:text-primary"
-            >
-              te autentifici din nou
-            </Link>
-            .
-          </>
-        ),
-        variant: "destructive",
-      });
+  const handleSaveDraft = async (silent = false) => {
+    // Prevent concurrent auto-saves
+    if (isAutoSaving) {
       return;
     }
 
+    if (!canSubmit) {
+      if (!silent) {
+        toast({
+          title: "Eroare",
+          description: (
+            <>
+              Sesiunea a expirat. Te rugăm să{" "}
+              <Link
+                href="/auth/autentificare"
+                className="underline font-semibold hover:text-primary"
+              >
+                te autentifici din nou
+              </Link>
+              .
+            </>
+          ),
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+
+    setIsAutoSaving(true);
     const formData = methods.getValues();
 
     // Set status to draft
@@ -191,20 +214,121 @@ export function UnifiedListingForm({
         setSavedListingId(result.id);
       }
 
-      toast({
-        title: "Ciornă salvată",
-        description:
-          "Modificările au fost salvate ca ciornă. Poți continua mai târziu.",
-        variant: "success",
-      });
-    } catch (error) {
+      // Track that we've saved this tab
+      setLastSavedTab(activeTab);
+      // Reset form dirty state after successful save
+      methods.reset(formData, { keepValues: true });
+
+      if (!silent) {
+        toast({
+          title: "Ciornă salvată",
+          description:
+            "Modificările au fost salvate ca ciornă. Poți continua mai târziu.",
+          variant: "success",
+        });
+      }
+    } catch (error: any) {
       console.error(error);
-      toast({
-        title: "Eroare",
-        description: "Nu s-a putut salva ciornaș.",
-        variant: "destructive",
-      });
+
+      // Parse Payload validation errors and set them on form fields
+      if (error?.errors && Array.isArray(error.errors)) {
+        const errorFields: string[] = [];
+
+        error.errors.forEach((err: any) => {
+          // Payload errors have data.path or message with field name
+          const fieldPath = err.data?.path || err.path || err.name;
+          const errorMessage = err.message || "Camp invalid";
+
+          if (fieldPath) {
+            // Map Payload field names to form field names
+            const formFieldPath = mapPayloadFieldToFormField(fieldPath);
+            if (formFieldPath) {
+              setError(formFieldPath as any, {
+                type: "validation",
+                message: errorMessage,
+              });
+
+              // Track root field for tab navigation
+              const rootField = formFieldPath.split(".")[0];
+              if (rootField && !errorFields.includes(rootField)) {
+                errorFields.push(rootField);
+              }
+            }
+          }
+        });
+
+        // Navigate to first error tab if we have field errors (only if not silent)
+        if (errorFields.length > 0 && !silent) {
+          navigateToErrorTab(errorFields);
+        }
+
+        if (!silent) {
+          toast({
+            title: "Eroare de validare",
+            description:
+              error.message || "Te rugăm să corectezi erorile din formular.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        // Check if error is related to city FK constraint
+        const errorMessage = error.message || "";
+        const errorDetail = error.responseData?.detail || "";
+        const isCityError =
+          errorMessage.includes("city") ||
+          errorMessage.includes("City") ||
+          errorDetail.includes("city_id") ||
+          errorDetail.includes("cities") ||
+          errorDetail.includes("not present in table");
+
+        if (isCityError) {
+          // Clear invalid city for drafts (city is optional for drafts)
+          console.warn(
+            "[handleSaveDraft] Invalid city detected, clearing city field",
+          );
+          // Reset city field - use 0 which will be converted to undefined in transform for drafts
+          methods.setValue("city", 0);
+
+          if (!silent) {
+            toast({
+              title: "Oraș invalid",
+              description:
+                "Orașul selectat nu mai există. Te rugăm să selectezi un alt oraș.",
+              variant: "destructive",
+            });
+          }
+        } else {
+          if (!silent) {
+            toast({
+              title: "Eroare",
+              description: error.message || "Nu s-a putut salva ciornaș.",
+              variant: "destructive",
+            });
+          }
+        }
+      }
+    } finally {
+      setIsAutoSaving(false);
     }
+  };
+
+  // Helper to map Payload field names to form field names
+  const mapPayloadFieldToFormField = (payloadField: string): string | null => {
+    const fieldMap: Record<string, string> = {
+      title: "title",
+      type: "type",
+      suitableFor: "suitableFor",
+      city: "city",
+      address: "address",
+      description: "description",
+      featuredImage: "featuredImage",
+      gallery: "gallery",
+      contact: "contact",
+      startDate: "startDate",
+      endDate: "endDate",
+    };
+
+    return fieldMap[payloadField] || payloadField;
   };
 
   const onSubmit = async (data: UnifiedListingFormData) => {
@@ -430,9 +554,20 @@ export function UnifiedListingForm({
       >
         <Tabs
           value={activeTab}
-          onValueChange={(value) => {
+          onValueChange={async (value) => {
+            // Auto-save draft before changing tabs if:
+            // 1. We haven't saved this tab yet AND
+            // 2. Form has been modified (isDirty) OR we haven't saved anything yet (no savedListingId)
+            if (
+              value !== activeTab &&
+              lastSavedTab !== activeTab &&
+              !isAutoSaving &&
+              (isDirty || !savedListingId)
+            ) {
+              await handleSaveDraft(true); // silent save
+            }
+
             setActiveTab(value);
-            console.log("scrolling to top");
             window.scrollTo({ top: 100, behavior: "smooth" });
           }}
           className="flex-1 flex flex-col"
@@ -506,7 +641,7 @@ export function UnifiedListingForm({
                   <Button
                     type="button"
                     variant="secondary"
-                    onClick={handleSaveDraft}
+                    onClick={() => handleSaveDraft(false)}
                     disabled={!canSubmit || isSubmitting}
                     className="gap-1 sm:gap-2 text-sm h-9"
                   >
@@ -536,7 +671,7 @@ export function UnifiedListingForm({
                 ) : (
                   <Button
                     type="button"
-                    onClick={(e) => handleNext(e)}
+                    onClick={handleNext}
                     disabled={isSubmitting}
                     className="gap-1 sm:gap-2 text-sm h-9"
                   >

@@ -134,12 +134,17 @@ export async function createListing(
     const responseData = await response.json();
 
     if (!response.ok) {
-      const errorMessage =
+      // Create error with full details including errors array
+      const error = new Error(
         responseData.error ||
-        responseData.message ||
-        responseData.errors?.[0]?.message ||
-        "Failed to create listing";
-      throw new Error(errorMessage);
+          responseData.message ||
+          responseData.errors?.[0]?.message ||
+          "Failed to create listing",
+      );
+      // Attach errors array for field-level error handling
+      (error as any).errors = responseData.errors || [];
+      (error as any).responseData = responseData;
+      throw error;
     }
 
     return responseData;
@@ -195,12 +200,17 @@ export async function updateListing(
     const responseData = await res.json();
 
     if (!res.ok) {
-      const errorMessage =
+      // Create error with full details including errors array
+      const error = new Error(
         responseData.error ||
-        responseData.message ||
-        responseData.errors?.[0]?.message ||
-        "Failed to update listing";
-      throw new Error(errorMessage);
+          responseData.message ||
+          responseData.errors?.[0]?.message ||
+          "Failed to update listing",
+      );
+      // Attach errors array for field-level error handling
+      (error as any).errors = responseData.errors || [];
+      (error as any).responseData = responseData;
+      throw error;
     }
 
     return responseData;

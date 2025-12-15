@@ -2,6 +2,8 @@
 
 import type { Field } from 'payload'
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export const sharedListingFields: Field[] = [
   { name: 'title', type: 'text', required: true },
   {
@@ -27,7 +29,20 @@ export const sharedListingFields: Field[] = [
     maxDepth: 2,
   },
   { name: 'description', type: 'textarea' },
-  { name: 'city', type: 'relationship', relationTo: 'cities', index: true, required: true },
+  {
+    name: 'city',
+    type: 'relationship',
+    relationTo: 'cities',
+    index: true,
+    required: false, // Allow optional for drafts
+    validate: (value: any, { data }: { data: any }) => {
+      // Require city for non-draft listings
+      if (data?.moderationStatus && data.moderationStatus !== 'draft' && !value) {
+        return 'City is required for published listings'
+      }
+      return true
+    },
+  },
 
   { name: 'address', type: 'text' },
   { name: 'geo', type: 'point', index: true },

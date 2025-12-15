@@ -54,7 +54,7 @@ export const Services: CollectionConfig = {
       name: 'type',
       type: 'relationship',
       relationTo: 'listing-types',
-      required: true,
+      required: false, // Allow optional for drafts
       filterOptions: {
         type: { equals: 'services' },
       },
@@ -62,6 +62,18 @@ export const Services: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Type of service',
+      },
+      validate: (value: any, { data }: { data: any }) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        // Require type for non-draft listings
+        if (
+          data?.moderationStatus &&
+          data.moderationStatus !== 'draft' &&
+          (!value || (Array.isArray(value) && value.length === 0))
+        ) {
+          return 'Type is required for published listings'
+        }
+        return true
       },
     },
     {
@@ -72,10 +84,22 @@ export const Services: CollectionConfig = {
         type: { equals: 'events' },
       },
       hasMany: true,
-      required: true,
+      required: false, // Allow optional for drafts
       admin: {
         position: 'sidebar',
         description: 'Type of event suitable for this service',
+      },
+      validate: (value: any, { data }: { data: any }) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        // Require suitableFor for non-draft listings
+        if (
+          data?.moderationStatus &&
+          data.moderationStatus !== 'draft' &&
+          (!value || (Array.isArray(value) && value.length === 0))
+        ) {
+          return 'Suitable For is required for published listings'
+        }
+        return true
       },
     },
     {
