@@ -313,7 +313,7 @@ const eventSchemaBase = baseListingSchema.extend({
       }
     }),
   allDayEvent: z.boolean(),
-  startDate: z.string().min(1, "Selectează data de început"), // Required in backend
+  startDate: z.string().optional(), // Made optional to allow drafts without dates
   startTime: z.string().optional(),
   endDate: z.string().optional(),
   endTime: z.string().optional(),
@@ -469,6 +469,21 @@ export const unifiedListingSchema = unifiedListingSchemaBase
     {
       message: "Pentru publicare, adresa completă este obligatorie",
       path: ["address"],
+    },
+  )
+  .refine(
+    (data) => {
+      // Only validate for events
+      if (data.listingType !== "event") return true;
+
+      // For submission, require start date
+      if (data.moderationStatus === "draft") return true;
+
+      return data.startDate && data.startDate.length >= 1;
+    },
+    {
+      message: "Pentru publicare, data de început este obligatorie",
+      path: ["startDate"],
     },
   )
   .refine(

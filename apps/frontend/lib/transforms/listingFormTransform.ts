@@ -425,26 +425,52 @@ export function payloadToForm(
         currency: eventData.pricing.currency || "RON",
       },
       allDayEvent: eventData.allDayEvent || false,
-      startDate: eventData.startDate
-        ? new Date(eventData.startDate).toLocaleDateString("sv-SE") // YYYY-MM-DD in local timezone
-        : "",
-      startTime:
-        eventData.startDate && !eventData.allDayEvent
-          ? new Date(eventData.startDate).toLocaleTimeString("sv-SE", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }) // HH:MM in local timezone
-          : "",
-      endDate: eventData.endDate
-        ? new Date(eventData.endDate).toLocaleDateString("sv-SE") // YYYY-MM-DD in local timezone
-        : "",
-      endTime:
-        eventData.endDate && !eventData.allDayEvent
-          ? new Date(eventData.endDate).toLocaleTimeString("sv-SE", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }) // HH:MM in local timezone
-          : "",
+      startDate: (() => {
+        if (!eventData.startDate) return "";
+        try {
+          const date = new Date(eventData.startDate);
+          return isNaN(date.getTime()) ? "" : date.toLocaleDateString("sv-SE");
+        } catch {
+          return "";
+        }
+      })(),
+      startTime: (() => {
+        if (!eventData.startDate || eventData.allDayEvent) return "";
+        try {
+          const date = new Date(eventData.startDate);
+          return isNaN(date.getTime())
+            ? ""
+            : date.toLocaleTimeString("sv-SE", {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+        } catch {
+          return "";
+        }
+      })(),
+      endDate: (() => {
+        if (!eventData.endDate) return "";
+        try {
+          const date = new Date(eventData.endDate);
+          return isNaN(date.getTime()) ? "" : date.toLocaleDateString("sv-SE");
+        } catch {
+          return "";
+        }
+      })(),
+      endTime: (() => {
+        if (!eventData.endDate || eventData.allDayEvent) return "";
+        try {
+          const date = new Date(eventData.endDate);
+          return isNaN(date.getTime())
+            ? ""
+            : date.toLocaleTimeString("sv-SE", {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+        } catch {
+          return "";
+        }
+      })(),
       capacity: eventData.capacity?.total
         ? {
             total: eventData.capacity?.total || undefined,
