@@ -224,27 +224,26 @@ export function formToPayload(
           : null,
       },
       allDayEvent: eventData.allDayEvent,
-      ...(eventData.allDayEvent
-        ? (eventData.startDate && eventData.startDate.trim()
-            ? { startDate: eventData.startDate }
-            : {}) // Omit field when null for drafts
-        : (eventData.startDate &&
+      startDate: eventData.allDayEvent
+        ? eventData.startDate && eventData.startDate.trim()
+          ? eventData.startDate
+          : new Date().toISOString() // Use current date for drafts when no date provided
+        : eventData.startDate &&
             eventData.startTime &&
             eventData.startDate.trim() &&
             eventData.startTime.trim()
-            ? { startDate: `${eventData.startDate}T${eventData.startTime}` }
-            : eventData.startDate && eventData.startDate.trim()
-              ? { startDate: eventData.startDate }
-              : {}) // Omit field when null for drafts
-      ),
-      ...(eventData.endDate && eventData.endDate.trim()
-        ? eventData.allDayEvent
-          ? { endDate: eventData.endDate }
-          : eventData.endTime && eventData.endTime.trim()
-            ? { endDate: `${eventData.endDate}T${eventData.endTime}` }
-            : { endDate: eventData.endDate }
-        : {} // Omit field when null for drafts
-      ),
+          ? `${eventData.startDate}T${eventData.startTime}`
+          : eventData.startDate && eventData.startDate.trim()
+            ? eventData.startDate
+            : new Date().toISOString(), // Use current date for drafts when no date provided
+      endDate:
+        eventData.endDate && eventData.endDate.trim()
+          ? eventData.allDayEvent
+            ? eventData.endDate
+            : eventData.endTime && eventData.endTime.trim()
+              ? `${eventData.endDate}T${eventData.endTime}`
+              : eventData.endDate
+          : new Date().toISOString(), // Use current date for drafts when no date provided
       capacity: eventData.capacity
         ? {
             enabled: !!eventData.capacity.total,
@@ -438,7 +437,19 @@ export function payloadToForm(
         if (!eventData.startDate) return "";
         try {
           const date = new Date(eventData.startDate);
-          return isNaN(date.getTime()) ? "" : date.toLocaleDateString("sv-SE");
+          if (isNaN(date.getTime())) return "";
+
+          // Check if this is a placeholder date (within last 5 minutes)
+          const now = new Date();
+          const diffMs = now.getTime() - date.getTime();
+          const diffMinutes = diffMs / (1000 * 60);
+
+          // If date is very recent (less than 5 minutes old), treat as placeholder
+          if (diffMinutes < 5) {
+            return "";
+          }
+
+          return date.toLocaleDateString("sv-SE");
         } catch {
           return "";
         }
@@ -458,31 +469,23 @@ export function payloadToForm(
         }
       })(),
       endDate: (() => {
-        if (!eventData.endDate) {
-          console.log(
-            "[DEBUG] payloadToForm endDate: no input, returning empty",
-          );
-          return "";
-        }
+        if (!eventData.endDate) return "";
         try {
           const date = new Date(eventData.endDate);
-          const result = isNaN(date.getTime())
-            ? ""
-            : date.toLocaleDateString("sv-SE");
-          console.log(
-            "[DEBUG] payloadToForm endDate result:",
-            result,
-            "from:",
-            eventData.endDate,
-          );
-          return result;
-        } catch (error) {
-          console.log(
-            "[DEBUG] payloadToForm endDate error:",
-            error,
-            "for input:",
-            eventData.endDate,
-          );
+          if (isNaN(date.getTime())) return "";
+
+          // Check if this is a placeholder date (within last 5 minutes)
+          const now = new Date();
+          const diffMs = now.getTime() - date.getTime();
+          const diffMinutes = diffMs / (1000 * 60);
+
+          // If date is very recent (less than 5 minutes old), treat as placeholder
+          if (diffMinutes < 5) {
+            return "";
+          }
+
+          return date.toLocaleDateString("sv-SE");
+        } catch {
           return "";
         }
       })(),
