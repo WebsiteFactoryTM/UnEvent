@@ -262,8 +262,9 @@ export function formToPayload(
         ? {} // Omit venueAddressDetails entirely for drafts with no valid city
         : {
             venueAddressDetails: {
-              venueAddress: "",
-              venueCity: eventData.city && eventData.city > 0 ? eventData.city : null,
+              // Omit venueAddress to avoid NOT NULL constraint - let database use default
+              venueCity:
+                eventData.city && eventData.city > 0 ? eventData.city : null,
               venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
             },
           }),
