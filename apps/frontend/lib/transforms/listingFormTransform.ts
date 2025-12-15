@@ -259,11 +259,11 @@ export function formToPayload(
       eventStatus: "upcoming" as const,
       venue: null,
       venueAddressDetails: {
-        venueAddress: "",
+        venueAddress: "Adresa",
         venueCity: isDraft
           ? eventData.city && eventData.city > 0
             ? eventData.city
-            : undefined
+            : 1 // Default to city ID 1 (Bucharest or first city)
           : eventData.city,
         venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
       },
