@@ -259,9 +259,9 @@ export function formToPayload(
       eventStatus: "upcoming" as const,
       venue: null,
       venueAddressDetails: {
-        venueAddress: undefined, // Undefined so cleanPayload removes it
+        venueAddress: "", // Empty string satisfies NOT NULL varchar constraint
         venueCity:
-          eventData.city && eventData.city > 0 ? eventData.city : undefined,
+          eventData.city && eventData.city > 0 ? eventData.city : null,
         venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
       },
     } as Partial<Event>;
