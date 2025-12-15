@@ -433,7 +433,7 @@ export interface Event {
    */
   type?: (number | ListingType)[] | null;
   eventStatus: 'upcoming' | 'in-progress' | 'finished';
-  startDate: string;
+  startDate?: string | null;
   endDate?: string | null;
   /**
    * Check if this is an all-day event
@@ -467,14 +467,14 @@ export interface Event {
    * Location where the event will be held
    */
   venue?: (number | null) | Location;
-  venueAddressDetails?: {
-    venueAddress?: string | null;
-    venueCity?: (number | null) | City;
+  venueAddressDetails: {
+    venueAddress: string;
+    venueCity: number | City;
     /**
      * @minItems 2
      * @maxItems 2
      */
-    venueGeo?: [number, number] | null;
+    venueGeo: [number, number];
   };
   requirements?:
     | {

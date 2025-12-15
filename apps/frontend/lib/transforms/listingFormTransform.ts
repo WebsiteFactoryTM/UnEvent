@@ -263,12 +263,13 @@ export function formToPayload(
         venueCity: isDraft
           ? eventData.city && eventData.city > 0
             ? eventData.city
-            : 1 // Default to city ID 1 (Bucharest or first city)
+            : 29681 // Default to city ID 1 (Bucharest or first city)
           : eventData.city,
         venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
       },
     } as Partial<Event>;
 
+    console.log("[DEBUG] eventPayload:", eventPayload);
     const cleanedPayload = cleanPayload(eventPayload);
     return cleanedPayload as Partial<Event>;
   }

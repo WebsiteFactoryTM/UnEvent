@@ -357,7 +357,7 @@ export interface Event {
    */
   owner: number | Profile;
   description?: string | null;
-  city: number | City;
+  city?: (number | null) | City;
   address?: string | null;
   /**
    * @minItems 2
@@ -431,9 +431,9 @@ export interface Event {
   /**
    * Type of event
    */
-  type: (number | ListingType)[];
+  type?: (number | ListingType)[] | null;
   eventStatus: 'upcoming' | 'in-progress' | 'finished';
-  startDate: string;
+  startDate?: string | null;
   endDate?: string | null;
   /**
    * Check if this is an all-day event
@@ -467,14 +467,14 @@ export interface Event {
    * Location where the event will be held
    */
   venue?: (number | null) | Location;
-  venueAddressDetails?: {
-    venueAddress?: string | null;
-    venueCity?: (number | null) | City;
+  venueAddressDetails: {
+    venueAddress: string;
+    venueCity: number | City;
     /**
      * @minItems 2
      * @maxItems 2
      */
-    venueGeo?: [number, number] | null;
+    venueGeo: [number, number];
   };
   requirements?:
     | {
@@ -604,7 +604,7 @@ export interface Location {
    */
   owner: number | Profile;
   description?: string | null;
-  city: number | City;
+  city?: (number | null) | City;
   address?: string | null;
   /**
    * @minItems 2
@@ -678,11 +678,11 @@ export interface Location {
   /**
    * Type of location
    */
-  type: (number | ListingType)[];
+  type?: (number | ListingType)[] | null;
   /**
    * Type of event suitable for this location
    */
-  suitableFor: (number | ListingType)[];
+  suitableFor?: (number | ListingType)[] | null;
   capacity?: {
     /**
      * Indoor capacity
@@ -779,7 +779,7 @@ export interface Service {
    */
   owner: number | Profile;
   description?: string | null;
-  city: number | City;
+  city?: (number | null) | City;
   address?: string | null;
   /**
    * @minItems 2
@@ -853,11 +853,11 @@ export interface Service {
   /**
    * Type of service
    */
-  type: (number | ListingType)[];
+  type?: (number | ListingType)[] | null;
   /**
    * Type of event suitable for this service
    */
-  suitableFor: (number | ListingType)[];
+  suitableFor?: (number | ListingType)[] | null;
   pricing: {
     type: 'fixed' | 'from' | 'contact';
     amount?: number | null;
