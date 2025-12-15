@@ -224,34 +224,27 @@ export function formToPayload(
           : null,
       },
       allDayEvent: eventData.allDayEvent,
-      startDate: (() => {
-        if (eventData.allDayEvent) {
-          return eventData.startDate && eventData.startDate.trim()
-            ? eventData.startDate
-            : null; // Send null for missing dates (both drafts and published)
-        } else {
-          return eventData.startDate &&
+      ...(eventData.allDayEvent
+        ? (eventData.startDate && eventData.startDate.trim()
+            ? { startDate: eventData.startDate }
+            : {}) // Omit field when null for drafts
+        : (eventData.startDate &&
             eventData.startTime &&
             eventData.startDate.trim() &&
             eventData.startTime.trim()
-            ? `${eventData.startDate}T${eventData.startTime}`
+            ? { startDate: `${eventData.startDate}T${eventData.startTime}` }
             : eventData.startDate && eventData.startDate.trim()
-              ? eventData.startDate
-              : null; // Send null for missing dates (both drafts and published)
-        }
-      })(),
-      endDate: (() => {
-        if (!eventData.endDate || !eventData.endDate.trim())
-          return null; // Send null for missing dates (both drafts and published)
-
-        if (eventData.allDayEvent) {
-          return eventData.endDate;
-        } else {
-          return eventData.endTime && eventData.endTime.trim()
-            ? `${eventData.endDate}T${eventData.endTime}`
-            : eventData.endDate;
-        }
-      })(),
+              ? { startDate: eventData.startDate }
+              : {}) // Omit field when null for drafts
+      ),
+      ...(eventData.endDate && eventData.endDate.trim()
+        ? eventData.allDayEvent
+          ? { endDate: eventData.endDate }
+          : eventData.endTime && eventData.endTime.trim()
+            ? { endDate: `${eventData.endDate}T${eventData.endTime}` }
+            : { endDate: eventData.endDate }
+        : {} // Omit field when null for drafts
+      ),
       capacity: eventData.capacity
         ? {
             enabled: !!eventData.capacity.total,
