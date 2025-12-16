@@ -52,9 +52,7 @@ export default function ListingReviewsList({
               src={avatar === null ? undefined : avatar?.url || undefined}
               alt={user?.displayName || user?.name || ""}
             />
-            <AvatarFallback className="bg-white/10 text-white text-sm">
-              {initials}
-            </AvatarFallback>
+            <AvatarFallback className="">{initials}</AvatarFallback>
           </Avatar>
 
           <div className="flex-1 space-y-1">
