@@ -206,9 +206,7 @@ export default async function DetailPage({
                   ? { lat: listing.geo[1], lon: listing.geo[0] }
                   : undefined
               }
-              city={
-                typeof listing?.city === "object" ? listing.city : undefined
-              }
+              city={typeof listing?.city === "object" ? listing.city : null}
             />
             {listingType === "locatii" && (
               <>

@@ -13,7 +13,7 @@ interface ListingMapProps {
   venue?: LocationListing;
   address: string;
   geo?: { lat: number; lon: number };
-  city?: City;
+  city?: City | null;
 }
 
 export const ListingMap = ({
