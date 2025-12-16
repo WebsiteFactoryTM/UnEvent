@@ -32,14 +32,12 @@ export default function ListingReviewsList({
     const user = typeof review.user === "object" ? review.user : null;
     const avatar = user && typeof user.avatar === "object" ? user.avatar : null;
 
-    const initials =
-      (user?.displayName ? user?.displayName : user?.name) ||
-      "UN"
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
+    const initials = (user?.displayName || user?.name || "UN")
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
 
     return (
       <div
