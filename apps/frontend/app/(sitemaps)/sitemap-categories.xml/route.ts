@@ -98,7 +98,12 @@ export async function GET() {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls
   .map(
-    (page) => `  <url>
+    (page: {
+      url: string;
+      lastmod: string;
+      changefreq: string;
+      priority: number;
+    }) => `  <url>
     <loc>${page.url}</loc>
     <lastmod>${page.lastmod}</lastmod>
     <changefreq>${page.changefreq}</changefreq>

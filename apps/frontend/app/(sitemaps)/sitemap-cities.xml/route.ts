@@ -9,7 +9,7 @@ async function fetchCities() {
   try {
     const payloadUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
     if (!payloadUrl) {
-      console.error('API_URL not configured');
+      console.error("API_URL not configured");
       return [];
     }
 
@@ -17,67 +17,76 @@ async function fetchCities() {
       `${payloadUrl}/api/cities?limit=1000&where[featured][equals]=true&sort=usageCount`,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         next: { revalidate: 21600 }, // 6 hours
-      }
+      },
     );
 
     if (!response.ok) {
-      console.error('Failed to fetch cities:', response.status);
+      console.error("Failed to fetch cities:", response.status);
       return [];
     }
 
     const data = await response.json();
     return data.docs || [];
   } catch (error) {
-    console.error('Error fetching cities:', error);
+    console.error("Error fetching cities:", error);
     return [];
   }
 }
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://unevent.ro';
-  const listingTypes = ['locatii', 'servicii', 'evenimente'];
-  
-  const cities = await fetchCities();
-  
-  // If no cities, use fallback top cities
-  const topCities = cities.length > 0 
-    ? cities 
-    : [
-        { slug: 'bucuresti' },
-        { slug: 'cluj-napoca' },
-        { slug: 'timisoara' },
-        { slug: 'iasi' },
-        { slug: 'brasov' },
-        { slug: 'constanta' },
-      ];
+  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "https://unevent.ro";
+  const listingTypes = ["locatii", "servicii", "evenimente"];
 
-  const urls = listingTypes.flatMap(listingType =>
-    topCities.map(city => ({
+  const cities = await fetchCities();
+
+  // If no cities, use fallback top cities
+  const topCities =
+    cities.length > 0
+      ? cities
+      : [
+          { slug: "bucuresti" },
+          { slug: "cluj-napoca" },
+          { slug: "timisoara" },
+          { slug: "iasi" },
+          { slug: "brasov" },
+          { slug: "constanta" },
+        ];
+
+  const urls = listingTypes.flatMap((listingType) =>
+    topCities.map((city: { slug: string }) => ({
       url: `${baseUrl}/${listingType}/oras/${city.slug}`,
       lastmod: new Date().toISOString(),
-      changefreq: 'daily',
+      changefreq: "daily",
       priority: 0.8,
-    }))
+    })),
   );
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(page => `  <url>
+${urls
+  .map(
+    (page: {
+      url: string;
+      lastmod: string;
+      changefreq: string;
+      priority: number;
+    }) => `  <url>
     <loc>${page.url}</loc>
     <lastmod>${page.lastmod}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
-  </url>`).join('\n')}
+  </url>`,
+  )
+  .join("\n")}
 </urlset>`;
 
   return new Response(xml, {
     headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=21600, s-maxage=21600',
+      "Content-Type": "application/xml",
+      "Cache-Control": "public, max-age=21600, s-maxage=21600",
     },
   });
 }
-
