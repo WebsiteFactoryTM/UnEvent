@@ -26,10 +26,11 @@ import {
 
 import { HamburgerIcon } from "./HamburgerIcon";
 import { signOut, useSession } from "next-auth/react";
-
+import { useTheme } from "next-themes";
+import Image from "next/image";
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
-
+  const { theme } = useTheme();
   const { data: session, status } = useSession({ required: false });
   const user = session?.user;
 
@@ -75,10 +76,12 @@ export function MobileMenu() {
             onClick={() => setOpen(false)}
             className="flex justify-center mb-6 hover:opacity-80 transition-opacity animate-fade-in-up"
           >
-            <img
+            <Image
               src="/logo-unevent-white.png"
               alt="UN:EVENT"
-              className="h-5 w-auto"
+              width={140}
+              height={40}
+              className="h-5 w-auto dark:invert-0 invert"
             />
           </Link>
 

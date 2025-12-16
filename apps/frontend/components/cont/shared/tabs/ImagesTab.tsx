@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormContext, useFieldArray } from "react-hook-form";
+import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -176,11 +177,24 @@ export function ImagesTab() {
               <div className="flex items-center gap-3 p-3 bg-background rounded-lg">
                 {/* Use URL from form state if available, fallback to upload manager preview */}
                 {(featuredImage.url || featuredUM.previews?.[0]) && (
-                  <img
-                    src={featuredImage.url || featuredUM.previews?.[0]}
-                    alt="Featured image preview"
-                    className="h-10 w-10 rounded object-cover shrink-0"
-                  />
+                  <>
+                    {featuredImage.url &&
+                    !featuredImage.url.startsWith("blob:") ? (
+                      <Image
+                        src={featuredImage.url}
+                        alt="Featured image preview"
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 rounded object-cover shrink-0"
+                      />
+                    ) : (
+                      <img
+                        src={featuredImage.url || featuredUM.previews?.[0]}
+                        alt="Featured image preview"
+                        className="h-10 w-10 rounded object-cover shrink-0"
+                      />
+                    )}
+                  </>
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
@@ -261,11 +275,23 @@ export function ImagesTab() {
               >
                 {/* Use URL from form state if available, fallback to upload manager preview */}
                 {item.url || galleryUM.previews[index] ? (
-                  <img
-                    src={item.url || galleryUM.previews[index]}
-                    alt={`Previzualizare ${index + 1}`}
-                    className="h-10 w-10 rounded object-cover shrink-0"
-                  />
+                  <>
+                    {item.url && !item.url.startsWith("blob:") ? (
+                      <Image
+                        src={item.url}
+                        alt={`Previzualizare ${index + 1}`}
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 rounded object-cover shrink-0"
+                      />
+                    ) : (
+                      <img
+                        src={item.url || galleryUM.previews[index]}
+                        alt={`Previzualizare ${index + 1}`}
+                        className="h-10 w-10 rounded object-cover shrink-0"
+                      />
+                    )}
+                  </>
                 ) : (
                   <ImageIcon className="h-6 w-6 text-muted-foreground shrink-0" />
                 )}

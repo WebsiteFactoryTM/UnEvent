@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { NavLink } from "./NavLink";
 import { UserMenu } from "./UserMenu";
 import { MobileMenu } from "./MobileMenu";
@@ -24,9 +25,11 @@ export function Header() {
             href="/"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <img
+            <Image
               src="/logo-unevent-white.png"
               alt="UN:EVENT"
+              width={140}
+              height={40}
               className="h-5 w-auto"
             />
           </Link>

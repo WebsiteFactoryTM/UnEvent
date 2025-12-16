@@ -21,9 +21,11 @@ export function Footer() {
           {/* Column 1: Logo + Social */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <img
+              <Image
                 src="/logo-unevent-favicon-black-on-white.png"
                 alt="UN:EVENT"
+                width={64}
+                height={64}
                 className="h-16 w-16"
               />
               <p className="text-sm text-white/70">
