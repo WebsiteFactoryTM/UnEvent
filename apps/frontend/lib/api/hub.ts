@@ -4,6 +4,7 @@ import type { City, HubSnapshot } from "@/types/payload-types";
 import type { Listing, ListingType } from "@/types/listings";
 import { frontendTypeToCollectionSlug } from "@/lib/api/reviews";
 import { getListingTypeSlug } from "@/lib/getListingType";
+import { tag } from "@unevent/shared";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -124,18 +125,28 @@ export async function fetchHubSnapshot(
   listingType: ListingType,
 ): Promise<HubSnapshot | null> {
   try {
-    // Use BFF route for edge caching
-    // During build time, fallback to direct Payload call if BFF unavailable
-    const isBuildTime =
-      process.env.NEXT_PHASE === "phase-production-build" ||
-      (typeof window === "undefined" &&
-        !process.env.VERCEL_URL &&
-        !process.env.NEXT_PUBLIC_FRONTEND_URL);
-
+    const isServer = typeof window === "undefined";
     const collection = getListingTypeSlug(listingType);
 
-    // Use BFF route at runtime, direct Payload call during build
-    if (!isBuildTime && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+    // 1. Server-Side: Direct Payload Call
+    if (isServer && API_URL) {
+      const url = new URL(`/api/hub`, API_URL);
+      url.searchParams.set("listingType", collection);
+
+      const res = await fetch(url.toString(), {
+        headers: { Accept: "application/json" },
+        next: {
+          tags: [tag.hubSnapshot(collection), tag.hubAny()],
+          revalidate: 900,
+        },
+      });
+
+      if (!res.ok) return null;
+      return (await res.json()) as HubSnapshot;
+    }
+
+    // 2. Client-Side: BFF Call
+    if (process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.VERCEL_URL) {
       const baseUrl =
         process.env.NEXT_PUBLIC_FRONTEND_URL ||
         (process.env.VERCEL_URL
@@ -153,17 +164,12 @@ export async function fetchHubSnapshot(
         if (res.ok) {
           return (await res.json()) as HubSnapshot;
         }
-        // Fall through to fallback if BFF fails
       } catch (bffError) {
-        console.error(
-          "BFF hub route failed, falling back to Payload:",
-          bffError,
-        );
-        // Fall through to fallback
+        console.error("BFF hub route failed:", bffError);
       }
     }
 
-    // Fallback to direct Payload call (build time or BFF failure)
+    // Fallback if client-side BFF fails or no URL configured
     if (!API_URL) return null;
     const url = new URL(`/api/hub`, API_URL);
     url.searchParams.set("listingType", collection);

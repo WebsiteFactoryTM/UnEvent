@@ -2,6 +2,7 @@
 
 import { Profile, Review } from "@/types/payload-types";
 import { ProfileFormData } from "@/components/cont/ProfilePersonalDetailsForm";
+import { tag } from "@unevent/shared";
 
 export async function getProfile(
   profileId?: number | string,
@@ -38,12 +39,45 @@ export async function fetchProfileBySlug(
   isDraftMode?: boolean,
 ): Promise<FetchProfileResult> {
   try {
-    const isBuildTime =
-      process.env.NEXT_PHASE === "phase-production-build" ||
-      (typeof window === "undefined" &&
-        !process.env.VERCEL_URL &&
-        !process.env.NEXT_PUBLIC_FRONTEND_URL);
+    const isServer = typeof window === "undefined";
 
+    // 1. Server-Side: Direct Payload Call (ISR/Static)
+    if (isServer && process.env.NEXT_PUBLIC_API_URL) {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/api/profiles?where[slug][equals]=${encodeURIComponent(
+        slug,
+      )}&depth=2&limit=1`;
+
+      const res = await fetch(url, {
+        cache: isDraftMode ? "no-store" : "default",
+        next: isDraftMode
+          ? { revalidate: 0 }
+          : {
+              tags: [tag.profileSlug(slug)],
+              revalidate: 300,
+            },
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        return {
+          data: null,
+          error: new Error(
+            text || `Failed to fetch profile from Payload (${res.status})`,
+          ),
+        };
+      }
+
+      const data = await res.json();
+      const doc = data?.docs?.[0];
+
+      if (!doc) {
+        return { data: null, error: new Error("Profile not found") };
+      }
+
+      return { data: doc as Profile, error: null };
+    }
+
+    // 2. Client-Side: BFF Call (Edge Caching)
     const baseUrl =
       process.env.NEXT_PUBLIC_FRONTEND_URL ||
       (process.env.VERCEL_URL
@@ -52,8 +86,7 @@ export async function fetchProfileBySlug(
 
     const draftParam = isDraftMode ? "?draft=1" : "";
 
-    // Prefer BFF route at runtime when FRONTEND_URL is configured
-    if (!isBuildTime && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+    if (process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.VERCEL_URL) {
       const bffUrl = `${baseUrl}/api/public/profiles/${encodeURIComponent(
         slug,
       )}${draftParam}`;
@@ -73,40 +106,40 @@ export async function fetchProfileBySlug(
       console.error(`Profile BFF route failed:`, errorMessage);
     }
 
-    // Fallback: direct Payload call
-    if (!process.env.NEXT_PUBLIC_API_URL) {
-      return {
-        data: null,
-        error: new Error("NEXT_PUBLIC_API_URL not configured"),
-      };
+    // Fallback: direct Payload call (Client-side fallback)
+    if (process.env.NEXT_PUBLIC_API_URL) {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/api/profiles?where[slug][equals]=${encodeURIComponent(
+        slug,
+      )}&depth=2&limit=1`;
+
+      const res = await fetch(url, {
+        cache: isDraftMode ? "no-store" : "force-cache",
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        return {
+          data: null,
+          error: new Error(
+            text || `Failed to fetch profile from Payload (${res.status})`,
+          ),
+        };
+      }
+
+      const data = await res.json();
+      const doc = data?.docs?.[0];
+
+      if (!doc) {
+        return { data: null, error: new Error("Profile not found") };
+      }
+
+      return { data: doc as Profile, error: null };
     }
 
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/profiles?where[slug][equals]=${encodeURIComponent(
-      slug,
-    )}&depth=2&limit=1`;
-
-    const res = await fetch(url, {
-      cache: isDraftMode ? "no-store" : "force-cache",
-    });
-
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      return {
-        data: null,
-        error: new Error(
-          text || `Failed to fetch profile from Payload (${res.status})`,
-        ),
-      };
-    }
-
-    const data = await res.json();
-    const doc = data?.docs?.[0];
-
-    if (!doc) {
-      return { data: null, error: new Error("Profile not found") };
-    }
-
-    return { data: doc as Profile, error: null };
+    return {
+      data: null,
+      error: new Error("NEXT_PUBLIC_API_URL not configured"),
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("fetchProfileBySlug error:", message);
@@ -127,44 +160,104 @@ export async function fetchProfileListings(
   profileId?: number,
 ): Promise<ProfileListingsResponse | null> {
   try {
-    const isBuildTime =
-      process.env.NEXT_PHASE === "phase-production-build" ||
-      (typeof window === "undefined" &&
-        !process.env.VERCEL_URL &&
-        !process.env.NEXT_PUBLIC_FRONTEND_URL);
+    const isServer = typeof window === "undefined";
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-    if (!process.env.NEXT_PUBLIC_FRONTEND_URL || isBuildTime) {
-      // For now, only expose listings via BFF at runtime
-      return null;
+    // 1. Server-Side: Direct Payload Call
+    if (isServer && API_URL && process.env.SVC_TOKEN) {
+      let pid = profileId;
+
+      if (!pid) {
+        // Resolve profile ID by slug
+        const profileUrl = `${API_URL}/api/profiles?where[slug][equals]=${encodeURIComponent(
+          slug,
+        )}&limit=1`;
+
+        const profileRes = await fetch(profileUrl, {
+          headers: {
+            Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+          },
+          next: {
+            tags: [tag.profileSlug(slug)],
+            revalidate: 300,
+          },
+        });
+
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          pid = profileData?.docs?.[0]?.id;
+        }
+      }
+
+      if (pid) {
+        const collectionSlugs = ["locations", "events", "services"] as const;
+
+        const results = await Promise.all(
+          collectionSlugs.map(async (collection) => {
+            const url = `${API_URL}/api/${collection}?where[owner][equals]=${pid}&depth=1&limit=100`;
+
+            const res = await fetch(url, {
+              headers: {
+                Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+              },
+              next: {
+                tags: [tag.collection(collection)],
+                revalidate: 300,
+              },
+            });
+
+            if (!res.ok) {
+              return { collection, docs: [] };
+            }
+
+            const data = await res.json();
+            return { collection, docs: data?.docs ?? [] };
+          }),
+        );
+
+        return {
+          profileId: pid,
+          slug,
+          locations:
+            results.find((r) => r.collection === "locations")?.docs ?? [],
+          events: results.find((r) => r.collection === "events")?.docs ?? [],
+          services:
+            results.find((r) => r.collection === "services")?.docs ?? [],
+        };
+      }
     }
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_FRONTEND_URL ||
-      (process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
+    // 2. Client-Side: BFF Call
+    if (process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.VERCEL_URL) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_FRONTEND_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
 
-    const usp = new URLSearchParams();
-    if (profileId) {
-      usp.set("profileId", String(profileId));
-    }
+      const usp = new URLSearchParams();
+      if (profileId) {
+        usp.set("profileId", String(profileId));
+      }
 
-    const queryString = usp.toString();
-    const bffUrl = `${baseUrl}/api/public/profiles/${encodeURIComponent(
-      slug,
-    )}/listings${queryString ? `?${queryString}` : ""}`;
+      const queryString = usp.toString();
+      const bffUrl = `${baseUrl}/api/public/profiles/${encodeURIComponent(
+        slug,
+      )}/listings${queryString ? `?${queryString}` : ""}`;
 
-    const response = await fetch(bffUrl, {
-      next: { revalidate: 300 },
-    });
+      const response = await fetch(bffUrl, {
+        next: { revalidate: 300 },
+      });
 
-    if (!response.ok) {
+      if (response.ok) {
+        return (await response.json()) as ProfileListingsResponse;
+      }
+
       const text = await response.text().catch(() => "");
       console.error("fetchProfileListings BFF error:", text);
-      return null;
     }
 
-    return (await response.json()) as ProfileListingsResponse;
+    return null;
   } catch (error) {
     console.error("fetchProfileListings error:", error);
     return null;
@@ -191,45 +284,90 @@ export async function fetchProfileReviews(
   profileId?: number,
 ): Promise<ProfileReviewsResponse | null> {
   try {
-    const isBuildTime =
-      process.env.NEXT_PHASE === "phase-production-build" ||
-      (typeof window === "undefined" &&
-        !process.env.VERCEL_URL &&
-        !process.env.NEXT_PUBLIC_FRONTEND_URL);
+    const isServer = typeof window === "undefined";
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-    if (!process.env.NEXT_PUBLIC_FRONTEND_URL || isBuildTime) {
-      return null;
+    // 1. Server-Side: Direct Payload Call
+    if (isServer && API_URL && process.env.SVC_TOKEN) {
+      let pid = profileId;
+
+      if (!pid) {
+        // Resolve profile ID by slug
+        const profileUrl = `${API_URL}/api/profiles?where[slug][equals]=${encodeURIComponent(
+          slug,
+        )}&limit=1`;
+
+        const profileRes = await fetch(profileUrl, {
+          headers: {
+            Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+          },
+          next: {
+            tags: [tag.profileSlug(slug)],
+            revalidate: 300,
+          },
+        });
+
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          pid = profileData?.docs?.[0]?.id;
+        }
+      }
+
+      if (pid) {
+        const reviewsUrl = `${API_URL}/api/reviews?where[user][equals]=${pid}&where[status][equals]=approved&depth=2&page=${page}&limit=${limit}`;
+
+        const reviewsRes = await fetch(reviewsUrl, {
+          headers: {
+            Authorization: `users API-Key ${process.env.SVC_TOKEN}`,
+          },
+          next: {
+            tags: [tag.profileSlug(slug)],
+            revalidate: 300,
+          },
+        });
+
+        if (reviewsRes.ok) {
+          return (await reviewsRes.json()) as ProfileReviewsResponse;
+        }
+
+        const text = await reviewsRes.text().catch(() => "");
+        console.error("fetchProfileReviews Payload error:", text);
+      }
     }
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_FRONTEND_URL ||
-      (process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
+    // 2. Client-Side: BFF Call
+    if (process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.VERCEL_URL) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_FRONTEND_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
 
-    const usp = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-    });
-    if (profileId) {
-      usp.set("profileId", String(profileId));
-    }
+      const usp = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+      });
+      if (profileId) {
+        usp.set("profileId", String(profileId));
+      }
 
-    const bffUrl = `${baseUrl}/api/public/profiles/${encodeURIComponent(
-      slug,
-    )}/reviews?${usp.toString()}`;
+      const bffUrl = `${baseUrl}/api/public/profiles/${encodeURIComponent(
+        slug,
+      )}/reviews?${usp.toString()}`;
 
-    const response = await fetch(bffUrl, {
-      next: { revalidate: 300 },
-    });
+      const response = await fetch(bffUrl, {
+        next: { revalidate: 300 },
+      });
 
-    if (!response.ok) {
+      if (response.ok) {
+        return (await response.json()) as ProfileReviewsResponse;
+      }
+
       const text = await response.text().catch(() => "");
       console.error("fetchProfileReviews BFF error:", text);
-      return null;
     }
 
-    return (await response.json()) as ProfileReviewsResponse;
+    return null;
   } catch (error) {
     console.error("fetchProfileReviews error:", error);
     return null;
