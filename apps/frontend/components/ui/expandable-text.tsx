@@ -21,6 +21,34 @@ function trimToWords(text: string, maxWords: number = 100): string {
   return words.slice(0, maxWords).join(" ") + "...";
 }
 
+// Utility function to split text into paragraphs and render them
+function renderParagraphs(text: string, className: string) {
+  const paragraphs = text.split("\n\n").filter((p) => p.trim().length > 0);
+
+  if (paragraphs.length === 1) {
+    return (
+      <p
+        className={`text-muted-foreground leading-relaxed break-all max-w-full ${className}`}
+      >
+        {text}
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {paragraphs.map((paragraph, index) => (
+        <p
+          key={index}
+          className={`text-muted-foreground leading-relaxed break-all max-w-full ${className}`}
+        >
+          {paragraph.trim()}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 export function ExpandableText({
   text,
   maxWords = 100,
@@ -33,23 +61,15 @@ export function ExpandableText({
   const shouldShowToggle = wordCount > maxWords;
 
   if (!shouldShowToggle) {
-    return (
-      <p
-        className={`text-muted-foreground leading-relaxed break-all max-w-full ${className}`}
-      >
-        {text}
-      </p>
-    );
+    return renderParagraphs(text, className);
   }
 
   return (
     <div className="space-y-3 max-w-full">
       <div className="relative overflow-hidden">
-        <p
-          className={`text-muted-foreground leading-relaxed break-all max-w-full ${className}`}
-        >
-          {isExpanded ? text : trimToWords(text, maxWords)}
-        </p>
+        {isExpanded
+          ? renderParagraphs(text, className)
+          : renderParagraphs(trimToWords(text, maxWords), className)}
         <div className="mt-2">
           <Button
             variant="ghost"
