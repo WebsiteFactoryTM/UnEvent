@@ -76,7 +76,7 @@ async function rankCollectionSegments(payload: Payload, kind: Kind): Promise<voi
     aggregateMap.set(targetId, agg)
   }
 
-  // Group listings by segment (city + type)
+  // Group listings by segment (city + type, city + all, city + suitableFor)
   const segments = new Map<string, Array<{ listing: Listing; aggregate: Aggregate }>>()
 
   for (const listing of listings.docs as Listing[]) {
@@ -90,6 +90,14 @@ async function rankCollectionSegments(payload: Payload, kind: Kind): Promise<voi
         ? String(listing.city.slug)
         : String(listing.city)
 
+    const aggregate = aggregateMap.get(String(listing.id))
+
+    if (!aggregate) {
+      console.warn(`[Feed] No aggregate found for ${kind} ${listing.id}, skipping...`)
+      continue
+    }
+
+    // 1. City + Type segments
     // Get type(s) - handle both single and hasMany
     const types = Array.isArray(listing.type) ? listing.type : [listing.type]
 
@@ -106,18 +114,44 @@ async function rankCollectionSegments(payload: Payload, kind: Kind): Promise<voi
           : String(typeRaw)
 
       const segmentKey = `${citySlug}|${typeSlug}`
-      const aggregate = aggregateMap.get(String(listing.id))
-
-      if (!aggregate) {
-        console.warn(`[Feed] No aggregate found for ${kind} ${listing.id}, skipping...`)
-        continue
-      }
 
       if (!segments.has(segmentKey)) {
         segments.set(segmentKey, [])
       }
 
       segments.get(segmentKey)!.push({ listing, aggregate })
+    }
+
+    // 2. City + All segment (rank all listings in the city regardless of type)
+    const allSegmentKey = `${citySlug}|all`
+    if (!segments.has(allSegmentKey)) {
+      segments.set(allSegmentKey, [])
+    }
+    segments.get(allSegmentKey)!.push({ listing, aggregate })
+
+    // 3. City + SuitableFor segments (only for locations/services)
+    if (kind !== 'events' && 'suitableFor' in listing && listing.suitableFor) {
+      const suitableForList = Array.isArray(listing.suitableFor)
+        ? listing.suitableFor
+        : [listing.suitableFor]
+
+      for (const sfRaw of suitableForList) {
+        if (!sfRaw) continue
+
+        const sfSlug =
+          typeof sfRaw === 'object' && sfRaw !== null && 'slug' in sfRaw
+            ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              String((sfRaw as any).slug)
+            : String(sfRaw)
+
+        const sfSegmentKey = `${citySlug}|${sfSlug}`
+
+        if (!segments.has(sfSegmentKey)) {
+          segments.set(sfSegmentKey, [])
+        }
+
+        segments.get(sfSegmentKey)!.push({ listing, aggregate })
+      }
     }
   }
 
@@ -313,7 +347,7 @@ export async function rankSingle(
       aggregateMap.set(targetIdStr, agg)
     }
 
-    // For each type, build the segment and re-rank that whole segment
+    // 1. Re-rank City + Type segments
     for (let i = 0; i < typeSlugs.length; i++) {
       const typeSlug = typeSlugs[i]
       const typeId = typeIds[i]
@@ -345,6 +379,79 @@ export async function rankSingle(
       }
 
       await rankSegment(payload, kind, segmentKey, items)
+    }
+
+    // 2. Re-rank City + All segment
+    const allSegmentKey = `${citySlug}|all`
+    const allListingsRes = await payload.find({
+      collection: kind,
+      where: { city: { equals: cityId } },
+      limit: 10000,
+      depth: 1,
+      pagination: false,
+    })
+
+    const allItems: Array<{ listing: Listing; aggregate: Aggregate }> = []
+    for (const l of allListingsRes.docs as Listing[]) {
+      const agg = aggregateMap.get(String(l.id))
+      if (!agg) continue
+      allItems.push({ listing: l, aggregate: agg })
+    }
+
+    if (allItems.length > 0) {
+      await rankSegment(payload, kind, allSegmentKey, allItems)
+    }
+
+    // 3. Re-rank City + SuitableFor segments (if applicable)
+    if (kind !== 'events' && 'suitableFor' in listing && listing.suitableFor) {
+      const sfList = Array.isArray(listing.suitableFor)
+        ? listing.suitableFor
+        : [listing.suitableFor]
+
+      const sfIds: string[] = []
+      const sfSlugs: string[] = []
+
+      for (const sfRaw of sfList) {
+        if (!sfRaw) continue
+        const sfSlug =
+          typeof sfRaw === 'object' && sfRaw !== null && 'slug' in sfRaw
+            ? String((sfRaw as any).slug) // eslint-disable-line @typescript-eslint/no-explicit-any
+            : String(sfRaw)
+        sfSlugs.push(sfSlug)
+
+        const sfId =
+          typeof sfRaw === 'object' && sfRaw !== null && 'id' in sfRaw
+            ? String((sfRaw as any).id) // eslint-disable-line @typescript-eslint/no-explicit-any
+            : String(sfRaw)
+        sfIds.push(sfId)
+      }
+
+      for (let i = 0; i < sfSlugs.length; i++) {
+        const sfSlug = sfSlugs[i]
+        const sfId = sfIds[i]
+        const sfSegmentKey = `${citySlug}|${sfSlug}`
+
+        const sfListingsRes = await payload.find({
+          collection: kind,
+          where: {
+            and: [{ city: { equals: cityId } }, { suitableFor: { equals: sfId } }],
+          },
+          limit: 10000,
+          depth: 1,
+          pagination: false,
+        })
+
+        const sfItems: Array<{ listing: Listing; aggregate: Aggregate }> = []
+        for (const l of sfListingsRes.docs as Listing[]) {
+          const agg = aggregateMap.get(String(l.id))
+          if (!agg) continue
+          sfItems.push({ listing: l, aggregate: agg })
+        }
+
+        if (sfItems.length > 0) {
+          await rankSegment(payload, kind, sfSegmentKey, sfItems)
+        }
+      }
     }
   } catch (e) {
     console.error(`[Feed] rankSingle error for ${kind} ${String(targetId)}:`, e)

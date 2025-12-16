@@ -141,7 +141,23 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     })
 
     // Create segment key for ranking (optional filters)
-    const segmentKey = query.city && query.type ? `${query.city}|${query.type}` : null
+    let segmentKey: string | null = null
+
+    if (query.city) {
+      if (query.type) {
+        segmentKey = `${query.city}|${query.type}`
+      } else if (query.suitableFor) {
+        // Handle comma-separated values - just pick the first one for ranking optimization
+        const firstSuitableFor = query.suitableFor.split(',')[0].trim()
+        if (firstSuitableFor) {
+          segmentKey = `${query.city}|${firstSuitableFor}`
+        } else {
+          segmentKey = `${query.city}|all`
+        }
+      } else {
+        segmentKey = `${query.city}|all`
+      }
+    }
     const pinnedLimit = 6 // Reserve first 6 slots for sponsored + recommended
     const today = new Date().toISOString().slice(0, 10)
 
