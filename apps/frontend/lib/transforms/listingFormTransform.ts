@@ -269,7 +269,6 @@ export function formToPayload(
       },
     } as Partial<Event>;
 
-    console.log("[DEBUG] eventPayload:", eventPayload);
     const cleanedPayload = cleanPayload(eventPayload);
     return cleanedPayload as Partial<Event>;
   }
