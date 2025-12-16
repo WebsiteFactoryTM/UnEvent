@@ -99,7 +99,7 @@ export const isDebugMode = (): boolean => {
  * Log tracking event in development mode
  */
 export const debugTrackingEvent = (
-  platform: "Google" | "Meta",
+  platform: "Google" | "Meta" | "TikTok",
   eventName: string,
   data?: any,
 ) => {

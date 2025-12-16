@@ -9,6 +9,7 @@ import React, {
 import { useSession } from "next-auth/react";
 import { useConsent } from "./ConsentContext";
 import type { EventType, CustomData, TrackingContext } from "@/types/tracking";
+import { trackTikTokContact } from "@/lib/tracking/tiktok";
 import {
   trackGooglePageView,
   trackGoogleEvent,
@@ -162,8 +163,10 @@ export const TrackingEventsProvider: React.FC<Props> = ({ children }) => {
         case "contactClick":
           trackGoogleContact(data);
           trackMetaContact(data);
+          trackTikTokContact(data);
           debugTrackingEvent("Google", "contact", data);
           debugTrackingEvent("Meta", "Contact", data);
+          debugTrackingEvent("TikTok", "Contact", data);
           break;
 
         case "filterSearch":

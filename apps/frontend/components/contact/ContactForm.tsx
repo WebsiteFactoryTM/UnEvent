@@ -39,10 +39,13 @@ const contactSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
+import { useTracking } from "@/hooks/useTracking";
+
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
+  const { trackEvent } = useTracking();
   const { executeRecaptcha, isReady: isRecaptchaReady } = useRecaptcha();
 
   const {
@@ -113,6 +116,13 @@ export function ContactForm() {
 
       // Show success state
       setIsSuccess(true);
+
+      // Track lead generation
+      trackEvent("lead", undefined, {
+        registration_method: "contact_form",
+        // @ts-ignore - 'subject' is not in standard CustomData but handled in custom tracking if needed
+        subject: data.subject,
+      });
 
       toast({
         title: "Mesaj trimis cu succes!",

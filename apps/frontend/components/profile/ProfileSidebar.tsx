@@ -26,7 +26,10 @@ interface ProfileSidebarProps {
   profile: ProfileWithUser;
 }
 
+import { useTracking } from "@/hooks/useTracking";
+
 export function ProfileSidebar({ profile }: ProfileSidebarProps) {
+  const { trackEvent } = useTracking();
   const user =
     profile.user && typeof profile.user === "object" ? profile.user : undefined;
   const socials = profile.socialMedia;
@@ -51,6 +54,14 @@ export function ProfileSidebar({ profile }: ProfileSidebarProps) {
 
   const handleContact = () => {
     if (profile.phone) {
+      // Track contact action
+      trackEvent("contactClick", undefined, {
+        contact_method: "phone_whatsapp",
+        profile_id: profile.id,
+        owner_id: profile.id,
+        city_name: profile.city || undefined,
+      });
+
       // Format phone number for WhatsApp (remove spaces and non-digit characters except +)
       let cleanPhone = profile.phone.replace(/\s+/g, "").replace(/[^\d+]/g, "");
 

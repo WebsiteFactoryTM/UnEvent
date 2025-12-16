@@ -185,7 +185,7 @@ export const CookieBanner = () => {
                 <p className="text-xs text-muted-foreground">
                   Ne ajută să înțelegem cum interacționează vizitatorii cu
                   site-ul nostru prin colectarea și raportarea anonimă a
-                  informațiilor. Include Google Analytics.
+                  informațiilor. Include Google Analytics și TikTok Pixel.
                 </p>
               </div>
             </div>
@@ -207,7 +207,8 @@ export const CookieBanner = () => {
                 </label>
                 <p className="text-xs text-muted-foreground">
                   Folosite pentru a urmări vizitatorii pe diferite site-uri
-                  pentru a afișa reclame relevante. Include Meta Pixel.
+                  pentru a afișa reclame relevante. Include Meta Pixel și TikTok
+                  Pixel.
                 </p>
               </div>
             </div>

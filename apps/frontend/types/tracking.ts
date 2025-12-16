@@ -68,7 +68,13 @@ export interface CustomData {
   filters?: string;
 
   // User action details
-  contact_method?: "phone" | "message" | "directions" | "website" | "email";
+  contact_method?:
+    | "phone"
+    | "message"
+    | "directions"
+    | "website"
+    | "email"
+    | "phone_whatsapp";
   selected_roles?: string[];
   registration_method?: string;
 
@@ -104,5 +110,7 @@ declare global {
     dataLayer?: any[];
     fbq?: (...args: any[]) => void;
     _fbq?: any;
+    ttq?: any;
+    TiktokAnalyticsObject?: any;
   }
 }
