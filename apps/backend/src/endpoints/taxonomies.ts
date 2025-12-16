@@ -12,7 +12,6 @@ export const getTaxonomies: PayloadHandler = async (req: PayloadRequest): Promis
       },
     }
 
-    console.log('query', query)
     const [listingTypes, facilities] = await Promise.all([
       payload.find({
         collection: 'listing-types',
@@ -25,6 +24,7 @@ export const getTaxonomies: PayloadHandler = async (req: PayloadRequest): Promis
           categorySlug: true,
           type: true,
           usageCount: true,
+          isPublic: true,
         },
         sort: ['title', 'asc'],
         where: query.fullList ? undefined : where,

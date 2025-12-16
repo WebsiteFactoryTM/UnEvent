@@ -92,6 +92,15 @@ export const ListingTypes: CollectionConfig = {
       },
     },
     {
+      name: 'isPublic',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description:
+          'Dacă este bifat, acest tip de eveniment este public (ex. Concert, Festival). Dacă nu, este privat (ex. Nuntă, Botez).',
+      },
+    },
+    {
       name: 'usageCount',
       type: 'number',
       defaultValue: 0,
