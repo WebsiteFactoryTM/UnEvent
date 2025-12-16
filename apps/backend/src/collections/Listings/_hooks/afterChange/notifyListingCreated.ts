@@ -28,7 +28,7 @@ export const notifyListingCreated: CollectionAfterChangeHook = async ({
   collection,
 }) => {
   // Only trigger on create
-  if (operation !== 'create') {
+  if (operation !== 'create' && operation !== 'update') {
     return
   }
 
