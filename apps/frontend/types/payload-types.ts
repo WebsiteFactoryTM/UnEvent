@@ -574,6 +574,10 @@ export interface ListingType {
    */
   isActive?: boolean | null;
   /**
+   * Dacă este bifat, acest tip de eveniment este public (ex. Concert, Festival). Dacă nu, este privat (ex. Nuntă, Botez).
+   */
+  isPublic?: boolean | null;
+  /**
    * Denormalized total of listings tagged cu acest tip (toate stările). Se actualizează prin hooks.
    */
   usageCount?: number | null;
@@ -1619,6 +1623,7 @@ export interface ListingTypesSelect<T extends boolean = true> {
   type?: T;
   sortOrder?: T;
   isActive?: T;
+  isPublic?: T;
   usageCount?: T;
   usageCountPublic?: T;
   usageUpdatedAt?: T;

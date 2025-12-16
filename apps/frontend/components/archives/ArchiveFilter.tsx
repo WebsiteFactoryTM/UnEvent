@@ -538,8 +538,12 @@ export function ArchiveFilter({
                     groupEnabled={!showCategoriesOnly}
                     options={
                       showCategoriesOnly
-                        ? extractUniqueCategories(eventTypes || [])
+                        ? extractUniqueCategories(
+                            eventTypes?.filter((type: any) => type.isPublic) ||
+                              [],
+                          )
                         : eventTypes
+                            ?.filter((type: any) => type.isPublic) // Only show public events
                             ?.map((type: ListingTypePayload) => ({
                               value: type.slug || "",
                               label: type.title || "",
