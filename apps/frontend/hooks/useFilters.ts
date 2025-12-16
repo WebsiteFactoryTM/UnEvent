@@ -35,12 +35,17 @@ export function useFilters(
   const pathParts = pathname.split("/").filter(Boolean);
   const entity = pathParts[0] || defaults?.listingType; // e.g. "servicii"
   const currentCity = pathParts[2]; // e.g. "timisoara"
+  const currentCategory = pathParts[3]; // e.g. "nunti"
 
   // Derive initial filters from query params
   const initialFilters = useMemo(() => {
     const params = getFiltersFromSearchParams(searchParams);
-    return { ...defaults, ...params };
-  }, [searchParams, defaults]);
+    // If currentCategory is present in path, map it to typeCategory
+    const categoryFilters = currentCategory
+      ? { typeCategory: currentCategory }
+      : {};
+    return { ...defaults, city: currentCity, ...categoryFilters, ...params };
+  }, [searchParams, defaults, currentCity, currentCategory]);
 
   // Track previous city to detect changes
   const prevCityRef = useRef<string | undefined>(currentCity);
@@ -51,6 +56,7 @@ export function useFilters(
   >({
     ...initialFilters,
     city: currentCity,
+    typeCategory: currentCategory,
   });
 
   // Use ref to always get the latest pendingFilters value (avoids closure stale state)
@@ -78,7 +84,10 @@ export function useFilters(
 
   // Current filters (combination of URL params and pending changes)
   const filters = useMemo(() => {
-    return { ...initialFilters, ...pendingFilters };
+    return { ...initialFilters, ...pendingFilters } as Record<
+      string,
+      string | number | undefined
+    >;
   }, [initialFilters, pendingFilters]);
 
   const setFilter = useCallback((key: string, value?: string | number) => {
@@ -120,10 +129,12 @@ export function useFilters(
 
       // Handle city filter (path-based)
       const cityValue = filtersToApply.city;
+      const categoryValue = filtersToApply.typeCategory;
 
       // Apply other filters to query params
       Object.entries(filtersToApply).forEach(([key, value]) => {
         if (key === "city") return; // Already handled above
+        if (key === "typeCategory") return; // Handled in path
 
         if (value === undefined || value === "" || value === null) {
           params.delete(key);
@@ -135,6 +146,11 @@ export function useFilters(
       let newPath = `/${entity}/oras/${currentCity}`;
       if (cityValue && typeof cityValue === "string") {
         newPath = `/${entity}/oras/${cityValue}`;
+      }
+
+      // Handle category in path
+      if (categoryValue && typeof categoryValue === "string") {
+        newPath = `${newPath}/${categoryValue}`;
       }
 
       if (!cityValue && !params.get("city") && !overrideFilters) {

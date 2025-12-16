@@ -65,28 +65,54 @@ export async function GET() {
   // Group types by collection type
   const locationTypes = types.filter((t: any) => t.type === "locations");
   const serviceTypes = types.filter((t: any) => t.type === "services");
+  const eventTypes = types.filter((t: any) => t.type === "events");
+
+  // Helper to extract unique categories
+  const getUniqueCategories = (types: any[]) => {
+    const categories = new Set<string>();
+    types.forEach((t) => {
+      if (t.categorySlug) {
+        categories.add(t.categorySlug);
+      }
+    });
+    return Array.from(categories);
+  };
+
+  const locationCategories = getUniqueCategories(locationTypes);
+  const serviceCategories = getUniqueCategories(serviceTypes);
+  const eventCategories = getUniqueCategories(eventTypes);
 
   const urls = [];
 
   // Location category pages
   for (const city of topCities) {
-    for (const type of locationTypes.slice(0, 10)) {
-      // Top 10 location types
+    for (const category of locationCategories) {
       urls.push({
-        url: `${baseUrl}/locatii/oras/${city.slug}/${type.slug}`,
+        url: `${baseUrl}/locatii/oras/${city.slug}/${category}`,
         lastmod: new Date().toISOString(),
         changefreq: "daily",
-        priority: 0.9, // High priority for category pages
+        priority: 0.9,
       });
     }
   }
 
   // Service category pages
   for (const city of topCities) {
-    for (const type of serviceTypes.slice(0, 10)) {
-      // Top 10 service types
+    for (const category of serviceCategories) {
       urls.push({
-        url: `${baseUrl}/servicii/oras/${city.slug}/${type.slug}`,
+        url: `${baseUrl}/servicii/oras/${city.slug}/${category}`,
+        lastmod: new Date().toISOString(),
+        changefreq: "daily",
+        priority: 0.9,
+      });
+    }
+  }
+
+  // Event category pages
+  for (const city of topCities) {
+    for (const category of eventCategories) {
+      urls.push({
+        url: `${baseUrl}/evenimente/oras/${city.slug}/${category}`,
         lastmod: new Date().toISOString(),
         changefreq: "daily",
         priority: 0.9,
