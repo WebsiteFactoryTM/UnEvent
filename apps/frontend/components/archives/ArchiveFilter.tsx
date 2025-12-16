@@ -180,7 +180,7 @@ export function ArchiveFilter({
         <div className="animate-in slide-in-from-top-2 duration-300">
           {listingType === "locatii" && (
             <div className="glass-card p-6 space-y-4">
-              <div className="relative grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="event-type">Ce eveniment organizezi?</Label>
 
@@ -218,7 +218,7 @@ export function ArchiveFilter({
                 <div className="space-y-2">
                   <Label htmlFor="city">Unde (Oraș)</Label>
                   <SearchableSelectV1
-                    id="city"
+                    id="location-city"
                     searchValue={citySearch}
                     onSearchChange={setCitySearch}
                     filterByLabel
@@ -397,78 +397,6 @@ export function ArchiveFilter({
             <div className="glass-card p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="service-type">Ce serviciu cauți?</Label>
-
-                  <SearchableSelectV1
-                    id="service-type"
-                    groupEnabled={!showCategoriesOnly}
-                    options={
-                      showCategoriesOnly
-                        ? extractUniqueCategories(serviceTypes || [])
-                        : serviceTypes
-                            ?.map((type: ListingTypePayload) => ({
-                              value: type.slug || "",
-                              label: type.title || "",
-                              group: type.category || "",
-                            }))
-                            .sort(
-                              (
-                                a: { label: string; value: string },
-                                b: { label: string; value: string },
-                              ) => a.label.localeCompare(b.label),
-                            ) || []
-                    }
-                    value={
-                      showCategoriesOnly
-                        ? (filters.typeCategory as string) || ""
-                        : (filters.type as string) || ""
-                    }
-                    onValueChange={(v) =>
-                      showCategoriesOnly
-                        ? setFilter("typeCategory", v)
-                        : setFilter("type", v)
-                    }
-                    placeholder="Selectează serviciul"
-                    searchPlaceholder="Caută serviciu..."
-                    variant={showCategoriesOnly ? "chip" : "list"}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="service-city">Unde?</Label>
-                  <SearchableSelectV1
-                    id="service-city"
-                    searchValue={citySearch}
-                    onSearchChange={setCitySearch}
-                    filterByLabel
-                    groupEnabled
-                    options={
-                      citiesData
-                        ?.map((city) => ({
-                          value: city.slug || "",
-                          label: city.name || "",
-                          group: city.county || "",
-                        }))
-                        .sort(
-                          (
-                            a: { label: string; value: string },
-                            b: { label: string; value: string },
-                          ) => a.label.localeCompare(b.label),
-                        ) || []
-                    }
-                    value={(filters.city as string) || ""}
-                    onValueChange={(v) => {
-                      setFilter("city", v);
-                      setErrors({ city: "" });
-                    }}
-                    placeholder="Selectează orașul"
-                    searchPlaceholder="Caută oraș..."
-                    className="w-full"
-                    error={errors.city}
-                  />
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="service-event">
                     Pentru ce tip de eveniment?
                   </Label>
@@ -504,6 +432,75 @@ export function ArchiveFilter({
                     }
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
+                    variant={showCategoriesOnly ? "chip" : "list"}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="service-city">Unde?</Label>
+                  <SearchableSelectV1
+                    id="service-city"
+                    searchValue={citySearch}
+                    onSearchChange={setCitySearch}
+                    filterByLabel
+                    groupEnabled
+                    options={
+                      citiesData
+                        ?.map((city) => ({
+                          value: city.slug || "",
+                          label: city.name || "",
+                          group: city.county || "",
+                        }))
+                        .sort(
+                          (
+                            a: { label: string; value: string },
+                            b: { label: string; value: string },
+                          ) => a.label.localeCompare(b.label),
+                        ) || []
+                    }
+                    value={(filters.city as string) || ""}
+                    onValueChange={handleCityChange}
+                    placeholder="Selectează orașul"
+                    searchPlaceholder="Caută oraș..."
+                    className="w-full"
+                    error={errors.city}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="service-type">Ce serviciu cauți?</Label>
+
+                  <SearchableSelectV1
+                    id="service-type"
+                    groupEnabled={!showCategoriesOnly}
+                    options={
+                      showCategoriesOnly
+                        ? extractUniqueCategories(serviceTypes || [])
+                        : serviceTypes
+                            ?.map((type: ListingTypePayload) => ({
+                              value: type.slug || "",
+                              label: type.title || "",
+                              group: type.category || "",
+                            }))
+                            .sort(
+                              (
+                                a: { label: string; value: string },
+                                b: { label: string; value: string },
+                              ) => a.label.localeCompare(b.label),
+                            ) || []
+                    }
+                    value={
+                      showCategoriesOnly
+                        ? (filters.typeCategory as string) || ""
+                        : (filters.type as string) || ""
+                    }
+                    onValueChange={(v) =>
+                      showCategoriesOnly
+                        ? setFilter("typeCategory", v)
+                        : setFilter("type", v)
+                    }
+                    placeholder="Selectează serviciul"
+                    searchPlaceholder="Caută serviciu..."
                     variant={showCategoriesOnly ? "chip" : "list"}
                   />
                 </div>
