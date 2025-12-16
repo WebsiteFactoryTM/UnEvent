@@ -186,7 +186,7 @@ export function GroupedMultiSelect({
                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider group-hover:text-foreground transition-colors">
                           {category}
                         </p>
-                        <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity uppercase font-medium">
+                        <span className="text-[10px] text-muted-foreground opacity-50 group-hover:opacity-100 transition-opacity uppercase font-medium">
                           {allCategorySelected
                             ? "Deselectează tot"
                             : "Selectează tot"}
