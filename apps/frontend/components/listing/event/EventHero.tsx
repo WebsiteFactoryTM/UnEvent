@@ -7,6 +7,7 @@ import PriceDisplay from "../shared/PriceDisplay";
 import { ExpandableTagsList } from "../shared/ExpandableTagsList";
 import { UnclaimedBadge } from "../shared/UnclaimedBadge";
 import { ClaimListingCTA } from "../shared/ClaimListingCTA";
+import { TierBadge } from "@/components/common/TierBadge";
 
 interface EventHeroProps {
   event: EventListing;
@@ -52,21 +53,12 @@ export default function EventHero({ event }: EventHeroProps) {
           </h1>
           <div className="flex gap-2 shrink-0">
             {event?.claimStatus === "unclaimed" && <UnclaimedBadge />}
-            {event?.verifiedStatus === "approved" && (
-              <Badge className="bg-green-500/90 backdrop-blur-sm">
-                Verificat
-              </Badge>
-            )}
-            {event?.tier === "recommended" && (
-              <Badge className="bg-blue-500/90 backdrop-blur-sm">
-                Recomandat
-              </Badge>
-            )}
-            {event?.tier === "sponsored" && (
-              <Badge className="bg-yellow-500/90 backdrop-blur-sm">
-                Partener
-              </Badge>
-            )}
+            {event?.verifiedStatus === "approved" ? (
+              <TierBadge tier="verified" />
+            ) : null}
+            {event?.tier !== "standard" && event?.tier ? (
+              <TierBadge tier={event.tier} />
+            ) : null}
           </div>
         </div>
 
@@ -115,7 +107,7 @@ export default function EventHero({ event }: EventHeroProps) {
           <div>
             <p className="text-sm font-medium">Data și ora</p>
             <p className="text-sm text-muted-foreground">
-              {formatDate(event?.startDate)}
+              {formatDate(event?.startDate || "")}
             </p>
             {event?.endDate && (
               <p className="text-sm text-muted-foreground">

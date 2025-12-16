@@ -15,6 +15,7 @@ import PriceDisplay from "../shared/PriceDisplay";
 import { ExpandableTagsList } from "../shared/ExpandableTagsList";
 import { UnclaimedBadge } from "../shared/UnclaimedBadge";
 import { ClaimListingCTA } from "../shared/ClaimListingCTA";
+import { TierBadge } from "@/components/common/TierBadge";
 
 interface LocationHeroProps {
   location: LocationListing;
@@ -52,21 +53,12 @@ export function LocationHero({ location }: LocationHeroProps) {
           </h1>
           <div className="flex gap-2 shrink-0">
             {location.claimStatus === "unclaimed" && <UnclaimedBadge />}
-            {location.verifiedStatus === "approved" && (
-              <Badge className="bg-green-500/90 backdrop-blur-sm">
-                Verificat
-              </Badge>
-            )}
-            {location.tier === "recommended" && (
-              <Badge className="bg-blue-500/90 backdrop-blur-sm">
-                Recomandat
-              </Badge>
-            )}
-            {location.tier === "sponsored" && (
-              <Badge className="bg-yellow-500/90 backdrop-blur-sm">
-                Partener
-              </Badge>
-            )}
+            {location.verifiedStatus === "approved" ? (
+              <TierBadge tier="verified" />
+            ) : null}
+            {location.tier !== "standard" && location.tier ? (
+              <TierBadge tier={location.tier} />
+            ) : null}
           </div>
         </div>
 

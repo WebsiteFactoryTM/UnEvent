@@ -26,6 +26,7 @@ import type { ListingCardData } from "@/lib/normalizers/hub";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import ListingCardImpressionsLayer from "./ListingCardImpressionsLayer";
 import { UnclaimedBadge } from "../listing/shared/UnclaimedBadge";
+import { TierBadge } from "../common/TierBadge";
 
 export function ListingCard({
   id,
@@ -50,47 +51,9 @@ export function ListingCard({
   const { indoor } = capacity || {};
   const kind = getListingTypeSlug(listingType);
 
-  const renderTierBadge = () => {
-    switch (tier) {
-      case "new":
-        return (
-          <Badge
-            variant="secondary"
-            className="text-xs bg-green-500/90 backdrop-blur-sm"
-          >
-            Nou
-          </Badge>
-        );
-
-      case "sponsored":
-        return (
-          <Badge
-            variant="secondary"
-            className="text-xs bg-yellow-500/90 backdrop-blur-sm"
-          >
-            Partener
-          </Badge>
-        );
-      case "recommended":
-        return (
-          <Badge
-            variant="secondary"
-            className="text-xs bg-blue-500/90 backdrop-blur-sm"
-          >
-            Recomandat
-          </Badge>
-        );
-      default:
-        return null;
-    }
-  };
   return (
     <Link href={`/${listingType}/${slug}`}>
       <Card className="glass-card overflow-hidden h-full flex flex-col">
-        {tier === "sponsored" && (
-          <ListingCardImpressionsLayer listingId={id} kind={kind} />
-        )}
-
         <CardHeader className="p-0 relative">
           <div className="relative h-48 w-full">
             <Image
@@ -120,7 +83,7 @@ export function ListingCard({
             <h3 className="font-semibold text-lg line-clamp-2">{title}</h3>
             <div className="flex gap-2 shrink-0">
               {claimStatus === "unclaimed" && <UnclaimedBadge />}
-              {tier && tier !== "standard" ? renderTierBadge() : null}
+              {tier && tier !== "standard" ? <TierBadge tier={tier} /> : null}
             </div>
           </div>
           <p className="text-sm text-muted-foreground line-clamp-3">
@@ -190,6 +153,9 @@ export function ListingCard({
           </Button>
         </CardFooter>
       </Card>
+      {tier === "sponsored" && (
+        <ListingCardImpressionsLayer listingId={id} kind={kind} />
+      )}
     </Link>
   );
 }
