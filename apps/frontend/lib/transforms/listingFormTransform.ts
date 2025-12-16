@@ -244,14 +244,14 @@ export function formToPayload(
               ? `${eventData.endDate}T${eventData.endTime}`
               : eventData.endDate
           : new Date().toISOString(), // Use current date for drafts when no date provided
-      capacity: eventData.capacity
+      capacity: eventData.capacity?.enabled
         ? {
-            enabled: !!eventData.capacity.total,
+            // enabled: !!eventData.capacity.total,
             total: eventData.capacity.total || null,
             remaining: eventData.capacity.remaining || null,
           }
         : {
-            enabled: false,
+            // enabled: false,
             total: null,
             remaining: null,
           },
@@ -378,8 +378,8 @@ export function payloadToForm(
     return {
       ...baseForm,
       listingType: "location" as const,
-      type: extractIds(locationData.type),
-      suitableFor: extractIds(locationData.suitableFor),
+      type: extractIds(locationData.type || []),
+      suitableFor: extractIds(locationData.suitableFor || []),
       capacity: {
         indoor: locationData.capacity?.indoor || undefined,
         outdoor: locationData.capacity?.outdoor || undefined,
@@ -404,8 +404,8 @@ export function payloadToForm(
     return {
       ...baseForm,
       listingType: "service" as const,
-      type: extractIds(serviceData.type),
-      suitableFor: extractIds(serviceData.suitableFor),
+      type: extractIds(serviceData.type || []),
+      suitableFor: extractIds(serviceData.suitableFor || []),
       pricing: {
         enabled: serviceData.pricing.type !== "contact",
         type: serviceData.pricing.type,
@@ -427,7 +427,7 @@ export function payloadToForm(
     return {
       ...baseForm,
       listingType: "event" as const,
-      type: extractIds(eventData.type),
+      type: extractIds(eventData.type || []),
       pricing: {
         enabled: eventData.pricing.type !== "free",
         type: eventData.pricing.type,
