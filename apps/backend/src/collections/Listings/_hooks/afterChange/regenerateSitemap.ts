@@ -30,7 +30,7 @@ export const regenerateSitemap: CollectionAfterChangeHook = async ({
   }
 
   const frontendUrl = process.env.PAYLOAD_PUBLIC_FRONTEND_URL || 'https://unevent.ro'
-  const revalidateSecret = process.env.REVALIDATE_SECRET || process.env.SVC_TOKEN
+  const revalidateSecret = process.env.PAYLOAD_REVALIDATE_SECRET || process.env.SVC_TOKEN
 
   if (!revalidateSecret) {
     console.warn('[Sitemap Regeneration] REVALIDATE_SECRET not configured, skipping sitemap update')
