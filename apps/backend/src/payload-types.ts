@@ -1407,6 +1407,8 @@ export interface Search {
   description?: string | null;
   address?: string | null;
   type?: string | null;
+  cityName?: string | null;
+  imageUrl?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2191,6 +2193,8 @@ export interface SearchSelect<T extends boolean = true> {
   description?: T;
   address?: T;
   type?: T;
+  cityName?: T;
+  imageUrl?: T;
   updatedAt?: T;
   createdAt?: T;
 }

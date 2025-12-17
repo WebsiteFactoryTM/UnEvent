@@ -352,6 +352,20 @@ export default buildConfig({
               readOnly: true,
             },
           },
+          {
+            name: 'cityName',
+            type: 'text',
+            admin: {
+              readOnly: true,
+            },
+          },
+          {
+            name: 'imageUrl',
+            type: 'text',
+            admin: {
+              readOnly: true,
+            },
+          },
         ],
       },
       beforeSync: async ({
@@ -366,6 +380,14 @@ export default buildConfig({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         payload: any
       }) => {
+        // Skip indexing non-approved listings
+        if (originalDoc?.moderationStatus !== 'approved') {
+          console.log(
+            `[beforeSync] Skipping doc ${originalDoc?.id} with moderationStatus: ${originalDoc?.moderationStatus}`,
+          )
+          return null // Return null to skip indexing
+        }
+
         let cityName = ''
 
         // Get city name from the relationship
@@ -417,6 +439,79 @@ export default buildConfig({
           searchDoc.type = []
         }
 
+        // Extract image URL for search index
+        let imageUrl = ''
+
+        console.log(
+          `[beforeSync] Processing doc for collection: ${payload.collection}, doc ID: ${originalDoc?.id}`,
+        )
+        console.log(`[beforeSync] featuredImage:`, {
+          exists: !!originalDoc?.featuredImage,
+          type: typeof originalDoc?.featuredImage,
+          value: originalDoc?.featuredImage,
+        })
+        console.log(`[beforeSync] gallery:`, {
+          exists: !!originalDoc?.gallery,
+          isArray: Array.isArray(originalDoc?.gallery),
+          length: originalDoc?.gallery?.length,
+          firstItem: originalDoc?.gallery?.[0],
+        })
+
+        if (originalDoc?.featuredImage) {
+          try {
+            const featuredImageId =
+              typeof originalDoc.featuredImage === 'object'
+                ? originalDoc.featuredImage.id
+                : originalDoc.featuredImage
+            console.log(`[beforeSync] FeaturedImage ID: ${featuredImageId}`)
+            if (featuredImageId) {
+              const media = await payload.findByID({
+                collection: 'media',
+                id: featuredImageId,
+              })
+              console.log(`[beforeSync] Media fetched:`, {
+                id: media?.id,
+                url: media?.url,
+                filename: media?.filename,
+              })
+              imageUrl = media?.url || media?.filename || ''
+              console.log(`[beforeSync] Set imageUrl from featuredImage: ${imageUrl}`)
+            }
+          } catch (error) {
+            console.error('[beforeSync] Error fetching featuredImage:', error)
+          }
+        }
+
+        // Fallback to first gallery image if no featuredImage
+        if (!imageUrl && originalDoc?.gallery?.length > 0) {
+          try {
+            const firstGalleryId =
+              typeof originalDoc.gallery[0] === 'object'
+                ? originalDoc.gallery[0].id
+                : originalDoc.gallery[0]
+            console.log(`[beforeSync] Gallery first image ID: ${firstGalleryId}`)
+            if (firstGalleryId) {
+              const media = await payload.findByID({
+                collection: 'media',
+                id: firstGalleryId,
+              })
+              console.log(`[beforeSync] Gallery media fetched:`, {
+                id: media?.id,
+                url: media?.url,
+                filename: media?.filename,
+              })
+              imageUrl = media?.url || media?.filename || ''
+              console.log(`[beforeSync] Set imageUrl from gallery: ${imageUrl}`)
+            }
+          } catch (error) {
+            console.error('[beforeSync] Error fetching gallery image:', error)
+          }
+        }
+
+        console.log(
+          `[beforeSync] Final imageUrl for doc ${originalDoc?.id}: ${imageUrl || '(empty)'}`,
+        )
+
         return {
           ...searchDoc,
           title: originalDoc?.title || '',
@@ -424,6 +519,7 @@ export default buildConfig({
           address: originalDoc?.address || '',
           cityName: cityName || '',
           type: searchDoc.type || [],
+          imageUrl: imageUrl || '',
         }
       },
     }),
