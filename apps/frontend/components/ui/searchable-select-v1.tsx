@@ -185,7 +185,7 @@ export function SearchableSelectV1({
                 : "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
             )
           : cn(
-              "flex items-center px-2 py-1.5 text-sm cursor-pointer select-none rounded-sm w-full",
+              "flex justify-start items-center text-start px-1 gap-2 py-1.5 text-sm cursor-pointer select-none rounded-sm w-full",
               "hover:bg-accent hover:text-accent-foreground",
               isActive && "bg-accent text-accent-foreground",
             ),
@@ -197,7 +197,7 @@ export function SearchableSelectV1({
         <>
           <FaCheck
             className={cn(
-              "mr-2 h-4 w-4",
+              "h-4 w-4",
               value === option.value ? "opacity-100" : "opacity-0",
             )}
           />
@@ -334,7 +334,7 @@ export function SearchableSelectV1({
 
         <PopoverContent
           className={cn(
-            "z-50 bg-card border border-border rounded-md shadow-lg",
+            "z-50 bg-card border border-border rounded-md shadow-md",
             "w-[var(--radix-popover-trigger-width)] p-0",
           )}
           sideOffset={4}
@@ -360,7 +360,7 @@ export function SearchableSelectV1({
         >
           <div className="flex flex-col max-h-[300px] overflow-y-auto">
             {filteredOptions.length === 0 ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
+              <div className="py-6 text-left px-2 text-sm text-muted-foreground">
                 {emptyText}
               </div>
             ) : (
