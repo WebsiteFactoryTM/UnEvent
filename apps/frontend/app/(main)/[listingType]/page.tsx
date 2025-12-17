@@ -28,7 +28,6 @@ const toCard = (
   id: it.listingId,
   title: it.title,
   slug: it.slug,
-  description: it.description || "",
   image: { url: it.imageUrl || "/placeholder.svg", alt: it.title },
   city: it.cityLabel || "România",
   type: it.type || getListingTypeLabel(listingType),

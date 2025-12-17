@@ -27,12 +27,13 @@ import { getListingTypeSlug } from "@/lib/getListingType";
 import ListingCardImpressionsLayer from "./ListingCardImpressionsLayer";
 import { UnclaimedBadge } from "../listing/shared/UnclaimedBadge";
 import { TierBadge } from "../common/TierBadge";
+import { RichTextRenderer } from "@/components/editor/RichTextRenderer";
 
 export function ListingCard({
   id,
   title,
   slug,
-  description,
+
   image,
   city,
   type,
@@ -86,9 +87,6 @@ export function ListingCard({
               {tier && tier !== "standard" ? <TierBadge tier={tier} /> : null}
             </div>
           </div>
-          <p className="text-sm text-muted-foreground line-clamp-3">
-            {description}
-          </p>
 
           <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
@@ -116,20 +114,17 @@ export function ListingCard({
                 <span>{new Date(date).toLocaleDateString("ro-RO")}</span>
               </div>
             )}
-
-            {/* <div className="flex items-center gap-1">
-            <FaEye className="h-4 w-4" />
-            <span>{views.toLocaleString("ro-RO")}</span>
-          </div> */}
           </div>
-          <div className="flex gap-2">
-            {type.split(",").map((t) => (
-              <Badge variant="secondary" key={t}>
-                {t}
-              </Badge>
-            ))}
+          <div className="flex gap- flex-wrap">
+            {type
+              .split(",")
+              .slice(0, 3)
+              .map((t) => (
+                <Badge variant="secondary" key={t}>
+                  {t}
+                </Badge>
+              ))}
           </div>
-
           {priceRange && (
             <p className="text-sm font-semibold text-foreground">
               {priceRange}
