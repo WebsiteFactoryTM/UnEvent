@@ -217,9 +217,27 @@ export interface Profile {
    */
   displayName?: string | null;
   /**
-   * Short bio or tagline
+   * Short bio or tagline (Legacy)
    */
   bio?: string | null;
+  /**
+   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.
+   */
+  bio_rich?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Primary contact number
    */
@@ -357,6 +375,24 @@ export interface Event {
    */
   owner: number | Profile;
   description?: string | null;
+  /**
+   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.
+   */
+  description_rich?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   city?: (number | null) | City;
   address?: string | null;
   /**
@@ -608,6 +644,24 @@ export interface Location {
    */
   owner: number | Profile;
   description?: string | null;
+  /**
+   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.
+   */
+  description_rich?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   city?: (number | null) | City;
   address?: string | null;
   /**
@@ -783,6 +837,24 @@ export interface Service {
    */
   owner: number | Profile;
   description?: string | null;
+  /**
+   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.
+   */
+  description_rich?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   city?: (number | null) | City;
   address?: string | null;
   /**
@@ -1522,6 +1594,7 @@ export interface ProfilesSelect<T extends boolean = true> {
   verification?: T;
   displayName?: T;
   bio?: T;
+  bio_rich?: T;
   phone?: T;
   website?: T;
   city?: T;
@@ -1657,6 +1730,7 @@ export interface EventsSelect<T extends boolean = true> {
   slug?: T;
   owner?: T;
   description?: T;
+  description_rich?: T;
   city?: T;
   address?: T;
   geo?: T;
@@ -1756,6 +1830,7 @@ export interface LocationsSelect<T extends boolean = true> {
   slug?: T;
   owner?: T;
   description?: T;
+  description_rich?: T;
   city?: T;
   address?: T;
   geo?: T;
@@ -1852,6 +1927,7 @@ export interface ServicesSelect<T extends boolean = true> {
   slug?: T;
   owner?: T;
   description?: T;
+  description_rich?: T;
   city?: T;
   address?: T;
   geo?: T;
