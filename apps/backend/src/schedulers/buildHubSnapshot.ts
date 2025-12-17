@@ -1,6 +1,7 @@
 // tasks/buildHubSnapshot.ts
-import { City, Event, HubSnapshot, ListingType, Location, Media, Service } from '@/payload-types'
+import { City, HubSnapshot, ListingType } from '@/payload-types'
 import type { Payload } from 'payload'
+import { toCardItem } from '@/utils/toCardItem'
 import cron from 'node-cron'
 import { revalidate } from '@/utils/revalidate'
 import { buildPopularSearchCombos } from '@/utils/popularSearchCombos'
@@ -173,40 +174,6 @@ export async function buildHubSnapshot(
 }
 
 /** Helpers — adapt to your real field names / media */
-function toCardItem(
-  listingType: 'locations' | 'services' | 'events',
-  doc: Location | Service | Event,
-) {
-  let capacity = 0
-  if (listingType === 'locations') {
-    capacity = (doc as Location)?.capacity?.indoor ?? 0
-  } else if (listingType === 'events') {
-    capacity = (doc as Event)?.capacity?.total ?? 0
-  }
-  return {
-    listingId: doc.id,
-    slug: doc.slug as string,
-    title: doc.title as string,
-    cityLabel: (doc.city as City)?.name ?? '',
-    imageUrl: getImageURL(doc),
-    verified: doc.verifiedStatus === 'approved',
-    ratingAvg: doc.rating as number | undefined,
-    ratingCount: doc.reviewCount as number | undefined,
-    description: doc.description as string,
-    type: doc.type?.map((t: number | ListingType) => (t as ListingType).title).join(', ') ?? '',
-    startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
-    capacity: capacity,
-    tier: doc.tier,
-  }
-}
-
-function getImageURL(doc: Location | Service | Event): string | undefined {
-  // Prefer featuredImage.url; fallback to first gallery image; adjust to your schema
-  const file = doc.featuredImage ?? (doc.gallery?.[0] as number | Media | undefined)
-  if (!file) return undefined
-  // When depth:0, uploads are IDs; if you store full URL on create, use that.
-  return typeof file === 'number' ? undefined : ((file.url ?? undefined) as string | undefined)
-}
 
 function toCityLabel(slug: string) {
   const map: Record<string, string> = {

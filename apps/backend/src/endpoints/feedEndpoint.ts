@@ -5,15 +5,8 @@ import { z } from 'zod'
 import { dailyJitter } from '../collections/Feed/scoring'
 import type { PayloadHandler } from 'payload'
 import * as Sentry from '@sentry/nextjs'
-import type {
-  Location,
-  Event,
-  Service,
-  ListingRank,
-  City,
-  Media,
-  ListingType,
-} from '@/payload-types'
+import type { Location, Event, Service, ListingRank } from '@/payload-types'
+import { toCardItem } from '@/utils/toCardItem'
 
 type Listing = Location | Event | Service
 
@@ -503,8 +496,12 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
           limit: query.limit,
           hasMore: start + query.limit < organicIds.length,
         },
-        pinnedSponsored: pinnedSponsored.map((listing) => toCardItem(query.entity, listing)),
-        organic: sortedOrganicDocs.map((listing) => toCardItem(query.entity, listing)),
+        pinnedSponsored: pinnedSponsored.map((listing) =>
+          toCardItem(query.entity, listing, { includeGeo: true }),
+        ),
+        organic: sortedOrganicDocs.map((listing) =>
+          toCardItem(query.entity, listing, { includeGeo: true }),
+        ),
       }),
       {
         status: 200,
@@ -561,55 +558,4 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       },
     )
   }
-}
-
-function toCardItem(
-  listingType: 'locations' | 'services' | 'events',
-  doc: Location | Service | Event,
-): {
-  listingId: number
-  slug: string
-  title: string
-  cityLabel: string
-  imageUrl: string | undefined
-  verified: boolean
-  ratingAvg: number | undefined
-  ratingCount: number | undefined
-  description: string
-  type: string
-  startDate: string | undefined
-  capacity: number
-  tier: 'new' | 'standard' | 'sponsored' | 'recommended' | null | undefined
-  geo: [number, number] | null | undefined
-} {
-  let capacity = 0
-  if (listingType === 'locations') {
-    capacity = (doc as Location)?.capacity?.indoor ?? 0
-  } else if (listingType === 'events') {
-    capacity = (doc as Event)?.capacity?.total ?? 0
-  }
-  return {
-    listingId: doc.id,
-    slug: doc.slug as string,
-    title: doc.title as string,
-    cityLabel: (doc.city as City)?.name ?? '',
-    imageUrl: getImageURL(doc),
-    verified: doc.verifiedStatus === 'approved',
-    ratingAvg: doc.rating as number | undefined,
-    ratingCount: doc.reviewCount as number | undefined,
-    description: doc.description as string,
-    type: doc.type?.map((t: number | ListingType) => (t as ListingType).title).join(', ') ?? '',
-    startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
-    capacity: capacity,
-    tier: doc.tier,
-    // Reverse coordinates from [lng, lat] (GeoJSON) to [lat, lng] for frontend
-    geo: doc.geo ? [doc.geo[0], doc.geo[1]] : null,
-  }
-}
-function getImageURL(doc: Location | Service | Event): string | undefined {
-  // Prefer featuredImage.url; fallback to first gallery image; adjust to your schema
-  const file = doc.featuredImage ?? (doc.gallery?.[0] as number | Media | undefined)
-  if (!file) return undefined
-  // When depth:0, uploads are IDs; if you store full URL on create, use that.
-  return typeof file === 'number' ? undefined : ((file.url ?? undefined) as string | undefined)
 }
