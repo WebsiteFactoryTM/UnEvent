@@ -7,6 +7,7 @@ import { updateUserAvatar } from './hooks/afterChange/updateUserAvatar'
 import { updateUserDisplayName } from './hooks/afterChange/updateUserDisplayName'
 import { markAvatarPermanent } from './hooks/afterChange/markAvatarPermanent'
 import { ensureUniqueSlug } from './hooks/ensureUniqueSlug'
+import { restrictedRichTextField } from '../../fields/restrictedRichText'
 import { afterChange } from '@/hooks/afterChange'
 
 export const Profiles: CollectionConfig = {
@@ -108,9 +109,10 @@ export const Profiles: CollectionConfig = {
       name: 'bio',
       type: 'textarea',
       admin: {
-        description: 'Short bio or tagline',
+        description: 'Short bio or tagline (Legacy)',
       },
     },
+    restrictedRichTextField('bio_rich', 'Bio (Rich Text)'),
     {
       name: 'phone',
       type: 'text',

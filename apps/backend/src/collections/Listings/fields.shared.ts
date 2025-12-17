@@ -1,5 +1,6 @@
 // shared/fields.shared.ts
 
+import { restrictedRichTextField } from '../../fields/restrictedRichText'
 import type { Field } from 'payload'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -29,6 +30,7 @@ export const sharedListingFields: Field[] = [
     maxDepth: 2,
   },
   { name: 'description', type: 'textarea' },
+  restrictedRichTextField('description_rich', 'Description (Rich Text)'),
   {
     name: 'city',
     type: 'relationship',
