@@ -35,7 +35,6 @@ export type CardItem = {
   verified: boolean;
   ratingAvg: number | undefined;
   ratingCount: number | undefined;
-  description: string;
   type: string;
   startDate: string | undefined;
   capacity: number;
