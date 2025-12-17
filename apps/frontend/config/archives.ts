@@ -3,12 +3,15 @@ export const listingTypes = ["locatii", "servicii", "evenimente"] as const;
 export type ListingType = (typeof listingTypes)[number];
 
 export const cities = [
-  { slug: "bucuresti", label: "București" },
-  { slug: "cluj-napoca", label: "Cluj-Napoca" },
-  { slug: "timisoara", label: "Timișoara" },
-  { slug: "iasi", label: "Iași" },
-  { slug: "brasov", label: "Brașov" },
-  { slug: "constanta", label: "Constanța" },
+  { slug: "municipiul-bucuresti-bucuresti", label: "București" },
+  { slug: "cluj-napoca-cluj-napoca", label: "Cluj-Napoca" },
+  { slug: "timisoara-timis", label: "Timișoara" },
+  { slug: "iasi-iasi", label: "Iași" },
+  { slug: "brasov-brasov", label: "Brașov" },
+  { slug: "constanta-constanta", label: "Constanța" },
+  { slug: "oradea-bihor", label: "Oradea" },
+  { slug: "sibiu-sibiu", label: "Sibiu" },
+  { slug: "craiova-dolj", label: "Craiova" },
 ] as const;
 
 export const locationTypes = [

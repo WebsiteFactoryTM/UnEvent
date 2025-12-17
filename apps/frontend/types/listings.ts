@@ -25,3 +25,20 @@ export type HomeListings = {
   upcomingEvents: Partial<EventListing>[];
   newListings: Partial<LocationListing>[];
 };
+
+export type CardItem = {
+  listingId: number;
+  slug: string;
+  title: string;
+  cityLabel: string;
+  imageUrl: string | undefined;
+  verified: boolean;
+  ratingAvg: number | undefined;
+  ratingCount: number | undefined;
+  description: string;
+  type: string;
+  startDate: string | undefined;
+  capacity: number;
+  tier: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
+  geo?: [number, number] | null;
+};

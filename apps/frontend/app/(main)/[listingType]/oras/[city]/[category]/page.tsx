@@ -19,6 +19,8 @@ import { ArchiveSchema } from "@/components/archives/ArchiveSchema";
 import { PaginationSEO } from "@/components/archives/PaginationSEO";
 import { fetchTaxonomies } from "@/lib/api/taxonomies";
 import { ListingType as PayloadListingType } from "@/types/payload-types";
+import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
+import ArchiveTitle from "@/components/archives/ArchiveTitle";
 
 export const revalidate = 3600;
 
@@ -191,43 +193,19 @@ export default async function CityCategoryArchivePage({
       <div className="min-h-screen">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-7xl mx-auto space-y-8">
-            <nav className="text-sm text-muted-foreground">
-              <ol className="flex items-center gap-2">
-                <li>
-                  <a href="/" className="hover:text-foreground">
-                    Acasă
-                  </a>
-                </li>
-                <li>/</li>
-                <li>
-                  <a href={`/${listingType}`} className="hover:text-foreground">
-                    {listingLabel}
-                  </a>
-                </li>
-                <li>/</li>
-                <li>
-                  <a
-                    href={`/${listingType}/oras/${city}`}
-                    className="hover:text-foreground"
-                  >
-                    {cityLabel}
-                  </a>
-                </li>
-                <li>/</li>
-                <li className="text-foreground font-medium">{categoryLabel}</li>
-              </ol>
-            </nav>
+            <ListingBreadcrumbs
+              type={listingType as ListingType}
+              cityName={cityLabel.split(" ")[0]}
+              citySlug={city}
+              categoryName={categoryLabel}
+              categorySlug={category}
+            />
 
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-              <div className="space-y-4 flex-1">
-                <h1 className="text-4xl md:text-5xl font-bold text-balance">
-                  Top {listingLabel} de {categoryLabel} {cityLabel}
-                </h1>
-                <p className="text-lg text-muted-foreground text-pretty">
-                  Descoperă cele mai bune {listingLabel.toLowerCase()} de{" "}
-                  {categoryLabel.toLowerCase()} din {cityLabel}.
-                </p>
-              </div>
+              <ArchiveTitle
+                title={`Top ${listingLabel} pentru evenimente de ${categoryLabel} în ${cityLabel}`}
+                subtitle={`Descoperă cele mai bune ${listingLabel.toLowerCase()} de ${categoryLabel.toLowerCase()} din ${cityLabel}.`}
+              />
               <AddListingButton listingType={listingType as any} />
             </div>
 

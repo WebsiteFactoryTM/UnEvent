@@ -67,20 +67,28 @@ export function useFilters(
 
   // Detect city changes via URL (path) and clear geo filters
   useEffect(() => {
+    // Only clear geo filters if the city changed AND we don't have new geo params in the URL
+    // This prevents clearing geo filters when the user navigates to a new city WITH geo coordinates (e.g. from a link)
     if (prevCityRef.current && prevCityRef.current !== currentCity) {
-      // City changed via URL - clear geo filters as they're no longer accurate
-      setPendingFilters((prev) => ({
-        ...prev,
-        lat: undefined,
-        lng: undefined,
-        mapCenterLat: undefined,
-        mapCenterLng: undefined,
-        mapZoom: undefined,
-        radius: undefined,
-      }));
+      const params = new URLSearchParams(searchParams);
+      const hasGeoParams =
+        params.has("lat") || params.has("lng") || params.has("radius");
+
+      if (!hasGeoParams) {
+        // City changed via URL without new coordinates - clear old geo filters
+        setPendingFilters((prev) => ({
+          ...prev,
+          lat: undefined,
+          lng: undefined,
+          mapCenterLat: undefined,
+          mapCenterLng: undefined,
+          mapZoom: undefined,
+          radius: undefined,
+        }));
+      }
     }
     prevCityRef.current = currentCity;
-  }, [currentCity]);
+  }, [currentCity, searchParams]);
 
   // Current filters (combination of URL params and pending changes)
   const filters = useMemo(() => {
@@ -127,9 +135,28 @@ export function useFilters(
       // This ensures we always get the most recent state, even if called immediately after setFilter
       const filtersToApply = overrideFilters || pendingFiltersRef.current;
 
+      console.log("[useFilters] Applying filters:", {
+        filtersToApply,
+        overrideFilters,
+        pending: pendingFiltersRef.current,
+        currentCity,
+        currentCategory,
+      });
+
       // Handle city filter (path-based)
       const cityValue = filtersToApply.city;
-      const categoryValue = filtersToApply.typeCategory;
+
+      // Handle category filter - use explicitly passed value, or current URL value if not present in update
+      const categoryValue =
+        filtersToApply.typeCategory !== undefined
+          ? filtersToApply.typeCategory
+          : currentCategory;
+
+      console.log("[useFilters] Extracted path values:", {
+        cityValue,
+        categoryValue,
+        source: filtersToApply.typeCategory !== undefined ? "filters" : "url",
+      });
 
       // Apply other filters to query params
       Object.entries(filtersToApply).forEach(([key, value]) => {
@@ -151,7 +178,20 @@ export function useFilters(
       // Handle category in path
       if (categoryValue && typeof categoryValue === "string") {
         newPath = `${newPath}/${categoryValue}`;
+      } else if (currentCategory && !filtersToApply.typeCategory) {
+        // Fallback: if category wasn't explicitly cleared (set to null/empty) in filtersToApply,
+        // but it IS in the current URL, preserve it.
+        // This handles cases where filtersToApply might be a partial update (like map bounds) that doesn't include the category.
+        newPath = `${newPath}/${currentCategory}`;
       }
+
+      // If a specific type is selected, we might need to handle category redirects
+      // Ideally, the UI should ensure only valid types for the current category are selectable.
+      // But if a type is selected that implies a different category, we could potentially detect it here
+      // if we had access to the full taxonomy tree. For now, we assume the UI handles this or the user
+      // explicitly navigated.
+
+      console.log("[useFilters] Constructed new path:", newPath);
 
       if (!cityValue && !params.get("city") && !overrideFilters) {
         setErrors({ city: "Orașul este obligatoriu" });
@@ -162,10 +202,18 @@ export function useFilters(
 
       const newUrl = `${newPath}${query ? `?${query}` : ""}`;
 
-      // Use replace instead of push to avoid showing loading state on filter changes
+      // Determine navigation method based on what changed
+      // If path segments changed (city or category), use push (add to history)
+      // If only query params changed (filters), use replace (update current history entry)
+      const pathChanged = newPath !== pathname;
+      const navigationMethod =
+        pathChanged || overrideFilters?.forcePush
+          ? router.push
+          : router.replace;
+
       // Use startTransition to mark navigation as non-urgent
       startTransition(() => {
-        router.replace(newUrl, {
+        navigationMethod(newUrl, {
           scroll: false,
         });
       });

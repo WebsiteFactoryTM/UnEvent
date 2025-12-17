@@ -16,6 +16,7 @@ import { ArchiveMapView } from "./ArchiveMapView";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Map } from "lucide-react";
 import type { Location } from "@/types/payload-types";
+import ArchiveGridView from "./ArchiveGridView";
 
 // Utility function to convert eventWhen filter to date ranges
 function convertEventWhenToDates(
@@ -189,6 +190,9 @@ const CityArchive = ({
     setViewMode(mode);
     const params = new URLSearchParams(searchParams);
     params.set("view", mode);
+    console.log("view mode change params", params.toString());
+
+    // Use replace for view mode toggle to avoid cluttering history
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
@@ -231,6 +235,7 @@ const CityArchive = ({
     queryFn: () => fetchFeed(filters),
     placeholderData: (previousData) => previousData, // Keep previous data while fetching
     // staleTime: 1000 * 60 * 5,
+    enabled: !!filters.lat || viewMode === "grid", // Only fetch if we have coordinates in map mode, or if we're in grid mode
   });
 
   const combinedListings = [
@@ -296,39 +301,13 @@ const CityArchive = ({
 
       {/* Grid View */}
       {viewMode === "grid" && (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {combinedListings.length > 0 ? (
-              combinedListings.map((item: CardItem) => (
-                <ListingCard
-                  key={item.slug}
-                  {...cardItemToListingCardData(item, entity)}
-                />
-              ))
-            ) : (
-              <div className="col-span-3 text-center text-muted-foreground py-12">
-                Nicio listare găsită.
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={() => handlePageChange("prev")}
-              disabled={filters.page <= 1}
-              className="px-4 py-2 border rounded disabled:opacity-50"
-            >
-              ← Înapoi
-            </button>
-            <button
-              onClick={() => handlePageChange("next")}
-              disabled={!data?.meta?.hasMore}
-              className="px-4 py-2 border rounded disabled:opacity-50"
-            >
-              Înainte →
-            </button>
-          </div>
-        </>
+        <ArchiveGridView
+          listings={combinedListings}
+          entity={entity}
+          handlePageChange={handlePageChange}
+          disablePrevious={filters.page <= 1}
+          disableNext={!data?.meta?.hasMore}
+        />
       )}
 
       {/* Map View */}

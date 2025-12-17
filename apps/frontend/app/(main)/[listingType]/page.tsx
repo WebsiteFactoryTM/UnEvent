@@ -17,6 +17,7 @@ import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrum
 import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
 import { CityTypeahead } from "@/components/hub/CityTypeahead";
 import { CityChips } from "@/components/hub/CityChips";
+import ArchiveTitle from "@/components/archives/ArchiveTitle";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -166,15 +167,10 @@ export default async function ListingTypePage({
           <div className="max-w-7xl mx-auto space-y-12">
             <ListingBreadcrumbs type={listingType as ListingType} />
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-              <div className="space-y-4 flex-1">
-                <h1 className="text-4xl md:text-5xl font-bold text-balance">
-                  {h1}
-                </h1>
-                <p className="text-lg text-muted-foreground text-pretty">
-                  Orientare rapidă: caută un oraș, explorează tipuri relevante
-                  și descoperă recomandările noastre.
-                </p>
-              </div>
+              <ArchiveTitle
+                title={h1}
+                subtitle={`Orientare rapidă: caută un oraș, explorează tipuri relevante și descoperă recomandările noastre.`}
+              />
               <AddListingButton listingType={listingType as any} />
             </div>
 

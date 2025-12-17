@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -71,6 +71,7 @@ export function ArchiveFilter({
 
   const [isOpen, setIsOpen] = useState(defaultIsOpen);
   const [showAdvanced, setShowAdvanced] = useState(false);
+
   const {
     filters,
     setFilter,
@@ -82,6 +83,7 @@ export function ArchiveFilter({
   } = useFilters({
     listingType,
   });
+
   const { data } = useQuery({
     queryKey: ["taxonomies"],
     queryFn: () => fetchTaxonomies({ fullList: true }),
@@ -97,6 +99,23 @@ export function ArchiveFilter({
     limit: 20,
     // popularFallback: true,
   });
+
+  const handleTypeChange = useCallback(
+    (typeSlug: string) => {
+      if (showCategoriesOnly) {
+        setFilter("typeCategory", typeSlug);
+      } else {
+        const category = locationTypes?.find(
+          (type) => type.slug === typeSlug,
+        )?.categorySlug;
+        if (category) {
+          setFilter("typeCategory", category);
+        }
+        setFilter("type", typeSlug);
+      }
+    },
+    [showCategoriesOnly, setFilter],
+  );
 
   // Helper function to handle city changes with geo filter updates
   const handleCityChange = useCallback(
@@ -156,6 +175,41 @@ export function ArchiveFilter({
     evenimente: "Filtrează evenimente",
   }[listingType];
 
+  const cityOptions = useMemo(() => {
+    return (
+      citiesData
+        ?.map((city) => ({
+          value: city.slug || "",
+          label: city.name || "",
+          group: city.county || "",
+        }))
+        .sort(
+          (
+            a: { label: string; value: string },
+            b: { label: string; value: string },
+          ) => a.label.localeCompare(b.label),
+        ) || []
+    );
+  }, [citiesData]);
+
+  const listingTypeOptions = useCallback(
+    (types: ListingTypePayload[]) => {
+      if (showCategoriesOnly) {
+        return extractUniqueCategories(types || []);
+      }
+      return (
+        types
+          ?.map((type: ListingTypePayload) => ({
+            value: type.slug || "",
+            label: type.title || "",
+            group: type.category || "",
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label)) || []
+      );
+    },
+    [showCategoriesOnly],
+  );
+
   return (
     <div className="space-y-4">
       {/* Toggle Button */}
@@ -187,18 +241,7 @@ export function ArchiveFilter({
                   <SearchableSelectV1
                     id="event-type"
                     groupEnabled={!showCategoriesOnly}
-                    options={
-                      showCategoriesOnly
-                        ? extractUniqueCategories(eventTypes || [])
-                        : eventTypes
-                            ?.map((type: ListingTypePayload) => ({
-                              value: type.slug || "",
-                              label: type.title || "",
-                              group: type.category || "",
-                            }))
-                            .sort((a, b) => a.label.localeCompare(b.label)) ||
-                          []
-                    }
+                    options={listingTypeOptions(eventTypes || [])}
                     value={
                       showCategoriesOnly
                         ? (filters.suitableForCategory as string) || ""
@@ -223,20 +266,7 @@ export function ArchiveFilter({
                     onSearchChange={setCitySearch}
                     filterByLabel
                     groupEnabled
-                    options={
-                      citiesData
-                        ?.map((city) => ({
-                          value: city.slug || "",
-                          label: city.name || "",
-                          group: city.county || "",
-                        }))
-                        .sort(
-                          (
-                            a: { label: string; value: string },
-                            b: { label: string; value: string },
-                          ) => a.label.localeCompare(b.label),
-                        ) || []
-                    }
+                    options={cityOptions}
                     value={String(filters.city || "")}
                     onValueChange={handleCityChange}
                     placeholder="Selectează orașul"
@@ -252,32 +282,13 @@ export function ArchiveFilter({
                   <SearchableSelectV1
                     id="location-type"
                     groupEnabled={!showCategoriesOnly}
-                    options={
-                      showCategoriesOnly
-                        ? extractUniqueCategories(locationTypes || [])
-                        : locationTypes
-                            ?.map((type: ListingTypePayload) => ({
-                              value: type.slug || "",
-                              label: type.title || "",
-                              group: type.category || "",
-                            }))
-                            .sort(
-                              (
-                                a: { label: string; value: string },
-                                b: { label: string; value: string },
-                              ) => a.label.localeCompare(b.label),
-                            ) || []
-                    }
+                    options={listingTypeOptions(locationTypes || [])}
                     value={
                       showCategoriesOnly
                         ? (filters.typeCategory as string) || ""
                         : (filters.type as string) || ""
                     }
-                    onValueChange={(v) =>
-                      showCategoriesOnly
-                        ? setFilter("typeCategory", v)
-                        : setFilter("type", v)
-                    }
+                    onValueChange={handleTypeChange}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip locație..."
                     variant={showCategoriesOnly ? "chip" : "list"}
@@ -287,9 +298,9 @@ export function ArchiveFilter({
               {!showCategoriesOnly ? (
                 <>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="w-full justify-between"
+                    className=" justify-between"
                   >
                     <span>Avansate</span>
                     {showAdvanced ? (
@@ -404,22 +415,7 @@ export function ArchiveFilter({
                   <SearchableSelectV1
                     id="service-event"
                     groupEnabled={!showCategoriesOnly}
-                    options={
-                      showCategoriesOnly
-                        ? extractUniqueCategories(eventTypes || [])
-                        : eventTypes
-                            ?.map((type: ListingTypePayload) => ({
-                              value: type.slug || "",
-                              label: type.title || "",
-                              group: type.category || "",
-                            }))
-                            .sort(
-                              (
-                                a: { label: string; value: string },
-                                b: { label: string; value: string },
-                              ) => a.label.localeCompare(b.label),
-                            ) || []
-                    }
+                    options={listingTypeOptions(eventTypes || [])}
                     value={
                       showCategoriesOnly
                         ? (filters.suitableForCategory as string) || ""
@@ -444,20 +440,7 @@ export function ArchiveFilter({
                     onSearchChange={setCitySearch}
                     filterByLabel
                     groupEnabled
-                    options={
-                      citiesData
-                        ?.map((city) => ({
-                          value: city.slug || "",
-                          label: city.name || "",
-                          group: city.county || "",
-                        }))
-                        .sort(
-                          (
-                            a: { label: string; value: string },
-                            b: { label: string; value: string },
-                          ) => a.label.localeCompare(b.label),
-                        ) || []
-                    }
+                    options={cityOptions}
                     value={(filters.city as string) || ""}
                     onValueChange={handleCityChange}
                     placeholder="Selectează orașul"
@@ -473,32 +456,13 @@ export function ArchiveFilter({
                   <SearchableSelectV1
                     id="service-type"
                     groupEnabled={!showCategoriesOnly}
-                    options={
-                      showCategoriesOnly
-                        ? extractUniqueCategories(serviceTypes || [])
-                        : serviceTypes
-                            ?.map((type: ListingTypePayload) => ({
-                              value: type.slug || "",
-                              label: type.title || "",
-                              group: type.category || "",
-                            }))
-                            .sort(
-                              (
-                                a: { label: string; value: string },
-                                b: { label: string; value: string },
-                              ) => a.label.localeCompare(b.label),
-                            ) || []
-                    }
+                    options={listingTypeOptions(serviceTypes || [])}
                     value={
                       showCategoriesOnly
                         ? (filters.typeCategory as string) || ""
                         : (filters.type as string) || ""
                     }
-                    onValueChange={(v) =>
-                      showCategoriesOnly
-                        ? setFilter("typeCategory", v)
-                        : setFilter("type", v)
-                    }
+                    onValueChange={handleTypeChange}
                     placeholder="Selectează serviciul"
                     searchPlaceholder="Caută serviciu..."
                     variant={showCategoriesOnly ? "chip" : "list"}
@@ -536,36 +500,15 @@ export function ArchiveFilter({
                   <SearchableSelectV1
                     id="event-category"
                     groupEnabled={!showCategoriesOnly}
-                    options={
-                      showCategoriesOnly
-                        ? extractUniqueCategories(
-                            eventTypes?.filter((type: any) => type.isPublic) ||
-                              [],
-                          )
-                        : eventTypes
-                            ?.filter((type: any) => type.isPublic) // Only show public events
-                            ?.map((type: ListingTypePayload) => ({
-                              value: type.slug || "",
-                              label: type.title || "",
-                              group: type.category || "",
-                            }))
-                            .sort(
-                              (
-                                a: { label: string; value: string },
-                                b: { label: string; value: string },
-                              ) => a.label.localeCompare(b.label),
-                            ) || []
-                    }
+                    options={listingTypeOptions(
+                      eventTypes?.filter((type: any) => type.isPublic) || [],
+                    )}
                     value={
                       showCategoriesOnly
                         ? (filters.typeCategory as string) || ""
                         : (filters.type as string) || ""
                     }
-                    onValueChange={(v) =>
-                      showCategoriesOnly
-                        ? setFilter("typeCategory", v)
-                        : setFilter("type", v)
-                    }
+                    onValueChange={handleTypeChange}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     variant={showCategoriesOnly ? "chip" : "list"}
@@ -580,20 +523,7 @@ export function ArchiveFilter({
                     onSearchChange={setCitySearch}
                     filterByLabel
                     groupEnabled
-                    options={
-                      citiesData
-                        ?.map((city) => ({
-                          value: city.slug || "",
-                          label: city.name || "",
-                          group: city.county || "",
-                        }))
-                        .sort(
-                          (
-                            a: { label: string; value: string },
-                            b: { label: string; value: string },
-                          ) => a.label.localeCompare(b.label),
-                        ) || []
-                    }
+                    options={cityOptions}
                     value={String(filters.city || "")}
                     onValueChange={handleCityChange}
                     placeholder="Selectează orașul"

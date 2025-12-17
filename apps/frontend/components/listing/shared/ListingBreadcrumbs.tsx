@@ -8,11 +8,15 @@ export function ListingBreadcrumbs({
   cityName,
   citySlug,
   title,
+  categoryName,
+  categorySlug,
 }: {
   type: ListingType;
   cityName?: string;
   citySlug?: string;
   title?: string;
+  categoryName?: string;
+  categorySlug?: string;
 }) {
   return (
     <nav
@@ -57,6 +61,17 @@ export function ListingBreadcrumbs({
           <span className="text-foreground font-medium line-clamp-1">
             {title}
           </span>
+        </>
+      )}
+      {categoryName && categorySlug && (
+        <>
+          <FaChevronRight className="w-3 h-3" />
+          <Link
+            href={`/${type}/oras/${citySlug}/${categorySlug}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {categoryName}
+          </Link>
         </>
       )}
     </nav>

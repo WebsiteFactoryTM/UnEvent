@@ -18,6 +18,7 @@ import { ListingType } from "@/types/listings";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import { ArchiveSchema } from "@/components/archives/ArchiveSchema";
 import { PaginationSEO } from "@/components/archives/PaginationSEO";
+import ArchiveTitle from "@/components/archives/ArchiveTitle";
 
 export const revalidate = 3600;
 // export async function generateStaticParams() {
@@ -183,15 +184,10 @@ export default async function CityArchivePage({
 
             {/* Header with add button */}
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-              <div className="space-y-4 flex-1">
-                <h1 className="text-4xl md:text-5xl font-bold text-balance">
-                  Top {listingLabel} {cityLabel}
-                </h1>
-                <p className="text-lg text-muted-foreground text-pretty">
-                  Caută cele mai potrivite {listingLabel.toLowerCase()} în{" "}
-                  {cityLabel}.
-                </p>
-              </div>
+              <ArchiveTitle
+                title={`Top ${listingLabel} pentru evenimente în ${cityLabel}`}
+                subtitle={`Caută cele mai potrivite ${listingLabel.toLowerCase()} pentru evenimente în ${cityLabel}.`}
+              />
               <AddListingButton listingType={listingType as any} />
             </div>
 
