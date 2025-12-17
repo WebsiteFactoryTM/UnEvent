@@ -10,6 +10,7 @@ import * as migration_20251205_075202 from './20251205_075202';
 import * as migration_20251211_100529_add_claim_status from './20251211_100529_add_claim_status';
 import * as migration_20251215_073929_make_city_optional_for_drafts from './20251215_073929_make_city_optional_for_drafts';
 import * as migration_20251216_120412 from './20251216_120412';
+import * as migration_20251217_113056 from './20251217_113056';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20251216_120412.up,
     down: migration_20251216_120412.down,
-    name: '20251216_120412'
+    name: '20251216_120412',
+  },
+  {
+    up: migration_20251217_113056.up,
+    down: migration_20251217_113056.down,
+    name: '20251217_113056'
   },
 ];

@@ -221,7 +221,7 @@ export interface Profile {
    */
   bio?: string | null;
   /**
-   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.
+   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link, Ordered/Unordered Lists.
    */
   bio_rich?: {
     root: {
@@ -376,7 +376,7 @@ export interface Event {
   owner: number | Profile;
   description?: string | null;
   /**
-   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.
+   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link, Ordered/Unordered Lists.
    */
   description_rich?: {
     root: {
@@ -645,7 +645,7 @@ export interface Location {
   owner: number | Profile;
   description?: string | null;
   /**
-   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.
+   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link, Ordered/Unordered Lists.
    */
   description_rich?: {
     root: {
@@ -838,7 +838,7 @@ export interface Service {
   owner: number | Profile;
   description?: string | null;
   /**
-   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.
+   * Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link, Ordered/Unordered Lists.
    */
   description_rich?: {
     root: {
