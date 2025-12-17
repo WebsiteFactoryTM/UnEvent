@@ -1,11 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import theme from "./Theme";
+
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ExpandableText } from "../ui/expandable-text";
 import { Button } from "../ui/button";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
+import theme from "./Theme";
 
 interface RichTextRendererProps {
   content: any; // JSON from Payload
@@ -66,6 +67,29 @@ const RenderNode = ({ node }: { node: any }) => {
             <RenderNode key={i} node={child} />
           ))}
         </Tag>
+      );
+
+    case "list":
+      const listType = node.listType as "bullet" | "number";
+      const ListTag = listType === "number" ? "ol" : "ul";
+      // @ts-ignore
+      const listClassName =
+        listType === "number" ? theme.list.ol : theme.list.ul;
+      return (
+        <ListTag className={listClassName}>
+          {node.children?.map((child: any, i: number) => (
+            <RenderNode key={i} node={child} />
+          ))}
+        </ListTag>
+      );
+
+    case "listitem":
+      return (
+        <li className={theme.list.listitem}>
+          {node.children?.map((child: any, i: number) => (
+            <RenderNode key={i} node={child} />
+          ))}
+        </li>
       );
 
     default:

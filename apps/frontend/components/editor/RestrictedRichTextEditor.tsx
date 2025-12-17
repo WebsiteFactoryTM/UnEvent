@@ -9,6 +9,8 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { HeadingNode } from "@lexical/rich-text";
 import { LinkNode, AutoLinkNode } from "@lexical/link";
+import { ListNode, ListItemNode } from "@lexical/list";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import {
   $createParagraphNode,
@@ -17,9 +19,9 @@ import {
   EditorState,
 } from "lexical";
 
+import { cn } from "@/lib/utils";
 import theme from "./Theme";
 import { ToolbarPlugin } from "./ToolbarPlugin";
-import { cn } from "@/lib/utils";
 
 interface RestrictedRichTextEditorProps {
   initialValue?: any; // JSON object from Payload
@@ -46,7 +48,7 @@ export function RestrictedRichTextEditor({
     namespace: "UnEventEditor",
     theme,
     onError,
-    nodes: [HeadingNode, LinkNode, AutoLinkNode],
+    nodes: [HeadingNode, LinkNode, AutoLinkNode, ListNode, ListItemNode],
     editorState: (editor: any) => {
       // If we have rich text JSON, use it
       if (initialValue && Object.keys(initialValue).length > 0) {
@@ -87,6 +89,7 @@ export function RestrictedRichTextEditor({
             />
             <HistoryPlugin />
             <LinkPlugin />
+            <ListPlugin />
             <OnChangePlugin
               onChange={(editorState: EditorState) => {
                 if (onChange) {
