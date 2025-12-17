@@ -1,8 +1,18 @@
 import type { FieldHook } from 'payload'
 import { ValidationError } from 'payload'
 
-const ALLOWED_NODE_TYPES = ['root', 'paragraph', 'text', 'link', 'heading', 'linebreak']
+const ALLOWED_NODE_TYPES = [
+  'root',
+  'paragraph',
+  'text',
+  'link',
+  'heading',
+  'linebreak',
+  'list',
+  'listitem',
+]
 const ALLOWED_HEADING_TAGS = ['h3', 'h4']
+const ALLOWED_LIST_TYPES = ['bullet', 'number'] // 'bullet' = unordered, 'number' = ordered
 
 // Lexical TextNode format flags
 // 1 = bold, 2 = italic, 4 = strikethrough, 8 = underline, 16 = code, 32 = subscript, 64 = superscript
@@ -29,6 +39,20 @@ const traverseNodes = (node: any, path: string = 'root') => {
         errors: [
           {
             message: `Disallowed heading tag: ${node.tag} at ${path}. Only h3 and h4 are allowed.`,
+            path,
+          },
+        ],
+      })
+    }
+  }
+
+  if (node.type === 'list') {
+    // Validate list type (bullet or number)
+    if (node.listType && !ALLOWED_LIST_TYPES.includes(node.listType)) {
+      throw new ValidationError({
+        errors: [
+          {
+            message: `Disallowed list type: ${node.listType} at ${path}. Only bullet and number lists are allowed.`,
             path,
           },
         ],

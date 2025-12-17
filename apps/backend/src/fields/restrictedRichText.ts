@@ -5,6 +5,8 @@ import {
   ParagraphFeature,
   lexicalEditor,
   HeadingFeature,
+  OrderedListFeature,
+  UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 import { Field } from 'payload'
 import { validateRichText } from '../hooks/validateRichText'
@@ -21,13 +23,16 @@ export const restrictedRichTextField = (name: string, label?: string): Field => 
         ItalicFeature(),
         LinkFeature({}), // Defaults are usually safe, restricts to http/https/mailto/tel usually
         HeadingFeature({ enabledHeadingSizes: ['h3', 'h4'] }),
+        OrderedListFeature(),
+        UnorderedListFeature(),
       ],
     }),
     hooks: {
       beforeValidate: [validateRichText],
     },
     admin: {
-      description: 'Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link.',
+      description:
+        'Restricted rich text editor. Allowed: Bold, Italic, H3, H4, Link, Ordered/Unordered Lists.',
     },
   }
 }
