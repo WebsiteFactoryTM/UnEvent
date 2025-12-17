@@ -17,69 +17,89 @@ function counterKey(
 }
 
 /**
+ * Lua script to atomically increment a counter and set expiration (only on first increment)
+ * This reduces 2 Redis commands (INCR + EXPIRE) to 1 atomic operation
+ */
+const INCR_WITH_EXPIRE_SCRIPT = `
+local key = KEYS[1]
+local expiration = tonumber(ARGV[1])
+local current = redis.call('INCR', key)
+if current == 1 then
+  redis.call('EXPIRE', key, expiration)
+end
+return current
+`
+
+/**
+ * Atomically increment a counter and set expiration (only on first increment)
+ * Uses a Lua script to combine INCR + EXPIRE into a single atomic operation
+ */
+async function incrWithExpire(key: string, expirationSeconds: number): Promise<number> {
+  const redis = getRedis()
+  const result = await redis.eval(INCR_WITH_EXPIRE_SCRIPT, [key], [expirationSeconds])
+  return Number(result)
+}
+
+/**
  * Increment a view counter for a listing
  * Sets 7-day expiry to auto-cleanup old counters
+ * Uses atomic Lua script to combine INCR + EXPIRE into single operation
  */
 export async function bumpView(
   kind: 'locations' | 'events' | 'services',
   listingId: string,
   ts: Date = new Date(),
 ): Promise<void> {
-  const redis = getRedis()
   const date = ts.toISOString().slice(0, 10) // YYYY-MM-DD
   const key = counterKey(kind, listingId, 'views', date)
 
-  await redis.incr(key)
-  await redis.expire(key, 7 * 24 * 60 * 60) // 7 days TTL
+  await incrWithExpire(key, 7 * 24 * 60 * 60) // 7 days TTL
 }
 
 /**
  * Increment a favorite counter for a listing
+ * Uses atomic Lua script to combine INCR + EXPIRE into single operation
  */
 export async function bumpFavorite(
   kind: 'locations' | 'events' | 'services',
   listingId: string,
   ts: Date = new Date(),
 ): Promise<void> {
-  const redis = getRedis()
   const date = ts.toISOString().slice(0, 10)
   const key = counterKey(kind, listingId, 'favorites', date)
 
-  await redis.incr(key)
-  await redis.expire(key, 7 * 24 * 60 * 60)
+  await incrWithExpire(key, 7 * 24 * 60 * 60)
 }
 
 /**
  * Increment a booking counter for a listing
+ * Uses atomic Lua script to combine INCR + EXPIRE into single operation
  */
 export async function bumpBooking(
   kind: 'locations' | 'events' | 'services',
   listingId: string,
   ts: Date = new Date(),
 ): Promise<void> {
-  const redis = getRedis()
   const date = ts.toISOString().slice(0, 10)
   const key = counterKey(kind, listingId, 'bookings', date)
 
-  await redis.incr(key)
-  await redis.expire(key, 7 * 24 * 60 * 60)
+  await incrWithExpire(key, 7 * 24 * 60 * 60)
 }
 
 /**
  * Increment an impression counter for a listing
  * Sets 7-day expiry to auto-cleanup old counters
+ * Uses atomic Lua script to combine INCR + EXPIRE into single operation
  */
 export async function bumpImpression(
   kind: 'locations' | 'events' | 'services',
   listingId: string,
   ts: Date = new Date(),
 ): Promise<void> {
-  const redis = getRedis()
   const date = ts.toISOString().slice(0, 10) // YYYY-MM-DD
   const key = counterKey(kind, listingId, 'impressions', date)
 
-  await redis.incr(key)
-  await redis.expire(key, 7 * 24 * 60 * 60) // 7 days TTL
+  await incrWithExpire(key, 7 * 24 * 60 * 60) // 7 days TTL
 }
 
 /**
@@ -103,6 +123,11 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
 
     if (keys.length === 0) return
 
+    // Batch fetch all counter values in a single MGET operation
+    // This reduces N GET commands to 1 MGET command
+    // Optimization: Using MGET instead of individual GET calls
+    const values = await redis.mget(...keys)
+
     // Group by (kind, listingId, date) and sum metrics
     const aggregated = new Map<
       string,
@@ -117,13 +142,14 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
       }
     >()
 
-    for (const key of keys) {
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
       // Parse key: feed:counters:{kind}:{listingId}:{metric}:{date}
       const parts = key.split(':')
       if (parts.length !== 6) continue
 
       const [, , kind, listingId, metric, date] = parts
-      const count = parseInt((await redis.get(key)) || '0', 10)
+      const count = parseInt((values[i] || '0') as string, 10)
 
       const groupKey = `${kind}:${listingId}:${date}`
       if (!aggregated.has(groupKey)) {
@@ -200,7 +226,7 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
               bookings: data.bookings,
             },
           })
-        } catch (error) {
+        } catch (_error) {
           // Listing doesn't exist (hard-deleted or invalid ID), skip creating metrics
           console.warn(
             `[Feed] Skipping metrics_daily creation for non-existent ${data.kind} ID ${data.listingId} (date: ${data.date})`,
@@ -215,7 +241,9 @@ export async function flushCountersToDaily(payload: Payload): Promise<void> {
       await redis.del(...keys)
     }
 
-    console.log(`[Feed] Flushed ${keys.length} counter keys to metrics_daily`)
+    console.log(
+      `[Feed] Flushed ${keys.length} counter keys to metrics_daily (optimized: used MGET instead of ${keys.length} individual GET calls)`,
+    )
   } catch (error) {
     console.error('[Feed] Error flushing counters:', error)
   }

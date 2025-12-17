@@ -26,26 +26,29 @@ All intervals below are **optional**. If not set, the system uses environment-aw
 SCHEDULER_FEED_FLUSH_INTERVAL_MINUTES=10
 
 # Compute feed aggregates
-# Production default: 15 minutes
-# Staging default: 45 minutes (3x slower)
-# Dev default: 90 minutes (6x slower)
-SCHEDULER_FEED_AGGREGATE_INTERVAL_MINUTES=15
+# Production default: 2 hours (optimized for MVP/low-traffic)
+# Staging default: 6 hours (3x slower)
+# Dev default: 12 hours (6x slower)
+# For high-traffic sites, set to 15 minutes
+SCHEDULER_FEED_AGGREGATE_INTERVAL_MINUTES=120
 
 # Rank feed segments
-# Production default: 20 minutes
-# Staging default: 60 minutes (3x slower)
-# Dev default: 120 minutes (6x slower)
-SCHEDULER_FEED_RANK_INTERVAL_MINUTES=20
+# Production default: 2 hours (optimized for MVP/low-traffic)
+# Staging default: 6 hours (3x slower)
+# Dev default: 12 hours (6x slower)
+# For high-traffic sites, set to 20 minutes
+SCHEDULER_FEED_RANK_INTERVAL_MINUTES=120
 ```
 
 ### Hub Snapshot Scheduler
 
 ```bash
 # Build hub snapshots (locations, services, events)
-# Production default: 6 hours (4x daily)
-# Staging default: 18 hours (3x slower = ~1.3x daily)
-# Dev default: 36 hours (6x slower = ~0.67x daily)
-SCHEDULER_HUB_SNAPSHOT_INTERVAL_HOURS=6
+# Production default: 12 hours (2x daily, optimized for MVP/low-traffic)
+# Staging default: 36 hours (3x slower)
+# Dev default: 72 hours (6x slower)
+# For high-traffic sites, set to 6 hours (4x daily)
+SCHEDULER_HUB_SNAPSHOT_INTERVAL_HOURS=12
 ```
 
 ### Counter Sync Schedulers

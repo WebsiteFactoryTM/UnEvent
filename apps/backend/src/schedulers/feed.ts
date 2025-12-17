@@ -48,9 +48,11 @@ export const initFeedSchedulers = async (payload: Payload) => {
     }
   })
 
-  // Compute aggregates every 15 minutes (offset by 2 minutes to stagger)
+  // Compute aggregates every 2 hours (offset by 2 minutes to stagger)
   // Configurable via SCHEDULER_FEED_AGGREGATE_INTERVAL_MINUTES
-  const aggregateInterval = getSchedulerInterval('feed_aggregate', 15, {
+  // Default increased from 15min to 2h for MVP/low-traffic scenarios
+  // For high-traffic sites, set SCHEDULER_FEED_AGGREGATE_INTERVAL_MINUTES=15
+  const aggregateInterval = getSchedulerInterval('feed_aggregate', 120, {
     envVarName: 'SCHEDULER_FEED_AGGREGATE_INTERVAL_MINUTES',
   })
   const aggregateCron = minutesToCron(aggregateInterval, 2)
@@ -79,9 +81,11 @@ export const initFeedSchedulers = async (payload: Payload) => {
     }
   })
 
-  // Rank segments every 20 minutes (offset by 5 minutes to stagger)
+  // Rank segments every 2 hours (offset by 5 minutes to stagger)
   // Configurable via SCHEDULER_FEED_RANK_INTERVAL_MINUTES
-  const rankInterval = getSchedulerInterval('feed_rank', 20, {
+  // Default increased from 20min to 2h for MVP/low-traffic scenarios
+  // For high-traffic sites, set SCHEDULER_FEED_RANK_INTERVAL_MINUTES=20
+  const rankInterval = getSchedulerInterval('feed_rank', 120, {
     envVarName: 'SCHEDULER_FEED_RANK_INTERVAL_MINUTES',
   })
   const rankCron = minutesToCron(rankInterval, 5)

@@ -190,12 +190,14 @@ function toCityLabel(slug: string) {
 export const registerBuildHubSnapshotScheduler = (payload: Payload) => {
   console.log('[registerBuildHubSnapshotScheduler] registering cron jobs')
 
-  // Hub snapshots run 4x daily (every 6 hours) by default
+  // Hub snapshots run 2x daily (every 12 hours) by default
   // Configurable via SCHEDULER_HUB_SNAPSHOT_INTERVAL_HOURS
-  // In production: 6 hours (4x daily)
-  // In staging: 18 hours (3x slower)
-  // In dev: 36 hours (6x slower)
-  const snapshotIntervalHours = getSchedulerIntervalHours('hub_snapshot', 6, {
+  // Default increased from 6h to 12h for MVP/low-traffic scenarios
+  // For high-traffic sites, set SCHEDULER_HUB_SNAPSHOT_INTERVAL_HOURS=6
+  // In production: 12 hours (2x daily)
+  // In staging: 36 hours (3x slower)
+  // In dev: 72 hours (6x slower)
+  const snapshotIntervalHours = getSchedulerIntervalHours('hub_snapshot', 12, {
     envVarName: 'SCHEDULER_HUB_SNAPSHOT_INTERVAL_HOURS',
   })
 

@@ -72,19 +72,17 @@ async function shouldRecordView(
 
   const dedupeKey = `metrics:view:${kind}:${listingId}:${date}:${identifier}`
 
-  // Check if already recorded today (TTL: until end of day + buffer)
-  const exists = await redis.get(dedupeKey)
-  if (exists) {
-    return false // Already recorded
-  }
-
-  // Set deduplication key with TTL until end of day (plus buffer)
+  // Atomically check and set deduplication key using SET NX EX
+  // Optimization: This reduces 2 commands (GET + SET) to 1 atomic operation
+  // Returns null if key already exists, 'OK' if key was newly set
   const now = new Date()
   const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
   const ttlSeconds = Math.floor((endOfDay.getTime() - now.getTime()) / 1000) + 3600 // +1 hour buffer
-  await redis.set(dedupeKey, '1', 'EX', ttlSeconds)
+  const wasSet = await redis.set(dedupeKey, '1', 'EX', ttlSeconds, 'NX')
 
-  return true
+  // If wasSet is null, key already existed (already recorded)
+  // If wasSet is 'OK', key was newly set (should record)
+  return wasSet !== null
 }
 
 export const recordView: PayloadHandler = async (req: PayloadRequest) => {

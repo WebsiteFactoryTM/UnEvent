@@ -3,6 +3,10 @@ import { Redis as UpstashRedis } from '@upstash/redis'
 let upstashClient: UpstashRedis | null = null
 
 // Compatibility wrapper to make Upstash Redis work like ioredis
+// Optimizations implemented:
+// - mget(): Batch GET operations (reduces N commands to 1)
+// - eval(): Lua scripts for atomic operations (e.g., INCR + EXPIRE)
+// - set() with NX: Atomic check-and-set operations
 function createRedisWrapper(client: UpstashRedis) {
   return {
     // Basic operations - work the same
@@ -58,6 +62,14 @@ function createRedisWrapper(client: UpstashRedis) {
       // Simple scan without pattern
       const [newCursor, keys] = await client.scan(Number(cursor))
       return [String(newCursor), keys]
+    },
+
+    async mget(...keys: string[]): Promise<(string | null)[]> {
+      return await client.mget(...keys)
+    },
+
+    async eval(script: string, keys: string[], args: (string | number)[]): Promise<unknown> {
+      return await client.eval(script, keys, args)
     },
   }
 }
