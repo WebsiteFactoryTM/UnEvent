@@ -243,12 +243,9 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     if (query.type) {
       // Split comma-separated types and use 'in' for multiple values
       const typeSlugs = query.type.split(',').map((s) => s.trim())
-      console.log('typeSlugs', typeSlugs)
 
       whereEntity.and?.push({ 'type.slug': { in: typeSlugs } })
     }
-
-    console.log(whereEntity && JSON.stringify(whereEntity, null, 2))
 
     // Add optional category filter for suitableFor (filters by suitableFor.categorySlug)
     if (query.entity !== 'events' && query.suitableForCategory) {

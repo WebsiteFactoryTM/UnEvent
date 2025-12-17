@@ -135,14 +135,6 @@ export function useFilters(
       // This ensures we always get the most recent state, even if called immediately after setFilter
       const filtersToApply = overrideFilters || pendingFiltersRef.current;
 
-      console.log("[useFilters] Applying filters:", {
-        filtersToApply,
-        overrideFilters,
-        pending: pendingFiltersRef.current,
-        currentCity,
-        currentCategory,
-      });
-
       // Handle city filter (path-based)
       const cityValue = filtersToApply.city;
 
@@ -151,12 +143,6 @@ export function useFilters(
         filtersToApply.typeCategory !== undefined
           ? filtersToApply.typeCategory
           : currentCategory;
-
-      console.log("[useFilters] Extracted path values:", {
-        cityValue,
-        categoryValue,
-        source: filtersToApply.typeCategory !== undefined ? "filters" : "url",
-      });
 
       // Apply other filters to query params
       Object.entries(filtersToApply).forEach(([key, value]) => {
@@ -190,8 +176,6 @@ export function useFilters(
       // But if a type is selected that implies a different category, we could potentially detect it here
       // if we had access to the full taxonomy tree. For now, we assume the UI handles this or the user
       // explicitly navigated.
-
-      console.log("[useFilters] Constructed new path:", newPath);
 
       if (!cityValue && !params.get("city") && !overrideFilters) {
         setErrors({ city: "Orașul este obligatoriu" });
