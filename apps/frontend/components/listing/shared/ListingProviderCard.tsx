@@ -12,6 +12,7 @@ import type { Profile, Media } from "@/types/payload-types";
 import type { ListingType, Listing } from "@/types/listings";
 import { getRolesLabel } from "@/lib/getRolesLabel";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RichTextRenderer } from "@/components/editor/RichTextRenderer";
 
 // Utility function to trim text to 100 words
 function trimToWords(text: string, maxWords: number = 100): string {
@@ -85,7 +86,7 @@ export function ListingProviderCard({
             )}
           </div>
 
-          {owner.bio && (
+          {/* {owner.bio && (
             <div className="space-y-2">
               <p className="text-muted-foreground text-sm">
                 {trimToWords(owner.bio, 50)}
@@ -100,6 +101,13 @@ export function ListingProviderCard({
                 </Link>
               )}
             </div>
+          )} */}
+          {owner.bio_rich && (
+            <RichTextRenderer
+              content={owner.bio_rich}
+              fallback={owner.bio || ""}
+              maxWords={50}
+            />
           )}
 
           {/* Contact & Social */}

@@ -33,6 +33,10 @@ export function useProfile(profileId?: number | string) {
         ...updatedProfile,
         id: profileId, // Ensure ID is preserved
       }));
+
+      queryClient.invalidateQueries({
+        queryKey: profileKeys.detail(String(profileId)),
+      });
     },
   });
 
