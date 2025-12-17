@@ -63,6 +63,7 @@ export function formToPayload(
   const basePayload = {
     title: formData.title,
     description: formData.description || null,
+    description_rich: formData.description_rich || null,
     // For drafts, allow city to be undefined if not selected (0 or falsy)
     // For non-drafts, city is required by validation
     // Use undefined instead of null for optional relationship fields to avoid FK constraint violations
@@ -334,6 +335,7 @@ export function payloadToForm(
   const baseForm = {
     title: listing.title,
     description: listing.description || "",
+    description_rich: (listing as any).description_rich || undefined,
     city: extractId(listing.city),
     address: listing.address || "",
     geo: listing.geo

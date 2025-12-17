@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { ExpandableText } from "@/components/ui/expandable-text";
 import { FaStar, FaCircleCheck } from "react-icons/fa6";
 import type { User, Profile } from "@/types/payload-types";
+import { RichTextRenderer } from "../editor/RichTextRenderer";
 
 type ProfileWithUser = Profile & { user?: number | User };
 
@@ -83,12 +84,10 @@ export function ProfileHero({ profile }: ProfileHeroProps) {
           </div>
 
           {/* Bio */}
-          {profile.bio && (
-            <ExpandableText
-              text={profile.bio}
-              maxWords={50}
-              showMoreText="Arată mai mult"
-              showLessText="Arată mai puțin"
+          {profile.bio_rich && (
+            <RichTextRenderer
+              content={profile.bio_rich}
+              fallback={profile.bio || ""}
             />
           )}
         </div>

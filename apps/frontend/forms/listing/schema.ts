@@ -37,6 +37,7 @@ const baseListingSchema = z.object({
     .string()
     .max(5000, "Descrierea nu poate depăși 5000 caractere")
     .optional(),
+  description_rich: z.any().optional(),
 
   // Address
   city: z.number().min(1, "Selectează orașul"), // Not required in backend
@@ -518,6 +519,7 @@ export function defaultListingFormValues(
   const baseDefaults = {
     title: "",
     description: "",
+    description_rich: undefined,
     city: undefined,
     address: "",
     geo: {

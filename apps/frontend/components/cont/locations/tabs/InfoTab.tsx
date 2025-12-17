@@ -3,13 +3,13 @@
 import { useFormContext, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { useTaxonomies } from "@/lib/react-query/taxonomies.queries";
 import type { UnifiedListingFormData } from "@/forms/listing/schema";
 import { GroupedMultiSelect } from "@/components/ui/grouped-multi-select";
+import { RestrictedRichTextEditor } from "@/components/editor/RestrictedRichTextEditor";
 
 export function InfoTab() {
   const {
@@ -27,7 +27,7 @@ export function InfoTab() {
   const selectedTypes = watch("type") || [];
   const selectedEvents = watch("suitableFor") || [];
   const pricingEnabled = watch("pricing.enabled");
-  const description = watch("description") || "";
+  // const description = watch("description") || ""; // Removed legacy watch since editor handles content internally
 
   return (
     <div className="space-y-6">
@@ -93,26 +93,27 @@ export function InfoTab() {
       {/* Description */}
       <div className="space-y-2">
         <Label htmlFor="description">Descriere locație</Label>
-        <Textarea
-          id="description"
-          placeholder="Descrie locația ta în detaliu: facilități, atmosferă, ce o face specială..."
-          rows={6}
-          maxLength={5000}
-          {...register("description")}
-          aria-invalid={errors.description ? "true" : "false"}
-          aria-describedby={
-            errors.description ? "description-error" : undefined
-          }
+        <Controller
+          control={control}
+          name="description_rich"
+          render={({ field }) => (
+            <RestrictedRichTextEditor
+              initialValue={field.value}
+              legacyValue={watch("description") || ""}
+              onChange={(json) => {
+                field.onChange(json);
+                // Optionally update legacy description for plain text fallback if needed
+                // But for now we rely on description_rich
+              }}
+              placeholder="Descrie locația ta în detaliu: facilități, atmosferă, ce o face specială..."
+            />
+          )}
         />
-        {errors.description && (
+        {errors.description && !watch("description_rich") && (
           <p id="description-error" className="text-sm text-destructive">
             {errors.description.message}
           </p>
         )}
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>Minim 50 caractere</span>
-          <span>{description.length} / 5000</span>
-        </div>
       </div>
 
       <Separator />

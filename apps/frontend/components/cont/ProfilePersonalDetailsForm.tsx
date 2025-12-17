@@ -4,11 +4,12 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Profile, User } from "@/types/payload-types";
 import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useProfile } from "@/lib/react-query/accountProfile.queries";
 import { useRouter } from "next/navigation";
+import { RestrictedRichTextEditor } from "../editor/RestrictedRichTextEditor";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Numele este obligatoriu"),
@@ -20,6 +21,7 @@ const profileSchema = z.object({
   city: z.string().min(1, "Orașul este obligatoriu"),
   bio: z.string().min(10, "Bio-ul trebuie să conțină cel puțin 10 caractere"),
   displayName: z.string().min(1, "Numele de afișare este obligatoriu"),
+  bio_rich: z.any(),
   socialMedia: z.object({
     facebook: z.string().url("Facebook-ul este invalid"),
     instagram: z.string().url("Instagram-ul este invalid"),
@@ -42,6 +44,8 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
   const {
     register,
     handleSubmit,
+    control,
+    watch,
     formState: { isSubmitting },
   } = useForm<ProfileFormData>({
     defaultValues: {
@@ -50,6 +54,7 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
       website: profile.website || "",
       city: profile.city || "",
       bio: profile.bio || "",
+      bio_rich: profile.bio_rich || {},
       displayName: profile.displayName || "",
       socialMedia: {
         facebook: profile.socialMedia?.facebook || "",
@@ -148,11 +153,20 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
         </div>
         <div className="space-y-2 md:col-span-2">
           <label className="text-sm font-medium text-foreground/80">Bio</label>
-          <Textarea
-            defaultValue={profile.bio || ""}
-            rows={4}
-            className="bg-muted/50 border-input text-foreground resize-none"
-            {...register("bio")}
+          <Controller
+            control={control}
+            name="bio_rich"
+            render={({ field }) => (
+              <RestrictedRichTextEditor
+                initialValue={field.value}
+                legacyValue={watch("bio") || ""}
+                onChange={(json) => {
+                  field.onChange(json);
+                  // Update legacy bio for plain text fallback if needed
+                }}
+                placeholder="Descrie-te în detaliu: ce faci, ce faci bine, ce faci rău..."
+              />
+            )}
           />
         </div>
         <div className="space-y-2 md:col-span-2">

@@ -181,7 +181,10 @@ export default async function DetailPage({
             listing={listing as Listing}
           />
           <div className="space-y-6">
-            <ListingDescription description={description} />
+            <ListingDescription
+              description={description}
+              descriptionRich={listing?.description_rich}
+            />
 
             {Array.isArray(listing?.youtubeLinks) &&
               listing?.youtubeLinks.length > 0 && (

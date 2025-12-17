@@ -60,9 +60,9 @@ const DesktopListingView = ({
               <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
                 Titlu
               </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
+              {/* <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
                 Scurtă descriere
-              </th>
+              </th> */}
               <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">
                 Locație (oraș)
               </th>
@@ -91,11 +91,11 @@ const DesktopListingView = ({
                     {listing.title}
                   </div>
                 </td>
-                <td className="py-4 px-4">
+                {/* <td className="py-4 px-4">
                   <div className="text-sm text-muted-foreground max-w-xs truncate">
                     {listing.description}
                   </div>
-                </td>
+                </td> */}
                 <td className="py-4 px-4">
                   <div className="text-sm text-foreground">
                     {getCityName(listing.city)}

@@ -82,9 +82,9 @@ const MobileListingView = ({
             </div>
 
             {/* Description */}
-            <p className="text-sm text-muted-foreground line-clamp-2">
+            {/* <p className="text-sm text-muted-foreground line-clamp-2">
               {listing.description}
-            </p>
+            </p> */}
 
             {/* Meta Information */}
             <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border/30">

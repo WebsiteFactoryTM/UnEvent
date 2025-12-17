@@ -541,13 +541,19 @@ export function UnifiedListingForm({
         onSubmit={handleSubmit(onSubmit as any, onFormError)}
         onKeyDown={(e) => {
           // Prevent form submission on Enter key unless on last tab
-          if (
-            e.key === "Enter" &&
-            !isLastTab &&
-            e.target instanceof HTMLElement &&
-            e.target.tagName !== "TEXTAREA"
-          ) {
-            handleNext(e);
+          if (e.key === "Enter" && !isLastTab) {
+            const target = e.target as HTMLElement;
+            // Check if we are in a text-editing context that needs Enter (Textarea or Rich Text)
+            const isTextarea =
+              target instanceof HTMLElement && target.tagName === "TEXTAREA";
+            const isContentEditable =
+              target instanceof HTMLElement &&
+              (target.isContentEditable ||
+                target.closest('[contenteditable="true"]'));
+
+            if (!isTextarea && !isContentEditable) {
+              handleNext(e);
+            }
           }
         }}
         className="flex flex-col"
