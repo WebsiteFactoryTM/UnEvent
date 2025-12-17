@@ -2,7 +2,7 @@
 "use client";
 
 import { FeedQuery } from "@/lib/api/feed";
-import { ListingType } from "@/types/listings";
+import { ListingType, CardItem } from "@/types/listings";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter } from "next/navigation";
 import { fetchFeed } from "@/lib/api/feed";
@@ -94,57 +94,6 @@ function convertEventWhenToDates(
     default:
       return {};
   }
-}
-
-type CardItem = {
-  listingId: number;
-  slug: string;
-  title: string;
-  cityLabel: string;
-  imageUrl: string | undefined;
-  verified: boolean;
-  ratingAvg: number | undefined;
-  ratingCount: number | undefined;
-  description: string;
-  type: string;
-  startDate: string | undefined;
-  capacity: number;
-  tier: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
-  geo?: [number, number] | null;
-};
-
-function cardItemToListingCardData(
-  item: CardItem,
-  entity: ListingType,
-): ListingCardData {
-  // Convert capacity number to Location["capacity"] format
-  let capacity: Location["capacity"] | null | undefined = undefined;
-  if (entity === "locatii" && item.capacity > 0) {
-    capacity = { indoor: item.capacity };
-  }
-
-  return {
-    id: item.listingId,
-    title: item.title,
-    slug: item.slug,
-    description: item.description,
-    image: {
-      url: item.imageUrl || "/placeholder.svg",
-      alt: item.title,
-    },
-    city: item.cityLabel,
-    type: item.type,
-    verified: item.verified,
-    rating:
-      item.ratingAvg !== undefined && item.ratingCount !== undefined
-        ? { average: item.ratingAvg, count: item.ratingCount }
-        : undefined,
-    views: 0,
-    listingType: entity,
-    capacity,
-    date: item.startDate,
-    tier: item.tier,
-  };
 }
 
 const CityArchive = ({

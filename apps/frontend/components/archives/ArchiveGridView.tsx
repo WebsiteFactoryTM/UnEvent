@@ -1,42 +1,7 @@
 import React from "react";
 import { CardItem, ListingType } from "@/types/listings";
-import { ListingCardData } from "@/lib/normalizers/hub";
-import { Location } from "@/types/payload-types";
+import { cardItemToListingCardData } from "@/lib/normalizers/hub";
 import { ListingCard } from "./ListingCard";
-
-function cardItemToListingCardData(
-  item: CardItem,
-  entity: ListingType,
-): ListingCardData {
-  // Convert capacity number to Location["capacity"] format
-  let capacity: Location["capacity"] | null | undefined = undefined;
-  if (entity === "locatii" && item.capacity > 0) {
-    capacity = { indoor: item.capacity };
-  }
-
-  return {
-    id: item.listingId,
-    title: item.title,
-    slug: item.slug,
-    description: item.description,
-    image: {
-      url: item.imageUrl || "/placeholder.svg",
-      alt: item.title,
-    },
-    city: item.cityLabel,
-    type: item.type,
-    verified: item.verified,
-    rating:
-      item.ratingAvg !== undefined && item.ratingCount !== undefined
-        ? { average: item.ratingAvg, count: item.ratingCount }
-        : undefined,
-    views: 0,
-    listingType: entity,
-    capacity,
-    date: item.startDate,
-    tier: item.tier,
-  };
-}
 
 const ArchiveGridView = ({
   listings,

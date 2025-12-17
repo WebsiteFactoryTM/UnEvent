@@ -6,13 +6,12 @@ import type {
   Media,
   Service,
 } from "@/types/payload-types";
-import type { Listing, ListingType } from "@/types/listings";
+import type { Listing, ListingType, CardItem } from "@/types/listings";
 
 export type ListingCardData = {
   id: number;
   title: string;
   slug: string;
-  description: string;
   image: { url: string; alt: string };
   city: string;
   type: string;
@@ -60,7 +59,6 @@ export function normalizeLocation(listing: Location): ListingCardData {
     id: listing.id,
     title: listing.title,
     slug: listing.slug || String(listing.id),
-    description: listing.description || "",
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
     type: getTypeLabelFromRelation(listing.type, "Locație"),
@@ -85,7 +83,6 @@ export function normalizeService(listing: Service): ListingCardData {
     id: listing.id,
     title: listing.title,
     slug: listing.slug || String(listing.id),
-    description: listing.description || "",
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
     type: getTypeLabelFromRelation(listing.type, "Serviciu"),
@@ -109,7 +106,6 @@ export function normalizeEvent(listing: Event): ListingCardData {
     id: listing.id,
     title: listing.title,
     slug: listing.slug || String(listing.id),
-    description: listing.description || "",
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
     type: getTypeLabelFromRelation(listing.type, "Eveniment"),
@@ -121,7 +117,7 @@ export function normalizeEvent(listing: Event): ListingCardData {
         : undefined,
     views: listing.views || 0,
     listingType: "evenimente",
-    date: listing.startDate,
+    date: listing.startDate ?? undefined,
     participants: listing.participants ?? undefined,
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
     tier: listing.tier,
@@ -136,4 +132,41 @@ export function normalizeListing(
   if (listingType === "locatii") return normalizeLocation(listing as Location);
   if (listingType === "servicii") return normalizeService(listing as Service);
   return normalizeEvent(listing as Event);
+}
+
+/**
+ * Convert CardItem (from feed/hub API) to ListingCardData format
+ * Used by ArchiveGridView and Archive components
+ */
+export function cardItemToListingCardData(
+  item: CardItem,
+  entity: ListingType,
+): ListingCardData {
+  // Convert capacity number to Location["capacity"] format
+  let capacity: Location["capacity"] | null | undefined = undefined;
+  if (entity === "locatii" && item.capacity > 0) {
+    capacity = { indoor: item.capacity };
+  }
+
+  return {
+    id: item.listingId,
+    title: item.title,
+    slug: item.slug,
+    image: {
+      url: item.imageUrl || "/placeholder.svg",
+      alt: item.title,
+    },
+    city: item.cityLabel,
+    type: item.type,
+    verified: item.verified,
+    rating:
+      item.ratingAvg !== undefined && item.ratingCount !== undefined
+        ? { average: item.ratingAvg, count: item.ratingCount }
+        : undefined,
+    views: 0,
+    listingType: entity,
+    capacity,
+    date: item.startDate,
+    tier: item.tier,
+  };
 }
