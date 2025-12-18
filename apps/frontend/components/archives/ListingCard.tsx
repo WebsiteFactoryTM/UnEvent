@@ -28,6 +28,7 @@ import ListingCardImpressionsLayer from "./ListingCardImpressionsLayer";
 import { UnclaimedBadge } from "../listing/shared/UnclaimedBadge";
 import { TierBadge } from "../common/TierBadge";
 import { RichTextRenderer } from "@/components/editor/RichTextRenderer";
+import { getListingPlainDescription } from "@/lib/richText";
 
 export function ListingCard({
   id,
@@ -48,9 +49,16 @@ export function ListingCard({
   initialIsFavorited,
   tier,
   claimStatus,
+  description,
+  description_rich,
 }: ListingCardData) {
   const { indoor } = capacity || {};
   const kind = getListingTypeSlug(listingType);
+
+  const richDescription = getListingPlainDescription(
+    { description_rich, description },
+    130,
+  );
 
   return (
     <Link href={`/${listingType}/${slug}`}>
@@ -115,7 +123,7 @@ export function ListingCard({
               </div>
             )}
           </div>
-          <div className="flex gap- flex-wrap">
+          <div className="flex gap-1 flex-wrap">
             {type
               .split(",")
               .slice(0, 3)
@@ -125,12 +133,17 @@ export function ListingCard({
                 </Badge>
               ))}
           </div>
+
           {priceRange && (
             <p className="text-sm font-semibold text-foreground">
               {priceRange}
             </p>
           )}
-
+          {richDescription && (
+            <p className="text-sm text-muted-foreground line-clamp-3">
+              {richDescription}
+            </p>
+          )}
           {rating && rating.average && rating.count ? (
             <div className="flex items-center gap-1 text-sm">
               <FaStar className="h-4 w-4 text-yellow-500" />

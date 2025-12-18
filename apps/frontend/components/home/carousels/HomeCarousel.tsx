@@ -13,7 +13,7 @@ import { CarouselSkeleton } from "./CarouselSkeleton";
 import { ListingCard } from "@/components/archives/ListingCard";
 import { useQuery } from "@tanstack/react-query";
 import { fetchHomeListings } from "@/lib/api/home";
-import { ListingCardData, normalizeListing } from "@/lib/normalizers/hub";
+import { ListingCardData, toListingCardData } from "@/lib/normalizers/hub";
 import { Listing, ListingType } from "@/types/listings";
 import { useMemo } from "react";
 
@@ -48,7 +48,7 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
   // Normalize listings to ListingCardData format
   const normalizedListings = useMemo(() => {
     return listings.map((listing: Listing) =>
-      normalizeListing(listingType, listing),
+      toListingCardData(listingType, listing),
     );
   }, [listings, listingType]);
 
@@ -126,7 +126,7 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
           <CarouselContent>
             {normalizedListings.map((cardData: ListingCardData) => (
               <CarouselItem
-                key={cardData.id}
+                key={cardData.title}
                 className="md:basis-1/2 lg:basis-1/3"
               >
                 <ListingCard {...cardData} />

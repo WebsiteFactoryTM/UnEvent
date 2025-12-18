@@ -23,7 +23,7 @@ import { City, ListingType as SuitableForType } from "@/types/payload-types";
 import { Listing, ListingType } from "@/types/listings";
 import { CarouselSkeleton } from "@/components/home/carousels/CarouselSkeleton";
 import { ListingCard } from "@/components/archives/ListingCard";
-import { normalizeListing } from "@/lib/normalizers/hub";
+import { toListingCardData } from "@/lib/normalizers/hub";
 import { useMemo } from "react";
 
 interface ListingRecommendationsProps {
@@ -64,7 +64,7 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
   const normalizedListings = useMemo(() => {
     if (!similarListings || similarListings.length === 0) return [];
     return similarListings.map((listing: Listing) =>
-      normalizeListing(typeRecommendations, listing),
+      toListingCardData(typeRecommendations, listing),
     );
   }, [similarListings, typeRecommendations]);
 

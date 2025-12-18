@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ListingCard } from "@/components/archives/ListingCard";
-import { normalizeListing } from "@/lib/normalizers/hub";
+import { toListingCardData } from "@/lib/normalizers/hub";
 import type { Listing } from "@/types/listings";
 import type { ListingCardData } from "@/lib/normalizers/hub";
 
@@ -21,13 +21,13 @@ export function ProfileListingsTabs({
 
   // Convert listings to ListingCardData format
   const locationCards: ListingCardData[] = locations.map((loc) =>
-    normalizeListing("locatii", loc),
+    toListingCardData("locatii", loc),
   );
   const serviceCards: ListingCardData[] = services.map((srv) =>
-    normalizeListing("servicii", srv),
+    toListingCardData("servicii", srv),
   );
   const eventCards: ListingCardData[] = events.map((evt) =>
-    normalizeListing("evenimente", evt),
+    toListingCardData("evenimente", evt),
   );
 
   return (

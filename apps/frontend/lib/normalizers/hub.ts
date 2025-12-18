@@ -8,6 +8,10 @@ import type {
 } from "@/types/payload-types";
 import type { Listing, ListingType, CardItem } from "@/types/listings";
 
+/**
+ * Shape consumed by `ListingCard` across the app.
+ * Anything rendering cards should normalize to this type first.
+ */
 export type ListingCardData = {
   id: number;
   title: string;
@@ -26,17 +30,37 @@ export type ListingCardData = {
   initialIsFavorited?: boolean;
   tier?: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
   claimStatus?: "claimed" | "unclaimed" | null;
+  description?: string;
+  description_rich?: (Location | Event | Service)["description_rich"];
 };
 
-function getTypeLabelFromRelation(
-  rel: (number | TaxType)[] | null | undefined,
-  fallback: string,
-): string {
+/**
+ * Derive a human-readable type label string from a `type` relationship.
+ * Mirrors the backend `toCardItem` logic (unique categories, max 3, joined by comma).
+ */
+function getTypeLabelFromRelation(rel: unknown, fallback: string): string {
+  // If it's already a string (e.g. coming from CardItem), just return it
+  if (typeof rel === "string") {
+    return rel;
+  }
+
   if (!Array.isArray(rel) || rel.length === 0) return fallback;
-  const first = rel[0];
-  if (typeof first === "object" && first && "title" in first)
-    return (first as TaxType).title;
-  return fallback;
+
+  const categories = [
+    ...new Set(
+      (rel as (number | TaxType)[])
+        .map((t) =>
+          typeof t === "object" && t && "category" in t
+            ? (t as TaxType).category
+            : null,
+        )
+        .filter((v): v is string => Boolean(v)),
+    ),
+  ];
+
+  if (categories.length === 0) return fallback;
+
+  return categories.slice(0, 3).join(", ");
 }
 
 function mediaToImage(
@@ -54,10 +78,12 @@ function cityToName(c?: number | City | null): string {
   return typeof c === "object" && c ? c.name : "România";
 }
 
-export function normalizeLocation(listing: Location): ListingCardData {
+function normalizeLocationToCardData(
+  listing: Partial<Location> & { type: string },
+): ListingCardData {
   return {
-    id: listing.id,
-    title: listing.title,
+    id: listing.id as number,
+    title: listing.title as string,
     slug: listing.slug || String(listing.id),
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
@@ -75,13 +101,17 @@ export function normalizeLocation(listing: Location): ListingCardData {
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
     tier: listing.tier,
     claimStatus: listing.claimStatus || undefined,
+    description: listing.description || undefined,
+    description_rich: listing.description_rich || undefined,
   };
 }
 
-export function normalizeService(listing: Service): ListingCardData {
+function normalizeServiceToCardData(
+  listing: Partial<Service> & { type: string },
+): ListingCardData {
   return {
-    id: listing.id,
-    title: listing.title,
+    id: listing.id as number,
+    title: listing.title as string,
     slug: listing.slug || String(listing.id),
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
@@ -98,13 +128,17 @@ export function normalizeService(listing: Service): ListingCardData {
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
     tier: listing.tier,
     claimStatus: listing.claimStatus || undefined,
+    description: listing.description || undefined,
+    description_rich: listing.description_rich || undefined,
   };
 }
 
-export function normalizeEvent(listing: Event): ListingCardData {
+function normalizeEventToCardData(
+  listing: Partial<Event> & { type: string },
+): ListingCardData {
   return {
-    id: listing.id,
-    title: listing.title,
+    id: listing.id as number,
+    title: listing.title as string,
     slug: listing.slug || String(listing.id),
     image: mediaToImage(listing.featuredImage, listing.title),
     city: cityToName(listing.city),
@@ -122,16 +156,31 @@ export function normalizeEvent(listing: Event): ListingCardData {
     initialIsFavorited: listing.isFavoritedByViewer ?? undefined,
     tier: listing.tier,
     claimStatus: listing.claimStatus || undefined,
+    description: listing.description || undefined,
+    description_rich: listing.description_rich || undefined,
   };
 }
 
-export function normalizeListing(
+/**
+ * High-level normalizer from a raw listing document to `ListingCardData`.
+ * This is intentionally separate from `lib/transforms/normalizeListing` which only
+ * adds the `status` alias to listing documents.
+ */
+export function toListingCardData(
   listingType: ListingType,
   listing: Listing,
 ): ListingCardData {
-  if (listingType === "locatii") return normalizeLocation(listing as Location);
-  if (listingType === "servicii") return normalizeService(listing as Service);
-  return normalizeEvent(listing as Event);
+  if (listingType === "locatii")
+    return normalizeLocationToCardData(
+      listing as unknown as Partial<Location> & { type: string },
+    );
+  if (listingType === "servicii")
+    return normalizeServiceToCardData(
+      listing as unknown as Partial<Service> & { type: string },
+    );
+  return normalizeEventToCardData(
+    listing as unknown as Partial<Event> & { type: string },
+  );
 }
 
 /**
@@ -169,4 +218,78 @@ export function cardItemToListingCardData(
     date: item.startDate,
     tier: item.tier,
   };
+}
+
+export function toCardItem(
+  listingType: "locations" | "services" | "events",
+  doc: Location | Service | Event,
+  options?: { includeGeo?: boolean },
+): {
+  id: number;
+  slug: string;
+  title: string;
+  cityLabel: string;
+  imageUrl: string | undefined;
+  verified: boolean;
+  ratingAvg: number | undefined;
+  ratingCount: number | undefined;
+  type: string;
+  startDate: string | undefined;
+  capacity: number;
+  tier: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
+  description?: string | null;
+  description_rich?: unknown;
+  geo?: [number, number] | null | undefined;
+} {
+  let capacity = 0;
+  if (listingType === "locations") {
+    capacity = (doc as Location)?.capacity?.indoor ?? 0;
+  } else if (listingType === "events") {
+    capacity = (doc as Event)?.capacity?.total ?? 0;
+  }
+  return {
+    id: doc.id,
+    slug: doc.slug as string,
+    title: doc.title as string,
+    cityLabel: (doc.city as City)?.name ?? "",
+    imageUrl: getImageURL(doc),
+    verified: doc.verifiedStatus === "approved",
+    ratingAvg: doc.rating as number | undefined,
+    ratingCount: doc.reviewCount as number | undefined,
+    type:
+      [
+        ...new Set(
+          doc.type?.map((t: number | TaxType) => (t as TaxType).category),
+        ),
+      ]
+        .slice(0, 3)
+        .join(", ") ?? "",
+    startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
+    capacity: capacity,
+    tier: doc.tier,
+    description: (doc as Location | Service | Event)?.description ?? null,
+    description_rich:
+      (doc as Location | Service | Event)?.description_rich ?? null,
+    // Include geo only if requested (for feedEndpoint, not for buildHubSnapshot)
+    ...(options?.includeGeo && {
+      geo: doc.geo ? [doc.geo[0], doc.geo[1]] : null,
+    }),
+  };
+}
+
+/**
+ * Helper to extract image URL from listing document
+ * Prefers featuredImage, falls back to first gallery image
+ */
+export function getImageURL(
+  doc: Location | Service | Event,
+): string | undefined {
+  // Prefer featuredImage.url; fallback to first gallery image; adjust to your schema
+  const file =
+    doc.featuredImage ?? (doc.gallery?.[0] as number | Media | undefined);
+  if (!file) return undefined;
+  // When depth:0, uploads are IDs; if you store full URL on create, use that.
+  return typeof file === "number"
+    ? undefined
+    : ((file.url ?? undefined) as string | undefined);
 }

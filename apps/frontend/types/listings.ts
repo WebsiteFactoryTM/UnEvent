@@ -40,4 +40,6 @@ export type CardItem = {
   capacity: number;
   tier: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
   geo?: [number, number] | null;
+  description?: string | null;
+  description_rich?: (Location | Event | Service)["description_rich"];
 };
