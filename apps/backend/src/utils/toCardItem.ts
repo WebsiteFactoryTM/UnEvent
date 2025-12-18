@@ -9,7 +9,7 @@ export function toCardItem(
   doc: Location | Service | Event,
   options?: { includeGeo?: boolean },
 ): {
-  listingId: number
+  id: number
   slug: string
   title: string
   cityLabel: string
@@ -21,6 +21,8 @@ export function toCardItem(
   startDate: string | undefined
   capacity: number
   tier: 'new' | 'standard' | 'sponsored' | 'recommended' | null | undefined
+  description?: string | null
+  description_rich?: unknown
   geo?: [number, number] | null | undefined
 } {
   let capacity = 0
@@ -30,7 +32,7 @@ export function toCardItem(
     capacity = (doc as Event)?.capacity?.total ?? 0
   }
   return {
-    listingId: doc.id,
+    id: doc.id,
     slug: doc.slug as string,
     title: doc.title as string,
     cityLabel: (doc.city as City)?.name ?? '',
@@ -38,10 +40,15 @@ export function toCardItem(
     verified: doc.verifiedStatus === 'approved',
     ratingAvg: doc.rating as number | undefined,
     ratingCount: doc.reviewCount as number | undefined,
-    type: doc.type?.map((t: number | ListingType) => (t as ListingType).title).join(', ') ?? '',
+    type:
+      [...new Set(doc.type?.map((t: number | ListingType) => (t as ListingType).category))]
+        .slice(0, 3)
+        .join(', ') ?? '',
     startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
     capacity: capacity,
     tier: doc.tier,
+    description: (doc as Location | Service | Event)?.description ?? null,
+    description_rich: (doc as Location | Service | Event)?.description_rich ?? null,
     // Include geo only if requested (for feedEndpoint, not for buildHubSnapshot)
     ...(options?.includeGeo && { geo: doc.geo ? [doc.geo[0], doc.geo[1]] : null }),
   }

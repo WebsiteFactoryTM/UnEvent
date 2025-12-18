@@ -1,6 +1,7 @@
 import { Event, Location, Service } from '@/payload-types'
 import { Payload, PayloadHandler, PayloadRequest } from 'payload'
 import * as Sentry from '@sentry/nextjs'
+import { toCardItem } from '@/utils/toCardItem'
 
 type ShapedHomeListings = {
   featuredLocations: Location[]
@@ -159,7 +160,9 @@ function getExtraListings(
     deletedAt: { exists: false }, // Exclude soft-deleted listings
   }
   if (type !== 'new') {
-    where.tier = { in: ['recommended', 'sponsored'] }
+    where.tier = {
+      in: ['sponsored', 'recommended'],
+    }
   }
 
   return payload.find({
@@ -172,42 +175,19 @@ function getExtraListings(
 }
 
 function shapeHomeResponse(home: {
-  featuredLocations: Partial<Location>[] | null | undefined
-  topServices: Partial<Service>[] | null | undefined
-  upcomingEvents: Partial<Event>[] | null | undefined
-  newLocations: Partial<Location>[] | null | undefined
-  newServices: Partial<Service>[] | null | undefined
-  newEvents: Partial<Event>[] | null | undefined
+  featuredLocations: Location[] | null | undefined
+  topServices: Service[] | null | undefined
+  upcomingEvents: Event[] | null | undefined
+  newLocations: Location[] | null | undefined
+  newServices: Service[] | null | undefined
+  newEvents: Event[] | null | undefined
 }) {
   return {
-    featuredLocations: home.featuredLocations?.map(shapeListing),
-    topServices: home.topServices?.map(shapeListing),
-    upcomingEvents: home.upcomingEvents?.map(shapeListing),
-    newLocations: home.newLocations?.map(shapeListing),
-    newServices: home.newServices?.map(shapeListing),
-    newEvents: home.newEvents?.map(shapeListing),
-  }
-}
-
-function shapeListing(
-  doc: Partial<Location> | Partial<Service> | Partial<Event>,
-): Partial<Location | Service | Event> {
-  return {
-    id: doc?.id,
-    title: doc?.title,
-    slug: doc?.slug,
-    rating: typeof doc?.rating === 'number' ? doc.rating : undefined,
-    reviewCount: typeof doc?.reviewCount === 'number' ? doc.reviewCount : undefined,
-    tier: doc?.tier,
-    featuredImage: typeof doc?.featuredImage === 'object' ? doc.featuredImage : null,
-    city: typeof doc?.city === 'object' ? doc.city : undefined,
-    description: doc?.description,
-    capacity: (doc as Location)?.capacity,
-    startDate: (doc as Event)?.startDate,
-    endDate: (doc as Event)?.endDate,
-    type: doc?.type,
-    isFavoritedByViewer: doc.isFavoritedByViewer || false,
-    geo: doc?.geo ? [doc.geo[0], doc.geo[1]] : null,
-    verifiedStatus: doc?.verifiedStatus,
+    featuredLocations: home.featuredLocations?.map((loc) => toCardItem('locations', loc)),
+    topServices: home.topServices?.map((serv) => toCardItem('services', serv)),
+    upcomingEvents: home.upcomingEvents?.map((evt) => toCardItem('events', evt)),
+    newLocations: home.newLocations?.map((loc) => toCardItem('locations', loc)),
+    newServices: home.newServices?.map((serv) => toCardItem('services', serv)),
+    newEvents: home.newEvents?.map((evt) => toCardItem('events', evt)),
   }
 }
