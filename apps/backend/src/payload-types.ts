@@ -503,15 +503,6 @@ export interface Event {
    * Location where the event will be held
    */
   venue?: (number | null) | Location;
-  venueAddressDetails: {
-    venueAddress: string;
-    venueCity: number | City;
-    /**
-     * @minItems 2
-     * @maxItems 2
-     */
-    venueGeo: [number, number];
-  };
   requirements?:
     | {
         requirement?: string | null;
@@ -1803,13 +1794,6 @@ export interface EventsSelect<T extends boolean = true> {
   registrationDeadline?: T;
   participants?: T;
   venue?: T;
-  venueAddressDetails?:
-    | T
-    | {
-        venueAddress?: T;
-        venueCity?: T;
-        venueGeo?: T;
-      };
   requirements?:
     | T
     | {

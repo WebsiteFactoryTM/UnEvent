@@ -1,0 +1,16 @@
+ALTER TABLE "events" DROP CONSTRAINT "events_venue_address_details_venue_city_id_cities_id_fk";
+ALTER TABLE "_events_v" DROP CONSTRAINT "_events_v_version_venue_address_details_venue_city_id_cities_id_fk";
+DROP INDEX "events_venue_address_details_venue_address_details_venue_idx";
+DROP INDEX "_events_v_version_venue_address_details_version_venue_ad_idx";
+ALTER TABLE "events" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-18T06:07:20.626Z';
+ALTER TABLE "_events_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-18T06:07:20.626Z';
+ALTER TABLE "locations" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-18T06:07:20.626Z';
+ALTER TABLE "_locations_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-18T06:07:20.626Z';
+ALTER TABLE "services" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-18T06:07:20.626Z';
+ALTER TABLE "_services_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-18T06:07:20.626Z';
+ALTER TABLE "events" DROP COLUMN "venue_address_details_venue_address";
+ALTER TABLE "events" DROP COLUMN "venue_address_details_venue_city_id";
+ALTER TABLE "events" DROP COLUMN "venue_address_details_venue_geo";
+ALTER TABLE "_events_v" DROP COLUMN "version_venue_address_details_venue_address";
+ALTER TABLE "_events_v" DROP COLUMN "version_venue_address_details_venue_city_id";
+ALTER TABLE "_events_v" DROP COLUMN "version_venue_address_details_venue_geo";

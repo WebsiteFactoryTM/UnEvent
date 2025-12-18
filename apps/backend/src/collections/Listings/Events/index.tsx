@@ -226,28 +226,6 @@ export const Events: CollectionConfig = {
       required: false,
     },
     {
-      name: 'venueAddressDetails',
-      type: 'group',
-      fields: [
-        {
-          name: 'venueAddress',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'venueCity',
-          type: 'relationship',
-          relationTo: 'cities',
-          required: true,
-        },
-        {
-          name: 'venueGeo',
-          type: 'point',
-          required: true,
-        },
-      ],
-    },
-    {
       name: 'requirements',
       type: 'array',
       fields: [

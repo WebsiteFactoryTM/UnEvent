@@ -29,7 +29,7 @@ export const sharedListingFields: Field[] = [
     },
     maxDepth: 2,
   },
-  { name: 'description', type: 'textarea' },
+  { name: 'description', type: 'textarea', required: false },
   restrictedRichTextField('description_rich', 'Description (Rich Text)'),
   {
     name: 'city',
