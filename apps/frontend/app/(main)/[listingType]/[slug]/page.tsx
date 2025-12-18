@@ -35,7 +35,9 @@ import { ListingType as SuitableForType } from "@/types/payload-types";
 import nextDynamic from "next/dynamic";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { fetchHubSnapshot } from "@/lib/api/hub";
+import { ListingViewTracker } from "@/components/metrics/ListingViewTracker";
+import { getListingPlainDescription } from "@/lib/richText";
 const ListingReviews = nextDynamic(
   () =>
     import("@/components/listing/shared/ListingReviews").then(
@@ -70,9 +72,6 @@ const ListingRecommendations = nextDynamic(
   },
 );
 // import { RecommendedListings } from "@/components/home/carousels/RecommendedLocations";
-
-import { fetchHubSnapshot } from "@/lib/api/hub";
-import { ListingViewTracker } from "@/components/metrics/ListingViewTracker";
 
 // Use auto to support both ISR and tag-based revalidation
 export const dynamic = "auto";
@@ -145,7 +144,10 @@ export default async function DetailPage({
   const cityName = city?.name ?? "";
   const citySlug = city?.slug ?? "";
   const title = listing?.title ?? "";
-  const description = listing?.description ?? "";
+  const description = getListingPlainDescription({
+    description: listing?.description,
+    description_rich: (listing as any).description_rich,
+  });
 
   const jsonLd = buildJsonLd(listingType as ListingType, listing);
 
@@ -393,7 +395,14 @@ export async function generateMetadata({
   const featuredImage =
     typeof data?.featuredImage === "object" ? data?.featuredImage?.url : null;
   const title = data?.title || prettifySlug(slug);
-  const description = data?.description?.slice(0, 160) || `${title}`;
+  const description =
+    getListingPlainDescription(
+      {
+        description: data?.description,
+        description_rich: (data as any)?.description_rich,
+      },
+      130,
+    ) || `${title}`;
 
   return {
     title: `${title} | UN:EVENT`,
