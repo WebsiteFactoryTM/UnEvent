@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { sharedListingFields } from '../fields.shared'
-import { autoSlug, attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
+import { attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
 import { approvedOrOwnDraft, isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
@@ -38,7 +38,7 @@ export const Events: CollectionConfig = {
   // Note: 'type' field is hasMany relationship, so can't be in compound index
   // Individual indexes are set on fields that support them
   hooks: {
-    beforeChange: [autoSlug, attachOwner, setDefaultStatus],
+    beforeChange: [attachOwner, setDefaultStatus],
     beforeDelete: [preventHardDelete],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
     afterChange: [

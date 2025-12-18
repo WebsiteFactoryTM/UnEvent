@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { sharedListingFields } from '../fields.shared'
-import { autoSlug, attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
+import { attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
 import { isOwnerOrAdmin, requireRole, approvedOrOwnDraft } from '@/collections/_access/roles'
 import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
@@ -35,7 +35,7 @@ export const Services: CollectionConfig = {
     delete: ({ req }) => isOwnerOrAdmin({ req }),
   },
   hooks: {
-    beforeChange: [autoSlug, attachOwner, setDefaultStatus],
+    beforeChange: [attachOwner, setDefaultStatus],
     beforeDelete: [preventHardDelete],
     afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
     afterChange: [

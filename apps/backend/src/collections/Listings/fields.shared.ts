@@ -1,6 +1,7 @@
 // shared/fields.shared.ts
 
 import { restrictedRichTextField } from '../../fields/restrictedRichText'
+import { ensureUniqueListingSlug } from './_hooks/ensureUniqueSlug'
 import type { Field } from 'payload'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -16,6 +17,10 @@ export const sharedListingFields: Field[] = [
       position: 'sidebar',
       description: 'URL-friendly identifier',
       readOnly: true,
+    },
+    hooks: {
+      // Ensure slug is generated from title and is unique per collection
+      beforeValidate: [ensureUniqueListingSlug],
     },
   },
   {
