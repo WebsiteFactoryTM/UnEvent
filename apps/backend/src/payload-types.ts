@@ -1406,9 +1406,23 @@ export interface Search {
       };
   description?: string | null;
   address?: string | null;
-  type?: string | null;
+  type?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   cityName?: string | null;
   imageUrl?: string | null;
+  listingCollectionName?: string | null;
+  slug?: string | null;
+  rating?: number | null;
+  tier?: string | null;
+  views?: number | null;
+  favoritesCount?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2195,6 +2209,12 @@ export interface SearchSelect<T extends boolean = true> {
   type?: T;
   cityName?: T;
   imageUrl?: T;
+  listingCollectionName?: T;
+  slug?: T;
+  rating?: T;
+  tier?: T;
+  views?: T;
+  favoritesCount?: T;
   updatedAt?: T;
   createdAt?: T;
 }

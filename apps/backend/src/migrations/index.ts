@@ -15,6 +15,7 @@ import * as migration_20251217_113056 from './20251217_113056'
 import * as migration_20251217_150432 from './20251217_150432'
 import * as migration_20251217_151242 from './20251217_151242'
 import * as migration_20251218_060720 from './20251218_060720'
+import * as migration_20251218_120110_Added_search_collection_fields from './20251218_120110_Added_search_collection_fields'
 import * as migration_20251219_141657 from './20251219_141657'
 
 export const migrations = [
@@ -102,6 +103,11 @@ export const migrations = [
     up: migration_20251218_060720.up,
     down: migration_20251218_060720.down,
     name: '20251218_060720',
+  },
+  {
+    up: migration_20251218_120110_Added_search_collection_fields.up,
+    down: migration_20251218_120110_Added_search_collection_fields.down,
+    name: '20251218_120110_Added_search_collection_fields',
   },
   {
     up: migration_20251219_141657.up,
