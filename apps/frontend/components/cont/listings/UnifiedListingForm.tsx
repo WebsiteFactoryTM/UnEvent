@@ -316,11 +316,14 @@ export function UnifiedListingForm({
   const mapPayloadFieldToFormField = (payloadField: string): string | null => {
     const fieldMap: Record<string, string> = {
       title: "title",
+      slug: "title", // Slug is derived from title
       type: "type",
       suitableFor: "suitableFor",
       city: "city",
       address: "address",
       description: "description",
+      description_rich: "description_rich",
+      root: "description_rich", // Rich text validation errors use 'root' path
       featuredImage: "featuredImage",
       gallery: "gallery",
       contact: "contact",
@@ -472,6 +475,7 @@ export function UnifiedListingForm({
         type: listingType === "service" ? "services" : "info",
         suitableFor: "info",
         description: "info",
+        description_rich: "info",
         capacity: "info",
         surface: "info",
         pricing: "info",

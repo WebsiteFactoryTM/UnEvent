@@ -5,7 +5,7 @@ import {
   EventFormData,
 } from "@/forms/listing/schema";
 import { Location, Event, Service } from "@/types/payload-types";
-
+const CITY_DEFAULT = process.env.NEXT_PUBLIC_CITY_DEFAULT || 26515;
 /**
  * Clean payload to remove null values from array fields
  * Payload Drizzle adapter doesn't handle null for array fields - they must be arrays or omitted
@@ -62,8 +62,15 @@ export function formToPayload(
     formData.moderationStatus === "draft" || formData._status === "draft";
   const basePayload = {
     title: formData.title,
-    description: formData.description || null,
-    description_rich: formData.description_rich || null,
+    description:
+      formData.description && formData.description.trim().length > 0
+        ? formData.description
+        : undefined,
+    description_rich:
+      formData.description_rich &&
+      Object.keys(formData.description_rich as any).length > 0
+        ? formData.description_rich
+        : undefined,
     // For drafts, allow city to be undefined if not selected (0 or falsy)
     // For non-drafts, city is required by validation
     // Use undefined instead of null for optional relationship fields to avoid FK constraint violations
@@ -77,7 +84,7 @@ export function formToPayload(
 
       // Return undefined if city is 0, null, undefined, NaN, or empty string
       if (!cityNum || cityNum === 0 || isNaN(cityNum)) {
-        return isDraft ? undefined : cityValue;
+        return isDraft ? CITY_DEFAULT : cityValue;
       }
 
       return cityNum;
@@ -259,15 +266,6 @@ export function formToPayload(
       ticketUrl: eventData.ticketUrl || null,
       eventStatus: "upcoming" as const,
       venue: null,
-      venueAddressDetails: {
-        venueAddress: "Adresa",
-        venueCity: isDraft
-          ? eventData.city && eventData.city > 0
-            ? eventData.city
-            : 29681 // Default to city ID 1 (Bucharest or first city)
-          : eventData.city,
-        venueGeo: [eventData.geo?.lon || 0, eventData.geo?.lat || 0],
-      },
     } as Partial<Event>;
 
     const cleanedPayload = cleanPayload(eventPayload);

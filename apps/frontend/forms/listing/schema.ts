@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+const CITY_DEFAULT = process.env.NEXT_PUBLIC_CITY_DEFAULT || 26515;
 // Helper function for user-friendly URL validation
 const createUserFriendlyUrlSchema = (errorMessage: string = "URL invalid") => {
   return z.preprocess(
@@ -22,6 +22,33 @@ const createUserFriendlyUrlSchema = (errorMessage: string = "URL invalid") => {
   );
 };
 
+// Helper to approximate text length from Lexical JSON rich text
+const getRichTextLength = (value: unknown): number => {
+  if (!value || typeof value !== "object") return 0;
+
+  const root = (value as any).root;
+  if (!root || !Array.isArray(root.children)) return 0;
+
+  const traverse = (node: any): number => {
+    if (!node) return 0;
+
+    if (node.type === "text" && typeof node.text === "string") {
+      return node.text.trim().length;
+    }
+
+    if (Array.isArray(node.children)) {
+      return node.children.reduce(
+        (len: number, child: any) => len + traverse(child),
+        0,
+      );
+    }
+
+    return 0;
+  };
+
+  return traverse(root);
+};
+
 /**
  * Unified schema for all listing types (locations, services, events)
  * Uses discriminated unions for type-safe handling
@@ -33,11 +60,18 @@ const createUserFriendlyUrlSchema = (errorMessage: string = "URL invalid") => {
 const baseListingSchema = z.object({
   // Basic info
   title: z.string().min(1, "Titlul este obligatoriu"),
-  description: z
-    .string()
-    .max(5000, "Descrierea nu poate depăși 5000 caractere")
+  description: z.string().optional(),
+  // Allow any valid Lexical JSON shape, frontend relies on backend validator
+  description_rich: z
+    .object({
+      root: z
+        .object({
+          children: z.array(z.any()).optional(),
+        })
+        .passthrough(),
+    })
+    .passthrough()
     .optional(),
-  description_rich: z.any().optional(),
 
   // Address
   city: z.number().min(1, "Selectează orașul"), // Not required in backend
@@ -438,7 +472,11 @@ export const unifiedListingSchema = unifiedListingSchemaBase
       // For submission, require description (min 50 chars)
       if (data.moderationStatus === "draft") return true;
 
-      const hasDescription = data.description && data.description.length >= 50;
+      const plainLength =
+        (data.description && data.description.trim().length) || 0;
+      const richLength = getRichTextLength(data.description_rich);
+
+      const hasDescription = plainLength >= 50 || richLength >= 50;
 
       return hasDescription;
     },
@@ -520,7 +558,7 @@ export function defaultListingFormValues(
     title: "",
     description: "",
     description_rich: undefined,
-    city: undefined,
+    city: CITY_DEFAULT,
     address: "",
     geo: {
       lat: 45.56,

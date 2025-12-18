@@ -114,6 +114,11 @@ export function InfoTab() {
             {errors.description.message}
           </p>
         )}
+        {errors.description_rich && (
+          <p className="text-sm text-destructive">
+            {errors.description_rich.message as string}
+          </p>
+        )}
       </div>
 
       <Separator />
