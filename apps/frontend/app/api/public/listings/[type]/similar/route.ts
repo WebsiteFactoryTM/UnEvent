@@ -54,6 +54,12 @@ export async function GET(
     }
   });
 
+  // For events, exclude finished events and events that have ended
+  if (type === "events") {
+    search.set("where[eventStatus][not_equals]", "finished");
+    search.set("where[endDate][greater_than_equal]", new Date().toISOString());
+  }
+
   try {
     const res = await fetchWithRetry(
       `${payloadUrl}/api/${collection}?${search.toString()}`,

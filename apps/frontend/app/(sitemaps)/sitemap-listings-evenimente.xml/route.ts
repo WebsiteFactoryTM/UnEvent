@@ -13,8 +13,10 @@ async function fetchApprovedEvents() {
       return [];
     }
 
+    // Exclude finished events and events that have ended
+    const now = new Date().toISOString();
     const response = await fetch(
-      `${payloadUrl}/api/events?limit=5000&where[moderationStatus][equals]=approved&where[_status][equals]=published&depth=1`,
+      `${payloadUrl}/api/events?limit=5000&where[moderationStatus][equals]=approved&where[_status][equals]=published&where[eventStatus][not_equals]=finished&where[endDate][greater_than_equal]=${encodeURIComponent(now)}&depth=1`,
       {
         headers: { "Content-Type": "application/json" },
         next: { revalidate: 3600 },

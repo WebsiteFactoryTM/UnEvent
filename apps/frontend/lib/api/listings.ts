@@ -305,6 +305,17 @@ export const fetchSimilarListings = async (
         );
       });
 
+      if (listingType === "evenimente") {
+        fallbackUrl.searchParams.set(
+          "where[eventStatus][not_equals]",
+          "finished",
+        );
+        fallbackUrl.searchParams.set(
+          "where[endDate][gte]",
+          new Date().toISOString(),
+        );
+      }
+
       const payloadResponse = await fetch(fallbackUrl.toString(), {
         next: { revalidate: 120 },
       });
@@ -326,6 +337,10 @@ export const fetchSimilarListings = async (
         const id = typeof item === "number" ? item : item.id;
         params.append("suitableFor", String(id));
       });
+
+      if (listingType === "evenimente") {
+        params.set("endDate", new Date().toISOString());
+      }
 
       const baseUrl =
         process.env.NEXT_PUBLIC_FRONTEND_URL ||
