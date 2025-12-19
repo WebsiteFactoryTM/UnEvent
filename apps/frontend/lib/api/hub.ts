@@ -1,7 +1,8 @@
 "use server";
 
-import type { City, HubSnapshot } from "@/types/payload-types";
+import type { City } from "@/types/payload-types";
 import type { Listing, ListingType } from "@/types/listings";
+import type { HubSnapshotResponse } from "@/lib/normalizers/hub";
 import { frontendTypeToCollectionSlug } from "@/lib/api/reviews";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import { tag } from "@unevent/shared";
@@ -123,7 +124,7 @@ export async function fetchHubTopByCity(
 
 export async function fetchHubSnapshot(
   listingType: ListingType,
-): Promise<HubSnapshot | null> {
+): Promise<HubSnapshotResponse | null> {
   try {
     const isServer = typeof window === "undefined";
     const collection = getListingTypeSlug(listingType);
@@ -142,7 +143,7 @@ export async function fetchHubSnapshot(
       });
 
       if (!res.ok) return null;
-      return (await res.json()) as HubSnapshot;
+      return (await res.json()) as HubSnapshotResponse;
     }
 
     // 2. Client-Side: BFF Call
@@ -162,7 +163,7 @@ export async function fetchHubSnapshot(
         });
 
         if (res.ok) {
-          return (await res.json()) as HubSnapshot;
+          return (await res.json()) as HubSnapshotResponse;
         }
       } catch (bffError) {
         console.error("BFF hub route failed:", bffError);
@@ -180,7 +181,7 @@ export async function fetchHubSnapshot(
     });
 
     if (!res.ok) return null;
-    return (await res.json()) as HubSnapshot;
+    return (await res.json()) as HubSnapshotResponse;
   } catch (err) {
     console.error("fetchHubSnapshot error", err);
     return null;

@@ -1,12 +1,49 @@
 import type {
   City,
   Event,
+  HubSnapshot,
   ListingType as TaxType,
   Location,
   Media,
   Service,
 } from "@/types/payload-types";
 import type { Listing, ListingType, CardItem } from "@/types/listings";
+
+/**
+ * Transformed HubSnapshot type where `listingId` is converted to `id` for API responses.
+ * This matches what the backend endpoint returns after transformation.
+ */
+export type HubSnapshotResponse = Omit<
+  HubSnapshot,
+  "featured" | "popularCityRows"
+> & {
+  featured?: Array<
+    Omit<NonNullable<HubSnapshot["featured"]>[number], "listingId"> & {
+      id: number;
+    }
+  > | null;
+  popularCityRows?: Array<
+    Omit<NonNullable<HubSnapshot["popularCityRows"]>[number], "items"> & {
+      items?: Array<
+        Omit<
+          NonNullable<
+            NonNullable<HubSnapshot["popularCityRows"]>[number]["items"]
+          >[number],
+          "listingId"
+        > & { id: number }
+      > | null;
+    }
+  > | null;
+};
+
+/**
+ * Type helper for HubSnapshot items from API responses (which use `id` after transformation)
+ */
+export type HubSnapshotItem =
+  | NonNullable<HubSnapshotResponse["featured"]>[number]
+  | NonNullable<
+      NonNullable<HubSnapshotResponse["popularCityRows"]>[number]["items"]
+    >[number];
 
 /**
  * Shape consumed by `ListingCard` across the app.
@@ -186,37 +223,62 @@ export function toListingCardData(
 /**
  * Convert CardItem (from feed/hub API) to ListingCardData format
  * Used by ArchiveGridView and Archive components
+ *
+ * Handles both `id` (from feed/home) and `listingId` (from HubSnapshot) for backwards compatibility
  */
 export function cardItemToListingCardData(
-  item: CardItem,
+  item: CardItem | HubSnapshotItem,
   entity: ListingType,
 ): ListingCardData {
+  // Both CardItem and HubSnapshotItem now use `id` (HubSnapshotResponse transforms listingId to id)
+  const id = item.id;
+
   // Convert capacity number to Location["capacity"] format
   let capacity: Location["capacity"] | null | undefined = undefined;
-  if (entity === "locatii" && item.capacity > 0) {
-    capacity = { indoor: item.capacity };
+  const itemCapacity = "capacity" in item ? item.capacity : null;
+  if (entity === "locatii" && itemCapacity && itemCapacity > 0) {
+    capacity = { indoor: itemCapacity };
   }
 
+  // Handle nullable fields from HubSnapshot
+  const cityLabel = "cityLabel" in item ? (item.cityLabel ?? "") : "";
+  const typeLabel = "type" in item ? (item.type ?? "") : "";
+  const verified = "verified" in item ? Boolean(item.verified) : false;
+  const ratingAvg = "ratingAvg" in item ? item.ratingAvg : undefined;
+  const ratingCount = "ratingCount" in item ? item.ratingCount : undefined;
+  const tier = "tier" in item ? item.tier : undefined;
+  const description =
+    "description" in item ? (item.description ?? undefined) : undefined;
+  const description_rich =
+    "description_rich" in item
+      ? (item.description_rich ?? undefined)
+      : undefined;
+
   return {
-    id: item.listingId,
+    id,
     title: item.title,
     slug: item.slug,
     image: {
       url: item.imageUrl || "/placeholder.svg",
       alt: item.title,
     },
-    city: item.cityLabel,
-    type: item.type,
-    verified: item.verified,
+    city: cityLabel,
+    type: typeLabel,
+    verified,
     rating:
-      item.ratingAvg !== undefined && item.ratingCount !== undefined
-        ? { average: item.ratingAvg, count: item.ratingCount }
+      ratingAvg !== undefined &&
+      ratingAvg !== null &&
+      ratingCount !== undefined &&
+      ratingCount !== null
+        ? { average: ratingAvg, count: ratingCount }
         : undefined,
     views: 0,
     listingType: entity,
     capacity,
-    date: item.startDate,
-    tier: item.tier,
+    date: item.startDate ?? undefined,
+    tier,
+    description,
+    description_rich,
   };
 }
 

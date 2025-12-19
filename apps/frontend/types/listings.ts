@@ -27,7 +27,7 @@ export type HomeListings = {
 };
 
 export type CardItem = {
-  listingId: number;
+  id: number;
   slug: string;
   title: string;
   cityLabel: string;
