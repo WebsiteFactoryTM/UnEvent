@@ -11,12 +11,30 @@ import * as Sentry from '@sentry/nextjs'
 
 // Fallback cities if DB query returns nothing
 const TOP_CITIES_FALLBACK = [
-  'bucuresti',
-  'cluj-napoca',
-  'timisoara',
-  'iasi',
-  'brasov',
-  'constanta',
+  {
+    slug: 'municipiul-bucuresti-bucuresti',
+    label: 'București',
+  },
+  {
+    slug: 'cluj-napoca-cluj',
+    label: 'Cluj-Napoca',
+  },
+  {
+    slug: 'timisoara-timis',
+    label: 'Timișoara',
+  },
+  {
+    slug: 'iasi-iasi',
+    label: 'Iași',
+  },
+  {
+    slug: 'brasov-brasov',
+    label: 'Brașov',
+  },
+  {
+    slug: 'constanta-constanta',
+    label: 'Constanța',
+  },
 ] as const
 
 export async function buildHubSnapshot(
@@ -35,15 +53,16 @@ export async function buildHubSnapshot(
     },
     limit: 100,
   })
+
   const typeaheadCities =
     citiesRes.docs.length > 0
       ? citiesRes.docs.slice(0, 6).map((c: City) => ({
           slug: (c as City).slug as string,
           label: (c as City).name as string,
         }))
-      : (TOP_CITIES_FALLBACK as readonly string[]).map((slug) => ({
-          slug,
-          label: toCityLabel(slug),
+      : (TOP_CITIES_FALLBACK as readonly { slug: string; label: string }[]).map((c) => ({
+          slug: c.slug,
+          label: c.label,
         }))
 
   const topCities = typeaheadCities.slice(0, 6)
@@ -91,6 +110,8 @@ export async function buildHubSnapshot(
     cityLabel: string
     items: Array<Omit<ReturnType<typeof toCardItem>, 'id'> & { listingId: number }>
   }> = []
+
+  console.log('top cities', topCities)
 
   for (const c of topCities) {
     const citySlug = c.slug
