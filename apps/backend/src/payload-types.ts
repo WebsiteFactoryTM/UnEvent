@@ -1383,10 +1383,6 @@ export interface Search {
     | {
         relationTo: 'events';
         value: number | Event;
-      }
-    | {
-        relationTo: 'profiles';
-        value: number | Profile;
       };
   description?: string | null;
   address?: string | null;
