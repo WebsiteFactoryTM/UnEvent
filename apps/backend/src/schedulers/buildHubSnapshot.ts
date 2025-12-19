@@ -65,9 +65,20 @@ export async function buildHubSnapshot(
   }))
 
   // 1) Featured nationwide (adjust filters to your schema)
+  const featuredWhere: any = {
+    moderationStatus: { equals: 'approved' },
+    tier: { in: ['recommended', 'sponsored'] },
+  }
+
+  // For events, exclude finished events and events that have ended
+  if (collection === 'events') {
+    featuredWhere.eventStatus = { not_equals: 'finished' }
+    featuredWhere.endDate = { greater_than_equal: new Date().toISOString() }
+  }
+
   const featured = await payload.find({
     collection,
-    where: { moderationStatus: { equals: 'approved' }, tier: { in: ['recommended', 'sponsored'] } }, // adapt
+    where: featuredWhere,
     sort: ['-rating', '-reviewsCount', '-updatedAt'],
     limit: 12,
     depth: 1, // keep snapshots light & fast
@@ -78,18 +89,26 @@ export async function buildHubSnapshot(
   const popularCityRows: Array<{
     citySlug: string
     cityLabel: string
-    items: ReturnType<typeof toCardItem>[]
+    items: Array<Omit<ReturnType<typeof toCardItem>, 'id'> & { listingId: number }>
   }> = []
 
   for (const c of topCities) {
     const citySlug = c.slug
+    const cityWhere: any = {
+      'city.slug': { equals: citySlug }, // adapt to your city field path
+      moderationStatus: { equals: 'approved' },
+      tier: { in: ['recommended', 'sponsored'] },
+    }
+
+    // For events, exclude finished events and events that have ended
+    if (collection === 'events') {
+      cityWhere.eventStatus = { not_equals: 'finished' }
+      cityWhere.endDate = { greater_than_equal: new Date().toISOString() }
+    }
+
     const top = await payload.find({
       collection,
-      where: {
-        'city.slug': { equals: citySlug }, // adapt to your city field path
-        moderationStatus: { equals: 'approved' },
-        tier: { in: ['recommended', 'sponsored'] },
-      },
+      where: cityWhere,
       sort: ['-rating', '-reviewsCount', '-updatedAt'],
       limit: 9,
       depth: 1,
@@ -99,7 +118,10 @@ export async function buildHubSnapshot(
       popularCityRows.push({
         citySlug,
         cityLabel: c.label,
-        items: top.docs.map((doc) => toCardItem(collection, doc)),
+        items: top.docs.map((doc) => {
+          const { id, ...rest } = toCardItem(collection, doc)
+          return { listingId: id, ...rest }
+        }),
       })
     }
   }
@@ -123,7 +145,10 @@ export async function buildHubSnapshot(
     topCities, // NEW: dynamic top cities used for rows/chips
     topTypes, // NEW: top 10 listing types for this domain
     popularCityRows,
-    featured: featured.docs.map((doc) => toCardItem(collection, doc)),
+    featured: featured.docs.map((doc) => {
+      const { id, ...rest } = toCardItem(collection, doc)
+      return { listingId: id, ...rest }
+    }),
     popularSearchCombos,
     generatedAt: new Date().toISOString(),
     algoVersion: 'v1',

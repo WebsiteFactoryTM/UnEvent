@@ -330,6 +330,9 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       const hasStart = Boolean(qStartISO)
       const hasEnd = Boolean(qEndISO)
 
+      // Exclude finished events - only show upcoming and in-progress events
+      whereEntity.and?.push({ eventStatus: { not_equals: 'finished' } })
+
       if (hasStart && hasEnd) {
         // Overlap: event.start < qEnd  AND  event.end >= qStart
         whereEntity.and?.push({

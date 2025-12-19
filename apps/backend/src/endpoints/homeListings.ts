@@ -154,6 +154,8 @@ function getExtraListings(
     moderationStatus: { equals: 'approved' }
     id: { not_in: Array<number> }
     deletedAt?: { exists: false }
+    eventStatus?: { not_equals: 'finished' }
+    endDate?: { greater_than_equal: string }
   } = {
     moderationStatus: { equals: 'approved' },
     id: { not_in: exclude },
@@ -163,6 +165,12 @@ function getExtraListings(
     where.tier = {
       in: ['sponsored', 'recommended'],
     }
+  }
+
+  // For events, exclude finished events and events that have ended
+  if (collection === 'events') {
+    where.eventStatus = { not_equals: 'finished' }
+    where.endDate = { greater_than_equal: new Date().toISOString() }
   }
 
   return payload.find({
