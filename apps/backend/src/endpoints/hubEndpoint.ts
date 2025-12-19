@@ -13,14 +13,36 @@ export const hubHandler: PayloadHandler = async (req: PayloadRequest) => {
       depth: 0,
     })
     const doc = docs[0]
+
     if (!doc) return new Response(JSON.stringify({ error: 'snapshot not found' }), { status: 404 })
+
+    // Transform listingId to id for API response (to match frontend expectations)
+    // Exclude both listingId and the Payload document id, then set id to listingId
+    type HubSnapshotItem = {
+      listingId: number
+      id?: string | unknown
+      [key: string]: unknown
+    }
+    const transformItem = (item: HubSnapshotItem) => {
+      const { listingId, id: _payloadId, ...rest } = item
+      return { id: listingId, ...rest }
+    }
+
+    type HubSnapshotRow = {
+      items?: HubSnapshotItem[] | null
+      [key: string]: unknown
+    }
+    const transformRow = (row: HubSnapshotRow) => ({
+      ...row,
+      items: row.items?.map(transformItem) ?? null,
+    })
 
     return new Response(
       JSON.stringify({
         listingType: doc.listingType,
         typeaheadCities: doc.typeaheadCities,
-        popularCityRows: doc.popularCityRows,
-        featured: doc.featured,
+        popularCityRows: doc.popularCityRows?.map(transformRow),
+        featured: doc.featured?.map(transformItem) ?? null,
         popularSearchCombos: doc.popularSearchCombos,
         topCities: doc.topCities,
         topTypes: doc.topTypes,
