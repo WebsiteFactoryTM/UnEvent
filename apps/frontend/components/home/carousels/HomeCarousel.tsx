@@ -126,7 +126,7 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
           <CarouselContent>
             {normalizedListings.map((cardData: ListingCardData) => (
               <CarouselItem
-                key={cardData.title}
+                key={`${cardData.title}-${cardData.id}`}
                 className="md:basis-1/2 lg:basis-1/3"
               >
                 <ListingCard {...cardData} />

@@ -195,7 +195,7 @@ const CityArchive = ({
   // Transform listings for map view
   const mapListings = useMemo(() => {
     const transformed = combinedListings.map((item: CardItem) => ({
-      id: item.listingId,
+      id: item.id,
       slug: item.slug,
       title: item.title,
       geo: item.geo ?? undefined,

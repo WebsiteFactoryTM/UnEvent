@@ -311,7 +311,7 @@ export const fetchSimilarListings = async (
           "finished",
         );
         fallbackUrl.searchParams.set(
-          "where[endDate][gte]",
+          "where[endDate][greater_than_equal]",
           new Date().toISOString(),
         );
       }

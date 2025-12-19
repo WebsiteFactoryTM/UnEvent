@@ -5,13 +5,13 @@ import { AddListingButton } from "@/components/archives/AddListingButton";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
 import { fetchHubSnapshot } from "@/lib/api/hub";
-import { HubSnapshot } from "@/types/payload-types";
+import type { HubSnapshotResponse } from "@/lib/normalizers/hub";
 
 import { OccasionChips } from "@/components/hub/OccasionChips";
 import { CityRow } from "@/components/hub/CityRow";
 import FeaturedGrid from "@/components/hub/FeaturedGrid";
 import PopularSearches from "@/components/hub/PopularSearches";
-import { type ListingCardData } from "@/lib/normalizers/hub";
+import { cardItemToListingCardData } from "@/lib/normalizers/hub";
 import { ListingType } from "@/types/listings";
 import { ListingBreadcrumbs } from "@/components/listing/shared/ListingBreadcrumbs";
 import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
@@ -20,26 +20,6 @@ import { CityChips } from "@/components/hub/CityChips";
 import ArchiveTitle from "@/components/archives/ArchiveTitle";
 
 export const revalidate = 3600; // ISR: revalidate every hour
-
-const toCard = (
-  it: NonNullable<HubSnapshot["featured"]>[number],
-  listingType: ListingType,
-): ListingCardData => ({
-  id: it.listingId,
-  title: it.title,
-  slug: it.slug,
-  image: { url: it.imageUrl || "/placeholder.svg", alt: it.title },
-  city: it.cityLabel || "România",
-  type: it.type || getListingTypeLabel(listingType),
-  verified: Boolean(it.verified),
-  rating:
-    typeof it.ratingAvg === "number" && typeof it.ratingCount === "number"
-      ? { average: it.ratingAvg, count: it.ratingCount }
-      : undefined,
-  views: 0,
-  listingType: listingType as any,
-  date: it.startDate || undefined,
-});
 
 const titles: Record<string, string> = {
   locatii: "Locații Evenimente România - Săli & Spații de Închiriat | UN:EVENT",
@@ -103,7 +83,7 @@ export default async function ListingTypePage({
     notFound();
   }
 
-  let snapshot: HubSnapshot | null = null;
+  let snapshot: HubSnapshotResponse | null = null;
   try {
     snapshot = await fetchHubSnapshot(listingType as ListingType);
   } catch (e) {
@@ -120,12 +100,12 @@ export default async function ListingTypePage({
     citySlug: row.citySlug,
     cityLabel: row.cityLabel,
     items: (row.items || []).map((it) =>
-      toCard(it!, listingType as ListingType),
+      cardItemToListingCardData(it!, listingType as ListingType),
     ),
   }));
 
-  const featuredNormalized: ListingCardData[] = (snapshot?.featured || []).map(
-    (it) => toCard(it!, listingType as ListingType),
+  const featuredNormalized = (snapshot?.featured || []).map((it) =>
+    cardItemToListingCardData(it!, listingType as ListingType),
   );
 
   const options =

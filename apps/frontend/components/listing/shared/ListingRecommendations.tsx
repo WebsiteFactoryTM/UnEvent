@@ -68,6 +68,15 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
     );
   }, [similarListings, typeRecommendations]);
 
+  const seeAllPath = city
+    ? `${typeRecommendations}/oras/${city.slug}`
+    : `${typeRecommendations}`;
+  const title =
+    label ||
+    typeRecommendations.charAt(0).toUpperCase() +
+      typeRecommendations.slice(1) +
+      " recomandate";
+
   if (isLoading) return <CarouselSkeleton count={3} showAvatar={false} />;
 
   if (error)
@@ -79,19 +88,15 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
 
   if (!normalizedListings || normalizedListings.length === 0)
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p>Nu sunt rezultate pentru această căutare</p>
+      <div className="flex flex-col gap-2">
+        {" "}
+        <h2 className="text-3xl font-bold">{title}</h2>
+        {subLabel && <span className="text-muted-foreground">{subLabel}</span>}
+        <div className="text-center py-8 text-muted-foreground">
+          <p>Nu sunt rezultate pentru această căutare</p>
+        </div>
       </div>
     );
-
-  const seeAllPath = city
-    ? `${typeRecommendations}/oras/${city.slug}`
-    : `${typeRecommendations}`;
-  const title =
-    label ||
-    typeRecommendations.charAt(0).toUpperCase() +
-      typeRecommendations.slice(1) +
-      " recomandate";
 
   return (
     <section className="container mx-auto px-4 py-6">
