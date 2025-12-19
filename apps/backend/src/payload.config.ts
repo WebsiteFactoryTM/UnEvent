@@ -43,11 +43,13 @@ import { hubHandler } from './endpoints/hubEndpoint'
 import { regenerateHubHandler } from './endpoints/regenerateHub'
 import { testCityCountersHandler } from './endpoints/testCityCounters'
 import { testListingTypeCountersHandler } from './endpoints/testListingTypeCounters'
+import { updateEventStatusHandler } from './endpoints/updateEventStatusEndpoint'
 import { ListingType } from './payload-types'
 import { registerSyncListingTypeCountersScheduler } from './schedulers/syncListingTypeCounters'
 import { registerSyncCityCountersScheduler } from './schedulers/syncCityCounters'
 import { registerCleanupTempMediaScheduler } from './schedulers/cleanupTempMedia'
 import { registerCleanupDeletedListingsScheduler } from './schedulers/cleanupDeletedListings'
+import { registerUpdateEventStatusScheduler } from './schedulers/updateEventStatus'
 import { migrations } from './migrations'
 import { logSchedulerConfig, setSchedulerEnvironment } from './utils/schedulerConfig'
 
@@ -157,6 +159,11 @@ export default buildConfig({
       path: '/update-listing-type-counters',
       method: 'post',
       handler: testListingTypeCountersHandler,
+    },
+    {
+      path: '/update-event-status',
+      method: 'post',
+      handler: updateEventStatusHandler,
     },
     {
       path: '/report',
@@ -297,12 +304,11 @@ export default buildConfig({
     openapi({ openapiVersion: '3.0', metadata: { title: 'Dev API', version: '0.0.1' } }),
     swaggerUI({ docsUrl: '/swagger', specEndpoint: '/openapi.json', enabled: true }),
     searchPlugin({
-      collections: ['locations', 'services', 'events', 'profiles'],
+      collections: ['locations', 'services', 'events'],
       defaultPriorities: {
         locations: 10,
         services: 20,
         events: 30,
-        profiles: 40,
       },
       searchOverrides: {
         fields: ({ defaultFields }: { defaultFields: Field[] }) => [
@@ -442,6 +448,7 @@ export default buildConfig({
       registerSyncCityCountersScheduler(payload)
       registerCleanupTempMediaScheduler(payload)
       registerCleanupDeletedListingsScheduler(payload)
+      registerUpdateEventStatusScheduler(payload)
 
       console.log('[Payload] ✅ All schedulers initialized')
     } else {

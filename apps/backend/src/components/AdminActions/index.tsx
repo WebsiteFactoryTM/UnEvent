@@ -32,6 +32,14 @@ export const AdminActionsPanel: React.FC = () => {
           confirmMessage="Are you sure you want to update listing type counters?"
           successMessage="Listing type counters updated successfully"
         />
+        <AdminActionButton
+          label="Update Event Statuses"
+          endpoint="/api/update-event-status"
+          method="POST"
+          description="Update event statuses based on current date (finished/in-progress/upcoming)"
+          confirmMessage="Are you sure you want to update all event statuses? This will process all events in the database."
+          successMessage="Event statuses updated successfully"
+        />
       </div>
     </div>
   )
