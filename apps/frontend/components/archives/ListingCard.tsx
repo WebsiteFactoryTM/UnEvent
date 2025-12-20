@@ -59,6 +59,7 @@ export function ListingCard({
     { description_rich, description },
     130,
   );
+  console.log(id, title, image);
 
   return (
     <Link href={`/${listingType}/${slug}`}>

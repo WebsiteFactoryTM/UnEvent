@@ -94,6 +94,7 @@ export default buildConfig({
           exportName: 'Icon',
         },
       },
+      beforeDashboard,
     },
     meta: {
       icons: [

@@ -55,9 +55,6 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
     );
   }, [listings, listingType]);
 
-  console.log("listings", listings);
-  console.log("normalizedListings", normalizedListings);
-
   // 1️⃣ Loading skeleton
   if (isLoading) return <CarouselSkeleton count={3} showAvatar={true} />;
 
