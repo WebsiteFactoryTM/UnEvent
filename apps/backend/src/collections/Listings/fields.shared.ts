@@ -34,7 +34,7 @@ export const sharedListingFields: Field[] = [
     },
     maxDepth: 2,
   },
-  { name: 'description', type: 'textarea', required: false },
+  { name: 'description', type: 'textarea', required: false, admin: { readOnly: true } },
   restrictedRichTextField('description_rich', 'Description (Rich Text)'),
   {
     name: 'city',
@@ -82,10 +82,30 @@ export const sharedListingFields: Field[] = [
       description: 'Status of the listing',
     },
   },
+
   {
     name: 'rejectionReason',
     type: 'textarea',
     admin: { condition: (data) => data?.moderationStatus === 'rejected', position: 'sidebar' },
+  },
+  {
+    name: 'tier',
+    type: 'select',
+    defaultValue: 'standard',
+    options: [
+      { label: 'New', value: 'new' },
+      { label: 'Standard', value: 'standard' },
+      {
+        label: 'Sponsored',
+        value: 'sponsored',
+      },
+      { label: 'Recommended', value: 'recommended' },
+    ],
+    index: true,
+    admin: {
+      position: 'sidebar',
+      description: 'Tier of the listing',
+    },
   },
   { name: 'featuredImage', type: 'upload', relationTo: 'media', required: false },
   { name: 'gallery', type: 'upload', relationTo: 'media', hasMany: true },
@@ -136,24 +156,6 @@ export const sharedListingFields: Field[] = [
     type: 'date',
     defaultValue: new Date(),
     admin: { readOnly: true },
-  },
-  {
-    name: 'tier',
-    type: 'select',
-    options: [
-      { label: 'New', value: 'new' },
-      { label: 'Standard', value: 'standard' },
-      {
-        label: 'Sponsored',
-        value: 'sponsored',
-      },
-      { label: 'Recommended', value: 'recommended' },
-    ],
-    index: true,
-    admin: {
-      position: 'sidebar',
-      description: 'Tier of the listing',
-    },
   },
 
   {

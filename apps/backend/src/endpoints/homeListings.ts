@@ -116,6 +116,8 @@ export const homeHandler: PayloadHandler = async (req: PayloadRequest) => {
     }
 
     const shaped = shapeHomeResponse(finalListings as ShapedHomeListings)
+    console.log('shaped', shaped)
+
     return new Response(JSON.stringify(shaped), { status: 200 })
   } catch (error) {
     console.error(error)

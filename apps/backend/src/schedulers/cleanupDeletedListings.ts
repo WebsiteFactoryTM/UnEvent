@@ -5,9 +5,9 @@ import * as Sentry from '@sentry/nextjs'
 
 async function cleanupDeletedListings(payload: Payload) {
   // Calculate cutoff date: 6 months ago
-  const sixMonthsAgo = new Date()
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-  const cutoffISO = sixMonthsAgo.toISOString()
+  const twoYearsAgo = new Date()
+  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2)
+  const cutoffISO = twoYearsAgo.toISOString()
 
   const collections: Array<'locations' | 'events' | 'services'> = [
     'locations',
