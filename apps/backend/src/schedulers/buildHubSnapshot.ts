@@ -83,35 +83,8 @@ export async function buildHubSnapshot(
     label: (t.title as string) || (t.slug as string),
   }))
 
-  // 1) Featured nationwide (adjust filters to your schema)
-  const featuredWhere: any = {
-    moderationStatus: { equals: 'approved' },
-    tier: { in: ['recommended', 'sponsored'] },
-  }
-
-  // For events, exclude finished events and events that have ended
-  if (collection === 'events') {
-    featuredWhere.eventStatus = { not_equals: 'finished' }
-    featuredWhere.endDate = { greater_than_equal: new Date().toISOString() }
-  }
-
-  const featured = await payload.find({
-    collection,
-    where: featuredWhere,
-    sort: ['-rating', '-reviewsCount', '-updatedAt'],
-    limit: 12,
-    depth: 1, // keep snapshots light & fast
-  })
-  console.log(`[HubSnapshot] Found ${featured.docs.length} featured nationwide`)
-
   // 2) City rows (use dynamic topCities)
-  const popularCityRows: Array<{
-    citySlug: string
-    cityLabel: string
-    items: Array<Omit<ReturnType<typeof toCardItem>, 'id'> & { listingId: number }>
-  }> = []
-
-  console.log('top cities', topCities)
+  const popularCityRows: NonNullable<HubSnapshot['popularCityRows']> = []
 
   for (const c of topCities) {
     const citySlug = c.slug
@@ -140,13 +113,65 @@ export async function buildHubSnapshot(
         citySlug,
         cityLabel: c.label,
         items: top.docs.map((doc) => {
-          const { id, ...rest } = toCardItem(collection, doc)
-          return { listingId: id, ...rest }
+          const cardItem = toCardItem(collection, doc)
+          const { id, geo: _geo, description_rich, ...rest } = cardItem
+          return {
+            listingId: id,
+            slug: rest.slug,
+            title: rest.title,
+            cityLabel: rest.cityLabel ?? null,
+            imageUrl: rest.imageUrl ?? null,
+            verified: rest.verified ?? null,
+            ratingAvg: rest.ratingAvg ?? null,
+            ratingCount: rest.ratingCount ?? null,
+            description: rest.description ?? null,
+            description_rich:
+              (description_rich as
+                | {
+                    [k: string]: unknown
+                  }
+                | unknown[]
+                | string
+                | number
+                | boolean
+                | null
+                | undefined) ?? null,
+            type: rest.type ?? null,
+            capacity: rest.capacity ?? null,
+            startDate: rest.startDate ?? undefined,
+            tier: rest.tier ?? null,
+          } as NonNullable<NonNullable<HubSnapshot['popularCityRows']>[number]['items']>[number]
         }),
       })
     }
   }
+  console.log(`[HubSnapshot] Found ${popularCityRows.length} popular city rows`)
 
+  // 1) Featured nationwide (adjust filters to your schema)
+  const featuredWhere: any = {
+    moderationStatus: { equals: 'approved' },
+    tier: { in: ['recommended', 'sponsored'] },
+    id: {
+      not_in: popularCityRows.flatMap(
+        (row) => row.items?.map((item) => item.listingId as number) ?? [],
+      ),
+    },
+  }
+
+  // For events, exclude finished events and events that have ended
+  if (collection === 'events') {
+    featuredWhere.eventStatus = { not_equals: 'finished' }
+    featuredWhere.endDate = { greater_than_equal: new Date().toISOString() }
+  }
+
+  const featured = await payload.find({
+    collection,
+    where: featuredWhere,
+    sort: ['-rating', '-reviewsCount', '-updatedAt'],
+    limit: 12,
+    depth: 1, // keep snapshots light & fast
+  })
+  console.log(`[HubSnapshot] Found ${featured.docs.length} featured nationwide`)
   // 3) Typeahead cities (use dynamic list)
 
   // 4) Popular search combos (static for now)
@@ -160,15 +185,41 @@ export async function buildHubSnapshot(
   console.log(`[HubSnapshot] Found ${popularSearchCombos.length} popular search combos`)
 
   // 5) Upsert snapshot with new fields
-  const data: Omit<HubSnapshot, 'id' | 'updatedAt' | 'createdAt'> = {
+  const data: Omit<HubSnapshot, 'id' | 'updatedAt' | 'createdAt' | 'sizes' | 'deletedAt'> = {
     listingType: collection,
     typeaheadCities, // for UI autocomplete
     topCities, // NEW: dynamic top cities used for rows/chips
     topTypes, // NEW: top 10 listing types for this domain
     popularCityRows,
     featured: featured.docs.map((doc) => {
-      const { id, ...rest } = toCardItem(collection, doc)
-      return { listingId: id, ...rest }
+      const cardItem = toCardItem(collection, doc)
+      const { id, geo: _geo, description_rich, ...rest } = cardItem
+      return {
+        listingId: id,
+        slug: rest.slug,
+        title: rest.title,
+        cityLabel: rest.cityLabel ?? null,
+        imageUrl: rest.imageUrl ?? null,
+        verified: rest.verified ?? null,
+        ratingAvg: rest.ratingAvg ?? null,
+        ratingCount: rest.ratingCount ?? null,
+        description: rest.description ?? null,
+        description_rich:
+          (description_rich as
+            | {
+                [k: string]: unknown
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null
+            | undefined) ?? null,
+        type: rest.type ?? null,
+        capacity: rest.capacity ?? null,
+        startDate: rest.startDate ?? undefined,
+        tier: rest.tier ?? null,
+      } as NonNullable<HubSnapshot['featured']>[number]
     }),
     popularSearchCombos,
     generatedAt: new Date().toISOString(),
