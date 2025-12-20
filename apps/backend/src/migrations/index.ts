@@ -13,6 +13,7 @@ import * as migration_20251215_074247_make_city_optional_for_drafts from './2025
 import * as migration_20251216_120412 from './20251216_120412';
 import * as migration_20251217_113056 from './20251217_113056';
 import * as migration_20251218_060720 from './20251218_060720';
+import * as migration_20251219_141657 from './20251219_141657';
 
 export const migrations = [
   {
@@ -88,6 +89,11 @@ export const migrations = [
   {
     up: migration_20251218_060720.up,
     down: migration_20251218_060720.down,
-    name: '20251218_060720'
+    name: '20251218_060720',
+  },
+  {
+    up: migration_20251219_141657.up,
+    down: migration_20251219_141657.down,
+    name: '20251219_141657'
   },
 ];

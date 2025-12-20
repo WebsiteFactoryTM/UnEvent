@@ -410,6 +410,10 @@ export interface Event {
    */
   moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
+  /**
+   * Tier of the listing
+   */
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
@@ -430,10 +434,6 @@ export interface Event {
   rating?: number | null;
   reviewCount?: number | null;
   lastViewedAt?: string | null;
-  /**
-   * Tier of the listing
-   */
-  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   /**
    * Keywords to help find this listing
    */
@@ -670,6 +670,10 @@ export interface Location {
    */
   moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
+  /**
+   * Tier of the listing
+   */
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
@@ -690,10 +694,6 @@ export interface Location {
   rating?: number | null;
   reviewCount?: number | null;
   lastViewedAt?: string | null;
-  /**
-   * Tier of the listing
-   */
-  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   /**
    * Keywords to help find this listing
    */
@@ -863,6 +863,10 @@ export interface Service {
    */
   moderationStatus?: ('pending' | 'approved' | 'rejected' | 'draft') | null;
   rejectionReason?: string | null;
+  /**
+   * Tier of the listing
+   */
+  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   /**
@@ -883,10 +887,6 @@ export interface Service {
   rating?: number | null;
   reviewCount?: number | null;
   lastViewedAt?: string | null;
-  /**
-   * Tier of the listing
-   */
-  tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
   /**
    * Keywords to help find this listing
    */
@@ -1321,9 +1321,19 @@ export interface HubSnapshot {
               ratingAvg?: number | null;
               ratingCount?: number | null;
               description?: string | null;
+              description_rich?:
+                | {
+                    [k: string]: unknown;
+                  }
+                | unknown[]
+                | string
+                | number
+                | boolean
+                | null;
               type?: string | null;
               capacity?: number | null;
               startDate?: string | null;
+              tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
               id?: string | null;
             }[]
           | null;
@@ -1341,9 +1351,19 @@ export interface HubSnapshot {
         ratingAvg?: number | null;
         ratingCount?: number | null;
         description?: string | null;
+        description_rich?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
         type?: string | null;
         capacity?: number | null;
         startDate?: string | null;
+        tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
         id?: string | null;
       }[]
     | null;
@@ -1730,6 +1750,7 @@ export interface EventsSelect<T extends boolean = true> {
       };
   moderationStatus?: T;
   rejectionReason?: T;
+  tier?: T;
   featuredImage?: T;
   gallery?: T;
   verifiedStatus?: T;
@@ -1741,7 +1762,6 @@ export interface EventsSelect<T extends boolean = true> {
   rating?: T;
   reviewCount?: T;
   lastViewedAt?: T;
-  tier?: T;
   tags?:
     | T
     | {
@@ -1823,6 +1843,7 @@ export interface LocationsSelect<T extends boolean = true> {
       };
   moderationStatus?: T;
   rejectionReason?: T;
+  tier?: T;
   featuredImage?: T;
   gallery?: T;
   verifiedStatus?: T;
@@ -1834,7 +1855,6 @@ export interface LocationsSelect<T extends boolean = true> {
   rating?: T;
   reviewCount?: T;
   lastViewedAt?: T;
-  tier?: T;
   tags?:
     | T
     | {
@@ -1920,6 +1940,7 @@ export interface ServicesSelect<T extends boolean = true> {
       };
   moderationStatus?: T;
   rejectionReason?: T;
+  tier?: T;
   featuredImage?: T;
   gallery?: T;
   verifiedStatus?: T;
@@ -1931,7 +1952,6 @@ export interface ServicesSelect<T extends boolean = true> {
   rating?: T;
   reviewCount?: T;
   lastViewedAt?: T;
-  tier?: T;
   tags?:
     | T
     | {
@@ -2118,9 +2138,11 @@ export interface HubSnapshotsSelect<T extends boolean = true> {
               ratingAvg?: T;
               ratingCount?: T;
               description?: T;
+              description_rich?: T;
               type?: T;
               capacity?: T;
               startDate?: T;
+              tier?: T;
               id?: T;
             };
         id?: T;
@@ -2137,9 +2159,11 @@ export interface HubSnapshotsSelect<T extends boolean = true> {
         ratingAvg?: T;
         ratingCount?: T;
         description?: T;
+        description_rich?: T;
         type?: T;
         capacity?: T;
         startDate?: T;
+        tier?: T;
         id?: T;
       };
   popularSearchCombos?:
