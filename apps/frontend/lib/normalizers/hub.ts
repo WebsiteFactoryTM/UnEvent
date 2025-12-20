@@ -111,8 +111,47 @@ function mediaToImage(
   };
 }
 
+/**
+ * Helper to extract image from either:
+ * - Raw Payload doc (has featuredImage as Media object)
+ * - CardItem format (has imageUrl as string)
+ */
+function extractImage(
+  listing: Partial<Location | Service | Event> & { imageUrl?: string },
+  altFallback: string = "Imagine",
+): { url: string; alt: string } {
+  // If it's already in CardItem format (has imageUrl)
+  if ("imageUrl" in listing && typeof listing.imageUrl === "string") {
+    return {
+      url: listing.imageUrl || "/placeholder.svg",
+      alt: (listing.title as string) || altFallback,
+    };
+  }
+  // Otherwise, it's a raw Payload doc (has featuredImage)
+  return mediaToImage(
+    (listing as Location | Service | Event).featuredImage,
+    (listing.title as string) || altFallback,
+  );
+}
+
 function cityToName(c?: number | City | null): string {
   return typeof c === "object" && c ? c.name : "România";
+}
+
+/**
+ * Helper to extract city name from either:
+ * - Raw Payload doc (has city as City object or number)
+ * - CardItem format (has cityLabel as string)
+ */
+function extractCityName(
+  listing: Partial<Location | Service | Event> & { cityLabel?: string },
+): string {
+  // If it's already in CardItem format (has cityLabel)
+  if ("cityLabel" in listing && typeof listing.cityLabel === "string") {
+    return listing.cityLabel || "România";
+  }
+  // Otherwise, it's a raw Payload doc (has city)
+  return cityToName((listing as Location | Service | Event).city);
 }
 
 function normalizeLocationToCardData(
@@ -122,8 +161,8 @@ function normalizeLocationToCardData(
     id: listing.id as number,
     title: listing.title as string,
     slug: listing.slug || String(listing.id),
-    image: mediaToImage(listing.featuredImage, listing.title),
-    city: cityToName(listing.city),
+    image: extractImage(listing, listing.title),
+    city: extractCityName(listing),
     type: getTypeLabelFromRelation(listing.type, "Locație"),
     verified: listing.verifiedStatus === "approved",
     rating:
@@ -150,8 +189,8 @@ function normalizeServiceToCardData(
     id: listing.id as number,
     title: listing.title as string,
     slug: listing.slug || String(listing.id),
-    image: mediaToImage(listing.featuredImage, listing.title),
-    city: cityToName(listing.city),
+    image: extractImage(listing, listing.title),
+    city: extractCityName(listing),
     type: getTypeLabelFromRelation(listing.type, "Serviciu"),
     verified: listing.verifiedStatus === "approved",
     rating:
@@ -177,8 +216,8 @@ function normalizeEventToCardData(
     id: listing.id as number,
     title: listing.title as string,
     slug: listing.slug || String(listing.id),
-    image: mediaToImage(listing.featuredImage, listing.title),
-    city: cityToName(listing.city),
+    image: extractImage(listing, listing.title),
+    city: extractCityName(listing),
     type: getTypeLabelFromRelation(listing.type, "Eveniment"),
     verified: listing.verifiedStatus === "approved",
     rating:
@@ -251,7 +290,9 @@ export function cardItemToListingCardData(
     "description" in item ? (item.description ?? undefined) : undefined;
   const description_rich =
     "description_rich" in item
-      ? (item.description_rich ?? undefined)
+      ? ((item.description_rich as
+          | (Location | Event | Service)["description_rich"]
+          | undefined) ?? undefined)
       : undefined;
 
   return {
@@ -280,78 +321,4 @@ export function cardItemToListingCardData(
     description,
     description_rich,
   };
-}
-
-export function toCardItem(
-  listingType: "locations" | "services" | "events",
-  doc: Location | Service | Event,
-  options?: { includeGeo?: boolean },
-): {
-  id: number;
-  slug: string;
-  title: string;
-  cityLabel: string;
-  imageUrl: string | undefined;
-  verified: boolean;
-  ratingAvg: number | undefined;
-  ratingCount: number | undefined;
-  type: string;
-  startDate: string | undefined;
-  capacity: number;
-  tier: "new" | "standard" | "sponsored" | "recommended" | null | undefined;
-  description?: string | null;
-  description_rich?: unknown;
-  geo?: [number, number] | null | undefined;
-} {
-  let capacity = 0;
-  if (listingType === "locations") {
-    capacity = (doc as Location)?.capacity?.indoor ?? 0;
-  } else if (listingType === "events") {
-    capacity = (doc as Event)?.capacity?.total ?? 0;
-  }
-  return {
-    id: doc.id,
-    slug: doc.slug as string,
-    title: doc.title as string,
-    cityLabel: (doc.city as City)?.name ?? "",
-    imageUrl: getImageURL(doc),
-    verified: doc.verifiedStatus === "approved",
-    ratingAvg: doc.rating as number | undefined,
-    ratingCount: doc.reviewCount as number | undefined,
-    type:
-      [
-        ...new Set(
-          doc.type?.map((t: number | TaxType) => (t as TaxType).category),
-        ),
-      ]
-        .slice(0, 3)
-        .join(", ") ?? "",
-    startDate: ((doc as Event)?.startDate as string | undefined) || undefined,
-    capacity: capacity,
-    tier: doc.tier,
-    description: (doc as Location | Service | Event)?.description ?? null,
-    description_rich:
-      (doc as Location | Service | Event)?.description_rich ?? null,
-    // Include geo only if requested (for feedEndpoint, not for buildHubSnapshot)
-    ...(options?.includeGeo && {
-      geo: doc.geo ? [doc.geo[0], doc.geo[1]] : null,
-    }),
-  };
-}
-
-/**
- * Helper to extract image URL from listing document
- * Prefers featuredImage, falls back to first gallery image
- */
-export function getImageURL(
-  doc: Location | Service | Event,
-): string | undefined {
-  // Prefer featuredImage.url; fallback to first gallery image; adjust to your schema
-  const file =
-    doc.featuredImage ?? (doc.gallery?.[0] as number | Media | undefined);
-  if (!file) return undefined;
-  // When depth:0, uploads are IDs; if you store full URL on create, use that.
-  return typeof file === "number"
-    ? undefined
-    : ((file.url ?? undefined) as string | undefined);
 }

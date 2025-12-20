@@ -1321,9 +1321,19 @@ export interface HubSnapshot {
               ratingAvg?: number | null;
               ratingCount?: number | null;
               description?: string | null;
+              description_rich?:
+                | {
+                    [k: string]: unknown;
+                  }
+                | unknown[]
+                | string
+                | number
+                | boolean
+                | null;
               type?: string | null;
               capacity?: number | null;
               startDate?: string | null;
+              tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
               id?: string | null;
             }[]
           | null;
@@ -1341,9 +1351,19 @@ export interface HubSnapshot {
         ratingAvg?: number | null;
         ratingCount?: number | null;
         description?: string | null;
+        description_rich?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
         type?: string | null;
         capacity?: number | null;
         startDate?: string | null;
+        tier?: ('new' | 'standard' | 'sponsored' | 'recommended') | null;
         id?: string | null;
       }[]
     | null;
@@ -1383,10 +1403,6 @@ export interface Search {
     | {
         relationTo: 'events';
         value: number | Event;
-      }
-    | {
-        relationTo: 'profiles';
-        value: number | Profile;
       };
   description?: string | null;
   address?: string | null;
@@ -2122,9 +2138,11 @@ export interface HubSnapshotsSelect<T extends boolean = true> {
               ratingAvg?: T;
               ratingCount?: T;
               description?: T;
+              description_rich?: T;
               type?: T;
               capacity?: T;
               startDate?: T;
+              tier?: T;
               id?: T;
             };
         id?: T;
@@ -2141,9 +2159,11 @@ export interface HubSnapshotsSelect<T extends boolean = true> {
         ratingAvg?: T;
         ratingCount?: T;
         description?: T;
+        description_rich?: T;
         type?: T;
         capacity?: T;
         startDate?: T;
+        tier?: T;
         id?: T;
       };
   popularSearchCombos?:

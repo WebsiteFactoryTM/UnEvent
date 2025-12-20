@@ -88,53 +88,50 @@ export const ListingRecommendations: React.FC<ListingRecommendationsProps> = ({
 
   if (!normalizedListings || normalizedListings.length === 0)
     return (
-      <div className="flex flex-col gap-2">
-        {" "}
+      <section className="container mx-auto px-4 py-6">
         <h2 className="text-3xl font-bold">{title}</h2>
         {subLabel && <span className="text-muted-foreground">{subLabel}</span>}
         <div className="text-center py-8 text-muted-foreground">
           <p>Nu sunt rezultate pentru această căutare</p>
         </div>
-      </div>
+      </section>
     );
 
   return (
-    <section className="container mx-auto px-4 py-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-2">
-            {" "}
-            <h2 className="text-3xl font-bold">{title}</h2>
-            {subLabel && (
-              <span className="text-muted-foreground">{subLabel}</span>
-            )}
-          </div>
-          <Button asChild variant="ghost">
-            <Link href={`/${seeAllPath}`}>Vezi toate</Link>
-          </Button>
+    <section className="container mx-auto px-4 py-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2">
+          {" "}
+          <h2 className="text-3xl font-bold">{title}</h2>
+          {subLabel && (
+            <span className="text-muted-foreground">{subLabel}</span>
+          )}
         </div>
-
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent>
-            {normalizedListings.map((cardData) => (
-              <CarouselItem
-                key={cardData.id}
-                className="md:basis-1/2 lg:basis-1/3"
-              >
-                <ListingCard {...cardData} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+        <Button asChild variant="ghost">
+          <Link href={`/${seeAllPath}`}>Vezi toate</Link>
+        </Button>
       </div>
+
+      <Carousel
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+        className="w-full"
+      >
+        <CarouselContent>
+          {normalizedListings.map((cardData) => (
+            <CarouselItem
+              key={cardData.id}
+              className="md:basis-1/2 lg:basis-1/3"
+            >
+              <ListingCard {...cardData} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
     </section>
   );
 };
