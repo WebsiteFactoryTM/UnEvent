@@ -127,7 +127,34 @@ export function useRecaptcha(): UseRecaptchaReturn {
 
         return token;
       } catch (error) {
-        console.error("[useRecaptcha] Failed to execute reCAPTCHA:", error);
+        // Convert non-Error rejections to Error objects to prevent unhandled rejections
+        const errorToLog =
+          error instanceof Error
+            ? error
+            : new Error(
+                typeof error === "string"
+                  ? `reCAPTCHA error: ${error}`
+                  : `reCAPTCHA execution failed: ${JSON.stringify(error)}`,
+              );
+
+        console.error(
+          "[useRecaptcha] Failed to execute reCAPTCHA:",
+          errorToLog,
+        );
+
+        // Optionally report timeout errors to Sentry for monitoring
+        if (
+          typeof window !== "undefined" &&
+          (window as any).Sentry &&
+          typeof error === "string" &&
+          error.toLowerCase().includes("timeout")
+        ) {
+          (window as any).Sentry.captureMessage(
+            `reCAPTCHA timeout during ${action}`,
+            "warning",
+          );
+        }
+
         return null;
       }
     },

@@ -10,6 +10,8 @@ import {
 } from "react-icons/fa6";
 import { RegulamentAccordion } from "./RegulamentAccordion";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Promoție de Crăciun - Câștigă Status Recomandat pe Viață | UN:EVENT",
   description:
@@ -192,7 +194,7 @@ export default function PromotieDeCraciunPage() {
               </p>
               <div className="flex flex-col gap-2 mt-4">
                 <Button asChild variant="default" size="sm" className="w-full">
-                  <Link href="/cont/locatiile-mele/adauga">
+                  <Link href="/cont/locatiile-mele/adauga" prefetch={false}>
                     Listează locație
                   </Link>
                 </Button>
@@ -202,7 +204,7 @@ export default function PromotieDeCraciunPage() {
                   size="sm"
                   className="w-full"
                 >
-                  <Link href="/cont/serviciile-mele/adauga">
+                  <Link href="/cont/serviciile-mele/adauga" prefetch={false}>
                     Listează serviciu
                   </Link>
                 </Button>
@@ -212,7 +214,7 @@ export default function PromotieDeCraciunPage() {
                   size="sm"
                   className="w-full"
                 >
-                  <Link href="/cont/evenimentele-mele/adauga">
+                  <Link href="/cont/evenimentele-mele/adauga" prefetch={false}>
                     Adaugă eveniment
                   </Link>
                 </Button>
