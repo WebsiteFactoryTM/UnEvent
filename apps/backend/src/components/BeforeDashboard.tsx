@@ -1,6 +1,7 @@
 'use client'
 
 import { useConfig } from '@payloadcms/ui'
+import { Pill } from '@payloadcms/ui/elements/Pill'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import '../app/(payload)/custom.scss'
@@ -52,26 +53,20 @@ interface StatCardProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, link, highlight = false }) => {
-  const cardClasses = ['stat-card', link && 'stat-card--link', highlight && 'stat-card--highlight']
-    .filter(Boolean)
-    .join(' ')
-
-  const cardContent = (
-    <>
+  const content = (
+    <div className="stat-card-content">
       <div className="stat-card__title">{title}</div>
       <div className="stat-card__value">{value.toLocaleString()}</div>
-    </>
+    </div>
   )
 
-  if (link) {
-    return (
-      <Link href={link} className={cardClasses}>
-        {cardContent}
-      </Link>
-    )
-  }
-
-  return <div className={cardClasses}>{cardContent}</div>
+  return (
+    <div className="stat-card-wrapper">
+      <Pill pillStyle={highlight ? 'warning' : 'light'} to={link} className="stat-card-pill">
+        {content}
+      </Pill>
+    </div>
+  )
 }
 
 interface StatGroupProps {
@@ -200,7 +195,9 @@ const ListingTypeTable: React.FC<ListingTypeTableProps> = ({ title, collectionSl
     <div className="listing-type-table">
       <div className="listing-table__header">
         <h3 className="listing-table__title">{title}</h3>
-        <span className="listing-table__total">Total: {stats.total.toLocaleString()}</span>
+        <Pill pillStyle="light-gray" size="small">
+          Total: {stats.total.toLocaleString()}
+        </Pill>
       </div>
       <div className="listing-table__scroll">
         <table className="listing-table">
