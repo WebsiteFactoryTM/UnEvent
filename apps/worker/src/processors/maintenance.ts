@@ -87,6 +87,10 @@ export function createMaintenanceProcessor(): Worker {
       lockDuration: settings.lockDuration,
       stalledInterval: settings.stalledInterval,
       maxStalledCount: settings.maxStalledCount,
+      limiter: {
+        max: 2, // 2 requests
+        duration: 1000, // per 1000ms (1 second) - respects Resend free tier rate limit
+      },
     },
   );
 
