@@ -13,6 +13,8 @@ import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from 
 import { AdminActionsPanel as AdminActionsPanel_4eb4527d009bd3603c51613737cff751 } from '../../../components/AdminActions/index.tsx'
 import { Icon as Icon_3d54692f952a4077fdcf382e43745351 } from '../../../components/Icon.tsx'
 import { Logo as Logo_afd14c61f1f7f1b6398adc932a666c65 } from '../../../components/Logo.tsx'
+import { BeforeDashboard as BeforeDashboard_43197f7a46ef3a6e2ca0b056f2e0a887 } from '../../../components/BeforeDashboard.tsx'
+import { HomeButton as HomeButton_628bbcdcf6f0624939432492fa188547 } from '../../../components/HomeButton.tsx'
 import { AdminErrorBoundary as AdminErrorBoundary_e5a9e14bdbe97e70ba60697217fe7688 } from '@payloadcms/plugin-sentry/client'
 
 export const importMap = {
@@ -31,5 +33,7 @@ export const importMap = {
   "./components/AdminActions/index.tsx#AdminActionsPanel": AdminActionsPanel_4eb4527d009bd3603c51613737cff751,
   "./components/Icon.tsx#Icon": Icon_3d54692f952a4077fdcf382e43745351,
   "./components/Logo.tsx#Logo": Logo_afd14c61f1f7f1b6398adc932a666c65,
+  "./components/BeforeDashboard.tsx#BeforeDashboard": BeforeDashboard_43197f7a46ef3a6e2ca0b056f2e0a887,
+  "./components/HomeButton.tsx#HomeButton": HomeButton_628bbcdcf6f0624939432492fa188547,
   "@payloadcms/plugin-sentry/client#AdminErrorBoundary": AdminErrorBoundary_e5a9e14bdbe97e70ba60697217fe7688
 }

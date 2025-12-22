@@ -57,6 +57,7 @@ import { getTaxonomies } from './endpoints/taxonomies'
 import { reportHandler } from './endpoints/reportEndpoint'
 import { contactHandler } from './endpoints/contactEndpoint'
 import { fixCities } from './endpoints/fixCities'
+import { adminStatsHandler } from './endpoints/adminStats'
 import * as Sentry from '@sentry/nextjs'
 import { sentryPlugin } from '@payloadcms/plugin-sentry'
 import pg from 'pg'
@@ -94,7 +95,18 @@ export default buildConfig({
           exportName: 'Icon',
         },
       },
-      beforeDashboard,
+      beforeDashboard: [
+        {
+          path: './components/BeforeDashboard.tsx',
+          exportName: 'BeforeDashboard',
+        },
+      ],
+      beforeNavLinks: [
+        {
+          path: './components/HomeButton.tsx',
+          exportName: 'HomeButton',
+        },
+      ],
     },
     meta: {
       icons: [
@@ -190,6 +202,11 @@ export default buildConfig({
       path: '/metrics/impression',
       method: 'post',
       handler: recordImpression,
+    },
+    {
+      path: '/admin/stats',
+      method: 'get',
+      handler: adminStatsHandler,
     },
   ],
   collections: [
