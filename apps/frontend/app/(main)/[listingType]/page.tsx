@@ -175,7 +175,7 @@ export default async function ListingTypePage({
 
             {/* Popular city rows */}
             {cityRows.map((row) => {
-              if (row.items.length < 2) return null;
+              if (row.items.length < 1) return null;
               return (
                 <CityRow
                   key={row.citySlug}
