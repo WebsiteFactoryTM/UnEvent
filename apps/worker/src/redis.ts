@@ -11,7 +11,7 @@ export function getRedisConnection(): Redis {
     return redisClient;
   }
 
-  const upstashUrl = process.env.UPSTASH_REDIS_URL;
+  const upstashUrl = process.env.RAILAY_REDIS_URL;
 
   if (upstashUrl) {
     // Parse Upstash TLS connection string: redis://default:password@host:port
