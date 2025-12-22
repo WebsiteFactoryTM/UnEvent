@@ -137,6 +137,19 @@ export function createNotificationsProcessor(): Worker {
   });
 
   worker.on("error", (err: Error) => {
+    // "ERR caller gone" is a non-fatal error that occurs when blocking Redis operations
+    // (like bzpopmin) are interrupted. BullMQ will automatically retry, so we don't need
+    // to log this as an error or send to Sentry.
+    const isCallerGoneError =
+      err.message?.includes("caller gone") ||
+      (err as any).command?.name === "bzpopmin";
+    if (isCallerGoneError) {
+      // Log at debug level - this is expected behavior with Upstash Redis
+      console.debug(
+        "[Notifications] Blocking operation interrupted (caller gone) - will retry",
+      );
+      return;
+    }
     console.error("[Notifications] Worker error:", err);
     Sentry.captureException(err, {
       tags: {

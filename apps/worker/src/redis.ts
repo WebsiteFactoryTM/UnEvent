@@ -11,12 +11,12 @@ export function getRedisConnection(): Redis {
     return redisClient;
   }
 
-  const upstashUrl = process.env.RAILAY_REDIS_URL;
+  const railwayRedisUrl = process.env.RAILWAY_REDIS_URL;
 
-  if (upstashUrl) {
+  if (railwayRedisUrl) {
     // Parse Upstash TLS connection string: redis://default:password@host:port
     // or rediss://default:password@host:port (TLS)
-    const url = new URL(upstashUrl);
+    const url = new URL(railwayRedisUrl);
     const password =
       url.password ||
       decodeURIComponent(url.searchParams.get("password") || "");
@@ -40,10 +40,27 @@ export function getRedisConnection(): Redis {
         const delay = Math.min(times * 50, 2000);
         return delay;
       },
+      // Keepalive settings to prevent connection timeouts
+      keepAlive: 30000, // Send keepalive ping every 30 seconds
+      connectTimeout: 10000, // 10 second connection timeout
+      lazyConnect: false, // Connect immediately
+      // Enable automatic reconnection
+      enableReadyCheck: true,
+      // Increase command timeout for blocking operations
+      commandTimeout: 60000, // 60 seconds for blocking commands like bzpopmin
     });
 
     redisClient.on("error", (err: Error) => {
-      console.error("[Redis] Connection error:", err);
+      // "ERR caller gone" is a non-fatal error that occurs when blocking operations
+      // are interrupted (e.g., connection timeout). BullMQ will retry automatically.
+      const isCallerGoneError = err.message?.includes("caller gone");
+      if (isCallerGoneError) {
+        console.warn(
+          "[Redis] Blocking operation interrupted (caller gone) - BullMQ will retry automatically",
+        );
+      } else {
+        console.error("[Redis] Connection error:", err);
+      }
     });
 
     redisClient.on("connect", () => {
@@ -89,10 +106,27 @@ export function getRedisConnection(): Redis {
       const delay = Math.min(times * 50, 2000);
       return delay;
     },
+    // Keepalive settings to prevent connection timeouts
+    keepAlive: 30000, // Send keepalive ping every 30 seconds
+    connectTimeout: 10000, // 10 second connection timeout
+    lazyConnect: false, // Connect immediately
+    // Enable automatic reconnection
+    enableReadyCheck: true,
+    // Increase command timeout for blocking operations
+    commandTimeout: 60000, // 60 seconds for blocking commands like bzpopmin
   });
 
   redisClient.on("error", (err: Error) => {
-    console.error("[Redis] Connection error:", err);
+    // "ERR caller gone" is a non-fatal error that occurs when blocking operations
+    // are interrupted (e.g., connection timeout). BullMQ will retry automatically.
+    const isCallerGoneError = err.message?.includes("caller gone");
+    if (isCallerGoneError) {
+      console.warn(
+        "[Redis] Blocking operation interrupted (caller gone) - BullMQ will retry automatically",
+      );
+    } else {
+      console.error("[Redis] Connection error:", err);
+    }
   });
 
   redisClient.on("connect", () => {
