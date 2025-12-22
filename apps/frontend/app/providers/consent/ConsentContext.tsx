@@ -30,6 +30,39 @@ interface ConsentStorage {
   hasConsented: boolean;
 }
 
+/**
+ * Validate consent data from localStorage
+ * Returns validated data or null if invalid
+ */
+const validateConsentData = (data: any): ConsentStorage | null => {
+  try {
+    if (typeof data !== "object" || !Array.isArray(data.services)) {
+      return null;
+    }
+
+    // Ensure services is an array of valid consent services
+    const validServices: ConsentService[] = [
+      "necessary",
+      "analytics",
+      "tracking",
+      "social",
+    ];
+    const services = data.services.filter((service: string) =>
+      validServices.includes(service as ConsentService),
+    );
+
+    return {
+      services: services.length > 0 ? services : ["necessary"],
+      timestamp:
+        typeof data.timestamp === "number" ? data.timestamp : Date.now(),
+      hasConsented:
+        typeof data.hasConsented === "boolean" ? data.hasConsented : false,
+    };
+  } catch {
+    return null;
+  }
+};
+
 export const ConsentProvider = ({
   children,
 }: {
@@ -40,15 +73,34 @@ export const ConsentProvider = ({
 
   // Load consent from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
-    if (stored) {
-      try {
-        const data: ConsentStorage = JSON.parse(stored);
-        setConsent(data.services);
-        setHasConsented(data.hasConsented);
-      } catch (error) {
-        console.error("[Cookie Consent] Failed to parse consent data:", error);
+    try {
+      const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsedData = JSON.parse(stored);
+          const validatedData = validateConsentData(parsedData);
+
+          if (validatedData) {
+            setConsent(validatedData.services);
+            setHasConsented(validatedData.hasConsented);
+          } else {
+            console.warn(
+              "[Cookie Consent] Invalid stored consent data, resetting",
+            );
+            localStorage.removeItem(CONSENT_STORAGE_KEY);
+          }
+        } catch (error) {
+          console.error(
+            "[Cookie Consent] Failed to parse consent data:",
+            error,
+          );
+          // Clear corrupted data
+          localStorage.removeItem(CONSENT_STORAGE_KEY);
+        }
       }
+    } catch (error) {
+      console.error("[Cookie Consent] Failed to access localStorage:", error);
+      // If localStorage is unavailable, continue with defaults
     }
   }, []);
 

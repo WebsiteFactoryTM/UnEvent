@@ -13,7 +13,11 @@ import type { CustomData, TrackingContext } from "@/types/tracking";
 export const trackMetaPageView = () => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  window.fbq("track", "PageView");
+  try {
+    window.fbq("track", "PageView");
+  } catch (error) {
+    console.warn("[Tracking] Meta page view error:", error);
+  }
 };
 
 /**
@@ -25,7 +29,11 @@ export const trackMetaEvent = (
 ) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  window.fbq("track", eventName, params);
+  try {
+    window.fbq("track", eventName, params);
+  } catch (error) {
+    console.warn("[Tracking] Meta event error:", error);
+  }
 };
 
 /**
@@ -37,7 +45,11 @@ export const trackMetaCustomEvent = (
 ) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  window.fbq("trackCustom", eventName, params);
+  try {
+    window.fbq("trackCustom", eventName, params);
+  } catch (error) {
+    console.warn("[Tracking] Meta custom event error:", error);
+  }
 };
 
 /**
@@ -46,32 +58,36 @@ export const trackMetaCustomEvent = (
 export const trackMetaViewContent = (data: CustomData & TrackingContext) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  const {
-    listing_id,
-    listing_type,
-    listing_slug,
-    city_name,
-    owner_id,
-    value,
-    currency,
-    content_name,
-    content_category,
-    content_ids,
-  } = data;
+  try {
+    const {
+      listing_id,
+      listing_type,
+      listing_slug,
+      city_name,
+      owner_id,
+      value,
+      currency,
+      content_name,
+      content_category,
+      content_ids,
+    } = data;
 
-  window.fbq("track", "ViewContent", {
-    content_name: content_name || listing_slug || "",
-    content_ids: content_ids || (listing_id ? [String(listing_id)] : []),
-    content_type: content_category || listing_type || "product",
-    content_category: listing_type,
-    value,
-    currency: currency || "RON",
-    // Custom parameters
-    listing_id,
-    listing_type,
-    city_name,
-    owner_id,
-  });
+    window.fbq("track", "ViewContent", {
+      content_name: content_name || listing_slug || "",
+      content_ids: content_ids || (listing_id ? [String(listing_id)] : []),
+      content_type: content_category || listing_type || "product",
+      content_category: listing_type,
+      value,
+      currency: currency || "RON",
+      // Custom parameters
+      listing_id,
+      listing_type,
+      city_name,
+      owner_id,
+    });
+  } catch (error) {
+    console.warn("[Tracking] Meta view content error:", error);
+  }
 };
 
 /**
@@ -80,15 +96,20 @@ export const trackMetaViewContent = (data: CustomData & TrackingContext) => {
 export const trackMetaSearch = (data: CustomData & TrackingContext) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  const { search_term, search_string, listing_type, city_name, filters } = data;
+  try {
+    const { search_term, search_string, listing_type, city_name, filters } =
+      data;
 
-  window.fbq("track", "Search", {
-    search_string: search_term || search_string || "",
-    content_category: listing_type,
-    listing_type,
-    city_name,
-    filters,
-  });
+    window.fbq("track", "Search", {
+      search_string: search_term || search_string || "",
+      content_category: listing_type,
+      listing_type,
+      city_name,
+      filters,
+    });
+  } catch (error) {
+    console.warn("[Tracking] Meta search error:", error);
+  }
 };
 
 /**
@@ -97,14 +118,18 @@ export const trackMetaSearch = (data: CustomData & TrackingContext) => {
 export const trackMetaLead = (data: CustomData & TrackingContext) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  const { user_id, profile_id, selected_roles, registration_method } = data;
+  try {
+    const { user_id, profile_id, selected_roles, registration_method } = data;
 
-  window.fbq("track", "Lead", {
-    user_id,
-    profile_id,
-    selected_roles: selected_roles?.join(",") || "",
-    registration_method: registration_method || "email",
-  });
+    window.fbq("track", "Lead", {
+      user_id,
+      profile_id,
+      selected_roles: selected_roles?.join(",") || "",
+      registration_method: registration_method || "email",
+    });
+  } catch (error) {
+    console.warn("[Tracking] Meta lead error:", error);
+  }
 };
 
 /**
@@ -115,15 +140,19 @@ export const trackMetaCompleteRegistration = (
 ) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  const { user_id, profile_id, selected_roles, registration_method } = data;
+  try {
+    const { user_id, profile_id, selected_roles, registration_method } = data;
 
-  window.fbq("track", "CompleteRegistration", {
-    user_id,
-    profile_id,
-    selected_roles: selected_roles?.join(",") || "",
-    registration_method: registration_method || "email",
-    status: "completed",
-  });
+    window.fbq("track", "CompleteRegistration", {
+      user_id,
+      profile_id,
+      selected_roles: selected_roles?.join(",") || "",
+      registration_method: registration_method || "email",
+      status: "completed",
+    });
+  } catch (error) {
+    console.warn("[Tracking] Meta complete registration error:", error);
+  }
 };
 
 /**
@@ -132,28 +161,32 @@ export const trackMetaCompleteRegistration = (
 export const trackMetaAddListing = (data: CustomData & TrackingContext) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  const {
-    listing_id,
-    listing_type,
-    listing_slug,
-    city_name,
-    owner_id,
-    user_id,
-    value,
-    currency,
-  } = data;
+  try {
+    const {
+      listing_id,
+      listing_type,
+      listing_slug,
+      city_name,
+      owner_id,
+      user_id,
+      value,
+      currency,
+    } = data;
 
-  // Use SubmitApplication as closest standard event
-  window.fbq("track", "SubmitApplication", {
-    listing_id,
-    listing_type,
-    listing_slug,
-    city_name,
-    owner_id: owner_id || user_id,
-    user_id,
-    value,
-    currency: currency || "RON",
-  });
+    // Use SubmitApplication as closest standard event
+    window.fbq("track", "SubmitApplication", {
+      listing_id,
+      listing_type,
+      listing_slug,
+      city_name,
+      owner_id: owner_id || user_id,
+      user_id,
+      value,
+      currency: currency || "RON",
+    });
+  } catch (error) {
+    console.warn("[Tracking] Meta add listing error:", error);
+  }
 };
 
 /**
@@ -162,32 +195,36 @@ export const trackMetaAddListing = (data: CustomData & TrackingContext) => {
 export const trackMetaAddToWishlist = (data: CustomData & TrackingContext) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  const {
-    listing_id,
-    listing_type,
-    listing_slug,
-    owner_id,
-    city_name,
-    user_id,
-    value,
-    currency,
-    content_name,
-    content_ids,
-  } = data;
+  try {
+    const {
+      listing_id,
+      listing_type,
+      listing_slug,
+      owner_id,
+      city_name,
+      user_id,
+      value,
+      currency,
+      content_name,
+      content_ids,
+    } = data;
 
-  window.fbq("track", "AddToWishlist", {
-    content_ids: content_ids || (listing_id ? [String(listing_id)] : []),
-    content_name: content_name || listing_slug,
-    content_category: listing_type,
-    value,
-    currency: currency || "RON",
-    // Custom parameters
-    listing_id,
-    listing_type,
-    owner_id,
-    city_name,
-    user_id,
-  });
+    window.fbq("track", "AddToWishlist", {
+      content_ids: content_ids || (listing_id ? [String(listing_id)] : []),
+      content_name: content_name || listing_slug,
+      content_category: listing_type,
+      value,
+      currency: currency || "RON",
+      // Custom parameters
+      listing_id,
+      listing_type,
+      owner_id,
+      city_name,
+      user_id,
+    });
+  } catch (error) {
+    console.warn("[Tracking] Meta add to wishlist error:", error);
+  }
 };
 
 /**
@@ -198,16 +235,20 @@ export const trackMetaRemoveFromWishlist = (
 ) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  const { listing_id, listing_type, listing_slug, owner_id, user_id } = data;
+  try {
+    const { listing_id, listing_type, listing_slug, owner_id, user_id } = data;
 
-  // Custom event for remove action
-  window.fbq("trackCustom", "RemoveFromWishlist", {
-    listing_id,
-    listing_type,
-    listing_slug,
-    owner_id,
-    user_id,
-  });
+    // Custom event for remove action
+    window.fbq("trackCustom", "RemoveFromWishlist", {
+      listing_id,
+      listing_type,
+      listing_slug,
+      owner_id,
+      user_id,
+    });
+  } catch (error) {
+    console.warn("[Tracking] Meta remove from wishlist error:", error);
+  }
 };
 
 /**
@@ -216,23 +257,27 @@ export const trackMetaRemoveFromWishlist = (
 export const trackMetaContact = (data: CustomData & TrackingContext) => {
   if (typeof window === "undefined" || !window.fbq) return;
 
-  const {
-    contact_method,
-    listing_id,
-    listing_type,
-    listing_slug,
-    owner_id,
-    city_name,
-    user_id,
-  } = data;
+  try {
+    const {
+      contact_method,
+      listing_id,
+      listing_type,
+      listing_slug,
+      owner_id,
+      city_name,
+      user_id,
+    } = data;
 
-  window.fbq("track", "Contact", {
-    contact_type: contact_method || "unknown",
-    listing_id,
-    listing_type,
-    listing_slug,
-    owner_id,
-    city_name,
-    user_id,
-  });
+    window.fbq("track", "Contact", {
+      contact_type: contact_method || "unknown",
+      listing_id,
+      listing_type,
+      listing_slug,
+      owner_id,
+      city_name,
+      user_id,
+    });
+  } catch (error) {
+    console.warn("[Tracking] Meta contact error:", error);
+  }
 };

@@ -4,14 +4,16 @@ import React from "react";
 import { ConsentProvider } from "./ConsentContext";
 import { ConsentTrackingProvider } from "./ConsentTrackingProvider";
 import { TrackingEventsProvider } from "./TrackingEventsProvider";
+import { TrackingErrorBoundary } from "./TrackingErrorBoundary";
 
 /**
  * AllConsentProviders
  *
  * Wraps all consent-related providers in the correct order:
- * 1. ConsentProvider - Manages consent state
- * 2. ConsentTrackingProvider - Loads tracking scripts based on consent
- * 3. TrackingEventsProvider - Provides tracking functions to components
+ * 1. TrackingErrorBoundary - Catches tracking errors without breaking the page
+ * 2. ConsentProvider - Manages consent state
+ * 3. ConsentTrackingProvider - Loads tracking scripts based on consent
+ * 4. TrackingEventsProvider - Provides tracking functions to components
  */
 export const AllConsentProviders = ({
   children,
@@ -19,11 +21,13 @@ export const AllConsentProviders = ({
   children: React.ReactNode;
 }) => {
   return (
-    <ConsentProvider>
-      <ConsentTrackingProvider>
-        <TrackingEventsProvider>{children}</TrackingEventsProvider>
-      </ConsentTrackingProvider>
-    </ConsentProvider>
+    <TrackingErrorBoundary>
+      <ConsentProvider>
+        <ConsentTrackingProvider>
+          <TrackingEventsProvider>{children}</TrackingEventsProvider>
+        </ConsentTrackingProvider>
+      </ConsentProvider>
+    </TrackingErrorBoundary>
   );
 };
 
