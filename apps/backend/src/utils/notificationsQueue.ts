@@ -22,7 +22,7 @@ function getRedisForBullMQ(): Redis | null {
     return redisClient
   }
 
-  const upstashUrl = process.env.UPSTASH_REDIS_URL
+  const upstashUrl = process.env.RAILWAY_REDIS_URL
 
   if (upstashUrl) {
     // Parse Upstash TLS connection string: redis://default:password@host:port
