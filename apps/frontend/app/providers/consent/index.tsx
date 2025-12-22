@@ -14,6 +14,9 @@ import { TrackingErrorBoundary } from "./TrackingErrorBoundary";
  * 2. ConsentProvider - Manages consent state
  * 3. ConsentTrackingProvider - Loads tracking scripts based on consent
  * 4. TrackingEventsProvider - Provides tracking functions to components
+ *
+ * Note: Third-party errors (like Facebook IAB bridge OperationError) are filtered
+ * in Sentry's beforeSend to prevent noise without adding complexity.
  */
 export const AllConsentProviders = ({
   children,

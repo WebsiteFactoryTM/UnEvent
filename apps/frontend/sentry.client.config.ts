@@ -36,6 +36,22 @@ Sentry.init({
     if (event.request) {
       delete event.request.cookies;
     }
+
+    // Filter out known benign errors from third-party scripts
+    // These are expected when users visit without consent (e.g., Facebook IAB bridge)
+    const exception = event.exception?.values?.[0];
+    if (exception) {
+      const isThirdPartyError =
+        exception.type === "OperationError" ||
+        exception.value?.includes("Non-recoverable error") ||
+        exception.value?.includes("OperationError");
+
+      if (isThirdPartyError) {
+        // Don't send to Sentry - these are harmless and expected
+        return null;
+      }
+    }
+
     return event;
   },
 });
