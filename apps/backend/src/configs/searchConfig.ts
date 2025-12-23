@@ -124,14 +124,43 @@ export const searchConfig: SearchPluginConfig = {
     )
 
     // Only index approved listings.
-    // For non-approved docs: return false to skip syncing entirely
-    // Note: Payload's deleteDrafts: true config will handle cleanup automatically
+    // For non-approved docs: delete existing search entry if it exists
     if (originalDoc?.moderationStatus !== 'approved' || originalDoc?._status !== 'published') {
       console.log(
-        `[search.beforeSync] SKIP - Collection: ${collectionName}, ID: ${docId}`,
+        `[search.beforeSync] UNAPPROVED - Collection: ${collectionName}, ID: ${docId}`,
         `Reason: moderationStatus=${originalDoc?.moderationStatus}, _status=${originalDoc?._status}`,
       )
-      // Return false to skip syncing (deleteDrafts config handles cleanup)
+      
+      // Try to find and delete existing search document
+      try {
+        const existingSearch = await payload.find({
+          collection: 'search',
+          where: {
+            and: [
+              { 'doc.relationTo': { equals: collectionName } },
+              { 'doc.value': { equals: docId } },
+            ],
+          },
+          limit: 1,
+        })
+        
+        if (existingSearch.docs.length > 0) {
+          console.log(
+            `[search.beforeSync] DELETING existing search doc for ${collectionName}:${docId}`,
+          )
+          await payload.delete({
+            collection: 'search',
+            id: existingSearch.docs[0].id,
+          })
+        }
+      } catch (error) {
+        console.error(
+          `[search.beforeSync] Error deleting search doc for ${collectionName}:${docId}`,
+          error,
+        )
+      }
+      
+      // Return false to skip creating new search entry
       return false as any
     }
 
