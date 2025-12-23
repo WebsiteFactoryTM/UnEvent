@@ -355,12 +355,15 @@ export const searchConfig: SearchPluginConfig = {
       return undefined
     }
 
-    // Build result document - explicitly preserve ALL plugin-managed fields
+    // Build result document
+    // IMPORTANT: Don't spread searchDoc - it may not have id/timestamps yet
+    // The plugin will add id, createdAt, updatedAt after we return
     const resultDoc = {
-      // CRITICAL: Preserve ALL plugin-managed fields first (spreading searchDoc to get everything)
-      ...searchDoc,
-
-      // Then override/add our custom fields
+      // CRITICAL: Preserve ONLY the fields the plugin provided
+      doc: searchDoc.doc, // Required polymorphic relationship
+      priority: searchDoc.priority, // Optional priority value
+      
+      // Add our custom searchable fields
       title,
       description,
       address,
@@ -376,10 +379,6 @@ export const searchConfig: SearchPluginConfig = {
       views: safeNumber(originalDoc?.views),
       favoritesCount: safeNumber(originalDoc?.favoritesCount),
       tier: safeString(originalDoc?.tier),
-
-      // Ensure critical fields are explicitly preserved (in case spreading failed)
-      doc: searchDoc.doc, // Required polymorphic relationship
-      priority: searchDoc.priority, // Optional but should be preserved
     }
 
     // Verify doc field is still present
