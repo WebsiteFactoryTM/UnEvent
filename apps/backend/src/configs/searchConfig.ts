@@ -110,8 +110,18 @@ export const searchConfig: SearchPluginConfig = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload: any
   }) => {
+    const collectionName = searchDoc?.doc?.relationTo
+    const docId = originalDoc?.id
+
+    // Log start of sync for debugging
+    console.log(`[search.beforeSync] START - Collection: ${collectionName}, ID: ${docId}, Title: ${originalDoc?.title}`)
+
     // Only index approved listings.
     if (originalDoc?.moderationStatus !== 'approved' || originalDoc?._status !== 'published') {
+      console.log(
+        `[search.beforeSync] SKIPPED - Collection: ${collectionName}, ID: ${docId}`,
+        `Reason: moderationStatus=${originalDoc?.moderationStatus}, _status=${originalDoc?._status}`,
+      )
       return null
     }
 
@@ -297,7 +307,14 @@ export const searchConfig: SearchPluginConfig = {
       getTypeLabels(),
       getSuitableForLabels(),
       getImageUrl(),
-    ])
+    ]).catch((error) => {
+      console.error(
+        `[search.beforeSync] ERROR in Promise.all - Collection: ${collectionName}, ID: ${docId}`,
+        error,
+      )
+      // Return empty values instead of failing
+      return ['', [], [], '']
+    })
 
     // Create searchable text fields from the label arrays
     const typeText = typeLabels.join(' ')
@@ -313,7 +330,10 @@ export const searchConfig: SearchPluginConfig = {
       [title, description, address, cityName, typeText, suitableForText].filter(Boolean).join(' '),
     )
 
-    return {
+    // Ensure listingCollectionName is correctly set
+    const finalCollectionName = searchDoc?.doc?.relationTo || collectionName || 'unknown'
+
+    const resultDoc = {
       ...searchDoc,
       // Keep the indexed payload minimal + UI-friendly
       title,
@@ -325,12 +345,26 @@ export const searchConfig: SearchPluginConfig = {
       suitableForText,
       searchText,
       imageUrl,
-      listingCollectionName: searchDoc?.doc?.relationTo,
+      listingCollectionName: finalCollectionName,
       slug: safeString(originalDoc?.slug),
       rating: safeNumber(originalDoc?.rating),
       views: safeNumber(originalDoc?.views),
       favoritesCount: safeNumber(originalDoc?.favoritesCount),
       tier: safeString(originalDoc?.tier),
     }
+
+    // Log successful sync with details
+    console.log(
+      `[search.beforeSync] SUCCESS - Collection: ${finalCollectionName}, ID: ${docId}`,
+      {
+        typeLabels: typeLabels.length,
+        cityName: cityName || 'none',
+        hasImage: !!imageUrl,
+        hasSearchText: !!searchText,
+        listingCollectionName: finalCollectionName,
+      },
+    )
+
+    return resultDoc
   },
 }

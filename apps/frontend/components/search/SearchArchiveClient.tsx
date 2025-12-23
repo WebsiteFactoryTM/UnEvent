@@ -42,12 +42,7 @@ export function SearchArchiveClient({
   const debouncedQuery = useDebounce(query, 300);
 
   // Use React Query for search with automatic caching
-  const {
-    data,
-    isLoading,
-    error,
-    isFetching,
-  } = useSearchListings(
+  const { data, isLoading, error, isFetching } = useSearchListings(
     {
       q: debouncedQuery.trim(),
       kind,
@@ -153,7 +148,8 @@ export function SearchArchiveClient({
       {/* Results count */}
       {data && data.totalDocs > 0 && (
         <div className="text-sm text-muted-foreground">
-          {data.totalDocs} {data.totalDocs === 1 ? "rezultat găsit" : "rezultate găsite"}
+          {data.totalDocs}{" "}
+          {data.totalDocs === 1 ? "rezultat găsit" : "rezultate găsite"}
         </div>
       )}
 
