@@ -116,21 +116,9 @@ export const searchConfig: SearchPluginConfig = {
     const collectionName = searchDoc?.doc?.relationTo
     const docId = originalDoc?.id
 
-    // Log start of sync for debugging
-    console.log(
-      `[search.beforeSync] START - Collection: ${collectionName}, ID: ${docId}, Title: ${originalDoc?.title}`,
-      'searchDoc.doc:',
-      searchDoc?.doc,
-    )
-
     // Only index approved listings.
     // For non-approved docs: delete existing search entry if it exists
     if (originalDoc?.moderationStatus !== 'approved' || originalDoc?._status !== 'published') {
-      console.log(
-        `[search.beforeSync] UNAPPROVED - Collection: ${collectionName}, ID: ${docId}`,
-        `Reason: moderationStatus=${originalDoc?.moderationStatus}, _status=${originalDoc?._status}`,
-      )
-      
       // Try to find and delete existing search document
       try {
         const existingSearch = await payload.find({
@@ -143,11 +131,8 @@ export const searchConfig: SearchPluginConfig = {
           },
           limit: 1,
         })
-        
+
         if (existingSearch.docs.length > 0) {
-          console.log(
-            `[search.beforeSync] DELETING existing search doc for ${collectionName}:${docId}`,
-          )
           await payload.delete({
             collection: 'search',
             id: existingSearch.docs[0].id,
@@ -159,7 +144,7 @@ export const searchConfig: SearchPluginConfig = {
           error,
         )
       }
-      
+
       // Return false to skip creating new search entry
       return false as any
     }
@@ -422,25 +407,6 @@ export const searchConfig: SearchPluginConfig = {
       // Try to restore it from searchDoc
       resultDoc.doc = searchDoc.doc
     }
-
-    // Log successful sync with details
-    console.log(`[search.beforeSync] SUCCESS - Collection: ${finalCollectionName}, ID: ${docId}`, {
-      typeLabels: typeLabels.length,
-      cityName: cityName || 'none',
-      hasImage: !!imageUrl,
-      hasSearchText: !!searchText,
-      listingCollectionName: finalCollectionName,
-      hasDocField: !!resultDoc.doc,
-      docRelationTo: resultDoc.doc?.relationTo,
-      docValue: resultDoc.doc?.value,
-      searchDocId: searchDoc.id,
-    })
-
-    // Log the complete document structure for debugging
-    console.log(`[search.beforeSync] Returning document for ${finalCollectionName}:${docId}`, {
-      keys: Object.keys(resultDoc),
-      docField: resultDoc.doc,
-    })
 
     return resultDoc
   },
