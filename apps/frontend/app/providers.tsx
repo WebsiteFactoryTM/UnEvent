@@ -10,6 +10,7 @@ import { getQueryClient } from "@/lib/react-query";
 import * as Sentry from "@sentry/nextjs";
 import { AllConsentProviders } from "@/app/providers/consent";
 import { ClaimTokenHandler } from "@/components/auth/ClaimTokenHandler";
+import { FavoritesSyncHandler } from "@/components/auth/FavoritesSyncHandler";
 
 function SentryUserContext() {
   const { data: session } = useSession();
@@ -49,6 +50,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             {children}
             <Suspense fallback={null}>
               <ClaimTokenHandler />
+              <FavoritesSyncHandler />
             </Suspense>
             <Toaster />
           </AllConsentProviders>

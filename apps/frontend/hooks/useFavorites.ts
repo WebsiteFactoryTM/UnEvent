@@ -9,6 +9,7 @@ import { getListingTypeSlug } from "@/lib/getListingType";
 import { favoritesKeys } from "@/lib/cacheKeys";
 import { listingsKeys } from "@/lib/cacheKeys";
 import { checkIfIsFavorited } from "@/lib/api/favorites";
+import { isAnonymousFavorite } from "@/lib/favorites/localStorage";
 
 type FrontendListingType = "evenimente" | "locatii" | "servicii";
 
@@ -21,7 +22,7 @@ export function useFavorites({
   listingId: number;
   initialIsFavorited?: boolean;
 }) {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const queryClient = useQueryClient();
 
   // Shared key for the favorite state so multiple components stay in sync
@@ -30,43 +31,51 @@ export function useFavorites({
     listingId,
   );
 
-  // Check if we have cached data or initial data
+  // Check if we have cached data
   const cached = queryClient.getQueryData<boolean>(favoriteKey);
-  const hasInitialData =
-    initialIsFavorited !== undefined && cached === undefined;
 
   const { data: isFavorited, isLoading } = useQuery<boolean, Error>({
     queryKey: favoriteKey,
-    queryFn: () =>
-      checkIfIsFavorited(
+    queryFn: async () => {
+      const accessToken = (session as any)?.accessToken;
+
+      // If authenticated, ALWAYS call API (never check localStorage when logged in)
+      if (accessToken) {
+        return checkIfIsFavorited(
+          getListingTypeSlug(listingType) as
+            | "events"
+            | "locations"
+            | "services",
+          listingId,
+          accessToken,
+        );
+      }
+
+      // If no accessToken, check localStorage (for anonymous users)
+      return isAnonymousFavorite(
         getListingTypeSlug(listingType) as "events" | "locations" | "services",
         listingId,
-        (session as any)?.accessToken,
-      ),
-    // Only enable query if we have a token AND don't have initial data from batch call
-    // If we have initialIsFavorited, treat it as already fetched (no API call needed)
-    enabled: !!(session as any)?.accessToken && !hasInitialData,
+      );
+    },
+    // Enable query once session is loaded (not 'loading')
+    // This ensures we know if user is authenticated before choosing localStorage vs API
+    enabled: sessionStatus !== "loading",
 
     // Aggressive caching - data stays fresh for 10 minutes
     staleTime: 10 * 60 * 1000, // 10 minutes
     // Keep in cache for 30 minutes even if unused
     gcTime: 30 * 60 * 1000, // 30 minutes (was default 5 minutes)
 
-    // If we have initialIsFavorited from batch call, use it as initialData
-    // This tells React Query the data is already fetched, preventing API call
-    initialData: hasInitialData ? initialIsFavorited : undefined,
+    // If we have cached data, use it as initialData
+    // Don't use initialIsFavorited as initialData because it might be stale from batch
+    initialData: cached,
 
-    // Fallback to cached data if available (for cases where cache exists)
-    placeholderData: () => {
-      if (cached !== undefined) return cached;
-      return undefined;
-    },
-
-    // Don't refetch on mount/window focus if we have cached data
-    refetchOnMount: false,
+    // Always refetch on mount to ensure we have the latest state from API
+    // This is important for detail pages where the user expects accurate data
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
-    // Only refetch on reconnect if data is stale
-    refetchOnReconnect: "always",
+    // Refetch on reconnect to get latest state
+    refetchOnReconnect: true,
   });
 
   const mutation = useMutation<
@@ -87,10 +96,8 @@ export function useFavorites({
       // Cancel any in-flight queries
       await queryClient.cancelQueries({ queryKey: favoriteKey });
 
-      // Get current cached value
-      const cached = queryClient.getQueryData<boolean>(favoriteKey);
-      const previous =
-        typeof cached === "boolean" ? cached : (initialIsFavorited ?? false);
+      // Get current state from cache (query always runs now, so this should be accurate)
+      const previous = queryClient.getQueryData<boolean>(favoriteKey) ?? false;
 
       // Optimistically update cache immediately
       queryClient.setQueryData<boolean>(favoriteKey, !previous);
@@ -141,12 +148,18 @@ export function useFavorites({
     },
   });
 
+  // Return the favorite state
+  // If query is disabled (session loading), isFavorited will be undefined
+  // In this case, default to false BUT mark as loading so UI doesn't show wrong state
+  const isActuallyLoading = isLoading || sessionStatus === "loading";
+  const finalState = isFavorited ?? false;
+
   return {
-    isFavorited,
+    isFavorited: finalState,
     toggle: mutation.mutate,
     toggleAsync: mutation.mutateAsync,
     isToggling: mutation.isPending,
-    isLoading: isLoading,
+    isLoading: isActuallyLoading, // Include session loading state
     error: mutation.error,
   };
 }

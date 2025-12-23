@@ -5,6 +5,11 @@ import {
   ServiceListing,
 } from "@/types/listings";
 import { normalizeListing } from "@/lib/transforms/normalizeListing";
+import {
+  isAnonymousFavorite,
+  addAnonymousFavorite,
+  removeAnonymousFavorite,
+} from "@/lib/favorites/localStorage";
 
 export interface ToggleFavoriteResponse {
   isFavorite: boolean;
@@ -47,11 +52,22 @@ export const toggleFavorite = async (
   listingId: number,
   accessToken?: string,
 ): Promise<ToggleFavoriteResponse> => {
+  // If no token, handle in localStorage (don't throw)
   if (!accessToken) {
-    const error = new Error("Unauthorized");
-    (error as any).status = 401;
-    throw error;
+    const currentState = isAnonymousFavorite(listingTypeSlug, listingId);
+
+    if (currentState) {
+      removeAnonymousFavorite(listingTypeSlug, listingId);
+    } else {
+      addAnonymousFavorite(listingTypeSlug, listingId);
+    }
+
+    return {
+      isFavorite: !currentState,
+      favorites: 0, // Can't know count for anonymous
+    };
   }
+
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/favorites/toggle`,
     {

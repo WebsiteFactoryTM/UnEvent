@@ -125,7 +125,7 @@ export function LocationHero({ location }: LocationHeroProps) {
         title={location.title}
         description={location.description ?? ""}
         id={location.id}
-        isFavoritedByViewer={location.isFavoritedByViewer ?? false}
+        isFavoritedByViewer={location.isFavoritedByViewer ?? undefined}
         listingType="locatii"
         phone={contact?.phone ?? undefined}
         slug={location.slug || ""}

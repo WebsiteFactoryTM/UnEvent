@@ -1,12 +1,11 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { FaHeart } from "react-icons/fa6";
 import { useToast } from "@/hooks/use-toast";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useTracking } from "@/hooks/useTracking";
 import { ListingType } from "@/types/listings";
-import Link from "next/link";
 
 const FavoriteButton = ({
   listingType,
@@ -26,8 +25,9 @@ const FavoriteButton = ({
   const { toggleAsync, isFavorited, isLoading, isToggling } = useFavorites({
     listingType,
     listingId,
-    initialIsFavorited: initialIsFavorited ?? false,
+    initialIsFavorited, // Don't convert undefined to false - let the hook handle it
   });
+  const [showSparkle, setShowSparkle] = useState(false);
 
   const handleFavorite = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -43,6 +43,8 @@ const FavoriteButton = ({
           listing_slug: listingSlug,
           owner_id: ownerId,
         });
+        // Trigger sparkle animation when adding to favorites
+        setShowSparkle(true);
       } else {
         trackEvent("removeFromFavorites", undefined, {
           listing_id: listingId,
@@ -51,46 +53,26 @@ const FavoriteButton = ({
           owner_id: ownerId,
         });
       }
-
-      toast({
-        title: result.isFavorite
-          ? "Adăugat la favorite"
-          : "Eliminat din favorite",
-        description: result.isFavorite
-          ? "Listarea a fost adăugată la favorite."
-          : "Listarea a fost eliminată din favorite.",
-      });
     } catch (e) {
       const err = e as any;
-      const status = err?.status as number | undefined;
       const message = (err?.message as string | undefined) || "";
-      if (status === 401 || /unauthorized/i.test(message)) {
-        toast({
-          title: "Autentificare necesară",
-          description: (
-            <>
-              Trebuie să te autentifici pentru a adăuga la favorite.{" "}
-              <Link
-                href="/auth/autentificare"
-                className="underline font-semibold hover:text-primary"
-              >
-                Loghează-te acum
-              </Link>
-              .
-            </>
-          ),
-          variant: "destructive",
-        } as any);
-      } else {
-        toast({
-          title: "Eroare",
-          description:
-            message || "Nu am putut actualiza favoritele. Încearcă din nou.",
-          variant: "destructive",
-        } as any);
-      }
+      toast({
+        title: "Eroare",
+        description:
+          message || "Nu am putut actualiza favoritele. Încearcă din nou.",
+        variant: "destructive",
+      } as any);
     }
   };
+
+  // Reset sparkle animation after it completes
+  useEffect(() => {
+    if (showSparkle) {
+      const timer = setTimeout(() => setShowSparkle(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [showSparkle]);
+
   return (
     <Button
       size="icon"
@@ -100,6 +82,31 @@ const FavoriteButton = ({
       disabled={isLoading || isToggling}
     >
       <FaHeart className={`h-4 w-4 ${isFavorited ? "fill-red-500" : ""}`} />
+      {showSparkle && (
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Sparkle particles - positioned in a circle */}
+          {[...Array(12)].map((_, i) => {
+            const angle = (i * 360) / 12;
+            const radians = (angle * Math.PI) / 180;
+            const distance = 20;
+            const x = Math.cos(radians) * distance;
+            const y = Math.sin(radians) * distance;
+            return (
+              <div
+                key={i}
+                className="sparkle-particle"
+                style={
+                  {
+                    "--sparkle-index": i,
+                    "--sparkle-x": `${x}px`,
+                    "--sparkle-y": `${y}px`,
+                  } as React.CSSProperties
+                }
+              />
+            );
+          })}
+        </div>
+      )}
     </Button>
   );
 };

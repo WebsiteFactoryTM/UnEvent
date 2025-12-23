@@ -37,7 +37,6 @@ export default function FavoritePage() {
   ) => {
     try {
       await activeData.removeFavoriteAsync({ listingType, listingId });
-      toast.success("Eliminat din favorite");
     } catch (err) {
       toast.error("Eroare la eliminarea din favorite");
     }

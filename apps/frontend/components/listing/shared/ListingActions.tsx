@@ -23,13 +23,13 @@ import { useTracking } from "@/hooks/useTracking";
 import { ListingType } from "@/types/listings";
 import { useState } from "react";
 import { ReportDialog } from "@/components/common/ReportDialog";
-import Link from "next/link";
 import { getListingTypeSlug } from "@/lib/getListingType";
+import { usePathname } from "next/navigation";
 
 interface ListingActionsProps {
   title: string;
   id: number;
-  isFavoritedByViewer: boolean;
+  isFavoritedByViewer?: boolean;
   description: string;
   listingType: ListingType;
   ticketUrl?: string;
@@ -54,6 +54,7 @@ export function ListingActions({
     listingId: id,
     initialIsFavorited: isFavoritedByViewer,
   });
+  const pathname = usePathname();
   const { toast } = useToast();
   const { trackEvent } = useTracking();
   const [isParticipating, setIsParticipating] = useState(false);
@@ -78,44 +79,15 @@ export function ListingActions({
           owner_id: ownerId,
         });
       }
-
-      toast({
-        title: result.isFavorite
-          ? "Adăugat la favorite"
-          : "Eliminat din favorite",
-        description: result.isFavorite
-          ? "Listarea a fost adăugată la favorite."
-          : "Listarea a fost eliminată din favorite.",
-      });
     } catch (e) {
       const err = e as any;
-      const status = err?.status as number | undefined;
       const message = (err?.message as string | undefined) || "";
-      if (status === 401 || /unauthorized/i.test(message)) {
-        toast({
-          title: "Autentificare necesară",
-          description: (
-            <>
-              Trebuie să te autentifici pentru a adăuga la favorite.{" "}
-              <Link
-                href="/auth/autentificare"
-                className="underline font-semibold hover:text-primary"
-              >
-                Loghează-te acum
-              </Link>
-              .
-            </>
-          ),
-          variant: "destructive",
-        } as any);
-      } else {
-        toast({
-          title: "Eroare",
-          description:
-            message || "Nu am putut actualiza favoritele. Încearcă din nou.",
-          variant: " ",
-        } as any);
-      }
+      toast({
+        title: "Eroare",
+        description:
+          message || "Nu am putut actualiza favoritele. Încearcă din nou.",
+        variant: "destructive",
+      } as any);
     }
   };
 
@@ -217,7 +189,7 @@ export function ListingActions({
           type="listing"
           entityId={id}
           entityTitle={title}
-          entityUrl={typeof window !== "undefined" ? window.location.href : ""}
+          entityUrl={`${process.env.NEXT_PUBLIC_FRONTEND_URL}${pathname}`}
           listingType={getListingTypeSlug(listingType)}
         />
       </div>

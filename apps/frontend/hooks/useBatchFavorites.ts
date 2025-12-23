@@ -6,6 +6,7 @@ import { favoritesKeys } from "@/lib/cacheKeys";
 import { useMemo } from "react";
 import { ListingCardData } from "@/lib/normalizers/hub";
 import { getListingTypeSlug } from "@/lib/getListingType";
+import { getAnonymousFavorites } from "@/lib/favorites/localStorage";
 
 /**
  * Hook to batch-fetch favorite status for multiple listings
@@ -27,8 +28,28 @@ export function useBatchFavorites(listings: ListingCardData[]) {
   // Fetch batch favorites
   const { data: favoritesMap, isLoading } = useQuery({
     queryKey: favoritesKeys.batch(targetKeys),
-    queryFn: () => checkBatchFavorites(targetKeys, accessToken),
-    enabled: !!accessToken && targetKeys.length > 0,
+    queryFn: () => {
+      // If no session, read from localStorage
+      if (!accessToken) {
+        const anonymousFavorites = getAnonymousFavorites();
+        const map: Record<string, boolean> = {};
+
+        targetKeys.forEach((key) => {
+          const [entity, idStr] = key.split(":");
+          const id = parseInt(idStr, 10);
+          map[key] = anonymousFavorites.some(
+            (fav) => fav.entity === entity && fav.id === id,
+          );
+        });
+
+        return map;
+      }
+
+      // If authenticated, use existing API
+      return checkBatchFavorites(targetKeys, accessToken);
+    },
+    // Enable for both auth states (changed from !!accessToken)
+    enabled: targetKeys.length > 0,
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
   });

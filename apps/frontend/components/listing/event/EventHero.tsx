@@ -144,7 +144,7 @@ export default function EventHero({ event }: EventHeroProps) {
         title={event?.title}
         id={event?.id}
         description={event?.description ?? ""}
-        isFavoritedByViewer={event?.isFavoritedByViewer ?? false}
+        isFavoritedByViewer={event?.isFavoritedByViewer ?? undefined}
         ticketUrl={event?.ticketUrl ?? undefined}
         slug={event?.slug || ""}
         ownerId={
