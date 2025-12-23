@@ -1,11 +1,12 @@
-import type { SearchParams, SearchResponse } from "./types";
+import { useQuery } from "@tanstack/react-query";
+import { searchKeys } from "../cacheKeys";
+import type { SearchParams, SearchResponse } from "../search/types";
 
 /**
  * Sanitize error message for user display
  */
 function sanitizeErrorMessage(error: unknown): string {
   if (error instanceof Error) {
-    // Check for common backend errors and provide friendly messages
     const message = error.message.toLowerCase();
 
     if (
@@ -23,12 +24,10 @@ function sanitizeErrorMessage(error: unknown): string {
       return "Căutarea durează prea mult. Te rugăm să încerci din nou.";
     }
 
-    // For HTTP errors, provide a generic message
     if (message.includes("http") || message.includes("failed")) {
       return "A apărut o eroare la căutare. Te rugăm să încerci din nou.";
     }
 
-    // For unknown errors, return a generic message
     return "A apărut o eroare. Te rugăm să încerci din nou.";
   }
 
@@ -36,14 +35,13 @@ function sanitizeErrorMessage(error: unknown): string {
 }
 
 /**
- * Search listings using the frontend API proxy
+ * Fetch search results from the API
  */
-export async function searchListings(
+async function fetchSearchResults(
   params: SearchParams,
 ): Promise<SearchResponse> {
   const { q, kind, collections, limit = 5, page = 1 } = params;
 
-  // Build query parameters
   const searchParams = new URLSearchParams();
   searchParams.set("q", q);
 
@@ -66,6 +64,7 @@ export async function searchListings(
 
   try {
     const response = await fetch(url, {
+      // Let React Query handle caching instead of browser
       cache: "no-store",
     });
 
@@ -73,8 +72,6 @@ export async function searchListings(
       const errorText = await response
         .text()
         .catch(() => `HTTP ${response.status}`);
-
-      // Log the full error for debugging, but throw sanitized version
       console.error("Search API error:", errorText);
       throw new Error(sanitizeErrorMessage(new Error(errorText)));
     }
@@ -85,4 +82,39 @@ export async function searchListings(
     console.error("Search fetch error:", error);
     throw new Error(sanitizeErrorMessage(error));
   }
+}
+
+/**
+ * Hook for searching listings with React Query caching
+ *
+ * @param params - Search parameters
+ * @param options - React Query options
+ * @returns Query result with search results
+ *
+ * @example
+ * ```tsx
+ * const { data, isLoading, error } = useSearchListings({
+ *   q: "restaurant",
+ *   kind: "locations",
+ *   limit: 10,
+ * });
+ * ```
+ */
+export function useSearchListings(
+  params: SearchParams,
+  options?: {
+    enabled?: boolean;
+    staleTime?: number;
+  },
+) {
+  const { q, kind = "all", collections, limit = 5, page = 1 } = params;
+
+  return useQuery({
+    queryKey: searchKeys.query({ q, kind, collections, limit, page }),
+    queryFn: () => fetchSearchResults(params),
+    enabled: options?.enabled ?? q.trim().length >= 2, // Only search if query is 2+ chars
+    staleTime: options?.staleTime ?? 60_000, // Cache for 1 minute (search results can be slightly stale)
+    gcTime: 5 * 60_000, // Keep in cache for 5 minutes
+    retry: 1, // Retry once on failure
+  });
 }

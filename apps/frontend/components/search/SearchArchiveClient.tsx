@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchResultCard } from "@/components/search/SearchResultCard";
-import { searchListings } from "@/lib/search/searchFetch";
+import { useSearchListings } from "@/lib/react-query/search.queries";
 import type { SearchKind, SearchResult } from "@/lib/search/types";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { FaSpinner } from "react-icons/fa6";
@@ -32,19 +32,34 @@ export function SearchArchiveClient({
   initialPage,
 }: SearchArchiveClientProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [query, setQuery] = useState(initialQuery);
   const [kind, setKind] = useState<SearchKind>(
     (initialKind as SearchKind) || "all",
   );
   const [page, setPage] = useState(initialPage);
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [totalDocs, setTotalDocs] = useState(0);
+  const [allResults, setAllResults] = useState<SearchResult[]>([]);
 
   const debouncedQuery = useDebounce(query, 300);
+
+  // Use React Query for search with automatic caching
+  const {
+    data,
+    isLoading,
+    error,
+    isFetching,
+  } = useSearchListings(
+    {
+      q: debouncedQuery.trim(),
+      kind,
+      limit: 20,
+      page,
+    },
+    {
+      enabled: debouncedQuery.trim().length >= 2,
+    },
+  );
+
+  const errorMessage = error ? String(error) : null;
 
   // Update URL when query, kind, or page changes
   useEffect(() => {
@@ -65,72 +80,24 @@ export function SearchArchiveClient({
     router.replace(newUrl, { scroll: false });
   }, [debouncedQuery, kind, page, router]);
 
-  // Perform search
-  const performSearch = useCallback(
-    async (searchQuery: string, searchKind: SearchKind, searchPage: number) => {
-      if (!searchQuery.trim() || searchQuery.trim().length < 2) {
-        setResults([]);
-        setError(null);
-        setHasNextPage(false);
-        setTotalDocs(0);
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        const collections =
-          searchKind === "all"
-            ? undefined
-            : [searchKind as "locations" | "services" | "events"];
-
-        const response = await searchListings({
-          q: searchQuery.trim(),
-          kind: searchKind,
-          collections,
-          limit: 20,
-          page: searchPage,
-        });
-
-        if (searchPage === 1) {
-          setResults(response.docs || []);
-        } else {
-          // Append for "load more"
-          setResults((prev) => [...prev, ...(response.docs || [])]);
-        }
-
-        setHasNextPage(response.hasNextPage || false);
-        setTotalDocs(response.totalDocs || 0);
-      } catch (err) {
-        console.error("Search error:", err);
-        setError(err instanceof Error ? err.message : "Eroare la căutare");
-        setResults([]);
-        setHasNextPage(false);
-        setTotalDocs(0);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [],
-  );
-
-  // Trigger search when debounced query, kind, or page changes
+  // Accumulate results for pagination (load more)
   useEffect(() => {
-    if (debouncedQuery.trim().length >= 2) {
+    if (data) {
       if (page === 1) {
-        // Reset results for new search
-        setResults([]);
+        // New search - replace results
+        setAllResults(data.docs || []);
+      } else {
+        // Load more - append results
+        setAllResults((prev) => [...prev, ...(data.docs || [])]);
       }
-      performSearch(debouncedQuery, kind, page);
-    } else {
-      setResults([]);
-      setError(null);
-      setHasNextPage(false);
-      setTotalDocs(0);
-      setLoading(false);
     }
-  }, [debouncedQuery, kind, page, performSearch]);
+  }, [data, page]);
+
+  // Reset accumulated results when query or kind changes
+  useEffect(() => {
+    setAllResults([]);
+    setPage(1);
+  }, [debouncedQuery, kind]);
 
   // Handle kind change - reset to page 1
   const handleKindChange = (newKind: string) => {
@@ -140,7 +107,7 @@ export function SearchArchiveClient({
 
   // Handle load more
   const handleLoadMore = () => {
-    if (!loading && hasNextPage) {
+    if (!isFetching && data?.hasNextPage) {
       setPage((prev) => prev + 1);
     }
   };
@@ -149,7 +116,7 @@ export function SearchArchiveClient({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && query.trim().length >= 2) {
       setPage(1);
-      setResults([]);
+      setAllResults([]);
     }
   };
 
@@ -164,8 +131,6 @@ export function SearchArchiveClient({
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
-            setPage(1);
-            setResults([]);
           }}
           onKeyDown={handleKeyDown}
           className="pl-9"
@@ -186,14 +151,14 @@ export function SearchArchiveClient({
       </Tabs>
 
       {/* Results count */}
-      {totalDocs > 0 && (
+      {data && data.totalDocs > 0 && (
         <div className="text-sm text-muted-foreground">
-          {totalDocs} {totalDocs === 1 ? "rezultat găsit" : "rezultate găsite"}
+          {data.totalDocs} {data.totalDocs === 1 ? "rezultat găsit" : "rezultate găsite"}
         </div>
       )}
 
       {/* Loading state */}
-      {loading && results.length === 0 && (
+      {isLoading && allResults.length === 0 && (
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="flex items-center gap-4 p-3">
@@ -208,15 +173,15 @@ export function SearchArchiveClient({
       )}
 
       {/* Error state */}
-      {error && !loading && (
-        <div className="text-center text-destructive py-8">{error}</div>
+      {errorMessage && !isLoading && (
+        <div className="text-center text-destructive py-8">{errorMessage}</div>
       )}
 
       {/* Empty state */}
-      {!loading &&
-        !error &&
+      {!isLoading &&
+        !errorMessage &&
         query.trim().length >= 2 &&
-        results.length === 0 && (
+        allResults.length === 0 && (
           <div className="text-center text-muted-foreground py-8">
             Nu s-au găsit rezultate pentru &quot;{query}&quot;
           </div>
@@ -230,9 +195,9 @@ export function SearchArchiveClient({
       )}
 
       {/* Results list */}
-      {!loading && results.length > 0 && (
+      {!isLoading && allResults.length > 0 && (
         <div className="space-y-1.5 sm:space-y-2">
-          {results.map((result) => (
+          {allResults.map((result) => (
             <SearchResultCard
               key={`${result.collection}-${result.id}-${page}`}
               result={result}
@@ -242,7 +207,7 @@ export function SearchArchiveClient({
       )}
 
       {/* Load more button */}
-      {!loading && hasNextPage && results.length > 0 && (
+      {!isFetching && data?.hasNextPage && allResults.length > 0 && (
         <div className="flex justify-center pt-4">
           <Button onClick={handleLoadMore} variant="outline" size="lg">
             Încarcă mai multe
@@ -251,7 +216,7 @@ export function SearchArchiveClient({
       )}
 
       {/* Loading more indicator */}
-      {loading && results.length > 0 && (
+      {isFetching && allResults.length > 0 && (
         <div className="flex justify-center pt-4">
           <FaSpinner className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
