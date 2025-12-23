@@ -12,6 +12,9 @@ type SearchDoc = {
   address?: string;
   cityName?: string;
   type?: unknown;
+  typeText?: string;
+  suitableForText?: string;
+  searchText?: string;
   imageUrl?: string;
   priority?: number;
   collection?: SearchCollection;
@@ -23,6 +26,23 @@ type SearchDoc = {
 
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
+
+// Remove Romanian diacritics for search matching
+// ă→a, â→a, î→i, ș→s, ț→t
+function removeDiacritics(text: string): string {
+  return text
+    .replace(/ă/g, "a")
+    .replace(/â/g, "a")
+    .replace(/î/g, "i")
+    .replace(/ș/g, "s")
+    .replace(/ț/g, "t")
+    .replace(/Ă/g, "A")
+    .replace(/Â/g, "A")
+    .replace(/Î/g, "I")
+    .replace(/Ș/g, "S")
+    .replace(/Ț/g, "T")
+    .toLowerCase();
+}
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -128,6 +148,14 @@ export async function GET(req: NextRequest) {
   upstreamParams.set("sort", "-tier,-favoritesCount,-rating,-views");
   const trimmedQuery = q.trim();
 
+  // Normalize query: remove diacritics and split into words
+  // "Petrecere Berărie" -> ["petrecere", "berarie"]
+  const normalizedQuery = removeDiacritics(trimmedQuery);
+  const queryWords = normalizedQuery
+    .split(/\s+/)
+    .map((w) => w.trim())
+    .filter((w) => w.length >= 2); // Ignore single characters
+
   // 1) Restrict results to selected collections at the DB query level.
   // We store the source collection in the indexed text field `listingCollectionName`
   // (set in the search plugin's beforeSync hook).
@@ -139,21 +167,12 @@ export async function GET(req: NextRequest) {
     );
   });
 
-  // 2) Match query against key searchable fields
-  // where[and][1][or][i][field][like]=<query>
-  const searchableFields = [
-    "title",
-    "description",
-    "address",
-    "cityName",
-
-    // NOTE: `type` is indexed as JSON (string[]). Depending on DB adapter and Payload's query validation,
-    // querying JSON with `like` may be unsupported. We keep it out of the upstream query and handle it
-    // in the relevance guard below.
-  ] as const;
-
-  searchableFields.forEach((field, i) => {
-    upstreamParams.set(`where[and][1][or][${i}][${field}][like]`, trimmedQuery);
+  // 2) Match each query word against the normalized searchText field
+  // All words must be found (AND logic), making multi-term search work correctly
+  // "petrecere restaurant" requires BOTH words to be present
+  // where[and][wordIndex+1][searchText][like]=<word>
+  queryWords.forEach((word, wordIndex) => {
+    upstreamParams.set(`where[and][${wordIndex + 1}][searchText][like]`, word);
   });
 
   const upstream = `${payloadUrl}/api/search?${upstreamParams.toString()}`;
@@ -225,19 +244,10 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // Lightweight relevance guard (defensive): ensure q is present in at least one display field.
-    // This prevents unexpected matches due to `like` behavior on json/text.
-    const qLower = trimmedQuery.toLowerCase();
-    const filteredDocs = transformedDocs.filter((doc) => {
-      const haystackParts: string[] = [];
-      if (doc.title) haystackParts.push(doc.title);
-      if (doc.description) haystackParts.push(doc.description);
-      if (doc.address) haystackParts.push(doc.address);
-      if (doc.cityName) haystackParts.push(doc.cityName);
-      if (Array.isArray(doc.type)) haystackParts.push(doc.type.join(" "));
-      const haystack = haystackParts.join(" ").toLowerCase();
-      return haystack.includes(qLower);
-    });
+    // Since we're already filtering at the DB level using searchText (which includes
+    // typeText and suitableForText), we can trust the results.
+    // No need for additional client-side relevance filtering.
+    const filteredDocs = transformedDocs;
 
     // Important: metadata is from upstream query (already filtered by collection + query)
     // The extra relevance guard may slightly reduce docs count on the page.

@@ -1423,6 +1423,9 @@ export interface Search {
   tier?: string | null;
   views?: number | null;
   favoritesCount?: number | null;
+  typeText?: string | null;
+  suitableForText?: string | null;
+  searchText?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2215,6 +2218,9 @@ export interface SearchSelect<T extends boolean = true> {
   tier?: T;
   views?: T;
   favoritesCount?: T;
+  typeText?: T;
+  suitableForText?: T;
+  searchText?: T;
   updatedAt?: T;
   createdAt?: T;
 }
