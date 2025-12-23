@@ -1,6 +1,41 @@
 import type { SearchParams, SearchResponse } from "./types";
 
 /**
+ * Sanitize error message for user display
+ */
+function sanitizeErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    // Check for common backend errors and provide friendly messages
+    const message = error.message.toLowerCase();
+
+    if (
+      message.includes("cannot be queried") ||
+      message.includes("upstream search error")
+    ) {
+      return "A apărut o eroare la căutare. Te rugăm să încerci din nou.";
+    }
+
+    if (message.includes("network") || message.includes("fetch")) {
+      return "Probleme de conexiune. Verifică conexiunea la internet.";
+    }
+
+    if (message.includes("timeout")) {
+      return "Căutarea durează prea mult. Te rugăm să încerci din nou.";
+    }
+
+    // For HTTP errors, provide a generic message
+    if (message.includes("http") || message.includes("failed")) {
+      return "A apărut o eroare la căutare. Te rugăm să încerci din nou.";
+    }
+
+    // For unknown errors, return a generic message
+    return "A apărut o eroare. Te rugăm să încerci din nou.";
+  }
+
+  return "A apărut o eroare. Te rugăm să încerci din nou.";
+}
+
+/**
  * Search listings using the frontend API proxy
  */
 export async function searchListings(
@@ -38,15 +73,16 @@ export async function searchListings(
       const errorText = await response
         .text()
         .catch(() => `HTTP ${response.status}`);
-      throw new Error(`Search failed: ${errorText}`);
+
+      // Log the full error for debugging, but throw sanitized version
+      console.error("Search API error:", errorText);
+      throw new Error(sanitizeErrorMessage(new Error(errorText)));
     }
 
     const data = await response.json();
     return data as SearchResponse;
   } catch (error) {
     console.error("Search fetch error:", error);
-    throw error instanceof Error
-      ? error
-      : new Error("Failed to search listings");
+    throw new Error(sanitizeErrorMessage(error));
   }
 }
