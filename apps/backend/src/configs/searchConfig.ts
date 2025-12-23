@@ -362,7 +362,7 @@ export const searchConfig: SearchPluginConfig = {
       // CRITICAL: Preserve ONLY the fields the plugin provided
       doc: searchDoc.doc, // Required polymorphic relationship
       priority: searchDoc.priority, // Optional priority value
-      
+
       // Add our custom searchable fields
       title,
       description,
@@ -404,16 +404,13 @@ export const searchConfig: SearchPluginConfig = {
       hasDocField: !!resultDoc.doc,
       docRelationTo: resultDoc.doc?.relationTo,
       docValue: resultDoc.doc?.value,
-      hasId: !!resultDoc.id,
       searchDocId: searchDoc.id,
-      resultDocId: resultDoc.id,
     })
 
     // Log the complete document structure for debugging
     console.log(`[search.beforeSync] Returning document for ${finalCollectionName}:${docId}`, {
       keys: Object.keys(resultDoc),
       docField: resultDoc.doc,
-      id: resultDoc.id,
     })
 
     return resultDoc
