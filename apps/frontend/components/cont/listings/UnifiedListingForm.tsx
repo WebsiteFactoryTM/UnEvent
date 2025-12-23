@@ -207,7 +207,7 @@ export function UnifiedListingForm({
         if (isAlreadyPublished) {
           delete payload._status;
         }
-        
+
         result = await updateListingMutation({
           id: savedListingId!,
           data: payload as any,
@@ -405,32 +405,17 @@ export function UnifiedListingForm({
 
       let payload: any;
       let result;
-      
+
       if (editMode || savedListingId) {
         // Update existing listing
-        if (isAlreadyPublished) {
-          // Resubmission: save to draft version only (keeps published version live)
-          // IMPORTANT: When using draft=true, Payload saves ONLY to versions table
-          // However, we must exclude _status from the payload to ensure the main
-          // collection's _status remains 'published' and doesn't get changed
-          payload = formToPayload(submissionData);
-          // Remove _status to prevent any accidental updates to main collection
-          delete payload._status;
-          
-          result = await updateListingMutation({
-            id: savedListingId!,
-            data: payload as any,
-            draft: true,
-          });
-        } else {
-          // First submission: update main collection with pending status
-          payload = formToPayload(submissionData);
-          result = await updateListingMutation({
-            id: savedListingId!,
-            data: payload as any,
-            // draft: false or omitted - updates main collection
-          });
-        }
+        payload = formToPayload(submissionData);
+
+        result = await updateListingMutation({
+          id: savedListingId!,
+          data: payload as any,
+          draft: true,
+          // draft: false or omitted - updates main collection
+        });
       } else {
         // Create new listing (first time creation always goes to main collection)
         payload = formToPayload(submissionData);

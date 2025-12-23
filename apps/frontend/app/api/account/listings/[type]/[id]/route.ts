@@ -26,7 +26,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   const payloadAuthHeader = `Bearer ${token}`;
 
   // Extract draft parameter from query string
-  const draftParam = req.nextUrl.searchParams.get('draft') === 'true' ? '?draft=true' : '';
+  const draftParam =
+    req.nextUrl.searchParams.get("draft") === "true" ? "?draft=true" : "";
 
   try {
     const body = await req.json();

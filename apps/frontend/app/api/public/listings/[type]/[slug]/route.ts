@@ -36,7 +36,8 @@ export async function GET(_req: Request, { params }: Params) {
   const authHeader = `users API-Key ${process.env.SVC_TOKEN}`;
 
   // Use query parameter approach (Payload v3 supports this)
-  const apiUrl = `${payloadUrl}/api/${type}?where[slug][equals]=${encodeURIComponent(slug)}&includeReviewState=true&limit=1`;
+  // Only return approved and published listings for public access
+  const apiUrl = `${payloadUrl}/api/${type}?where[slug][equals]=${encodeURIComponent(slug)}&where[moderationStatus][equals]=approved&where[_status][equals]=published&includeReviewState=true&limit=1`;
 
   try {
     const res = await fetchWithRetry(
