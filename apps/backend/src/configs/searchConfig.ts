@@ -114,7 +114,11 @@ export const searchConfig: SearchPluginConfig = {
     const docId = originalDoc?.id
 
     // Log start of sync for debugging
-    console.log(`[search.beforeSync] START - Collection: ${collectionName}, ID: ${docId}, Title: ${originalDoc?.title}`)
+    console.log(
+      `[search.beforeSync] START - Collection: ${collectionName}, ID: ${docId}, Title: ${originalDoc?.title}`,
+      'searchDoc.doc:',
+      searchDoc?.doc,
+    )
 
     // Only index approved listings.
     if (originalDoc?.moderationStatus !== 'approved' || originalDoc?._status !== 'published') {
@@ -333,9 +337,25 @@ export const searchConfig: SearchPluginConfig = {
     // Ensure listingCollectionName is correctly set
     const finalCollectionName = searchDoc?.doc?.relationTo || collectionName || 'unknown'
 
+    // CRITICAL: Ensure the 'doc' field is preserved - it's required by the search plugin
+    // The doc field is a polymorphic relationship: { relationTo: 'events', value: 10 }
+    if (!searchDoc?.doc) {
+      console.error(
+        `[search.beforeSync] ERROR - Missing 'doc' field for Collection: ${finalCollectionName}, ID: ${docId}`,
+        'searchDoc:',
+        searchDoc,
+      )
+      // Return null to skip indexing rather than causing a validation error
+      return null
+    }
+
+    // Build result document - explicitly preserve required fields first
     const resultDoc = {
-      ...searchDoc,
-      // Keep the indexed payload minimal + UI-friendly
+      // CRITICAL: Preserve plugin-managed fields first
+      doc: searchDoc.doc, // Required polymorphic relationship
+      priority: searchDoc.priority, // Optional but should be preserved
+
+      // Then add our custom fields
       title,
       description,
       address,
@@ -353,17 +373,30 @@ export const searchConfig: SearchPluginConfig = {
       tier: safeString(originalDoc?.tier),
     }
 
+    // Verify doc field is still present
+    if (!resultDoc.doc) {
+      console.error(
+        `[search.beforeSync] ERROR - 'doc' field missing in resultDoc for Collection: ${finalCollectionName}, ID: ${docId}`,
+        'resultDoc.doc:',
+        resultDoc.doc,
+        'searchDoc.doc:',
+        searchDoc.doc,
+      )
+      // Try to restore it from searchDoc
+      resultDoc.doc = searchDoc.doc
+    }
+
     // Log successful sync with details
-    console.log(
-      `[search.beforeSync] SUCCESS - Collection: ${finalCollectionName}, ID: ${docId}`,
-      {
-        typeLabels: typeLabels.length,
-        cityName: cityName || 'none',
-        hasImage: !!imageUrl,
-        hasSearchText: !!searchText,
-        listingCollectionName: finalCollectionName,
-      },
-    )
+    console.log(`[search.beforeSync] SUCCESS - Collection: ${finalCollectionName}, ID: ${docId}`, {
+      typeLabels: typeLabels.length,
+      cityName: cityName || 'none',
+      hasImage: !!imageUrl,
+      hasSearchText: !!searchText,
+      listingCollectionName: finalCollectionName,
+      hasDocField: !!resultDoc.doc,
+      docRelationTo: resultDoc.doc?.relationTo,
+      docValue: resultDoc.doc?.value,
+    })
 
     return resultDoc
   },
