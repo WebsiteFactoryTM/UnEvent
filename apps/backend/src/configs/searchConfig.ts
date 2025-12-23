@@ -109,7 +109,8 @@ export const searchConfig: SearchPluginConfig = {
     searchDoc: any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload: any
-  }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }): Promise<any> => {
     const collectionName = searchDoc?.doc?.relationTo
     const docId = originalDoc?.id
 
