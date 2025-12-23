@@ -8,6 +8,7 @@ import { toggleFavorites } from './endpoints/toggleFavorites'
 import { checkIfIsFavorited } from './endpoints/checkIfIsFavorited'
 import { checkBatchFavorites } from './endpoints/checkBatchFavorites'
 import { getUserFavorites } from './endpoints/getUserFavorites'
+import { syncAnonymousFavorites } from './endpoints/syncAnonymousFavorites'
 
 export const kindOptions = ['locations', 'events', 'services'] as const
 export type Kind = (typeof kindOptions)[number]
@@ -43,6 +44,11 @@ export const Favorites: CollectionConfig = {
       path: '/getUserFavorites',
       method: 'get',
       handler: getUserFavorites,
+    },
+    {
+      path: '/syncAnonymousFavorites',
+      method: 'post',
+      handler: syncAnonymousFavorites,
     },
   ],
   hooks: {
