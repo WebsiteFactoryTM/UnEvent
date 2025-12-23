@@ -124,15 +124,15 @@ export const searchConfig: SearchPluginConfig = {
     )
 
     // Only index approved listings.
-    // For non-approved docs: return null WITH doc field to trigger deletion from search index
-    // This ensures unapproved/rejected listings are removed from search results
+    // For non-approved docs: return false to skip syncing entirely
+    // Note: Payload's deleteDrafts: true config will handle cleanup automatically
     if (originalDoc?.moderationStatus !== 'approved' || originalDoc?._status !== 'published') {
       console.log(
-        `[search.beforeSync] REMOVING from search - Collection: ${collectionName}, ID: ${docId}`,
+        `[search.beforeSync] SKIP - Collection: ${collectionName}, ID: ${docId}`,
         `Reason: moderationStatus=${originalDoc?.moderationStatus}, _status=${originalDoc?._status}`,
       )
-      // Return null with doc field to delete from search index
-      return null
+      // Return false to skip syncing (deleteDrafts config handles cleanup)
+      return false as any
     }
 
     const safeString = (value: unknown): string => (typeof value === 'string' ? value : '')
@@ -351,8 +351,8 @@ export const searchConfig: SearchPluginConfig = {
         'searchDoc:',
         searchDoc,
       )
-      // Return null to trigger deletion if doc field is missing (shouldn't happen)
-      return null
+      // Return false to skip if doc field is missing
+      return false as any
     }
 
     // Build result document
