@@ -231,7 +231,7 @@ export function SearchArchiveClient({
 
       {/* Results list */}
       {!loading && results.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           {results.map((result) => (
             <SearchResultCard
               key={`${result.collection}-${result.id}-${page}`}

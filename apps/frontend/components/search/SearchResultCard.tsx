@@ -33,48 +33,45 @@ export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
       href={href}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-4 w-full p-3 rounded-lg",
+        "flex items-center gap-2 sm:gap-3 w-full p-2 sm:p-3 rounded-lg",
         "bg-card border border-border",
         "hover:bg-accent hover:border-accent-foreground/20",
         "transition-colors duration-200",
-        "min-h-[80px] max-h-[100px]",
       )}
     >
       {/* Image thumbnail */}
-      <div className="relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden bg-muted">
+      <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-md overflow-hidden bg-muted">
         {imageUrl && imageUrl !== "/placeholder.svg" ? (
           <Image
             src={imageUrl}
             alt={imageAlt}
             fill
             className="object-cover"
-            sizes="80px"
+            sizes="(max-width: 640px) 64px, 80px"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
-            <FaLocationDot className="h-6 w-6" />
+            <FaLocationDot className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+      <div className="flex-1 min-w-0 flex flex-col gap-1 sm:gap-1.5">
         {/* Title */}
-        <h3 className="font-semibold text-sm line-clamp-1 text-foreground">
+        <h3 className="font-semibold text-sm line-clamp-2 sm:line-clamp-1 text-foreground">
           {result.title}
         </h3>
 
         {/* Metadata row */}
-        <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-          {result.cityName && (
-            <div className="flex items-center gap-1">
-              <FaLocationDot className="h-3 w-3" />
-              <span className="line-clamp-1">{result.cityName}</span>
-            </div>
-          )}
-        </div>
+        {result.cityName && (
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <FaLocationDot className="h-3 w-3 flex-shrink-0" />
+            <span className="line-clamp-1">{result.cityName}</span>
+          </div>
+        )}
 
-        {/* Type badges - max 5, wrapped */}
+        {/* Type badges - max 3 on mobile, max 5 on desktop */}
         {(() => {
           // Ensure type is always an array
           let types: string[] = [];
@@ -113,20 +110,28 @@ export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
 
           if (types.length === 0) return null;
 
+          // Show max 2 badges on mobile, 3 on desktop
+          const maxBadges = 2;
+          const displayTypes = types.slice(0, maxBadges);
+          const remaining = types.length - maxBadges;
+
           return (
-            <div className="flex gap-1.5 flex-wrap">
-              {types.slice(0, 3).map((typeLabel, index) => (
+            <div className="flex gap-1 sm:gap-1.5 flex-wrap items-center">
+              {displayTypes.map((typeLabel, index) => (
                 <Badge
                   key={`${typeLabel}-${index}`}
                   variant="secondary"
-                  className="text-xs px-1.5 py-0.5"
+                  className="text-[10px] sm:text-xs px-1.5 py-0 sm:py-0.5 leading-tight"
                 >
                   {typeLabel}
                 </Badge>
               ))}
-              {types.length > 3 && (
-                <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
-                  +{types.length - 3}
+              {remaining > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="text-[10px] sm:text-xs px-1.5 py-0 sm:py-0.5 leading-tight"
+                >
+                  +{remaining}
                 </Badge>
               )}
             </div>

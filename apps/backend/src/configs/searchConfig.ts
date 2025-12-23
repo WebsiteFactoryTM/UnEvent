@@ -47,7 +47,10 @@ export const searchConfig: SearchPluginConfig = {
       {
         name: 'listingCollectionName',
         type: 'text',
-        admin: { readOnly: true },
+        admin: { readOnly: true, hidden: false },
+        access: {
+          read: () => true,
+        },
       },
       {
         name: 'slug',
@@ -87,8 +90,11 @@ export const searchConfig: SearchPluginConfig = {
       {
         name: 'searchText',
         type: 'text',
-        admin: { readOnly: true },
+        admin: { readOnly: true, hidden: false },
         label: 'Normalized Search Text (diacritics removed)',
+        access: {
+          read: () => true,
+        },
       },
     ],
   },

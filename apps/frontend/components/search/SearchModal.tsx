@@ -124,12 +124,14 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[80vh] flex flex-col">
+      <DialogContent className="sm:max-w-2xl max-h-[85vh] sm:max-h-[80vh] flex flex-col p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle>Caută locații, servicii și evenimente</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">
+            Caută locații, servicii și evenimente
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 flex-1 min-h-0">
+        <div className="flex flex-col gap-3 sm:gap-4 flex-1 min-h-0">
           {/* Search input */}
           <div className="relative">
             <FaMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -192,7 +194,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
             )}
 
             {!loading && !error && hasResults && (
-              <div className="space-y-2">
+              <div className="space-y-1.5 sm:space-y-2">
                 {results.map((result) => (
                   <SearchResultCard
                     key={`${result.collection}-${result.id}`}
