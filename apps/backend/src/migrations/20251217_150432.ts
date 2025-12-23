@@ -2,17 +2,33 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
-   ALTER TABLE "search_rels" DROP CONSTRAINT "search_rels_profiles_fk";
+   ALTER TABLE "search_rels" DROP CONSTRAINT IF EXISTS "search_rels_profiles_fk";
   
-  DROP INDEX "search_rels_profiles_id_idx";
+  DROP INDEX IF EXISTS "search_rels_profiles_id_idx";
   ALTER TABLE "events" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-17T15:04:32.636Z';
   ALTER TABLE "_events_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-17T15:04:32.636Z';
   ALTER TABLE "locations" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-17T15:04:32.636Z';
   ALTER TABLE "_locations_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-17T15:04:32.636Z';
   ALTER TABLE "services" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-17T15:04:32.636Z';
   ALTER TABLE "_services_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-17T15:04:32.636Z';
-  ALTER TABLE "search" ADD COLUMN "city_name" varchar;
-  ALTER TABLE "search_rels" DROP COLUMN "profiles_id";`)
+  
+  DO $$ BEGIN
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_name = 'search' AND column_name = 'city_name'
+    ) THEN
+      ALTER TABLE "search" ADD COLUMN "city_name" varchar;
+    END IF;
+  END $$;
+  
+  DO $$ BEGIN
+    IF EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_name = 'search_rels' AND column_name = 'profiles_id'
+    ) THEN
+      ALTER TABLE "search_rels" DROP COLUMN "profiles_id";
+    END IF;
+  END $$;`)
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
