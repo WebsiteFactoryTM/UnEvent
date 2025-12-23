@@ -150,6 +150,7 @@ export async function buildHubSnapshot(
   // 1) Featured nationwide (adjust filters to your schema)
   const featuredWhere: any = {
     moderationStatus: { equals: 'approved' },
+    _status: { equals: 'published' },
     tier: { in: ['recommended', 'sponsored'] },
     id: {
       not_in: popularCityRows.flatMap(

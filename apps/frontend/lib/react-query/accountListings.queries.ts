@@ -56,8 +56,15 @@ export function useListingsManager({
 
   // ---- Update listing ----
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) =>
-      updateListing(listingType, id, data, accessToken, profileId),
+    mutationFn: ({
+      id,
+      data,
+      draft,
+    }: {
+      id: number;
+      data: any;
+      draft?: boolean;
+    }) => updateListing(listingType, id, data, accessToken, profileId, draft),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: listingsKeys.userListings(listingType, String(profileId)),

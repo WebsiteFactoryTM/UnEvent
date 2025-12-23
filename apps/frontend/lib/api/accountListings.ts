@@ -29,7 +29,7 @@ export const getUserListing = async (
   }
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}/${listingId}?depth=1`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}/${listingId}?depth=1&draft=true`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -163,6 +163,7 @@ export async function updateListing(
   data: LocationFormData | EventFormData | ServiceFormData,
   accessToken?: string,
   profileId?: number,
+  draft?: boolean,
 ) {
   if (!id) {
     throw new Error("Listing ID is required");
@@ -185,8 +186,10 @@ export async function updateListing(
         ? window.location.origin
         : "http://localhost:3000");
 
+    const draftParam = draft ? "?draft=true" : "";
+
     const res = await fetch(
-      `${baseUrl}/api/account/listings/${listingType}/${id}`,
+      `${baseUrl}/api/account/listings/${listingType}/${id}${draftParam}`,
       {
         method: "PATCH",
         headers: {

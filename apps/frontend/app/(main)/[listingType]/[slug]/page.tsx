@@ -133,10 +133,15 @@ export default async function DetailPage({
   }
 
   // listing exists → check if can be shown (only show published in production)
-  if (
-    listing._status !== "published" ||
-    ["rejected", "pending", "draft"].includes(listing.moderationStatus as any)
-  ) {
+  // Public pages should ONLY check _status
+  // The main collection document is what public sees
+  // If there's a pending draft in versions table, that's invisible to public queries
+  if (listing._status !== "published") {
+    notFound();
+  }
+
+  // Optional: Also hide rejected listings from main collection
+  if (listing.moderationStatus === "rejected") {
     notFound();
   }
 

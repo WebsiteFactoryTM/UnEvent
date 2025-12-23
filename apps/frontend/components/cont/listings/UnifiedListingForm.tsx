@@ -191,25 +191,24 @@ export function UnifiedListingForm({
     setIsAutoSaving(true);
     const formData = methods.getValues();
 
-    // Set status to draft
-    methods.setValue("moderationStatus", "draft");
-
     try {
       const payload = formToPayload({
         ...formData,
-        moderationStatus: "draft",
-        _status: "draft",
+        // Do NOT set _status or moderationStatus here
+        // Let them remain as they are in the existing document
       } as UnifiedListingFormData);
 
       let result;
       if (editMode || savedListingId) {
-        // Update existing listing
+        // Update existing listing with draft=true
+        // This saves only to versions table, keeping published version unchanged
         result = await updateListingMutation({
           id: savedListingId!,
           data: payload as any,
+          draft: true,
         });
       } else {
-        // Create new listing
+        // Create new listing (first time creation always goes to main collection)
         result = await createListingMutation(payload as any);
         setSavedListingId(result.id);
       }
@@ -361,8 +360,9 @@ export function UnifiedListingForm({
     // Validate with status="pending" to check all submission requirements
     const submissionData = {
       ...data,
-      _status: "published" as const,
       moderationStatus: "pending" as const,
+      // Do NOT set _status here - it will be handled based on whether this is
+      // a first submission or resubmission
     };
 
     try {
@@ -396,15 +396,29 @@ export function UnifiedListingForm({
       // Validation passed, proceed with submission
       const payload = formToPayload(submissionData);
 
+      // Check if listing is already published (resubmission) or first submission
+      const isAlreadyPublished = existingListing?._status === "published";
+
       let result;
       if (editMode || savedListingId) {
         // Update existing listing
-        result = await updateListingMutation({
-          id: savedListingId!,
-          data: payload as any,
-        });
+        if (isAlreadyPublished) {
+          // Resubmission: save to draft version only (keeps published version live)
+          result = await updateListingMutation({
+            id: savedListingId!,
+            data: payload as any,
+            draft: true,
+          });
+        } else {
+          // First submission: update main collection with pending status
+          result = await updateListingMutation({
+            id: savedListingId!,
+            data: payload as any,
+            // draft: false or omitted - updates main collection
+          });
+        }
       } else {
-        // Create new listing
+        // Create new listing (first time creation always goes to main collection)
         result = await createListingMutation(payload as any);
         setSavedListingId(result.id);
       }
