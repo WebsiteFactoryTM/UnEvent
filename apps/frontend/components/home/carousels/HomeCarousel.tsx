@@ -19,6 +19,7 @@ import {
 } from "@/lib/normalizers/hub";
 import { CardItem, ListingType } from "@/types/listings";
 import { useMemo } from "react";
+import { useBatchFavorites } from "@/hooks/useBatchFavorites";
 
 interface HomeCarouselProps {
   listingType: ListingType;
@@ -54,6 +55,9 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
       cardItemToListingCardData(item, listingType),
     );
   }, [listings, listingType]);
+
+  // Batch fetch favorites for all listings
+  const { listings: enrichedListings } = useBatchFavorites(normalizedListings);
 
   // 1️⃣ Loading skeleton
   if (isLoading) return <CarouselSkeleton count={3} showAvatar={true} />;
@@ -127,7 +131,7 @@ const HomeCarousel: React.FC<HomeCarouselProps> = ({
           className="w-full"
         >
           <CarouselContent>
-            {normalizedListings.map((cardData: ListingCardData) => (
+            {enrichedListings.map((cardData: ListingCardData) => (
               <CarouselItem
                 key={`${cardData.title}-${cardData.id}`}
                 className="md:basis-1/2 lg:basis-1/3"

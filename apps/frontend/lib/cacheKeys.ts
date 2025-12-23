@@ -68,6 +68,7 @@ export const favoritesKeys = {
     kind
       ? ([...favoritesKeys.all, "user", userId, kind] as const)
       : ([...favoritesKeys.all, "user", userId] as const),
+  batch: (targetKeys: string[]) => ["favorites", "batch", targetKeys] as const,
 };
 
 /**

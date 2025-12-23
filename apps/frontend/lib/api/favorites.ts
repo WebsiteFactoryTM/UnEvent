@@ -112,6 +112,99 @@ export const checkIfIsFavorited = async (
   }
 };
 
+/**
+ * Batch check if multiple items are favorited
+ * @param targetKeys Array of targetKeys in format "collection:id" (e.g. ["locations:1", "events:2"])
+ * @param accessToken Auth token
+ * @returns Map of targetKey to boolean (e.g. { "locations:1": true, "events:2": false })
+ */
+export const checkBatchFavorites = async (
+  targetKeys: string[],
+  accessToken?: string,
+): Promise<Record<string, boolean>> => {
+  if (!accessToken || targetKeys.length === 0) {
+    // Return all false for unauthenticated or empty batch
+    return Object.fromEntries(targetKeys.map((key) => [key, false]));
+  }
+
+  // Check if we're in build context - during static generation, BFF routes don't exist
+  const isBuildTime =
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    (typeof window === "undefined" &&
+      !process.env.VERCEL_URL &&
+      !process.env.NEXT_PUBLIC_FRONTEND_URL);
+
+  // Use BFF route at runtime, direct Payload call during build
+  if (!isBuildTime && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+    const baseUrl =
+      process.env.NEXT_PUBLIC_FRONTEND_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
+
+    try {
+      const keysParam = targetKeys.join(",");
+      const res = await fetch(
+        `${baseUrl}/api/account/favorites/batch?targetKeys=${encodeURIComponent(keysParam)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          cache: "no-store",
+        },
+      );
+
+      if (res.ok) {
+        return await res.json();
+      }
+
+      // Fall through to fallback if BFF fails
+      console.warn(
+        "BFF batch favorites route failed, falling back to Payload:",
+        await res.text().catch(() => `HTTP ${res.status}`),
+      );
+    } catch (bffError) {
+      console.error(
+        "BFF batch favorites fetch error, falling back to Payload:",
+        bffError,
+      );
+      // Fall through to fallback
+    }
+  }
+
+  // Fallback to direct Payload call (build time or BFF failure)
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    // Return all false if no API URL configured
+    return Object.fromEntries(targetKeys.map((key) => [key, false]));
+  }
+
+  try {
+    // Join targetKeys with commas for query param
+    const keysParam = targetKeys.join(",");
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/favorites/checkBatch?targetKeys=${encodeURIComponent(keysParam)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    if (!res.ok) {
+      // Return all false on error
+      return Object.fromEntries(targetKeys.map((key) => [key, false]));
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : "Unknown error";
+    console.error("checkBatchFavorites error", errMsg);
+    // Return all false on error
+    return Object.fromEntries(targetKeys.map((key) => [key, false]));
+  }
+};
+
 export const getUserFavorites = async (
   accessToken?: string,
   options?: {

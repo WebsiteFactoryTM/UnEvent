@@ -30,6 +30,11 @@ export function useFavorites({
     listingId,
   );
 
+  // Check if we have cached data or initial data
+  const cached = queryClient.getQueryData<boolean>(favoriteKey);
+  const hasInitialData =
+    initialIsFavorited !== undefined && cached === undefined;
+
   const { data: isFavorited, isLoading } = useQuery<boolean, Error>({
     queryKey: favoriteKey,
     queryFn: () =>
@@ -38,18 +43,23 @@ export function useFavorites({
         listingId,
         (session as any)?.accessToken,
       ),
-    enabled: !!(session as any)?.accessToken,
+    // Only enable query if we have a token AND don't have initial data from batch call
+    // If we have initialIsFavorited, treat it as already fetched (no API call needed)
+    enabled: !!(session as any)?.accessToken && !hasInitialData,
 
     // Aggressive caching - data stays fresh for 10 minutes
     staleTime: 10 * 60 * 1000, // 10 minutes
     // Keep in cache for 30 minutes even if unused
     gcTime: 30 * 60 * 1000, // 30 minutes (was default 5 minutes)
 
-    // Use cached data if available, but don't use initialIsFavorited from props
-    // (that could be stale from SSR)
+    // If we have initialIsFavorited from batch call, use it as initialData
+    // This tells React Query the data is already fetched, preventing API call
+    initialData: hasInitialData ? initialIsFavorited : undefined,
+
+    // Fallback to cached data if available (for cases where cache exists)
     placeholderData: () => {
-      const cached = queryClient.getQueryData<boolean>(favoriteKey);
-      return cached !== undefined ? cached : undefined;
+      if (cached !== undefined) return cached;
+      return undefined;
     },
 
     // Don't refetch on mount/window focus if we have cached data
@@ -106,6 +116,13 @@ export function useFavorites({
           exact: false, // Invalidate all variants (with/without kind filter)
         });
       }
+
+      // Invalidate all batch favorites caches so grid views reflect the change
+      // Batch caches are keyed as ["favorites", "batch", targetKeys[]]
+      queryClient.invalidateQueries({
+        queryKey: ["favorites", "batch"],
+        exact: false, // Match all batch queries regardless of targetKeys
+      });
     },
     onSettled: async () => {
       // Invalidate listing queries so derived fields (counts, flags) refresh

@@ -10,13 +10,12 @@ import { useCityBySlug } from "@/lib/react-query/cities.queries";
 import { feedKeys } from "@/lib/cacheKeys";
 import React, { useMemo, useState, useEffect } from "react";
 import { getListingTypeSlug } from "@/lib/getListingType";
-import { ListingCard } from "./ListingCard";
-import { ListingCardData } from "@/lib/normalizers/hub";
+import { cardItemToListingCardData } from "@/lib/normalizers/hub";
 import { ArchiveMapView } from "./ArchiveMapView";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Map } from "lucide-react";
-import type { Location } from "@/types/payload-types";
 import ArchiveGridView from "./ArchiveGridView";
+import { useBatchFavorites } from "@/hooks/useBatchFavorites";
 
 // Utility function to convert eventWhen filter to date ranges
 function convertEventWhenToDates(
@@ -192,6 +191,16 @@ const CityArchive = ({
     ...(data?.organic || []),
   ];
 
+  // Convert CardItem[] to ListingCardData[] for batch favorites
+  const normalizedListings = useMemo(() => {
+    return combinedListings.map((item: CardItem) =>
+      cardItemToListingCardData(item, entity),
+    );
+  }, [combinedListings, entity]);
+
+  // Batch fetch favorites for all listings
+  const { listings: enrichedListings } = useBatchFavorites(normalizedListings);
+
   // Transform listings for map view
   const mapListings = useMemo(() => {
     const transformed = combinedListings.map((item: CardItem) => ({
@@ -251,7 +260,7 @@ const CityArchive = ({
       {/* Grid View */}
       {viewMode === "grid" && (
         <ArchiveGridView
-          listings={combinedListings}
+          listings={enrichedListings}
           entity={entity}
           handlePageChange={handlePageChange}
           disablePrevious={filters.page <= 1}

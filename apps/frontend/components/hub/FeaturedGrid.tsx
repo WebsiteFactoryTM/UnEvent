@@ -1,7 +1,9 @@
+"use client";
 import Link from "next/link";
 import { ListingCard } from "@/components/archives/ListingCard";
 import { Button } from "@/components/ui/button";
 import type { ListingCardData } from "@/lib/normalizers/hub";
+import { useBatchFavorites } from "@/hooks/useBatchFavorites";
 
 type ListingType = "locatii" | "servicii" | "evenimente";
 
@@ -14,6 +16,8 @@ export default function FeaturedGrid({
   listingType,
   items,
 }: FeaturedGridProps) {
+  const { listings: enrichedItems } = useBatchFavorites(items);
+
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between">
@@ -27,7 +31,7 @@ export default function FeaturedGrid({
         </Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.slice(0, 12).map((item) => (
+        {enrichedItems.slice(0, 12).map((item) => (
           <ListingCard
             key={`${item.listingType}_${item.slug}_${item.id}`}
             {...item}

@@ -1,6 +1,6 @@
 import React from "react";
-import { CardItem, ListingType } from "@/types/listings";
-import { cardItemToListingCardData } from "@/lib/normalizers/hub";
+import { ListingType } from "@/types/listings";
+import { ListingCardData } from "@/lib/normalizers/hub";
 import { ListingCard } from "./ListingCard";
 
 const ArchiveGridView = ({
@@ -10,7 +10,7 @@ const ArchiveGridView = ({
   disablePrevious,
   disableNext,
 }: {
-  listings: CardItem[];
+  listings: ListingCardData[];
   entity: ListingType;
   handlePageChange: (direction: "next" | "prev") => void;
   disablePrevious: boolean;
@@ -20,11 +20,8 @@ const ArchiveGridView = ({
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {listings.length > 0 ? (
-          listings.map((item: CardItem) => (
-            <ListingCard
-              key={item.slug}
-              {...cardItemToListingCardData(item, entity)}
-            />
+          listings.map((item: ListingCardData) => (
+            <ListingCard key={item.slug} {...item} />
           ))
         ) : (
           <div className="col-span-3 text-center text-muted-foreground py-12">

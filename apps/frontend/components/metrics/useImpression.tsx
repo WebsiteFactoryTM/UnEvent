@@ -22,6 +22,21 @@ export function useImpression({ listingId, kind }: UseImpressionOptions) {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasSentRef.current) {
+            // Check session-level deduplication (prevent duplicate impressions per session)
+            const dedupeKey = `unevent:impression:${kind}:${listingId}`;
+
+            try {
+              const lastSentAt = Number(sessionStorage.getItem(dedupeKey) || 0);
+              // Don't send if impression was sent in last 30 minutes
+              if (Date.now() - lastSentAt < 1000 * 60 * 30) {
+                hasSentRef.current = true;
+                observer.disconnect();
+                return;
+              }
+            } catch {
+              // ignore sessionStorage errors (private browsing, etc.)
+            }
+
             hasSentRef.current = true;
             (async () => {
               try {
@@ -33,6 +48,13 @@ export function useImpression({ listingId, kind }: UseImpressionOptions) {
                 });
 
                 if (response.ok) {
+                  // Mark as sent in sessionStorage to prevent duplicates
+                  try {
+                    sessionStorage.setItem(dedupeKey, String(Date.now()));
+                  } catch {
+                    // ignore sessionStorage errors
+                  }
+
                   // Invalidate metrics cache to refresh the displayed numbers
                   queryClient.invalidateQueries({
                     queryKey: metricsKeys.listing(kind, listingId),
