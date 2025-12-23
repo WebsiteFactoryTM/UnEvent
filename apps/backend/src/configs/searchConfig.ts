@@ -122,12 +122,15 @@ export const searchConfig: SearchPluginConfig = {
     )
 
     // Only index approved listings.
+    // Note: We can't return null here because the plugin will try to delete the search doc
+    // and fail if the doc field is missing. Instead, we return undefined which tells the
+    // plugin to skip syncing without attempting deletion.
     if (originalDoc?.moderationStatus !== 'approved' || originalDoc?._status !== 'published') {
       console.log(
         `[search.beforeSync] SKIPPED - Collection: ${collectionName}, ID: ${docId}`,
         `Reason: moderationStatus=${originalDoc?.moderationStatus}, _status=${originalDoc?._status}`,
       )
-      return null
+      return undefined
     }
 
     const safeString = (value: unknown): string => (typeof value === 'string' ? value : '')
@@ -346,8 +349,8 @@ export const searchConfig: SearchPluginConfig = {
         'searchDoc:',
         searchDoc,
       )
-      // Return null to skip indexing rather than causing a validation error
-      return null
+      // Return undefined to skip indexing without attempting deletion
+      return undefined
     }
 
     // Build result document - explicitly preserve required fields first
