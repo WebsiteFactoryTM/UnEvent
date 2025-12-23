@@ -19,6 +19,8 @@ import {
 } from "react-icons/fa6";
 import type { User, Profile } from "@/types/payload-types";
 import { ReportDialog } from "@/components/common/ReportDialog";
+import { useTracking } from "@/hooks/useTracking";
+import { usePathname } from "next/navigation";
 
 type ProfileWithUser = Profile & { user?: number | User };
 
@@ -26,9 +28,8 @@ interface ProfileSidebarProps {
   profile: ProfileWithUser;
 }
 
-import { useTracking } from "@/hooks/useTracking";
-
 export function ProfileSidebar({ profile }: ProfileSidebarProps) {
+  const pathname = usePathname();
   const { trackEvent } = useTracking();
   const user =
     profile.user && typeof profile.user === "object" ? profile.user : undefined;
@@ -260,9 +261,7 @@ export function ProfileSidebar({ profile }: ProfileSidebarProps) {
               typeof profile.id === "number" ? profile.id : Number(profile.id)
             }
             entityTitle={profile.displayName || profile.name || "Profil"}
-            entityUrl={
-              typeof window !== "undefined" ? window.location.href : ""
-            }
+            entityUrl={`${process.env.NEXT_PUBLIC_FRONTEND_URL}${pathname}`}
           />
         </CardContent>
       </Card>
