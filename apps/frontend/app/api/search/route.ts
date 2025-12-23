@@ -24,8 +24,10 @@ type SearchDoc = {
   listingCollectionName?: SearchCollection;
 };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 60;
+// Enable Next.js caching for search results
+// Search results can be cached for a short time to reduce backend load
+export const dynamic = "auto"; // Allow caching
+export const revalidate = 60; // Revalidate every 60 seconds
 
 // Remove Romanian diacritics for search matching
 // ă→a, â→a, î→i, ș→s, ț→t
@@ -49,7 +51,11 @@ function jsonResponse(body: unknown, status = 200) {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Cache-Control": "no-store, no-cache, must-revalidate",
+      // Cache successful responses for 60 seconds, errors not cached
+      "Cache-Control":
+        status === 200
+          ? "public, s-maxage=60, stale-while-revalidate=120"
+          : "no-store",
     },
   });
 }

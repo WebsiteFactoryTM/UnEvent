@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -13,11 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchResultCard } from "./SearchResultCard";
 import { useDebounce } from "@/hooks/useDebounce";
-import { searchListings } from "@/lib/search/searchFetch";
-import type { SearchKind, SearchResult } from "@/lib/search/types";
+import { useSearchListings } from "@/lib/react-query/search.queries";
+import type { SearchKind } from "@/lib/search/types";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 interface SearchModalProps {
   open: boolean;
@@ -35,68 +34,29 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<SearchKind>("all");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const debouncedQuery = useDebounce(query, 250);
 
-  // Search function
-  const performSearch = useCallback(
-    async (searchQuery: string, searchKind: SearchKind) => {
-      if (!searchQuery.trim() || searchQuery.trim().length < 2) {
-        setResults([]);
-        setError(null);
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        const collections =
-          searchKind === "all"
-            ? undefined
-            : [searchKind as "locations" | "services" | "events"];
-
-        const response = await searchListings({
-          q: searchQuery.trim(),
-          kind: searchKind,
-          collections,
-          limit: 5, // Show top 5 in modal
-        });
-
-        setResults(response.docs || []);
-      } catch (err) {
-        console.error("Search error:", err);
-        setError(err instanceof Error ? err.message : "Eroare la căutare");
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
+  // Use React Query for search with automatic caching and deduplication
+  const { data, isLoading, error } = useSearchListings(
+    {
+      q: debouncedQuery.trim(),
+      kind,
+      limit: 5, // Show top 5 in modal
     },
-    [],
+    {
+      enabled: open && debouncedQuery.trim().length >= 2,
+    },
   );
 
-  // Trigger search when debounced query or kind changes
-  useEffect(() => {
-    if (debouncedQuery.trim().length >= 2) {
-      performSearch(debouncedQuery, kind);
-    } else {
-      setResults([]);
-      setError(null);
-      setLoading(false);
-    }
-  }, [debouncedQuery, kind, performSearch]);
+  const results = data?.docs || [];
+  const errorMessage = error ? String(error) : null;
 
-  // Reset on close
+  // Reset query on close
   useEffect(() => {
     if (!open) {
       setQuery("");
       setKind("all");
-      setResults([]);
-      setError(null);
-      setLoading(false);
     }
   }, [open]);
 
@@ -167,7 +127,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               </div>
             )}
 
-            {loading && query.trim().length >= 2 && (
+            {isLoading && query.trim().length >= 2 && (
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="flex items-center gap-4 p-3">
@@ -181,19 +141,22 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               </div>
             )}
 
-            {error && !loading && (
+            {errorMessage && !isLoading && (
               <div className="text-center text-destructive py-8 text-sm">
-                {error}
+                {errorMessage}
               </div>
             )}
 
-            {!loading && !error && query.trim().length >= 2 && !hasResults && (
-              <div className="text-center text-muted-foreground py-8 text-sm">
-                Nu s-au găsit rezultate pentru &quot;{query}&quot;
-              </div>
-            )}
+            {!isLoading &&
+              !errorMessage &&
+              query.trim().length >= 2 &&
+              !hasResults && (
+                <div className="text-center text-muted-foreground py-8 text-sm">
+                  Nu s-au găsit rezultate pentru &quot;{query}&quot;
+                </div>
+              )}
 
-            {!loading && !error && hasResults && (
+            {!isLoading && !errorMessage && hasResults && (
               <div className="space-y-1.5 sm:space-y-2">
                 {results.map((result) => (
                   <SearchResultCard

@@ -109,9 +109,24 @@ export const searchConfig: SearchPluginConfig = {
     searchDoc: any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload: any
-  }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }): Promise<any> => {
+    const collectionName = searchDoc?.doc?.relationTo
+    const docId = originalDoc?.id
+
+    // Log start of sync for debugging
+    console.log(
+      `[search.beforeSync] START - Collection: ${collectionName}, ID: ${docId}, Title: ${originalDoc?.title}`,
+      'searchDoc.doc:',
+      searchDoc?.doc,
+    )
+
     // Only index approved listings.
     if (originalDoc?.moderationStatus !== 'approved' || originalDoc?._status !== 'published') {
+      console.log(
+        `[search.beforeSync] SKIPPED - Collection: ${collectionName}, ID: ${docId}`,
+        `Reason: moderationStatus=${originalDoc?.moderationStatus}, _status=${originalDoc?._status}`,
+      )
       return null
     }
 
@@ -297,7 +312,14 @@ export const searchConfig: SearchPluginConfig = {
       getTypeLabels(),
       getSuitableForLabels(),
       getImageUrl(),
-    ])
+    ]).catch((error) => {
+      console.error(
+        `[search.beforeSync] ERROR in Promise.all - Collection: ${collectionName}, ID: ${docId}`,
+        error,
+      )
+      // Return empty values with correct types instead of failing
+      return ['', [], [], ''] as [string, string[], string[], string]
+    })
 
     // Create searchable text fields from the label arrays
     const typeText = typeLabels.join(' ')
@@ -313,9 +335,28 @@ export const searchConfig: SearchPluginConfig = {
       [title, description, address, cityName, typeText, suitableForText].filter(Boolean).join(' '),
     )
 
-    return {
-      ...searchDoc,
-      // Keep the indexed payload minimal + UI-friendly
+    // Ensure listingCollectionName is correctly set
+    const finalCollectionName = searchDoc?.doc?.relationTo || collectionName || 'unknown'
+
+    // CRITICAL: Ensure the 'doc' field is preserved - it's required by the search plugin
+    // The doc field is a polymorphic relationship: { relationTo: 'events', value: 10 }
+    if (!searchDoc?.doc) {
+      console.error(
+        `[search.beforeSync] ERROR - Missing 'doc' field for Collection: ${finalCollectionName}, ID: ${docId}`,
+        'searchDoc:',
+        searchDoc,
+      )
+      // Return null to skip indexing rather than causing a validation error
+      return null
+    }
+
+    // Build result document - explicitly preserve required fields first
+    const resultDoc = {
+      // CRITICAL: Preserve plugin-managed fields first
+      doc: searchDoc.doc, // Required polymorphic relationship
+      priority: searchDoc.priority, // Optional but should be preserved
+
+      // Then add our custom fields
       title,
       description,
       address,
@@ -325,12 +366,39 @@ export const searchConfig: SearchPluginConfig = {
       suitableForText,
       searchText,
       imageUrl,
-      listingCollectionName: searchDoc?.doc?.relationTo,
+      listingCollectionName: finalCollectionName,
       slug: safeString(originalDoc?.slug),
       rating: safeNumber(originalDoc?.rating),
       views: safeNumber(originalDoc?.views),
       favoritesCount: safeNumber(originalDoc?.favoritesCount),
       tier: safeString(originalDoc?.tier),
     }
+
+    // Verify doc field is still present
+    if (!resultDoc.doc) {
+      console.error(
+        `[search.beforeSync] ERROR - 'doc' field missing in resultDoc for Collection: ${finalCollectionName}, ID: ${docId}`,
+        'resultDoc.doc:',
+        resultDoc.doc,
+        'searchDoc.doc:',
+        searchDoc.doc,
+      )
+      // Try to restore it from searchDoc
+      resultDoc.doc = searchDoc.doc
+    }
+
+    // Log successful sync with details
+    console.log(`[search.beforeSync] SUCCESS - Collection: ${finalCollectionName}, ID: ${docId}`, {
+      typeLabels: typeLabels.length,
+      cityName: cityName || 'none',
+      hasImage: !!imageUrl,
+      hasSearchText: !!searchText,
+      listingCollectionName: finalCollectionName,
+      hasDocField: !!resultDoc.doc,
+      docRelationTo: resultDoc.doc?.relationTo,
+      docValue: resultDoc.doc?.value,
+    })
+
+    return resultDoc
   },
 }
