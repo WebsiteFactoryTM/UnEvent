@@ -14,6 +14,8 @@ export const searchConfig: SearchPluginConfig = {
     services: 20,
     events: 30,
   },
+  syncDrafts: false, // Don't sync draft documents
+  deleteDrafts: true, // Delete drafts from search index
   searchOverrides: {
     fields: ({ defaultFields }: { defaultFields: Field[] }) => [
       ...defaultFields,
@@ -353,13 +355,12 @@ export const searchConfig: SearchPluginConfig = {
       return undefined
     }
 
-    // Build result document - explicitly preserve required fields first
+    // Build result document - explicitly preserve ALL plugin-managed fields
     const resultDoc = {
-      // CRITICAL: Preserve plugin-managed fields first
-      doc: searchDoc.doc, // Required polymorphic relationship
-      priority: searchDoc.priority, // Optional but should be preserved
+      // CRITICAL: Preserve ALL plugin-managed fields first (spreading searchDoc to get everything)
+      ...searchDoc,
 
-      // Then add our custom fields
+      // Then override/add our custom fields
       title,
       description,
       address,
@@ -375,6 +376,10 @@ export const searchConfig: SearchPluginConfig = {
       views: safeNumber(originalDoc?.views),
       favoritesCount: safeNumber(originalDoc?.favoritesCount),
       tier: safeString(originalDoc?.tier),
+
+      // Ensure critical fields are explicitly preserved (in case spreading failed)
+      doc: searchDoc.doc, // Required polymorphic relationship
+      priority: searchDoc.priority, // Optional but should be preserved
     }
 
     // Verify doc field is still present
@@ -400,6 +405,16 @@ export const searchConfig: SearchPluginConfig = {
       hasDocField: !!resultDoc.doc,
       docRelationTo: resultDoc.doc?.relationTo,
       docValue: resultDoc.doc?.value,
+      hasId: !!resultDoc.id,
+      searchDocId: searchDoc.id,
+      resultDocId: resultDoc.id,
+    })
+
+    // Log the complete document structure for debugging
+    console.log(`[search.beforeSync] Returning document for ${finalCollectionName}:${docId}`, {
+      keys: Object.keys(resultDoc),
+      docField: resultDoc.doc,
+      id: resultDoc.id,
     })
 
     return resultDoc
