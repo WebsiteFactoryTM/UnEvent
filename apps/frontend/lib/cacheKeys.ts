@@ -141,3 +141,12 @@ export const metricsKeys = {
   listing: (kind: string, id: number | string) =>
     [...metricsKeys.all, kind, String(id)] as const,
 };
+
+/**
+ * 🔍 Search
+ */
+export const searchKeys = {
+  all: ["search"] as const,
+  query: (filters: Record<string, unknown>) =>
+    [...searchKeys.all, "query", stableKey(filters)] as const,
+};

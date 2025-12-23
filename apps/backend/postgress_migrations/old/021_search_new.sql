@@ -1,0 +1,13 @@
+ALTER TABLE "events" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-18T11:45:10.657Z';
+ALTER TABLE "_events_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-18T11:45:10.657Z';
+ALTER TABLE "locations" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-18T11:45:10.657Z';
+ALTER TABLE "_locations_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-18T11:45:10.657Z';
+ALTER TABLE "services" ALTER COLUMN "last_viewed_at" SET DEFAULT '2025-12-18T11:45:10.657Z';
+ALTER TABLE "_services_v" ALTER COLUMN "version_last_viewed_at" SET DEFAULT '2025-12-18T11:45:10.657Z';
+ALTER TABLE "search" ALTER COLUMN "type" SET DATA TYPE jsonb;
+ALTER TABLE "search" ADD COLUMN "listing_collection_name" varchar;
+ALTER TABLE "search" ADD COLUMN "slug" varchar;
+ALTER TABLE "search" ADD COLUMN "rating" numeric;
+ALTER TABLE "search" ADD COLUMN "tier" varchar;
+ALTER TABLE "search" ADD COLUMN "views" numeric;
+ALTER TABLE "search" ADD COLUMN "favorites_count" numeric;

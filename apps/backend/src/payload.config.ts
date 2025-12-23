@@ -61,6 +61,7 @@ import { adminStatsHandler } from './endpoints/adminStats'
 import * as Sentry from '@sentry/nextjs'
 import { sentryPlugin } from '@payloadcms/plugin-sentry'
 import pg from 'pg'
+import { searchConfig } from './configs/searchConfig'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -321,112 +322,7 @@ export default buildConfig({
       : []),
     openapi({ openapiVersion: '3.0', metadata: { title: 'Dev API', version: '0.0.1' } }),
     swaggerUI({ docsUrl: '/swagger', specEndpoint: '/openapi.json', enabled: true }),
-    searchPlugin({
-      collections: ['locations', 'services', 'events'],
-      defaultPriorities: {
-        locations: 10,
-        services: 20,
-        events: 30,
-      },
-      searchOverrides: {
-        fields: ({ defaultFields }: { defaultFields: Field[] }) => [
-          ...defaultFields,
-          {
-            name: 'description',
-            type: 'textarea',
-            admin: {
-              readOnly: true,
-            },
-          },
-          {
-            name: 'address',
-            type: 'text',
-            admin: {
-              readOnly: true,
-            },
-          },
-          {
-            name: 'type',
-            type: 'text',
-            admin: {
-              readOnly: true,
-            },
-          },
-        ],
-      },
-      beforeSync: async ({
-        originalDoc,
-        searchDoc,
-        payload,
-      }: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        originalDoc: any
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        searchDoc: any
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        payload: any
-      }) => {
-        let cityName = ''
-
-        // Get city name from the relationship
-        if (originalDoc?.city && payload.collection !== 'profiles') {
-          try {
-            const cityId =
-              typeof originalDoc.city === 'object' ? originalDoc.city.id : originalDoc.city
-            const city = await payload.findByID({
-              collection: 'cities',
-              id: cityId,
-            })
-            cityName = city?.name || ''
-          } catch (error) {
-            console.error('Error fetching city:', error)
-          }
-        }
-
-        if (originalDoc?.type?.length) {
-          try {
-            // Extract IDs from type array (handles both populated objects and plain IDs)
-            const typeIds = originalDoc.type
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .map((item: any) => {
-                if (typeof item === 'object' && item !== null && 'id' in item) {
-                  return item.id
-                }
-                return item
-              })
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .filter((id: any) => id != null)
-
-            if (typeIds.length > 0) {
-              const result = await payload.find({
-                collection: 'listing-types',
-                where: { id: { in: typeIds } },
-                depth: 0,
-                limit: 100,
-              })
-              const labels = result.docs.map((d: ListingType) => d?.title).filter(Boolean)
-              searchDoc.type = labels // keep as array in index
-            } else {
-              searchDoc.type = []
-            }
-          } catch (e) {
-            console.error('Error fetching listing-types:', e)
-            searchDoc.type = []
-          }
-        } else {
-          searchDoc.type = []
-        }
-
-        return {
-          ...searchDoc,
-          title: originalDoc?.title || '',
-          description: originalDoc?.description || '',
-          address: originalDoc?.address || '',
-          cityName: cityName || '',
-          type: searchDoc.type || [],
-        }
-      },
-    }),
+    searchPlugin(searchConfig),
   ],
   onInit: async (payload) => {
     // Try to read from Settings global, fallback to ENV

@@ -26,12 +26,12 @@ import {
 
 import { HamburgerIcon } from "./HamburgerIcon";
 import { signOut, useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
+
 import Image from "next/image";
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
-  const { theme } = useTheme();
-  const { data: session, status } = useSession({ required: false });
+
+  const { data: session } = useSession({ required: false });
   const user = session?.user;
 
   const handleLogout = () => {
