@@ -316,8 +316,8 @@ export const searchConfig: SearchPluginConfig = {
         `[search.beforeSync] ERROR in Promise.all - Collection: ${collectionName}, ID: ${docId}`,
         error,
       )
-      // Return empty values instead of failing
-      return ['', [], [], '']
+      // Return empty values with correct types instead of failing
+      return ['', [], [], ''] as [string, string[], string[], string]
     })
 
     // Create searchable text fields from the label arrays
