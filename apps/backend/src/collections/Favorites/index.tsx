@@ -6,6 +6,7 @@ import { retractAggregatesFavorites } from './hooks/afterDelete/retractAggregate
 import { isAdminOrSelf } from '../_access/roles'
 import { toggleFavorites } from './endpoints/toggleFavorites'
 import { checkIfIsFavorited } from './endpoints/checkIfIsFavorited'
+import { checkBatchFavorites } from './endpoints/checkBatchFavorites'
 import { getUserFavorites } from './endpoints/getUserFavorites'
 
 export const kindOptions = ['locations', 'events', 'services'] as const
@@ -32,6 +33,11 @@ export const Favorites: CollectionConfig = {
       path: '/checkIfIsFavorited',
       method: 'get',
       handler: checkIfIsFavorited,
+    },
+    {
+      path: '/checkBatch',
+      method: 'get',
+      handler: checkBatchFavorites,
     },
     {
       path: '/getUserFavorites',

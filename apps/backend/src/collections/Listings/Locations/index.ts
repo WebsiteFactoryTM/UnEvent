@@ -2,7 +2,6 @@ import type { CollectionConfig } from 'payload'
 import { sharedListingFields } from '../fields.shared'
 import { attachOwner, setDefaultStatus } from '../_hooks/beforeValidate'
 import { isOwnerOrAdmin, requireRole } from '@/collections/_access/roles'
-import { withIsFavoritedByViewer } from '../_hooks/afterRead/withIsFavoritedByViewer'
 import { withHasReviewedByViewer } from '../_hooks/afterRead/withIsReviedByViewer'
 import { revalidateListing } from '../_hooks/afterChange/revalidateListing'
 import { markListingMediaPermanent } from '../_hooks/afterChange/markMediaPermanent'
@@ -37,7 +36,7 @@ export const Locations: CollectionConfig = {
   hooks: {
     beforeChange: [attachOwner, setDefaultStatus],
     beforeDelete: [preventHardDelete],
-    afterRead: [withIsFavoritedByViewer, withHasReviewedByViewer],
+    afterRead: [withHasReviewedByViewer],
     afterChange: [
       markListingMediaPermanent,
       revalidateListing,
