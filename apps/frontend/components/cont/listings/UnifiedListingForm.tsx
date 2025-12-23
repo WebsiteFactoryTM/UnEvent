@@ -202,6 +202,12 @@ export function UnifiedListingForm({
       if (editMode || savedListingId) {
         // Update existing listing with draft=true
         // This saves only to versions table, keeping published version unchanged
+        // Exclude _status to ensure main collection's _status remains unchanged
+        const isAlreadyPublished = existingListing?._status === "published";
+        if (isAlreadyPublished) {
+          delete payload._status;
+        }
+        
         result = await updateListingMutation({
           id: savedListingId!,
           data: payload as any,
@@ -394,16 +400,23 @@ export function UnifiedListingForm({
 
     try {
       // Validation passed, proceed with submission
-      const payload = formToPayload(submissionData);
-
       // Check if listing is already published (resubmission) or first submission
       const isAlreadyPublished = existingListing?._status === "published";
 
+      let payload: any;
       let result;
+      
       if (editMode || savedListingId) {
         // Update existing listing
         if (isAlreadyPublished) {
           // Resubmission: save to draft version only (keeps published version live)
+          // IMPORTANT: When using draft=true, Payload saves ONLY to versions table
+          // However, we must exclude _status from the payload to ensure the main
+          // collection's _status remains 'published' and doesn't get changed
+          payload = formToPayload(submissionData);
+          // Remove _status to prevent any accidental updates to main collection
+          delete payload._status;
+          
           result = await updateListingMutation({
             id: savedListingId!,
             data: payload as any,
@@ -411,6 +424,7 @@ export function UnifiedListingForm({
           });
         } else {
           // First submission: update main collection with pending status
+          payload = formToPayload(submissionData);
           result = await updateListingMutation({
             id: savedListingId!,
             data: payload as any,
@@ -419,6 +433,7 @@ export function UnifiedListingForm({
         }
       } else {
         // Create new listing (first time creation always goes to main collection)
+        payload = formToPayload(submissionData);
         result = await createListingMutation(payload as any);
         setSavedListingId(result.id);
       }
