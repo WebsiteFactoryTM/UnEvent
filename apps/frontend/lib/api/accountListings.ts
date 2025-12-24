@@ -63,8 +63,9 @@ export const getUserListings = async (
   }
   try {
     // Filter out soft-deleted listings (deletedAt is null or doesn't exist)
+    // Include draft=true to show the latest draft versions for owners
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[owner][equals]=${profileId}&where[deletedAt][exists]=false&depth=1`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/${listingType}?where[owner][equals]=${profileId}&where[deletedAt][exists]=false&depth=1&draft=true`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

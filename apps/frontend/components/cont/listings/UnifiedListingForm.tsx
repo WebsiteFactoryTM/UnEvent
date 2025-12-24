@@ -400,8 +400,6 @@ export function UnifiedListingForm({
 
     try {
       // Validation passed, proceed with submission
-      // Check if listing is already published (resubmission) or first submission
-      const isAlreadyPublished = existingListing?._status === "published";
 
       let payload: any;
       let result;
