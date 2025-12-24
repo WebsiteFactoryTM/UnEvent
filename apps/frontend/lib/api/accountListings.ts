@@ -12,6 +12,47 @@ import {
 
 type ListingCollectionSlug = "locations" | "events" | "services";
 
+// Helper function to log API errors to Sentry (only logs system errors, not validation errors)
+function logApiErrorToSentry(
+  error: unknown,
+  operation: string,
+  apiCallContext: Record<string, any>,
+) {
+  if (typeof window !== "undefined" && (window as any).Sentry) {
+    const isNetworkError =
+      error instanceof TypeError && error.message?.includes("fetch");
+    const isServerError =
+      error instanceof Error &&
+      (error.message?.includes("500") ||
+        error.message?.includes("502") ||
+        error.message?.includes("503") ||
+        error.message?.includes("504"));
+    const isAuthError =
+      error instanceof Error &&
+      (error.message?.includes("401") ||
+        error.message?.includes("403") ||
+        error.message?.includes("Unauthorized"));
+
+    if (isNetworkError || isServerError || isAuthError) {
+      (window as any).Sentry.withScope((scope: any) => {
+        scope.setTag("operation", operation);
+        scope.setTag("component", "accountListings");
+        scope.setTag(
+          "error_type",
+          isNetworkError ? "network" : isServerError ? "server" : "auth",
+        );
+        scope.setContext("api_call", apiCallContext);
+        scope.setContext("error_details", {
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+          responseData: (error as any).responseData,
+        });
+        (window as any).Sentry.captureException(error);
+      });
+    }
+  }
+}
+
 export const getUserListing = async (
   listingType: ListingCollectionSlug,
   listingId: number,
@@ -153,45 +194,13 @@ export async function createListing(
   } catch (error) {
     console.error("Error creating listing:", error);
 
-    // Log API failures to Sentry (exclude expected validation errors)
-    if (typeof window !== "undefined" && (window as any).Sentry) {
-      const isNetworkError =
-        error instanceof TypeError && error.message?.includes("fetch");
-      const isServerError =
-        error instanceof Error &&
-        (error.message?.includes("500") ||
-          error.message?.includes("502") ||
-          error.message?.includes("503") ||
-          error.message?.includes("504"));
-      const isAuthError =
-        error instanceof Error &&
-        (error.message?.includes("401") ||
-          error.message?.includes("403") ||
-          error.message?.includes("Unauthorized"));
-
-      if (isNetworkError || isServerError || isAuthError) {
-        (window as any).Sentry.withScope((scope: any) => {
-          scope.setTag("operation", "create_listing_api");
-          scope.setTag("component", "accountListings");
-          scope.setTag(
-            "error_type",
-            isNetworkError ? "network" : isServerError ? "server" : "auth",
-          );
-          scope.setContext("api_call", {
-            listingType,
-            profileId,
-            url: `${baseUrl}/api/account/listings/${listingType}`,
-            hasAccessToken: !!accessToken,
-          });
-          scope.setContext("error_details", {
-            message: error instanceof Error ? error.message : String(error),
-            stack: error instanceof Error ? error.stack : undefined,
-            responseData: (error as any).responseData,
-          });
-          (window as any).Sentry.captureException(error);
-        });
-      }
-    }
+    // Log API failures to Sentry
+    logApiErrorToSentry(error, "create_listing_api", {
+      listingType,
+      profileId,
+      url: `${baseUrl}/api/account/listings/${listingType}`,
+      hasAccessToken: !!accessToken,
+    });
 
     if (error instanceof Error) {
       throw error;
@@ -263,47 +272,15 @@ export async function updateListing(
   } catch (error) {
     console.error("Error updating listing:", error);
 
-    // Log API failures to Sentry (exclude expected validation errors)
-    if (typeof window !== "undefined" && (window as any).Sentry) {
-      const isNetworkError =
-        error instanceof TypeError && error.message?.includes("fetch");
-      const isServerError =
-        error instanceof Error &&
-        (error.message?.includes("500") ||
-          error.message?.includes("502") ||
-          error.message?.includes("503") ||
-          error.message?.includes("504"));
-      const isAuthError =
-        error instanceof Error &&
-        (error.message?.includes("401") ||
-          error.message?.includes("403") ||
-          error.message?.includes("Unauthorized"));
-
-      if (isNetworkError || isServerError || isAuthError) {
-        (window as any).Sentry.withScope((scope: any) => {
-          scope.setTag("operation", "update_listing_api");
-          scope.setTag("component", "accountListings");
-          scope.setTag(
-            "error_type",
-            isNetworkError ? "network" : isServerError ? "server" : "auth",
-          );
-          scope.setContext("api_call", {
-            listingType,
-            listingId: id,
-            profileId,
-            draft,
-            url: `${baseUrl}/api/account/listings/${listingType}/${id}${draftParam}`,
-            hasAccessToken: !!accessToken,
-          });
-          scope.setContext("error_details", {
-            message: error instanceof Error ? error.message : String(error),
-            stack: error instanceof Error ? error.stack : undefined,
-            responseData: (error as any).responseData,
-          });
-          (window as any).Sentry.captureException(error);
-        });
-      }
-    }
+    // Log API failures to Sentry
+    logApiErrorToSentry(error, "update_listing_api", {
+      listingType,
+      listingId: id,
+      profileId,
+      draft,
+      url: `${baseUrl}/api/account/listings/${listingType}/${id}${draftParam}`,
+      hasAccessToken: !!accessToken,
+    });
 
     if (error instanceof Error) {
       throw error;
@@ -362,45 +339,14 @@ export async function deleteListing(
   } catch (error) {
     console.error("Error deleting listing:", error);
 
-    // Log API failures to Sentry (exclude expected validation errors)
-    if (typeof window !== "undefined" && (window as any).Sentry) {
-      const isNetworkError =
-        error instanceof TypeError && error.message?.includes("fetch");
-      const isServerError =
-        error instanceof Error &&
-        (error.message?.includes("500") ||
-          error.message?.includes("502") ||
-          error.message?.includes("503") ||
-          error.message?.includes("504"));
-      const isAuthError =
-        error instanceof Error &&
-        (error.message?.includes("401") ||
-          error.message?.includes("403") ||
-          error.message?.includes("Unauthorized"));
-
-      if (isNetworkError || isServerError || isAuthError) {
-        (window as any).Sentry.withScope((scope: any) => {
-          scope.setTag("operation", "delete_listing_api");
-          scope.setTag("component", "accountListings");
-          scope.setTag(
-            "error_type",
-            isNetworkError ? "network" : isServerError ? "server" : "auth",
-          );
-          scope.setContext("api_call", {
-            listingType,
-            listingId: id,
-            profileId,
-            url: `${baseUrl}/api/account/listings/${listingType}/${id}`,
-            hasAccessToken: !!accessToken,
-          });
-          scope.setContext("error_details", {
-            message: error instanceof Error ? error.message : String(error),
-            stack: error instanceof Error ? error.stack : undefined,
-          });
-          (window as any).Sentry.captureException(error);
-        });
-      }
-    }
+    // Log API failures to Sentry
+    logApiErrorToSentry(error, "delete_listing_api", {
+      listingType,
+      listingId: id,
+      profileId,
+      url: `${baseUrl}/api/account/listings/${listingType}/${id}`,
+      hasAccessToken: !!accessToken,
+    });
 
     if (error instanceof Error) {
       throw error;
