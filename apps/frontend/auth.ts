@@ -189,7 +189,7 @@ async function refreshPayloadToken(
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  debug: true, // Enable debug logging in production temporarily
+  debug: false, // Enable debug logging in production temporarily
   providers: [
     CredentialsProvider({
       name: "Credentials",

@@ -80,7 +80,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     const results = await Promise.all(
       collectionSlugs.map(async (collection) => {
         // For events, exclude finished events and events that have ended
-        let url = `${payloadUrl}/api/${collection}?where[owner][equals]=${profileId}&depth=1&limit=100`;
+        let url = `${payloadUrl}/api/${collection}?where[owner][equals]=${profileId}&where[moderationStatus][equals]=approved&where[_status][equals]=published&depth=1&limit=100`;
         if (collection === "events") {
           url += `&where[eventStatus][not_equals]=finished&where[endDate][greater_than_equal]=${new Date().toISOString()}`;
         }
