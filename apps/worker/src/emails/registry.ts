@@ -514,12 +514,11 @@ export const EMAIL_TEMPLATES: Partial<
     getRecipients: (p: AdminListingPendingPayload) => {
       return getAdminEmails("admin.listing.pending");
     },
-    getSubject: (p) =>
-      `📋 Listare nouă așteaptă aprobare: „${p.listing_title}”`,
+    getSubject: (p) => `📋 Listare așteaptă aprobare: „${p.listing_title}”`,
     getPreheader: () =>
-      "O nouă listare a fost creată și așteaptă aprobarea ta.",
+      "O nouă listare a fost creată sau actualizată și așteaptă aprobarea ta.",
     getTextFallback: (p) =>
-      `O nouă listare de tip ${p.listing_type} a fost creată și așteaptă aprobarea ta.\n\nTitlu: ${p.listing_title}\nTip: ${p.listing_type}\nCreat de: ${p.created_by}\nID: ${p.listing_id}`,
+      `O nouă listare de tip ${p.listing_type} a fost creată sau actualizată și așteaptă aprobarea ta.\n\nTitlu: ${p.listing_title}\nTip: ${p.listing_type}\nCreat de: ${p.created_by}\nID: ${p.listing_id}`,
     render: (p) =>
       AdminListingPendingEmail({
         listingTitle: p.listing_title,

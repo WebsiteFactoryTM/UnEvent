@@ -26,12 +26,14 @@ export function AdminListingPendingEmail({
 
   return (
     <EmailLayout
-      preview={`O listare nouă așteaptă aprobare: „${listingTitle}”`}
+      preview={`O listare nouă sau actualizată așteaptă aprobare: „${listingTitle}”`}
     >
-      <Heading style={heading}>O listare nouă așteaptă aprobare</Heading>
+      <Heading style={heading}>
+        O listare nouă sau actualizată așteaptă aprobare
+      </Heading>
       <Text style={paragraph}>
         O nouă listare de tip <strong>{listingTypeLabel}</strong> a fost creată
-        și așteaptă aprobarea ta.
+        sau actualizată și așteaptă aprobarea ta.
       </Text>
       <Section style={infoBox}>
         <Text style={infoLabel}>Titlu:</Text>
