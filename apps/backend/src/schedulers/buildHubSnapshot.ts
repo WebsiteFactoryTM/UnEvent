@@ -91,6 +91,7 @@ export async function buildHubSnapshot(
     const cityWhere: any = {
       'city.slug': { equals: citySlug }, // adapt to your city field path
       moderationStatus: { equals: 'approved' },
+      claimStatus: { not_equals: 'unclaimed' },
       _status: { equals: 'published' },
     }
 
@@ -151,6 +152,7 @@ export async function buildHubSnapshot(
   const featuredWhere: any = {
     moderationStatus: { equals: 'approved' },
     _status: { equals: 'published' },
+    claimStatus: { not_equals: 'unclaimed' },
     id: {
       not_in: popularCityRows.flatMap(
         (row) => row.items?.map((item) => item.listingId as number) ?? [],

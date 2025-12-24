@@ -444,6 +444,7 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
       collection: query.entity,
       where: { id: { in: pinnedCandidateIds } },
       limit: pinnedCandidateIds.length,
+      sort: 'claimStatus',
       depth: 1,
     })
 

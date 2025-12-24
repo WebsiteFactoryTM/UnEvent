@@ -158,9 +158,11 @@ function getExtraListings(
     deletedAt?: { exists: false }
     eventStatus?: { not_equals: 'finished' }
     endDate?: { greater_than_equal: string }
+    claimStatus?: { not_equals: 'unclaimed' }
   } = {
     moderationStatus: { equals: 'approved' },
     _status: { equals: 'published' },
+    claimStatus: { not_equals: 'unclaimed' },
     id: { not_in: exclude },
     deletedAt: { exists: false }, // Exclude soft-deleted listings
   }
