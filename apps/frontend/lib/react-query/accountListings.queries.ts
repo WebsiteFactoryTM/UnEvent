@@ -51,28 +51,8 @@ export function useListingsManager({
     },
     onError: (error) => {
       console.error("Error creating listing:", error);
-
-      // Log to Sentry for monitoring (skip expected validation errors)
-      if (typeof window !== "undefined" && (window as any).Sentry) {
-        const isValidationError = error instanceof Error &&
-          (error.message?.includes("required") ||
-           error.message?.includes("validation") ||
-           error.message?.includes("invalid"));
-
-        if (!isValidationError) {
-          (window as any).Sentry.withScope((scope: any) => {
-            scope.setTag("operation", "create_listing");
-            scope.setTag("component", "accountListings");
-            scope.setContext("error_details", {
-              message: error instanceof Error ? error.message : String(error),
-              stack: error instanceof Error ? error.stack : undefined,
-            });
-            (window as any).Sentry.captureException(error);
-          });
-        }
-      }
-
       // Error is thrown and will be caught by the component
+      // API-level Sentry logging handles monitoring
     },
   });
 
@@ -94,26 +74,7 @@ export function useListingsManager({
     },
     onError: (error) => {
       console.error("Error updating listing:", error);
-
-      // Log to Sentry for monitoring (skip expected validation errors)
-      if (typeof window !== "undefined" && (window as any).Sentry) {
-        const isValidationError = error instanceof Error &&
-          (error.message?.includes("required") ||
-           error.message?.includes("validation") ||
-           error.message?.includes("invalid"));
-
-        if (!isValidationError) {
-          (window as any).Sentry.withScope((scope: any) => {
-            scope.setTag("operation", "update_listing");
-            scope.setTag("component", "accountListings");
-            scope.setContext("error_details", {
-              message: error instanceof Error ? error.message : String(error),
-              stack: error instanceof Error ? error.stack : undefined,
-            });
-            (window as any).Sentry.captureException(error);
-          });
-        }
-      }
+      // API-level Sentry logging handles monitoring
 
       // Error is thrown and will be caught by the component
     },
@@ -131,25 +92,7 @@ export function useListingsManager({
     onError: (error) => {
       console.error("Error deleting listing:", error);
 
-      // Log to Sentry for monitoring (skip expected validation errors)
-      if (typeof window !== "undefined" && (window as any).Sentry) {
-        const isValidationError = error instanceof Error &&
-          (error.message?.includes("required") ||
-           error.message?.includes("validation") ||
-           error.message?.includes("invalid"));
-
-        if (!isValidationError) {
-          (window as any).Sentry.withScope((scope: any) => {
-            scope.setTag("operation", "delete_listing");
-            scope.setTag("component", "accountListings");
-            scope.setContext("error_details", {
-              message: error instanceof Error ? error.message : String(error),
-              stack: error instanceof Error ? error.stack : undefined,
-            });
-            (window as any).Sentry.captureException(error);
-          });
-        }
-      }
+      // API-level Sentry logging handles monitoring
 
       // Error is thrown and will be caught by the component
     },
