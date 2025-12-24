@@ -38,6 +38,7 @@ export function useListingsManager({
     enabled: !!profileId && !!accessToken,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
+  console.log("listings", listings);
 
   // ---- Create listing ----
   const createMutation = useMutation({
@@ -51,13 +52,21 @@ export function useListingsManager({
     onError: (error) => {
       console.error("Error creating listing:", error);
       // Error is thrown and will be caught by the component
+      // API-level Sentry logging handles monitoring
     },
   });
 
   // ---- Update listing ----
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) =>
-      updateListing(listingType, id, data, accessToken, profileId),
+    mutationFn: ({
+      id,
+      data,
+      draft,
+    }: {
+      id: number;
+      data: any;
+      draft?: boolean;
+    }) => updateListing(listingType, id, data, accessToken, profileId, draft),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: listingsKeys.userListings(listingType, String(profileId)),
@@ -65,6 +74,8 @@ export function useListingsManager({
     },
     onError: (error) => {
       console.error("Error updating listing:", error);
+      // API-level Sentry logging handles monitoring
+
       // Error is thrown and will be caught by the component
     },
   });
@@ -80,6 +91,9 @@ export function useListingsManager({
     },
     onError: (error) => {
       console.error("Error deleting listing:", error);
+
+      // API-level Sentry logging handles monitoring
+
       // Error is thrown and will be caught by the component
     },
   });

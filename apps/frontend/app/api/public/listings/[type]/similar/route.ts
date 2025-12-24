@@ -40,6 +40,7 @@ export async function GET(
   search.set("depth", "2");
   search.set("sort", "-rating");
   search.set("where[moderationStatus][equals]", "approved");
+  search.set("where[_status][equals]", "published");
 
   if (listingId) {
     // Payload uses not_in for excluding IDs, even for a single value

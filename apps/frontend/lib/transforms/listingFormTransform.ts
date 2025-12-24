@@ -114,7 +114,6 @@ export function formToPayload(
           }))
         : undefined,
     moderationStatus: formData.moderationStatus,
-    _status: formData._status,
     // Images - extract IDs only for submission
     featuredImage: formData.featuredImage
       ? typeof formData.featuredImage === "object" &&

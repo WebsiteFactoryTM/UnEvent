@@ -158,6 +158,7 @@ export const feedHandler: PayloadHandler = async (req: PayloadRequest) => {
     const whereEntity: Where = {
       and: [
         { moderationStatus: { equals: 'approved' } }, // Only approved listings
+        { _status: { equals: 'published' } }, // Only published listings (not drafts)
         { deletedAt: { exists: false } }, // Exclude soft-deleted listings
       ],
     }

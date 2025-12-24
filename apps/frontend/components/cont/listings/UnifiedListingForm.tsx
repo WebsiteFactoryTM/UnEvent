@@ -191,25 +191,30 @@ export function UnifiedListingForm({
     setIsAutoSaving(true);
     const formData = methods.getValues();
 
-    // Set status to draft
-    methods.setValue("moderationStatus", "draft");
-
     try {
       const payload = formToPayload({
         ...formData,
-        moderationStatus: "draft",
-        _status: "draft",
+        // Do NOT set _status or moderationStatus here
+        // Let them remain as they are in the existing document
       } as UnifiedListingFormData);
 
       let result;
       if (editMode || savedListingId) {
-        // Update existing listing
+        // Update existing listing with draft=true
+        // This saves only to versions table, keeping published version unchanged
+        // Exclude _status to ensure main collection's _status remains unchanged
+        const isAlreadyPublished = existingListing?._status === "published";
+        if (isAlreadyPublished) {
+          delete payload._status;
+        }
+
         result = await updateListingMutation({
           id: savedListingId!,
           data: payload as any,
+          draft: true,
         });
       } else {
-        // Create new listing
+        // Create new listing (first time creation always goes to main collection)
         result = await createListingMutation(payload as any);
         setSavedListingId(result.id);
       }
@@ -361,8 +366,9 @@ export function UnifiedListingForm({
     // Validate with status="pending" to check all submission requirements
     const submissionData = {
       ...data,
-      _status: "published" as const,
       moderationStatus: "pending" as const,
+      // Do NOT set _status here - it will be handled based on whether this is
+      // a first submission or resubmission
     };
 
     try {
@@ -394,17 +400,23 @@ export function UnifiedListingForm({
 
     try {
       // Validation passed, proceed with submission
-      const payload = formToPayload(submissionData);
 
+      let payload: any;
       let result;
+
       if (editMode || savedListingId) {
         // Update existing listing
+        payload = formToPayload(submissionData);
+
         result = await updateListingMutation({
           id: savedListingId!,
           data: payload as any,
+          draft: true,
+          // draft: false or omitted - updates main collection
         });
       } else {
-        // Create new listing
+        // Create new listing (first time creation always goes to main collection)
+        payload = formToPayload(submissionData);
         result = await createListingMutation(payload as any);
         setSavedListingId(result.id);
       }
