@@ -91,7 +91,7 @@ export async function buildHubSnapshot(
     const cityWhere: any = {
       'city.slug': { equals: citySlug }, // adapt to your city field path
       moderationStatus: { equals: 'approved' },
-      tier: { in: ['recommended', 'sponsored'] },
+      _status: { equals: 'published' },
     }
 
     // For events, exclude finished events and events that have ended
@@ -103,7 +103,7 @@ export async function buildHubSnapshot(
     const top = await payload.find({
       collection,
       where: cityWhere,
-      sort: ['-rating', '-reviewsCount', '-updatedAt'],
+      sort: ['-rating', '-reviewsCount', '-createdAt'],
       limit: 9,
       depth: 1,
     })
@@ -151,7 +151,6 @@ export async function buildHubSnapshot(
   const featuredWhere: any = {
     moderationStatus: { equals: 'approved' },
     _status: { equals: 'published' },
-    tier: { in: ['recommended', 'sponsored'] },
     id: {
       not_in: popularCityRows.flatMap(
         (row) => row.items?.map((item) => item.listingId as number) ?? [],
@@ -168,7 +167,7 @@ export async function buildHubSnapshot(
   const featured = await payload.find({
     collection,
     where: featuredWhere,
-    sort: ['-rating', '-reviewsCount', '-updatedAt'],
+    sort: ['-rating', '-reviewsCount', '-createdAt'],
     limit: 12,
     depth: 1, // keep snapshots light & fast
   })
