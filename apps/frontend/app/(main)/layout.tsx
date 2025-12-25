@@ -170,9 +170,7 @@ export default async function RootLayout({
         <Providers>
           <Header />
           <RecaptchaScript />
-          <XMasPromoBannerTop />
           <main className="pt-16">{children}</main>
-
           <Footer />
           <FloatingContactButton />
           <CookieBanner />
