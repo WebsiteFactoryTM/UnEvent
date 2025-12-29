@@ -269,7 +269,9 @@ export function ArchiveFilter({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="city">Unde (Oraș)</Label>
+                  <Label htmlFor="location-city">
+                    Unde (Oraș)<span className="text-xs text-red-500">*</span>
+                  </Label>
                   <SearchableSelectV1
                     id="location-city"
                     searchValue={citySearch}
@@ -443,7 +445,9 @@ export function ArchiveFilter({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="service-city">Unde?</Label>
+                  <Label htmlFor="service-city">
+                    Unde (Oraș)<span className="text-xs text-red-500">*</span>
+                  </Label>
                   <SearchableSelectV1
                     id="service-city"
                     searchValue={citySearch}
@@ -526,7 +530,9 @@ export function ArchiveFilter({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="event-city">Unde?</Label>
+                  <Label htmlFor="event-city">
+                    Unde (Oraș)<span className="text-xs text-red-500">*</span>
+                  </Label>
                   <SearchableSelectV1
                     id="event-city"
                     searchValue={citySearch}
