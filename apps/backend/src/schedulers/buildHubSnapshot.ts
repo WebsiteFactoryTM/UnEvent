@@ -1,6 +1,6 @@
 // tasks/buildHubSnapshot.ts
 import { City, HubSnapshot, ListingType } from '@/payload-types'
-import type { Payload } from 'payload'
+import type { Payload, Where } from 'payload'
 import { toCardItem } from '@/utils/toCardItem'
 import cron from 'node-cron'
 import { revalidate } from '@/utils/revalidate'
@@ -66,29 +66,48 @@ export async function buildHubSnapshot(
         }))
 
   const topCities = typeaheadCities.slice(0, 6)
-  // 0.b) Top 10 listing types for this domain
-  const topTypesRes = await payload.find({
+  // 0.b) Top 10 categories by aggregated usage (fetch all types, group by category)
+  const allTypesRes = await payload.find({
     collection: 'listing-types',
     where: {
       type: { equals: collection },
       isActive: { equals: true },
     },
-    sort: ['-usageCount', '-updatedAt'],
-    limit: 10,
+    limit: 1000, // Fetch all active types to properly aggregate
     depth: 0,
   })
 
-  const topTypes = topTypesRes.docs.map((t: ListingType) => ({
-    slug: t.slug as string,
-    label: (t.title as string) || (t.slug as string),
-  }))
+  // Group types by category and sum their usageCount
+  const categoryMap = new Map<string, { slug: string; label: string; totalUsage: number }>()
+  allTypesRes.docs.forEach((t: ListingType) => {
+    if (!t.categorySlug || !t.category) return
+    const existing = categoryMap.get(t.categorySlug)
+    if (existing) {
+      existing.totalUsage += t.usageCount || 0
+    } else {
+      categoryMap.set(t.categorySlug, {
+        slug: t.categorySlug,
+        label: t.category,
+        totalUsage: t.usageCount || 0,
+      })
+    }
+  })
+
+  // Sort by totalUsage and take top 10 categories
+  const topCategories = Array.from(categoryMap.values())
+    .sort((a, b) => b.totalUsage - a.totalUsage)
+    .slice(0, 10)
+    .map(({ slug, label }) => ({ slug, label }))
+
+  // Store in topTypes field (name unchanged for backwards compatibility, but contains categories)
+  const topTypes = topCategories
 
   // 2) City rows (use dynamic topCities)
   const popularCityRows: NonNullable<HubSnapshot['popularCityRows']> = []
 
   for (const c of topCities) {
     const citySlug = c.slug
-    const cityWhere: any = {
+    const cityWhere: Where = {
       'city.slug': { equals: citySlug }, // adapt to your city field path
       moderationStatus: { equals: 'approved' },
       claimStatus: { not_equals: 'unclaimed' },
@@ -149,7 +168,7 @@ export async function buildHubSnapshot(
   console.log(`[HubSnapshot] Found ${popularCityRows.length} popular city rows`)
 
   // 1) Featured nationwide (adjust filters to your schema)
-  const featuredWhere: any = {
+  const featuredWhere: Where = {
     moderationStatus: { equals: 'approved' },
     _status: { equals: 'published' },
     claimStatus: { not_equals: 'unclaimed' },
@@ -176,12 +195,16 @@ export async function buildHubSnapshot(
   console.log(`[HubSnapshot] Found ${featured.docs.length} featured nationwide`)
   // 3) Typeahead cities (use dynamic list)
 
-  // 4) Popular search combos (static for now)
+  // 4) Popular search combos (now using top categories instead of individual types)
+  // Use lower thresholds for services since they're more specialized/niche
+  const comboOptions = { minListings: 2, perCity: 3, maxOverall: 10 }
+
   const popularSearchCombos = await buildPopularSearchCombos(
     payload,
     collection,
     topCities,
-    topTypes,
+    topCategories,
+    comboOptions,
   )
 
   console.log(`[HubSnapshot] Found ${popularSearchCombos.length} popular search combos`)
@@ -274,17 +297,17 @@ export async function buildHubSnapshot(
 
 /** Helpers — adapt to your real field names / media */
 
-function toCityLabel(slug: string) {
-  const map: Record<string, string> = {
-    bucuresti: 'București',
-    'cluj-napoca': 'Cluj-Napoca',
-    timisoara: 'Timișoara',
-    iasi: 'Iași',
-    brasov: 'Brașov',
-    constanta: 'Constanța',
-  }
-  return map[slug] ?? slug
-}
+// function toCityLabel(slug: string) {
+//   const map: Record<string, string> = {
+//     bucuresti: 'București',
+//     'cluj-napoca': 'Cluj-Napoca',
+//     timisoara: 'Timișoara',
+//     iasi: 'Iași',
+//     brasov: 'Brașov',
+//     constanta: 'Constanța',
+//   }
+//   return map[slug] ?? slug
+// }
 
 export const registerBuildHubSnapshotScheduler = (payload: Payload) => {
   console.log('[registerBuildHubSnapshotScheduler] registering cron jobs')

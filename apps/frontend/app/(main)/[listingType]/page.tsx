@@ -108,13 +108,7 @@ export default async function ListingTypePage({
     cardItemToListingCardData(it!, listingType as ListingType),
   );
 
-  const options =
-    (snapshot?.topTypes ?? []).map((t) => ({
-      slug: t.slug,
-      label: t.label,
-    })) ?? [];
-
-  // Popular searches: build a small set of deep links from city/type combos
+  // Popular searches: build a small set of deep links from city/category combos
   const popularSearchChips =
     (snapshot?.popularSearchCombos ?? []).map((it) => ({
       citySlug: it.citySlug,

@@ -6,8 +6,8 @@ type ListingType = "locatii" | "servicii" | "evenimente";
 interface PopularSearchItem {
   citySlug: string;
   cityLabel: string;
-  typeSlug: string;
-  typeLabel: string;
+  typeSlug: string; // Contains category slug (e.g., "nunti-ceremonii")
+  typeLabel: string; // Contains category label (e.g., "NUNȚI & CEREMONII")
 }
 
 interface PopularSearchesProps {

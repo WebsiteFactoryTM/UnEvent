@@ -43,6 +43,9 @@ export const HubSnapshots: CollectionConfig = {
     },
     {
       name: 'topTypes',
+      admin: {
+        description: 'Top categories for the listing type',
+      },
       type: 'array',
       fields: [
         { name: 'slug', type: 'text', required: true },
