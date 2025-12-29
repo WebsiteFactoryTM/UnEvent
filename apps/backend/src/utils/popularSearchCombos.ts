@@ -50,6 +50,12 @@ export async function buildPopularSearchCombos(
             { 'city.slug': { equals: city.slug } },
             { 'type.categorySlug': { equals: category.slug } },
           ],
+          ...(collection === 'events'
+            ? {
+                eventStatus: { not_equals: 'finished' },
+                endDate: { greater_than_equal: new Date().toISOString() },
+              }
+            : {}),
         }
 
         const count = await countApproved(payload, collection, where)
