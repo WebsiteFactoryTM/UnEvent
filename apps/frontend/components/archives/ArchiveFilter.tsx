@@ -101,13 +101,23 @@ export function ArchiveFilter({
   });
 
   const handleTypeChange = useCallback(
-    (typeSlug: string) => {
+    (typeSlug: string, listingType: ListingType) => {
+      let types: ListingTypePayload[] = [];
+      if (listingType === "locatii") {
+        types = locationTypes || [];
+      } else if (listingType === "servicii") {
+        types = serviceTypes || [];
+      } else if (listingType === "evenimente") {
+        types = eventTypes || [];
+      }
+
       if (showCategoriesOnly) {
         setFilter("typeCategory", typeSlug);
       } else {
-        const category = locationTypes?.find(
+        const category = types?.find(
           (type) => type.slug === typeSlug,
         )?.categorySlug;
+
         if (category) {
           setFilter("typeCategory", category);
         }
@@ -288,7 +298,7 @@ export function ArchiveFilter({
                         ? (filters.typeCategory as string) || ""
                         : (filters.type as string) || ""
                     }
-                    onValueChange={handleTypeChange}
+                    onValueChange={(v) => handleTypeChange(v, "locatii")}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip locație..."
                     variant={showCategoriesOnly ? "chip" : "list"}
@@ -462,7 +472,7 @@ export function ArchiveFilter({
                         ? (filters.typeCategory as string) || ""
                         : (filters.type as string) || ""
                     }
-                    onValueChange={handleTypeChange}
+                    onValueChange={(v) => handleTypeChange(v, "servicii")}
                     placeholder="Selectează serviciul"
                     searchPlaceholder="Caută serviciu..."
                     variant={showCategoriesOnly ? "chip" : "list"}
@@ -508,7 +518,7 @@ export function ArchiveFilter({
                         ? (filters.typeCategory as string) || ""
                         : (filters.type as string) || ""
                     }
-                    onValueChange={handleTypeChange}
+                    onValueChange={(v) => handleTypeChange(v, "evenimente")}
                     placeholder="Selectează tipul"
                     searchPlaceholder="Caută tip eveniment..."
                     variant={showCategoriesOnly ? "chip" : "list"}
