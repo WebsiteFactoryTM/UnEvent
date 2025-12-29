@@ -26,8 +26,6 @@ export async function buildPopularSearchCombos(
   topCategories: Array<{ slug: string; label: string }>,
   opts?: { minListings?: number; perCity?: number; maxOverall?: number },
 ) {
-  console.log('topCities', topCities)
-  console.log('topCategories', topCategories)
   const minListings = opts?.minListings ?? 3
   const perCity = opts?.perCity ?? 3 // show up to 3 combos per city
   const maxOverall = opts?.maxOverall ?? 18 // total cap
@@ -77,8 +75,6 @@ export async function buildPopularSearchCombos(
 
     if (combos.length >= maxOverall) break
   }
-
-  console.log('combos', combos)
 
   // Drop counts from final payload
   return combos.slice(0, maxOverall).map(({ count: _drop, ...rest }) => rest)
