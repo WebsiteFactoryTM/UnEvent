@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -29,6 +30,8 @@ interface RestrictedRichTextEditorProps {
   onChange?: (editorState: any) => void;
   placeholder?: string;
   className?: string;
+  minCharacters?: number; // Minimum character count (default: 50)
+  maxCharacters?: number; // Maximum character count (optional)
 }
 
 // Catch any errors that occur during Lexical updates and log them
@@ -37,13 +40,62 @@ function onError(error: Error) {
   console.error(error);
 }
 
+// Helper function to calculate character count from Lexical JSON
+// Counts actual characters including spaces (without trimming individual nodes)
+function getCharacterCount(value: unknown): number {
+  if (!value || typeof value !== "object") return 0;
+
+  const root = (value as any).root;
+  if (!root || !Array.isArray(root.children)) return 0;
+
+  const traverse = (node: any): number => {
+    if (!node) return 0;
+
+    if (node.type === "text" && typeof node.text === "string") {
+      return node.text.length;
+    }
+
+    if (Array.isArray(node.children)) {
+      return node.children.reduce(
+        (len: number, child: any) => len + traverse(child),
+        0,
+      );
+    }
+
+    return 0;
+  };
+
+  return traverse(root);
+}
+
 export function RestrictedRichTextEditor({
   initialValue,
   legacyValue,
   onChange,
   placeholder = "Enter text...",
   className,
+  minCharacters,
+  maxCharacters,
 }: RestrictedRichTextEditorProps) {
+  const [characterCount, setCharacterCount] = useState<number>(0);
+
+  // Calculate initial character count
+  useEffect(() => {
+    if (initialValue && Object.keys(initialValue).length > 0) {
+      setCharacterCount(getCharacterCount(initialValue));
+    } else if (legacyValue) {
+      setCharacterCount(legacyValue.length);
+    } else {
+      setCharacterCount(0);
+    }
+  }, [initialValue, legacyValue]);
+
+  const isBelowMinimum =
+    minCharacters !== undefined && characterCount < minCharacters;
+  const isAboveMaximum =
+    maxCharacters !== undefined && characterCount > maxCharacters;
+  const hasError = isBelowMinimum || isAboveMaximum;
+
   const initialConfig = {
     namespace: "UnEventEditor",
     theme,
@@ -92,13 +144,32 @@ export function RestrictedRichTextEditor({
             <ListPlugin />
             <OnChangePlugin
               onChange={(editorState: EditorState) => {
+                const json = editorState.toJSON();
+                const count = getCharacterCount(json);
+                setCharacterCount(count);
+
                 if (onChange) {
-                  const json = editorState.toJSON();
                   onChange(json);
                 }
               }}
             />
           </div>
+        </div>
+        {/* Character count display */}
+        <div className="px-2 pb-2 flex flex-col gap-1">
+          {minCharacters !== undefined && (
+            <div className="flex items-center justify-between text-xs">
+              <span className={cn("text-muted-foreground")}>
+                {characterCount}/{minCharacters} caractere
+              </span>
+            </div>
+          )}
+
+          {isAboveMaximum && (
+            <p className="text-xs text-destructive">
+              Maxim {maxCharacters} caractere permise
+            </p>
+          )}
         </div>
       </LexicalComposer>
     </div>

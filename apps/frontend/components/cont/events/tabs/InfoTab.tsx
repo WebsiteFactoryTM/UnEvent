@@ -88,6 +88,7 @@ export function InfoTab() {
                 field.onChange(json);
               }}
               placeholder="Descrie evenimentul: ce activități vor fi, cine participă, ce trebuie să știe invitații..."
+              minCharacters={50}
             />
           )}
         />

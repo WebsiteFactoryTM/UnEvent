@@ -104,6 +104,7 @@ export function InfoTab() {
                 field.onChange(json);
               }}
               placeholder="Descrie serviciile oferite: experiență, echipament, ce te diferențiază..."
+              minCharacters={50}
             />
           )}
         />

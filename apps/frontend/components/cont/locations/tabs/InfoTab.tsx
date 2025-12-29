@@ -106,6 +106,7 @@ export function InfoTab() {
                 // But for now we rely on description_rich
               }}
               placeholder="Descrie locația ta în detaliu: facilități, atmosferă, ce o face specială..."
+              minCharacters={50}
             />
           )}
         />
