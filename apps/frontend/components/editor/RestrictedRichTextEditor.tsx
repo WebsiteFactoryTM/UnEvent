@@ -160,7 +160,7 @@ export function RestrictedRichTextEditor({
           {minCharacters !== undefined && (
             <div className="flex items-center justify-between text-xs">
               <span className={cn("text-muted-foreground")}>
-                {characterCount}/{minCharacters} caractere
+                Minim {minCharacters} caractere necesare: {characterCount}
               </span>
             </div>
           )}
