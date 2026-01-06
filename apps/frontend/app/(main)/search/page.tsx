@@ -4,12 +4,14 @@ import { SearchArchiveClient } from "@/components/search/SearchArchiveClient";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    follow: true,
-  },
-};
+import { constructMetadata } from "@/lib/metadata";
+
+// ... existing imports
+
+export const metadata = constructMetadata({
+  title: "Căutare",
+  noIndex: true,
+});
 
 interface SearchPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;

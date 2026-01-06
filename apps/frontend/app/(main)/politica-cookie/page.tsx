@@ -4,11 +4,15 @@ import { FaChevronRight, FaHouse } from "react-icons/fa6";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { CookieDetectionTable } from "@/components/common/CookieDetectionTable";
 
-export const metadata: Metadata = {
-  title: "Politica de Cookie | UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+// ... existing imports
+
+export const metadata = constructMetadata({
+  title: "Politica de Cookie",
   description:
     "Politica de utilizare a cookie-urilor pe platforma UN:EVENT. Informații despre tipurile de cookie-uri folosite, scopurile acestora și cum le puteți gestiona.",
-};
+});
 
 export default function PoliticaCookiePage() {
   return (

@@ -13,13 +13,15 @@ import { getQueryClient } from "@/lib/react-query";
 import HomeCarousel from "@/components/home/carousels/HomeCarousel";
 import { XMasPromoBannerTop } from "@/components/home/XMasPromoBanner";
 
-export const metadata: Metadata = {
-  title: "Locații de nuntă, săli evenimente, DJ & catering | UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+// ... imports
+
+export const metadata = constructMetadata({
+  title: "Locații de nuntă, săli evenimente, DJ & catering",
   description:
     "Platformă pentru locații de nuntă, săli de evenimente, DJ, formații, catering și foto-video. Prețuri și contact direct în România. Listează gratuit.",
-  keywords:
-    "locații de nuntă,săli evenimente,DJ evenimente,trupă nuntă,catering evenimente,formații muzică,foto-video evenimente,închiriere spații,organizare evenimente,locații petreceri,săli conferințe,evenimente România",
-};
+});
 
 export const revalidate = 3600; // ISR: revalidate every hour
 

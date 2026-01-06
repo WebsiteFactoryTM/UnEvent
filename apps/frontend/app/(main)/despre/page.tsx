@@ -30,11 +30,15 @@ import { Button } from "@/components/ui/button";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { FAQSection } from "@/components/despre/FAQSection";
 
-export const metadata: Metadata = {
-  title: "Despre Noi — UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+// ... existing imports
+
+export const metadata = constructMetadata({
+  title: "Despre Noi",
   description:
     "Conectăm spații, oameni și idei. Fără zgomot. Doar potriviri bune. Descoperă povestea UN:EVENT și cum transformăm modul în care organizezi evenimente în România.",
-};
+});
 
 export default function DesprePage() {
   return (

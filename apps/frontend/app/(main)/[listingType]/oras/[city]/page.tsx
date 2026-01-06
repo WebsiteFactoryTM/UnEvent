@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { constructMetadata } from "@/lib/metadata";
+import { buildFeedFilters } from "@/lib/feed-helpers";
 
 import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
 import { AddListingButton } from "@/components/archives/AddListingButton";
@@ -33,20 +35,32 @@ export async function generateMetadata({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { listingType, city } = await params;
-  const searchFilters = await searchParams;
-  const page = Number(searchFilters?.page ?? 1);
+  if (!listingTypes.includes(listingType)) {
+    return constructMetadata({
+      title: "Pagina nu a fost găsită",
+      noIndex: true,
+    });
+  }
 
-  const listingLabel = getListingTypeLabel(listingType);
-  const cityLabel = getCityLabel(city);
-
-  const baseUrl = `https://unevent.ro/${listingType}/oras/${city}`;
-  const title = `${listingLabel} Evenimente ${cityLabel}: Săli & Spații de Închiriat${
-    page > 1 ? ` – Pagina ${page}` : ""
-  } | UN:EVENT`;
-  const description = `Descoperă top ${listingLabel.toLowerCase()} din ${cityLabel}. De la săli de nuntă elegante la spații corporate și outdoor. Vezi capacitatea, compară prețuri și rezervă pe UN:EVENT.`;
-
-  // Smart Canonical Logic
-  // Filter params (these indicate filtered results, not unique pages)
+  const filters = buildFeedFilters({
+    listingType,
+    city,
+    searchParams: await searchParams,
+  });
+  
+  // Fetch feed items to verify content existence
+  const feedData = await fetchFeed(filters);
+  const hasItems = 
+    (feedData?.pinnedSponsored && feedData.pinnedSponsored.length > 0) || 
+    (feedData?.organic && feedData.organic.length > 0);
+  
+  // Use "noindex" if page is empty and no specific filters are active (clean hub page)
+  // If filters are active, "noindex" is already handled by canonical/robots logic in constructMetadata if we want, 
+  // but here we specifically want to de-index EMPTY hub pages.
+  // The original code had `shouldIndex = !hasFilters`. 
+  // We want: if clean URL (no filters) AND empty -> noindex.
+  // If has filters -> noindex (as per original logic).
+  
   const filterParams = [
     "priceMin",
     "priceMax",
@@ -61,53 +75,37 @@ export async function generateMetadata({
     "suitableFor",
     "limit",
   ];
-
-  // Check if any filter params exist (excluding 'page')
-  const hasFilters = Object.keys(searchFilters || {}).some(
-    (key) => filterParams.includes(key) && searchFilters[key],
+  
+  const searchFiltersObj = await searchParams;
+  const hasFilters = Object.keys(searchFiltersObj || {}).some(
+    (key) => filterParams.includes(key) && searchFiltersObj[key]
   );
 
-  // Canonical URL logic:
-  // - If filters applied → point to clean URL (no params)
-  // - If only page param → self-canonical with page (page 2 is unique content)
-  // - If no params → self-canonical
+  const shouldIndex = !hasFilters && hasItems;
+
+  const listingLabel = getListingTypeLabel(listingType);
+  const cityLabel = getCityLabel(city);
+  const page = filters.page || 1;
+
+  const baseUrl = `https://unevent.ro/${listingType}/oras/${city}`;
+  const title = `Top ${listingLabel} ${listingType !== 'evenimente' ? 'Evenimente' : ''} în ${cityLabel}${
+    page > 1 ? ` – Pagina ${page}` : ""
+  } | UN:EVENT`;
+
+  const description = `Găsește ${listingLabel.toLowerCase()} în ${cityLabel}. Vezi prețuri, recenzii și parteneri verificați. Compară și rezervă direct pe UN:EVENT`;
+
   const canonicalUrl = hasFilters
     ? baseUrl // Clean URL without any params
     : page > 1
       ? `${baseUrl}?page=${page}` // Self-canonical with page number
       : baseUrl; // Clean URL
 
-  // Robots meta: noindex filtered pages to prevent duplicate content
-  const shouldIndex = !hasFilters;
-
-  return {
+  return constructMetadata({
     title,
     description,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    robots: {
-      index: shouldIndex,
-      follow: true,
-      googleBot: {
-        index: shouldIndex,
-        follow: true,
-      },
-    },
-    openGraph: {
-      title,
-      description,
-      url: baseUrl, // OG always uses clean URL
-      siteName: "UN:EVENT",
-      type: "website",
-      locale: "ro_RO",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-    },
-  };
+    canonicalUrl,
+    noIndex: !shouldIndex,
+  });
 }
 
 export default async function CityArchivePage({
@@ -127,41 +125,14 @@ export default async function CityArchivePage({
   const cityLabel = getCityLabel(city);
   const listingLabel = getListingTypeLabel(listingType);
 
-  const page = (() => {
-    const pageValue = Number(searchFilters?.page || 1);
-    return isNaN(pageValue) ? 1 : pageValue;
-  })();
-
-  const limit = (() => {
-    const limitValue = Number(searchFilters?.limit || 24);
-    return isNaN(limitValue) ? 24 : limitValue;
-  })();
-
-  const filters: FeedQuery = {
-    entity: getListingTypeSlug(listingType),
+  const filters = buildFeedFilters({
+    listingType,
     city,
-    page,
-    limit,
-    type: searchFilters?.type as string | undefined,
-    suitableFor: searchFilters?.suitableFor as string | undefined,
-    ratingMin: searchFilters?.ratingMin
-      ? Number(searchFilters.ratingMin)
-      : undefined,
-    priceMin: searchFilters?.priceMin
-      ? Number(searchFilters.priceMin)
-      : undefined,
-    priceMax: searchFilters?.priceMax
-      ? Number(searchFilters.priceMax)
-      : undefined,
-    capacityMin: searchFilters?.capacityMin
-      ? Number(searchFilters.capacityMin)
-      : undefined,
-    facilitiesMode: (searchFilters?.facilitiesMode as "all" | "any") ?? "all",
-    facilities: searchFilters?.facilities as string | undefined,
-    lat: searchFilters?.lat ? Number(searchFilters.lat) : undefined,
-    lng: searchFilters?.lng ? Number(searchFilters.lng) : undefined,
-    radius: searchFilters?.radius ? Number(searchFilters.radius) : undefined,
-  };
+    searchParams: searchFilters,
+  });
+
+  const page = filters.page || 1;
+  const limit = filters.limit || 24;
   // Initialize React Query client
   const queryClient = getQueryClient();
   const feedData = await fetchFeed(filters);

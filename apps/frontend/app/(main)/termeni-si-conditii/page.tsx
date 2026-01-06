@@ -3,11 +3,13 @@ import Link from "next/link";
 import { FaChevronRight, FaHouse } from "react-icons/fa6";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
-export const metadata: Metadata = {
-  title: "Termeni și Condiții | UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata = constructMetadata({
+  title: "Termeni și Condiții",
   description:
     "Termenii și condițiile de utilizare a platformei UN:EVENT. Informații despre responsabilitățile utilizatorilor, serviciile oferite și politicile platformei.",
-};
+});
 
 export default function TermeniSiConditiiPage() {
   return (

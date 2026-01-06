@@ -3,11 +3,14 @@ import Link from "next/link";
 import { AuthCard } from "@/components/auth/auth-card";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 
-export const metadata: Metadata = {
-  title: "Înregistrare | UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata = constructMetadata({
+  title: "Înregistrare",
   description:
     "Creează un cont nou pe UN:EVENT - platforma ta pentru evenimente memorabile.",
-};
+  noIndex: true,
+});
 
 export default function SignUpPage() {
   return (

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { constructMetadata } from "@/lib/metadata";
+import { buildFeedFilters } from "@/lib/feed-helpers";
 
 import { ArchiveFilter } from "@/components/archives/ArchiveFilter";
 import { AddListingButton } from "@/components/archives/AddListingButton";
@@ -38,6 +40,30 @@ function getTypesFromTaxonomies(
   return [];
 }
 
+function constructTitleBasedOnType(
+  listingType: string,
+  cityLabel: string,
+  categoryLabel: string,
+) {
+  let title;
+  let description;
+  switch (listingType) {
+    case "locatii":
+      title = `Top locații ${categoryLabel} în ${cityLabel} | UN:EVENT`;
+      description = `Cauți locații pentru ${categoryLabel.toLowerCase()} în ${cityLabel}? Vezi lista celor mai bune locații pentru evenimente și rezervă direct.`;
+      break;
+    case "servicii":
+      title = `${categoryLabel} în ${cityLabel} | UN:EVENT`;
+      description = `Cauți servicii pentru ${categoryLabel.toLowerCase()} în ${cityLabel}? Vezi lista celor mai bune servicii pentru evenimente și contactază direct.`;
+      break;
+    case "evenimente":
+      title = `${categoryLabel} în ${cityLabel} | UN:EVENT`;
+      description = `Descriere: Cauți ${categoryLabel.toLowerCase()} în ${cityLabel}? Vezi lista celor mai populare evenimente și rezervă direct.`;
+      break;
+  }
+  return { title, description };
+}
+
 export async function generateMetadata({
   params,
   searchParams,
@@ -46,23 +72,18 @@ export async function generateMetadata({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
   const { listingType, city, category } = await params;
-  const searchFilters = await searchParams;
-  const page = Number(searchFilters?.page ?? 1);
 
-  const taxonomies = await fetchTaxonomies({ fullList: true });
-  const types = getTypesFromTaxonomies(listingType, taxonomies);
-  const categoryLabel =
-    types.find((t) => t.categorySlug === category)?.category ||
-    category.charAt(0).toUpperCase() + category.slice(1);
+  const filters = buildFeedFilters({
+    listingType,
+    city,
+    category,
+    searchParams: await searchParams,
+  });
 
-  const listingLabel = getListingTypeLabel(listingType);
-  const cityLabel = getCityLabel(city);
-
-  const baseUrl = `https://unevent.ro/${listingType}/oras/${city}/${category}`;
-  const title = `Top ${listingLabel} de ${categoryLabel} ${cityLabel}${
-    page > 1 ? ` – Pagina ${page}` : ""
-  } | UN:EVENT`;
-  const description = `Descoperă cele mai bune ${listingLabel.toLowerCase()} de ${categoryLabel.toLowerCase()} din ${cityLabel}.`;
+  const feedData = await fetchFeed(filters);
+  const hasItems =
+    (feedData?.pinnedSponsored && feedData.pinnedSponsored.length > 0) ||
+    (feedData?.organic && feedData.organic.length > 0);
 
   const filterParams = [
     "priceMin",
@@ -79,8 +100,28 @@ export async function generateMetadata({
     "limit",
   ];
 
-  const hasFilters = Object.keys(searchFilters || {}).some(
-    (key) => filterParams.includes(key) && searchFilters[key],
+  const searchFiltersObj = await searchParams;
+  const hasFilters = Object.keys(searchFiltersObj || {}).some(
+    (key) => filterParams.includes(key) && searchFiltersObj[key],
+  );
+
+  const shouldIndex = !hasFilters && hasItems;
+
+  const page = filters.page || 1;
+
+  const taxonomies = await fetchTaxonomies({ fullList: true });
+  const types = getTypesFromTaxonomies(listingType, taxonomies);
+  const categoryLabel =
+    types.find((t) => t.categorySlug === category)?.category ||
+    category.charAt(0).toUpperCase() + category.slice(1);
+
+  const cityLabel = getCityLabel(city);
+
+  const baseUrl = `https://unevent.ro/${listingType}/oras/${city}/${category}`;
+  const { title, description } = constructTitleBasedOnType(
+    listingType,
+    cityLabel,
+    categoryLabel,
   );
 
   const canonicalUrl = hasFilters
@@ -89,36 +130,12 @@ export async function generateMetadata({
       ? `${baseUrl}?page=${page}`
       : baseUrl;
 
-  const shouldIndex = !hasFilters;
-
-  return {
+  return constructMetadata({
     title,
     description,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    robots: {
-      index: shouldIndex,
-      follow: true,
-      googleBot: {
-        index: shouldIndex,
-        follow: true,
-      },
-    },
-    openGraph: {
-      title,
-      description,
-      url: baseUrl,
-      siteName: "UN:EVENT",
-      type: "website",
-      locale: "ro_RO",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-    },
-  };
+    canonicalUrl,
+    noIndex: !shouldIndex,
+  });
 }
 
 export default async function CityCategoryArchivePage({
@@ -144,42 +161,15 @@ export default async function CityCategoryArchivePage({
     types.find((t) => t.categorySlug === category)?.category ||
     category.charAt(0).toUpperCase() + category.slice(1);
 
-  const page = (() => {
-    const pageValue = Number(searchFilters?.page || 1);
-    return isNaN(pageValue) ? 1 : pageValue;
-  })();
-
-  const limit = (() => {
-    const limitValue = Number(searchFilters?.limit || 24);
-    return isNaN(limitValue) ? 24 : limitValue;
-  })();
-
-  const filters: FeedQuery = {
-    entity: getListingTypeSlug(listingType as ListingType),
+  const filters = buildFeedFilters({
+    listingType,
     city,
-    page,
-    limit,
-    typeCategory: category,
-    type: searchFilters?.type as string | undefined,
-    suitableFor: searchFilters?.suitableFor as string | undefined,
-    ratingMin: searchFilters?.ratingMin
-      ? Number(searchFilters.ratingMin)
-      : undefined,
-    priceMin: searchFilters?.priceMin
-      ? Number(searchFilters.priceMin)
-      : undefined,
-    priceMax: searchFilters?.priceMax
-      ? Number(searchFilters.priceMax)
-      : undefined,
-    capacityMin: searchFilters?.capacityMin
-      ? Number(searchFilters.capacityMin)
-      : undefined,
-    facilitiesMode: (searchFilters?.facilitiesMode as "all" | "any") ?? "all",
-    facilities: searchFilters?.facilities as string | undefined,
-    lat: searchFilters?.lat ? Number(searchFilters.lat) : undefined,
-    lng: searchFilters?.lng ? Number(searchFilters.lng) : undefined,
-    radius: searchFilters?.radius ? Number(searchFilters.radius) : undefined,
-  };
+    category,
+    searchParams: searchFilters,
+  });
+
+  const page = filters.page || 1;
+  const limit = filters.limit || 24;
 
   const queryClient = getQueryClient();
   const feedData = await fetchFeed(filters);

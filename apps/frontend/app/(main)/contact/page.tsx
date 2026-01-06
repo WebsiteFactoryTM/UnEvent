@@ -6,11 +6,15 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { SocialLinks } from "@/components/footer/SocialLinks";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
-export const metadata: Metadata = {
-  title: "Contactează-ne | UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+// ... existing imports
+
+export const metadata = constructMetadata({
+  title: "Contactează-ne",
   description:
     "Suntem aici să te ajutăm. Trimite-ne un mesaj și îți vom răspunde în cel mai scurt timp.",
-};
+});
 
 export default function ContactPage() {
   return (

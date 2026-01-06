@@ -20,78 +20,12 @@ const manrope = Manrope({
   preload: true,
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_FRONTEND_URL || "https://unevent.ro",
-  ),
-  title: {
-    default: "UN:EVENT - Locații, Servicii și Evenimente în România",
-    template: "%s | UN:EVENT",
-  },
-  description:
-    "Descoperă locații pentru evenimente, servicii verificate și evenimente din România. Compară prețuri, vezi recenzii și contactează direct organizatorii.",
-  keywords: [
-    "evenimente România",
-    "locații evenimente",
-    "servicii evenimente",
-    "organizare evenimente",
-    "săli evenimente",
-    "locații nuntă",
-    "DJ evenimente",
-    "catering",
-  ],
-  authors: [{ name: "UN:EVENT" }],
-  creator: "UN:EVENT",
-  publisher: "SC PIXEL FACTORY SRL",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  openGraph: {
-    type: "website",
-    locale: "ro_RO",
-    url: "/",
-    siteName: "UN:EVENT",
-    title: "UN:EVENT - Locații, Servicii și Evenimente în România",
-    description:
-      "Descoperă locații pentru evenimente, servicii verificate și evenimente din România.",
-    images: [
-      {
-        url: "/logo-unevent-favicon-white-on-black.png",
-        width: 512,
-        height: 512,
-        alt: "UN:EVENT - Platformă Evenimente România",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary", // Changed to "summary" for square logo (better for logos)
-    title: "UN:EVENT - Locații, Servicii și Evenimente în România",
-    description:
-      "Descoperă locații pentru evenimente, servicii verificate și evenimente din România.",
-    images: ["/logo-unevent-favicon-white-on-black.png"],
-  },
-  alternates: {
-    canonical: "/",
-  },
-  icons: {
-    icon: [
-      { url: "/logo-unevent-favicon-white-on-black.png", sizes: "any" },
-      {
-        url: "/logo-unevent-favicon-white-on-black.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/logo-unevent-favicon-white-on-black.png",
-  },
-};
+import { constructMetadata } from "@/lib/metadata";
+
+// ... imports remain the same
+
+export const metadata = constructMetadata();
+
 
 export default async function RootLayout({
   children,
@@ -150,7 +84,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ro" suppressHydrationWarning>
-      <head>
+      <body className={`${manrope.variable} font-sans antialiased`}>
         {/* Organization Schema */}
         <script
           type="application/ld+json"
@@ -165,8 +99,6 @@ export default async function RootLayout({
             __html: JSON.stringify(websiteSchema),
           }}
         />
-      </head>
-      <body className={`${manrope.variable} font-sans antialiased`}>
         <Providers>
           <Header />
           <RecaptchaScript />

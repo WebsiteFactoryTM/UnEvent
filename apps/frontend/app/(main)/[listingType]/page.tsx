@@ -43,6 +43,10 @@ export async function generateStaticParams() {
   }));
 }
 
+import { constructMetadata } from "@/lib/metadata";
+
+// ... existing imports
+
 export async function generateMetadata({
   params,
 }: {
@@ -54,23 +58,11 @@ export async function generateMetadata({
   const description = descriptions[listingType] || "";
   const canonicalUrl = `https://unevent.ro/${listingType}`;
 
-  return {
+  return constructMetadata({
     title,
     description,
-    alternates: { canonical: canonicalUrl },
-    robots: {
-      index: true,
-      follow: true,
-    },
-    openGraph: {
-      title,
-      description,
-      url: canonicalUrl,
-      siteName: "UN:EVENT",
-      type: "website",
-      locale: "ro_RO",
-    },
-  };
+    canonicalUrl,
+  });
 }
 
 export default async function ListingTypePage({

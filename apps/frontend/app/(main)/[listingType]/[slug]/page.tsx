@@ -376,6 +376,10 @@ export default async function DetailPage({
   );
 }
 
+import { constructMetadata } from "@/lib/metadata";
+
+// ... existing imports
+
 export async function generateMetadata({
   params,
 }: {
@@ -383,7 +387,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { listingType, slug } = await params;
   if (!listingTypes.includes(listingType as any))
-    return { title: "Pagină negăsită | UN:EVENT" };
+    return constructMetadata({ title: "Pagină negăsită", noIndex: true });
 
   // Fetch mock data per type (UI-only)
   const listingTypeUrl = getListingTypeSlug(listingType as ListingType);
@@ -409,23 +413,9 @@ export async function generateMetadata({
       130,
     ) || `${title}`;
 
-  return {
-    title: `${title} | UN:EVENT`,
+  return constructMetadata({
+    title,
     description,
-    openGraph: {
-      title,
-      description,
-      images: featuredImage
-        ? [
-            {
-              url: featuredImage,
-              width: 1200,
-              height: 630,
-              alt: title,
-            },
-          ]
-        : [],
-      type: "website",
-    },
-  };
+    image: featuredImage || undefined,
+  });
 }

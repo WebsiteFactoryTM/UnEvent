@@ -3,11 +3,13 @@ import Link from "next/link"
 import { FaHouse, FaChevronRight } from "react-icons/fa6"
 import { ScrollToTop } from "@/components/ScrollToTop"
 
-export const metadata: Metadata = {
-  title: "Politica de Confidențialitate | UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata = constructMetadata({
+  title: "Politica de Confidențialitate",
   description:
     "Politica de confidențialitate UN:EVENT - Aflați cum colectăm, folosim și protejăm datele dumneavoastră personale conform GDPR.",
-}
+});
 
 export default function PoliticaDeConfidentialitatePage() {
   return (

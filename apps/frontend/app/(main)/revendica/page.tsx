@@ -15,10 +15,12 @@ import { Button } from "@/components/ui/button";
 import { FaLocationDot, FaStar } from "react-icons/fa6";
 import type { ListingType } from "@/types/listings";
 
-export const metadata: Metadata = {
-  title: "Revendică listarea | UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata = constructMetadata({
+  title: "Revendică listarea",
   description: "Revendică listarea ta pe UN:EVENT",
-};
+});
 
 export const dynamic = "force-dynamic";
 

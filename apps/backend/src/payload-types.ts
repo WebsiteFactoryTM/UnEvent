@@ -1299,6 +1299,9 @@ export interface HubSnapshot {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Top categories for the listing type
+   */
   topTypes?:
     | {
         slug: string;

@@ -7,11 +7,14 @@ import { authOptions } from "@/auth";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
-export const metadata: Metadata = {
-  title: "Autentificare | UN:EVENT",
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata = constructMetadata({
+  title: "Autentificare",
   description:
     "Autentifică-te în contul tău UN:EVENT pentru a accesa toate funcționalitățile platformei.",
-};
+  noIndex: true,
+});
 
 export default async function LoginPage() {
   const session = await getServerSession(authOptions);
