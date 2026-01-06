@@ -24,6 +24,11 @@ UnEvent is a modern event management platform designed to provide seamless event
 - **Redis** (ioredis) – In-memory data store for caching and performance
 - **Next.js 15** – PayloadCMS runs on Next.js
 
+### Worker
+- **BullMQ** – Job queue for background processing
+- **Resend** – Email delivery service
+- **Express.js** – Healthcheck server
+
 ### Infrastructure & Tools
 - **PostgreSQL** – Primary database (Neon.tech for cloud, Docker for local)
 - **Redis** – Caching layer (Upstash for cloud, Docker for local)
@@ -32,12 +37,14 @@ UnEvent is a modern event management platform designed to provide seamless event
 - **pnpm Workspaces** – Monorepo package management
 - **TypeScript** – Type safety across the stack
 
-### Monitoring & Deployment (Optional)
-- **Sentry** – Error tracking and performance monitoring
-- **Vercel** – Frontend hosting
-- **Render** – Backend hosting
-- **Neon.tech** – Managed PostgreSQL
-- **Upstash** – Serverless Redis
+### Hosting & Services
+- **Frontend** – [Vercel](https://vercel.com)
+- **Backend & Worker** – [Railway](https://railway.app)
+- **Database** – [Neon](https://neon.tech) (Serverless PostgreSQL)
+- **Redis (General)** – [Upstash](https://upstash.com) (Caching & Session Store)
+- **Redis (Notifications)** – [Railway](https://railway.app) (Queue management for high throughput)
+- **Email Service** – [Resend](https://resend.com)
+- **Monitoring** – [Sentry](https://sentry.io)
 
 ### Development Tools
 - **ESLint** – Code linting
@@ -65,9 +72,10 @@ UnEvent follows a **monorepo architecture** with clear separation between fronte
 
 ## Repository Structure
 
-- `apps/backend` – PayloadCMS backend application with collections, hooks, and endpoints
-- `apps/frontend` – Next.js frontend application with App Router
-- `packages/shared` – Shared utilities and components (if any)
+- `apps/backend` – PayloadCMS backend application ([README](apps/backend/README.md))
+- `apps/frontend` – Next.js frontend application ([README](apps/frontend/README.md))
+- `apps/worker` – Background worker service for emails and cronjobs ([README](apps/worker/README.md))
+- `packages/shared` – Shared utilities and components
 - `docs/` – Documentation including deployment plans and storage estimates
 
 ## Requirements
@@ -155,6 +163,12 @@ Before getting started, ensure you have the following installed on your local ma
 
   ```bash
   pnpm dev:frontend
+  ```
+
+- **Start worker only**
+
+  ```bash
+  pnpm dev:worker
   ```
 
 - **Run tests**

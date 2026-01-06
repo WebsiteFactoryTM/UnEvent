@@ -336,3 +336,38 @@ This is usually a false positive. If Sentry says it's initialized, it's working.
 - Use React Email's preview feature: `npx react-email dev` (if you add a preview script)
 - Check Resend dashboard for sent emails and their content
 
+## Email Registry
+
+The worker handles the following email templates (located in `src/emails/`):
+
+### Admin Notifications
+*   `AdminContactEmail`: Contact form submissions.
+*   `AdminDailyDigestEmail`: Daily summary of platform activity.
+*   `AdminListingPendingEmail`: Notification of new listings awaiting approval.
+*   `AdminListingReportEmail`: Reports filed against listings.
+*   `AdminProfileReportEmail`: Reports filed against user profiles.
+*   `AdminReviewPendingEmail`: New reviews awaiting moderation.
+*   `AdminUserNewEmail`: Notification of new user registrations.
+*   `AdminClaimPendingEmail`: New listing claim requests.
+
+### User Welcome
+*   `UserWelcomeEmail`: General welcome email.
+*   `UserWelcomeClientEmail`: Welcome for Client role.
+*   `UserWelcomeHostEmail`: Welcome for Host role.
+*   `UserWelcomeOrganizerEmail`: Welcome for Organizer role.
+*   `UserWelcomeProviderEmail`: Welcome for Service Provider role.
+
+### Content Moderation (Listings & Reviews)
+*   `ListingApprovedEmail`: Your listing has been approved and is live.
+*   `ListingRejectedEmail`: Your listing was rejected (includes reason).
+*   `ListingClaimInvitationEmail`: Invitation to claim a listing.
+*   `ClaimApprovedEmail`: Listing claim request approved.
+*   `ClaimRejectedEmail`: Listing claim request rejected.
+*   `ReviewNewEmail`: You received a new review.
+*   `ReviewApprovedEmail`: Your review has been published.
+*   `ReviewRejectedEmail`: Your review was rejected.
+
+### Operational
+*   `EventReminderEmail`: Reminder sent 24h before an event starts.
+
+
