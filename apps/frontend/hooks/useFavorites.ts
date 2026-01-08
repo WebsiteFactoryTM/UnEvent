@@ -57,22 +57,28 @@ export function useFavorites({
         listingId,
       );
     },
-    // Enable query once session is loaded (not 'loading')
-    // This ensures we know if user is authenticated before choosing localStorage vs API
-    enabled: sessionStatus !== "loading",
+    // Disable the query entirely - we only rely on batch data and cache
+    // FavoriteButton is only used in ListingCard, which is always in a batch context
+    // The batch query (useBatchFavorites) will populate the cache for us
+    enabled: false,
 
     // Aggressive caching - data stays fresh for 10 minutes
     staleTime: 10 * 60 * 1000, // 10 minutes
     // Keep in cache for 30 minutes even if unused
     gcTime: 30 * 60 * 1000, // 30 minutes (was default 5 minutes)
 
-    // If we have cached data, use it as initialData
-    // Don't use initialIsFavorited as initialData because it might be stale from batch
-    initialData: cached,
+    // Use initialIsFavorited from batch as initialData
+    // This prevents the query from running if we already have data from the batch
+    initialData: initialIsFavorited !== undefined ? initialIsFavorited : cached,
+    
+    // Mark initialData as fresh if it came from initialIsFavorited (batch)
+    // This prevents React Query from immediately refetching
+    initialDataUpdatedAt:  Date.now(),
 
-    // Always refetch on mount to ensure we have the latest state from API
-    // This is important for detail pages where the user expects accurate data
-    refetchOnMount: true,
+    // Respect staleTime - don't refetch if data is fresh (e.g., from batch)
+    // This allows useBatchFavorites to populate the cache and avoid redundant requests
+    // For detail pages, the batch hook won't run, so this will fetch as normal
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
     // Refetch on reconnect to get latest state
     refetchOnReconnect: true,

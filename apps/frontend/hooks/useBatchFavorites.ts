@@ -1,9 +1,9 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { checkBatchFavorites } from "@/lib/api/favorites";
 import { favoritesKeys } from "@/lib/cacheKeys";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { ListingCardData } from "@/lib/normalizers/hub";
 import { getListingTypeSlug } from "@/lib/getListingType";
 import { getAnonymousFavorites } from "@/lib/favorites/localStorage";
@@ -14,6 +14,7 @@ import { getAnonymousFavorites } from "@/lib/favorites/localStorage";
  */
 export function useBatchFavorites(listings: ListingCardData[]) {
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
   const accessToken = (session as any)?.accessToken;
 
   // Build targetKeys array
@@ -54,15 +55,33 @@ export function useBatchFavorites(listings: ListingCardData[]) {
     gcTime: 30 * 60 * 1000, // 30 minutes
   });
 
+  // Populate individual cache keys for useFavorites
+  useEffect(() => {
+    if (favoritesMap) {
+      Object.entries(favoritesMap).forEach(([key, isFavorited]) => {
+        // key is format "entity:id" (e.g. "locations:1")
+        const [entity, idStr] = key.split(":");
+        const id = parseInt(idStr, 10);
+        
+        // Populate the specific cache key used by useFavorites
+        const individualKey = favoritesKeys.listing(entity, id);
+        
+        // Only set if not already in cache or if we want to ensure freshness
+        // useFavorites uses staleTime: 10 mins. We should set it to fresh.
+        queryClient.setQueryData(individualKey, isFavorited);
+      });
+    }
+  }, [favoritesMap, queryClient]);
+
   // Enrich listings with favorite status
   const enrichedListings = useMemo(() => {
-    if (!favoritesMap) return listings;
-
     return listings.map((listing) => {
       const targetKey = `${getListingTypeSlug(listing.listingType)}:${listing.id}`;
       return {
         ...listing,
-        initialIsFavorited: favoritesMap[targetKey] ?? false,
+        // Always set initialIsFavorited, use batch data if available, otherwise undefined
+        // This ensures the property exists even before batch completes
+        initialIsFavorited: favoritesMap?.[targetKey],
       };
     });
   }, [listings, favoritesMap]);
