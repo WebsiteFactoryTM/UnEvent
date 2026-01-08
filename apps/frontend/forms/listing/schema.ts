@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { richTextSchema } from "../../lib/richText";
+
 const CITY_DEFAULT = process.env.NEXT_PUBLIC_CITY_DEFAULT || 26515;
 // Helper function for user-friendly URL validation
 const createUserFriendlyUrlSchema = (errorMessage: string = "URL invalid") => {
@@ -62,16 +64,8 @@ const baseListingSchema = z.object({
   title: z.string().min(1, "Titlul este obligatoriu"),
   description: z.string().optional(),
   // Allow any valid Lexical JSON shape, frontend relies on backend validator
-  description_rich: z
-    .object({
-      root: z
-        .object({
-          children: z.array(z.any()).optional(),
-        })
-        .passthrough(),
-    })
-    .passthrough()
-    .optional(),
+  // We sanitize client-side to prevent backend errors for H2/H1
+  description_rich: richTextSchema,
 
   // Address
   city: z.number().min(1, "Selectează orașul"), // Not required in backend

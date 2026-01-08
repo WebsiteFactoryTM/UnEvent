@@ -8,29 +8,68 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useProfile } from "@/lib/react-query/accountProfile.queries";
+import { richTextSchema } from "@/lib/richText";
 import { useRouter } from "next/navigation";
 import { RestrictedRichTextEditor } from "../editor/RestrictedRichTextEditor";
+import { zodResolver } from "@hookform/resolvers/zod";
 
+const createUserFriendlyUrlSchema = (errorMessage: string = "URL invalid") => {
+  return z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val || val === "") return "";
+      
+      // If it already has a protocol, validate and return
+      if (val.match(/^https?:\/\//)) {
+        try {
+          new URL(val);
+          return val;
+        } catch {
+          throw new Error(errorMessage);
+        }
+      }
+      
+      // Reject obviously invalid patterns
+      if (val.match(/^ww\./)) {
+        throw new Error(errorMessage);
+      }
+      
+      // Check for basic domain format
+      if (!val.includes(".") || val.split(".").length < 2) {
+        throw new Error(errorMessage);
+      }
+      
+      // Add https:// and validate
+      const withProtocol = `https://${val}`;
+      try {
+        new URL(withProtocol);
+        return withProtocol;
+      } catch {
+        throw new Error(errorMessage);
+      }
+    });
+};
 const profileSchema = z.object({
   name: z.string().min(1, "Numele este obligatoriu"),
   email: z.string().email("Email-ul este invalid"),
   phone: z
     .string()
     .min(10, "Numărul de telefon trebuie să conțină cel puțin 10 cifre"),
-  website: z.string().url("Website-ul este invalid"),
-  city: z.string().min(1, "Orașul este obligatoriu"),
-  bio: z.string().min(10, "Bio-ul trebuie să conțină cel puțin 10 caractere"),
-  displayName: z.string().min(1, "Numele de afișare este obligatoriu"),
-  bio_rich: z.any(),
+  website: createUserFriendlyUrlSchema("Website-ul este invalid").optional(),
+  city: z.string().optional(),
+  bio: z.string().optional(),
+  displayName: z.string().optional(),
+  bio_rich: richTextSchema.optional(),
   socialMedia: z.object({
-    facebook: z.string().url("Facebook-ul este invalid"),
-    instagram: z.string().url("Instagram-ul este invalid"),
-    linkedin: z.string().url("LinkedIn-ul este invalid"),
-    youtube: z.string().url("YouTube-ul este invalid"),
-    tiktok: z.string().url("TikTok-ul este invalid"),
-    twitch: z.string().url("Twitch-ul este invalid"),
-    x: z.string().url("X-ul este invalid"),
-  }),
+    facebook: createUserFriendlyUrlSchema("Facebook-ul este invalid").optional() ,
+    instagram: createUserFriendlyUrlSchema("Instagram-ul este invalid").optional() ,
+    linkedin: createUserFriendlyUrlSchema("LinkedIn-ul este invalid").optional() ,
+    youtube: createUserFriendlyUrlSchema("YouTube-ul este invalid").optional() ,
+    tiktok: createUserFriendlyUrlSchema("TikTok-ul este invalid").optional() ,
+    twitch: createUserFriendlyUrlSchema("Twitch-ul este invalid").optional() ,
+    x: createUserFriendlyUrlSchema("X-ul este invalid").optional(),
+  }).optional(),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
@@ -46,9 +85,11 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
     handleSubmit,
     control,
     watch,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
     defaultValues: {
+      email: (profile.user as User)?.email || "",
       name: profile.name,
       phone: profile.phone || "",
       website: profile.website || "",
@@ -67,9 +108,17 @@ const ProfilePersonalDetailsForm = ({ profile }: { profile: Profile }) => {
       },
     },
   });
+console.log(errors);
+
+
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
+      // DEBUG: Log the rich text JSON before submission
+      console.log('=== PROFILE SUBMIT DEBUG ===');
+      console.log('bio_rich JSON:', JSON.stringify(data.bio_rich, null, 2));
+      console.log('===========================');
+      
       await updateProfileMutation({ data });
 
       toast({
