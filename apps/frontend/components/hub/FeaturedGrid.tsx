@@ -23,7 +23,7 @@ export default function FeaturedGrid({
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <h3 className="text-2xl md:text-3xl font-bold">
-            Recomandate în toată România
+            Sugestii în toată România
           </h3>
         </div>
         <Button asChild variant="ghost">

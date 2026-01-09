@@ -116,13 +116,18 @@ export default async function ListingTypePage({
   };
   const h1 = h1Titles[listingType];
 
-  // if (featuredNormalized.length === 0 && cityRows.length === 0) {
-  //   return (
-  //     <div className="p-6 h-screen flex items-center justify-center text-muted-foreground">
-  //       Încă nu avem date pentru această secțiune. Revino curând.
-  //     </div>
-  //   );
-  // }
+  const h2Titles: Record<string, string> = {
+    locatii:
+      "Descoperă locația potrivită pentru evenimentul tău. Folosește filtrele pentru o căutare avansată.",
+    servicii:
+      "Descoperă furnizorii potriviți pentru evenimentul tău. Folosește filtrele pentru o căutare avansată.",
+    evenimente:
+      "Descoperă evenimentele la care vrei să participi. Folosește filtrele pentru o căutare avansată.",
+  };
+
+  const h2 = h2Titles[listingType];
+
+
 
   return (
     <>
@@ -134,7 +139,7 @@ export default async function ListingTypePage({
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <ArchiveTitle
                 title={h1}
-                subtitle={`Orientare rapidă: caută un oraș, explorează tipuri relevante și descoperă recomandările noastre.`}
+                subtitle={h2}
               />
               <AddListingButton listingType={listingType as any} />
             </div>

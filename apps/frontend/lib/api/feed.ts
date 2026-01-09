@@ -26,7 +26,7 @@ const FeedQuerySchema = z.object({
   radius: z.coerce
     .number()
     .transform((val) => Math.min(val, 100000)) // Clamp to max 100km
-    .default(40000)
+    .default(50000)
     .optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),

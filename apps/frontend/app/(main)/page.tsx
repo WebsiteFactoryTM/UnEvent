@@ -57,7 +57,7 @@ export default async function HomePage() {
           <HomeCarousel
             listingType="locatii"
             category="featuredLocations"
-            label="Locații recomandate"
+            label="Top Locații"
           />
         </Suspense>
 
@@ -65,7 +65,7 @@ export default async function HomePage() {
           <HomeCarousel
             listingType="servicii"
             category="topServices"
-            label="Servicii recomandate"
+            label="Top Servicii"
           />
         </Suspense>
 

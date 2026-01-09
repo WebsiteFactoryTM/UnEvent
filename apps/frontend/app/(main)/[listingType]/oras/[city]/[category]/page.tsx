@@ -193,8 +193,8 @@ export default async function CityCategoryArchivePage({
 
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <ArchiveTitle
-                title={`Top ${listingLabel} pentru evenimente de ${categoryLabel} în ${cityLabel}`}
-                subtitle={`Descoperă cele mai bune ${listingLabel.toLowerCase()} de ${categoryLabel.toLowerCase()} din ${cityLabel}.`}
+                title={`Top ${listingLabel} ${categoryLabel} în ${cityLabel}`}
+                subtitle={`Descoperă cele mai bune ${listingLabel.toLowerCase()} ${categoryLabel.toLowerCase()} din ${cityLabel}. Folosește filtrele pentru o căutare avansată.`}
               />
               <AddListingButton listingType={listingType as any} />
             </div>

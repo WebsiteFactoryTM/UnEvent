@@ -10,6 +10,23 @@ import { toCardItem } from '@/utils/toCardItem'
 
 type Listing = Location | Event | Service
 
+/*
+New logic to include Ambasador status and NEW in Feed
+
+/oras/Timisoara
+/oras/Timisoara/DJ
+
+24 per pagina (If City and Category)
+3 ambasadori per categorie per oras
+3 parteneri
+3 spotlighturi
+3 new
+12 standard
+
+24 per pagina (If only city):
+Sort by Ambasadori - parteneri - spotlight - new - standard
+*/
+
 /**
  * Create a GeoJSON polygon representing a circle
  * Used for geo queries that need to avoid ORDER BY (which conflicts with DISTINCT)

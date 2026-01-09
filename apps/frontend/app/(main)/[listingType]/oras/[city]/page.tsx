@@ -47,20 +47,20 @@ export async function generateMetadata({
     city,
     searchParams: await searchParams,
   });
-  
+
   // Fetch feed items to verify content existence
   const feedData = await fetchFeed(filters);
-  const hasItems = 
-    (feedData?.pinnedSponsored && feedData.pinnedSponsored.length > 0) || 
+  const hasItems =
+    (feedData?.pinnedSponsored && feedData.pinnedSponsored.length > 0) ||
     (feedData?.organic && feedData.organic.length > 0);
-  
+
   // Use "noindex" if page is empty and no specific filters are active (clean hub page)
-  // If filters are active, "noindex" is already handled by canonical/robots logic in constructMetadata if we want, 
+  // If filters are active, "noindex" is already handled by canonical/robots logic in constructMetadata if we want,
   // but here we specifically want to de-index EMPTY hub pages.
-  // The original code had `shouldIndex = !hasFilters`. 
+  // The original code had `shouldIndex = !hasFilters`.
   // We want: if clean URL (no filters) AND empty -> noindex.
   // If has filters -> noindex (as per original logic).
-  
+
   const filterParams = [
     "priceMin",
     "priceMax",
@@ -75,10 +75,10 @@ export async function generateMetadata({
     "suitableFor",
     "limit",
   ];
-  
+
   const searchFiltersObj = await searchParams;
   const hasFilters = Object.keys(searchFiltersObj || {}).some(
-    (key) => filterParams.includes(key) && searchFiltersObj[key]
+    (key) => filterParams.includes(key) && searchFiltersObj[key],
   );
 
   const shouldIndex = !hasFilters && hasItems;
@@ -88,7 +88,7 @@ export async function generateMetadata({
   const page = filters.page || 1;
 
   const baseUrl = `https://unevent.ro/${listingType}/oras/${city}`;
-  const title = `Top ${listingLabel} ${listingType !== 'evenimente' ? 'Evenimente' : ''} în ${cityLabel}${
+  const title = `Top ${listingLabel} ${listingType !== "evenimente" ? "Evenimente" : ""} în ${cityLabel}${
     page > 1 ? ` – Pagina ${page}` : ""
   } | UN:EVENT`;
 
@@ -140,6 +140,23 @@ export default async function CityArchivePage({
 
   const dehydratedState = dehydrate(queryClient);
 
+  const title = {
+    locatii: `Top locații pentru evenimente în ${cityLabel}`,
+    evenimente: `Top evenimente în ${cityLabel}`,
+    servicii: `Top servicii pentru evenimente în ${cityLabel}`,
+  };
+
+  const subtitle = {
+
+    locatii:
+      `Descoperă locația ideală din ${cityLabel} pentru evenimentul tău. Folosește filtrele pentru o căutare avansată.`,
+    servicii:
+      `Descoperă furnizori din ${cityLabel} pregătiți pentru evenimentul tău. Folosește filtrele pentru o căutare avansată.`,
+    evenimente:
+      `Descoperă evenimentele din ${cityLabel} la care vrei să participi. Folosește filtrele pentru o căutare avansată.`,
+  };
+
+
   return (
     <>
       <PaginationSEO baseUrl={baseUrl} page={page} hasMore={feedData.hasMore} />
@@ -156,8 +173,8 @@ export default async function CityArchivePage({
             {/* Header with add button */}
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <ArchiveTitle
-                title={`Top ${listingLabel} pentru evenimente în ${cityLabel}`}
-                subtitle={`Caută cele mai potrivite ${listingLabel.toLowerCase()} pentru evenimente în ${cityLabel}.`}
+                title={title[listingType]}
+                subtitle={subtitle[listingType]}
               />
               <AddListingButton listingType={listingType as any} />
             </div>
